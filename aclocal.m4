@@ -1,4 +1,4 @@
-dnl $Id: aclocal.m4,v 11.2 2000/01/24 12:10:32 tom Exp $
+dnl $Id: aclocal.m4,v 11.3 2000/12/26 13:51:35 tom Exp $
 dnl Macros for CM_TOOLS configure script.
 dnl ---------------------------------------------------------------------------
 dnl ---------------------------------------------------------------------------
@@ -44,11 +44,13 @@ dnl Check if we're accidentally using a cache from a different machine.
 dnl Derive the system name, as a check for reusing the autoconf cache.
 dnl
 dnl If we've packaged config.guess and config.sub, run that (since it does a
-dnl better job than uname).
+dnl better job than uname).  Normally we'll use AC_CANONICAL_HOST, but allow
+dnl an extra parameter that we may override, e.g., for AC_CANONICAL_SYSTEM
+dnl which is useful in cross-compiles.
 AC_DEFUN([CF_CHECK_CACHE],
 [
 if test -f $srcdir/config.guess ; then
-	AC_CANONICAL_HOST
+	ifelse([$1],,[AC_CANONICAL_HOST],[$1])
 	system_name="$host_os"
 else
 	system_name="`(uname -s -r) 2>/dev/null`"
@@ -103,47 +105,48 @@ dnl Look for a non-standard library, given parameters for AC_TRY_LINK.  We
 dnl prefer a standard location, and use -L options only if we do not find the
 dnl library in the standard library location(s).
 dnl	$1 = library name
-dnl	$2 = includes
-dnl	$3 = code fragment to compile/link
-dnl	$4 = corresponding function-name
+dnl	$2 = library class, usually the same as library name
+dnl	$3 = includes
+dnl	$4 = code fragment to compile/link
+dnl	$5 = corresponding function-name
+dnl	$6 = flag, nonnull if failure causes an error-exit
 dnl
 dnl Sets the variable "$cf_libdir" as a side-effect, so we can see if we had
 dnl to use a -L option.
 AC_DEFUN([CF_FIND_LIBRARY],
 [
-	cf_cv_have_lib_$1=no
+	eval 'cf_cv_have_lib_'$1'=no'
 	cf_libdir=""
-	AC_CHECK_FUNC($4,cf_cv_have_lib_$1=yes,[
+	AC_CHECK_FUNC($5,
+		eval 'cf_cv_have_lib_'$1'=yes',[
 		cf_save_LIBS="$LIBS"
-		AC_MSG_CHECKING(for $4 in -l$1)
+		AC_MSG_CHECKING(for $5 in -l$1)
 		LIBS="-l$1 $LIBS"
-		AC_TRY_LINK([$2],[$3],
+		AC_TRY_LINK([$3],[$4],
 			[AC_MSG_RESULT(yes)
-			 cf_cv_have_lib_$1=yes
+			 eval 'cf_cv_have_lib_'$1'=yes'
 			],
 			[AC_MSG_RESULT(no)
-			CF_LIBRARY_PATH(cf_search,$1)
+			CF_LIBRARY_PATH(cf_search,$2)
 			for cf_libdir in $cf_search
 			do
 				AC_MSG_CHECKING(for -l$1 in $cf_libdir)
 				LIBS="-L$cf_libdir -l$1 $cf_save_LIBS"
-				AC_TRY_LINK([$2],[$3],
+				AC_TRY_LINK([$3],[$4],
 					[AC_MSG_RESULT(yes)
-			 		 cf_cv_have_lib_$1=yes
+			 		 eval 'cf_cv_have_lib_'$1'=yes'
 					 break],
 					[AC_MSG_RESULT(no)
 					 LIBS="$cf_save_LIBS"])
 			done
 			])
 		])
-if test $cf_cv_have_lib_$1 = no ; then
+eval 'cf_found_library=[$]cf_cv_have_lib_'$1
+ifelse($6,,[
+if test $cf_found_library = no ; then
 	AC_ERROR(Cannot link $1 library)
 fi
-case $host_os in #(vi
-linux*) # Suse Linux does not follow /usr/lib convention
-	LIBS="$LIBS -L/lib"
-	;;
-esac
+])
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl Locate TD_LIB, which is either installed, with headers, library and
@@ -156,6 +159,7 @@ dnl	TD_LIB_rules - actual path of td_lib.mk
 dnl
 AC_DEFUN([CF_FIND_TDLIB],
 [
+AC_REQUIRE([CF_LIB_PREFIX])
 AC_MSG_CHECKING(for td_lib in side-by-side directory)
 AC_CACHE_VAL(cf_cv_tdlib_devel,[
 	cf_cv_tdlib_devel=no
@@ -164,7 +168,7 @@ AC_CACHE_VAL(cf_cv_tdlib_devel,[
 	test -d ../td_lib/include &&
 	test -f ../td_lib/include/td_config.h &&
 	test -d ../td_lib/lib &&
-	test -f ../td_lib/lib/libtd.a &&
+	test -f ../td_lib/lib/${LIB_PREFIX}td.a &&
 	cf_cv_tdlib_devel=yes
 
 	if test "$cf_cv_tdlib_devel" = yes ; then
@@ -184,7 +188,7 @@ if test "$cf_cv_tdlib_devel" = no ; then
     do
 	test -f $cf_incdir/td/td_config.h && CFLAGS="-I$cf_incdir $CFLAGS"
     done
-    CF_FIND_LIBRARY(td,[
+    CF_FIND_LIBRARY(td,td,[
 #define TESTING_CONFIG_H
 #include <td/ptypes.h>],[
         char *p = doalloc(0,1)],
@@ -211,36 +215,78 @@ dnl ---------------------------------------------------------------------------
 dnl Construct a search-list for a nonstandard header-file
 AC_DEFUN([CF_HEADER_PATH],
 [$1=""
-if test -d "$includedir"  ; then
-test "$includedir" != NONE       && $1="[$]$1 $includedir $includedir/$2"
-fi
-if test -d "$oldincludedir"  ; then
-test "$oldincludedir" != NONE    && $1="[$]$1 $oldincludedir $oldincludedir/$2"
-fi
-if test -d "$prefix"; then
-test "$prefix" != NONE           && $1="[$]$1 $prefix/include $prefix/include/$2"
-fi
-test "$prefix" != /usr/local     && $1="[$]$1 /usr/local/include /usr/local/include/$2"
-test "$prefix" != /usr           && $1="[$]$1 /usr/include /usr/include/$2"
-test "$prefix" != /opt           && $1="[$]$1 /opt/include /opt/include/$2"
+
+test "$includedir" != NONE && \
+test -d "$includedir" && \
+$1="[$]$1 $includedir $includedir/$2"
+
+test "$oldincludedir" != NONE && \
+test -d "$oldincludedir" && \
+$1="[$]$1 $oldincludedir $oldincludedir/$2"
+
+test "$prefix" != NONE && \
+test -d "$prefix" && \
+$1="[$]$1 $prefix/include $prefix/include/$2 $prefix/$2/include"
+
+test "$prefix" != /usr/local && \
+test -d /usr/local && \
+$1="[$]$1 /usr/local/include /usr/local/include/$2 /usr/local/$2/include"
+
+test "$prefix" != /usr && \
+$1="[$]$1 /usr/include /usr/include/$2 /usr/$2/include"
+
+test "$prefix" != /opt && \
+test -d /opt && \
+$1="[$]$1 /opt/include /opt/include/$2 /opt/$2/include"
+
+$1="[$]$1 [$]HOME/lib [$]HOME/lib/$2 [$]HOME/$2/lib"
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl Compute the library-prefix for the given host system
+dnl $1 = variable to set
+AC_DEFUN([CF_LIB_PREFIX],
+[
+	case $cf_cv_system_name in
+	OS/2*)	LIB_PREFIX=''     ;;
+	os2)	LIB_PREFIX=''     ;;
+	*)	LIB_PREFIX='lib'  ;;
+	esac
+ifelse($1,,,[$1=$LIB_PREFIX])
+	AC_SUBST(LIB_PREFIX)
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl Construct a search-list for a nonstandard library-file
 AC_DEFUN([CF_LIBRARY_PATH],
 [$1=""
-if test -d "$libdir"  ; then
-test "$libdir" != NONE           && $1="[$]$1 $libdir $libdir/$2"
-fi
-if test -d "$exec_prefix"; then
-test "$exec_prefix" != NONE      && $1="[$]$1 $exec_prefix/lib $exec_prefix/lib/$2"
-fi
-if test -d "$prefix"; then
-test "$prefix" != NONE           && \
-test "$prefix" != "$exec_prefix" && $1="[$]$1 $prefix/lib $prefix/lib/$2"
-fi
-test "$prefix" != /usr/local     && $1="[$]$1 /usr/local/lib /usr/local/lib/$2"
-test "$prefix" != /usr           && $1="[$]$1 /usr/lib /usr/lib/$2"
-test "$prefix" != /opt           && $1="[$]$1 /opt/lib /opt/lib/$2"
+
+test "$libdir" != NONE && \
+test -d $libdir && \
+$1="[$]$1 $libdir $libdir/$2"
+
+test "$exec_prefix" != NONE && \
+test -d $exec_prefix && \
+$1="[$]$1 $exec_prefix/lib $exec_prefix/lib/$2"
+
+test "$prefix" != NONE && \
+test "$prefix" != "$exec_prefix" && \
+test -d $prefix && \
+$1="[$]$1 $prefix/lib $prefix/lib/$2 $prefix/$2/lib"
+
+test "$prefix" != /usr/local && \
+test -d /usr/local && \
+$1="[$]$1 /usr/local/lib /usr/local/lib/$2 /usr/local/$2/lib"
+
+test "$prefix" != /usr && \
+$1="[$]$1 /usr/lib /usr/lib/$2 /usr/$2/lib"
+
+test "$prefix" != / && \
+$1="[$]$1 /lib /lib/$2 /$2/lib"
+
+test "$prefix" != /opt && \
+test -d /opt && \
+$1="[$]$1 /opt/lib /opt/lib/$2 /opt/$2/lib"
+
+$1="[$]$1 [$]HOME/lib [$]HOME/lib/$2 [$]HOME/$2/lib"
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl Check for the use of 'include' in 'make' (BSDI is a special case)
@@ -302,13 +348,15 @@ dnl Tests for one or more programs given by name along the user's path, and
 dnl sets a variable to the program's full-path if found.
 AC_DEFUN([CF_PROGRAM_FULLPATH],
 [
+AC_REQUIRE([CF_PATHSEP])
+AC_REQUIRE([CF_PROG_EXT])
 AC_MSG_CHECKING(full path of $1)
 AC_CACHE_VAL(cf_cv_$1,[
 	cf_cv_$1="[$]$1"
 	if test -z "[$]cf_cv_$1"; then
 		set -- $2;
 		while test [$]# != 0; do
-			cf_word=[$]1
+			cf_word=[$]1${PROG_EXT}
 			case [$]1 in
 			-*)
 				;;
@@ -316,7 +364,7 @@ AC_CACHE_VAL(cf_cv_$1,[
 				if test -f "$cf_word" && test ! -f "./$cf_word" && test -x "$cf_word"; then
 					cf_cv_$1="$cf_word"
 				else
-					IFS="${IFS= 	}"; cf_save_ifs="$IFS"; IFS="${IFS}:"
+					IFS="${IFS= 	}"; cf_save_ifs="$IFS"; IFS="${IFS}${PATHSEP}"
 					for cf_dir in $PATH; do
 						test -z "$cf_dir" && cf_dir=.
 						if test "$cf_dir" != "." && test -f $cf_dir/$cf_word && test -x $cf_dir/$cf_word; then
@@ -359,7 +407,7 @@ dnl $1=uppercase($2)
 AC_DEFUN([CF_UPPER],
 [
 changequote(,)dnl
-$1=`echo $2 | tr '[a-z]' '[A-Z]'`
+$1=`echo "$2" | sed y%abcdefghijklmnopqrstuvwxyz./-%ABCDEFGHIJKLMNOPQRSTUVWXYZ___%`
 changequote([,])dnl
 ])dnl
 dnl ---------------------------------------------------------------------------

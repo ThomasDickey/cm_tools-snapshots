@@ -3,6 +3,8 @@
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		26 Dec 2000, add -p option.  Make copy-dir less verbose.
+ *			     Resolve conflict between -u and -U options.
  *		15 Jan 1999, use pathcat2 when combining data read from the
  *			     directory entries, since "~" does not mean anything
  *			     in that context.
@@ -110,7 +112,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.22 1999/06/27 18:39:03 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.23 2000/12/26 16:06:58 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -120,7 +122,7 @@ MODULE_ID("$Id: copy.c,v 11.22 1999/06/27 18:39:03 tom Exp $")
 
 #define	S_MODEBITS	(~S_IFMT)
 
-#ifndef	S_IFLNK
+#if !defined(S_IFLNK) && !defined(lstat)
 #define	lstat	stat
 #endif	/* S_IFLNK */
 
@@ -144,9 +146,9 @@ static	int	d_opt,		/* obtain source from destination arg */
 		l_opt,		/* copy symbolic-link-targets */
 		m_opt,		/* merge directories */
 		n_opt,		/* true if we don't actually do copies */
+		p_opt,		/* true if we try to preserve ownership */
 		s_opt,		/* enable set-uid/gid in target files */
-		u_opt,		/* update-only */
-		U_opt,		/* update-only (newer files only) */
+		u_opt,		/* update (1=all, 2=newer) */
 		v_opt;		/* verbose */
 
 /************************************************************************
@@ -275,6 +277,27 @@ char *	skip_dots(
 	return (path);
 }
 
+static
+int	SetOwner(
+	_ARX(char *,	path)
+	_ARX(int,	uid)
+	_AR1(int,	gid)
+		)
+	_DCL(Stat_t *,	dst)
+	_DCL(int,	uid)
+	_DCL(int,	gid)
+{
+	if (p_opt) {
+		DEBUG("++ chown %03o %s\n", uid, path);
+		DEBUG("++ chgrp %03o %s\n", gid, path);
+		if (!n_opt && (chown(path, uid, gid) < 0)) {
+			problem("chown", path);
+			return -1;
+		}
+	}
+	return 0;
+}
+
 /*
  * Enable protection of a file temporarily, so we can write into it, or
  * set the protection after we're done copying.
@@ -382,6 +405,11 @@ int	copyfile(
 		problem("access", src);
 		return(-1);
 	}
+
+	VERBOSE("** copy %s to %s\n", src, dst);
+	if (n_opt)
+		return 0;
+
 	*bfr1 = EOS;
 #ifdef	__STDC__
 	catarg(bfr1, "-p");	/* ...so we can test for success of copy */
@@ -422,6 +450,10 @@ int	copyfile(
 	int	did_chmod = TRUE;
 	int	old_mode = new_sb->st_mode & S_MODEBITS,
 		tmp_mode = old_mode | S_IWUSR;	/* must be writeable! */
+
+	VERBOSE("** copy %s to %s\n", src, dst);
+	if (n_opt)
+		return 0;
 
 	if ((ifp = fopen(src, "r")) == 0) {
 		problem("fopen(src)", src);
@@ -488,13 +520,16 @@ int	copylink(
 {
 	auto	char	bfr[BUFSIZ];
 
-	if (!ReadLink(src, bfr)) {
-		problem("ReadLink(src)", src);
-		return(-1);
-	}
-	if (symlink(bfr, dst) < 0) {
-		problem("symlink", dst);
-		return(-1);
+	VERBOSE("** link %s to %s\n", src, dst);
+	if (!n_opt) {
+		if (!ReadLink(src, bfr)) {
+			problem("ReadLink(src)", src);
+			return(-1);
+		}
+		if (symlink(bfr, dst) < 0) {
+			problem("symlink", dst);
+			return(-1);
+		}
 	}
 	return (0);
 }
@@ -658,7 +693,7 @@ int	copyit(
 				src, dst);
 			return FALSE;
 		}
-		if (u_opt || U_opt) {
+		if (u_opt) {
 #ifdef	S_IFLNK
 			if (!l_opt) {
 				lstat(bfr1, &src_sb);
@@ -679,7 +714,7 @@ int	copyit(
 					src_sb.st_mtime &= ~1L;
 				}
 #endif
-				if (U_opt
+				if (u_opt >= 2
 				 && (src_sb.st_mtime < dst_sb.st_mtime))
 					return FALSE;
 
@@ -696,7 +731,7 @@ int	copyit(
 		}
 	}
 #ifdef	S_IFLNK
-	else if (u_opt || U_opt) {
+	else if (u_opt) {
 		if (!l_opt) {
 			lstat(bfr1, &src_sb);
 			lstat(bfr2, &dst_sb);
@@ -729,8 +764,6 @@ int	copyit(
 			}
 		}
 	}
-
-	VERBOSE("** copy \"%s\" to \"%s\"\n", src, dst);
 
 	/* Verify that the source is a legal file */
 #ifdef	S_IFLNK
@@ -786,22 +819,25 @@ int	copyit(
 	if (isDIR(src_sb.st_mode) && copydir(src,dst,num) < 0)
 		return forced;
 
-	if (!n_opt) {
 #ifdef	S_IFLNK
-		if (num && !isDIR(src_sb.st_mode) && isLINK(dst_sb.st_mode)) {
-			if (unlink(dst) < 0) {
-				problem("unlink(dst)", dst);
-				return forced;
-			}
+	if (!n_opt
+	 && num != 0
+	 && !isDIR(src_sb.st_mode)
+	 && isLINK(dst_sb.st_mode)) {
+		if (unlink(dst) < 0) {
+			problem("unlink(dst)", dst);
+			return forced;
 		}
-		if (isLINK(src_sb.st_mode)) {
-			if (copylink(src,dst) < 0)
-				return forced;
-		}
-#endif	/* S_IFLNK */
-		if (isFILE(src_sb.st_mode) && copyfile(src,dst,num,&src_sb) < 0)
+	}
+	if (isLINK(src_sb.st_mode)) {
+		if (copylink(src,dst) < 0)
 			return forced;
 	}
+#endif	/* S_IFLNK */
+
+	if (isFILE(src_sb.st_mode)
+	 && copyfile(src,dst,num,&src_sb) < 0)
+		return forced;
 
 	if (isFILE(src_sb.st_mode) || isDIR(src_sb.st_mode)) {
 		int	mode	= dst_sb.st_mode & S_MODEBITS;
@@ -810,6 +846,7 @@ int	copyit(
 			mode	&= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 			mode	|=  (S_ISUID | S_ISGID);
 		}
+		(void)SetOwner(dst, src_sb.st_uid, src_sb.st_gid);
 		if (isDIR(src_sb.st_mode) && !isDIR(dst_sb.st_mode))
 			mode	|= 0111;
 		(void)SetMode(dst, mode);
@@ -846,13 +883,14 @@ void	usage(_AR0)
 #endif
 ,"  -m      merge directories"
 ,"  -n      no-op (show what would be copied)"
+,"  -p      preserve ownership"
 ,"  -s      enable set-uid/gid in target"
 ,"  -u      update-only (copies only new files or those differing in size or date)"
-,"  -U      update-only (copies only newer files)"
+,"  -U      update-only (same as -u, but copies newer files)"
 ,"  -v      verbose"
 #if	DOS_VISIBLE
-,"  -S      source is MSDOS"
-,"  -D      destination is MSDOS"
+,"  -S      source is local-time filesystem"
+,"  -D      destination is local-time filesystem"
 ,"  -F file specify MSDOS/Unix name-conversions"
 #endif
 		};
@@ -1013,7 +1051,7 @@ _MAIN
 {
 	register int	j;
 
-	while ((j = getopt(argc, argv, "dfilmnsuUvSDF:")) != EOF) switch (j) {
+	while ((j = getopt(argc, argv, "dfilmnpsuUvSDF:")) != EOF) switch (j) {
 	case 'd':	d_opt = TRUE;	break;
 	case 'f':	f_opt = TRUE;	break;
 	case 'i':	i_opt = TRUE;	break;
@@ -1022,9 +1060,10 @@ _MAIN
 #endif
 	case 'm':	m_opt = TRUE;	break;
 	case 'n':	n_opt = TRUE;	break;
+	case 'p':	p_opt = TRUE;	break;
 	case 's':	s_opt = TRUE;	break;
-	case 'u':	u_opt = TRUE;	break;
-	case 'U':	U_opt = TRUE;	break;
+	case 'u':	u_opt = 1;	break;
+	case 'U':	u_opt = 2;	break;
 	case 'v':	v_opt++;	break;
 #if	DOS_VISIBLE
 	case 'S':	src_type = MsDos;		break;
