@@ -1,11 +1,12 @@
-# $Id: Makefile,v 10.0 1991/11/12 12:30:02 ste_cm Rel $
-#
+# $Id: Makefile,v 11.0 1992/02/18 11:48:23 ste_cm Rel $
 
 ####### (Development) ##########################################################
 INSTALL_MAN=../../install_man
-COPY	= cp -p
+
 GET	= checkout
+COPY	= cp -p
 PUT	= rm -f $@; $(COPY) $? $@
+
 THIS	= cm_tools
 
 USE	= man
@@ -33,19 +34,6 @@ IT	=\
 	$(PREFIX)rcsput.$(SECTION)\
 	$(PREFIX)vcs.$(SECTION)
 
-CAT_FILES =\
-	baseline.cat\
-	checkin.cat\
-	checkout.cat\
-	checkup.cat\
-	copy.cat\
-	ded.cat\
-	link2rcs.cat\
-	permit.cat\
-	rcsget.cat\
-	rcsput.cat\
-	vcs.cat
-
 SOURCES	=\
 	baseline.man\
 	checkin.man\
@@ -62,12 +50,12 @@ SOURCES	=\
 ALL	=
 
 ####### (Standard Productions) #################################################
-all:		$(ALL)			; @echo '** use "make install"'
-clean:
-clobber:	clean			; rm -f *.out *.cat core
+all:		$(ALL)
+clean:					; rm -f *.bak *.log *.out core
+clobber:	clean			; rm -f *.cat
 destroy:	clobber
 	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
-run_tests:	$(CAT_FILES)
+run_tests:
 sources:	$(SOURCES)
 install:	$(IT)
 deinstall:		; rm -f $(IT)

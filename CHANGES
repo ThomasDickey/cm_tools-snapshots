@@ -1,3 +1,715 @@
+1992-02-28  dickey@software.org
+
+	* certify/release.txt: newest fix
+
+1992-02-27  dickey@software.org
+
+	* src/vcs/Makefile: -x option of checkout is obsolete
+
+1992-02-27  ste_cm@software.org
+
+	* src/vcs/Makefile: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-27  dickey@software.org
+
+	* src/permit/Makefile: -x option of checkout is obsolete
+
+1992-02-27  ste_cm@software.org
+
+	* src/permit/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-27  dickey@software.org
+
+	* src/link2rcs/Makefile: -x option of checkout is obsolete
+
+1992-02-27  ste_cm@software.org
+
+	* src/link2rcs/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-27  dickey@software.org
+
+	* src/copy/Makefile: -x option of checkout is obsolete
+
+1992-02-27  ste_cm@software.org
+
+	* src/copy/Makefile: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-27  dickey@software.org
+
+	* src/checkup/Makefile: -x option of checkout is obsolete
+
+1992-02-27  ste_cm@software.org
+
+	* src/checkup/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-27  dickey@software.org
+
+	* src/checkout/Makefile: -x option of checkout is obsolete
+
+1992-02-27  ste_cm@software.org
+
+	* src/checkout/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-27  dickey@software.org
+
+	* src/checkin/Makefile: -x option of checkout is obsolete
+
+1992-02-27  ste_cm@software.org
+
+	* src/checkin/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-27  dickey@software.org
+
+	* src/baseline/Makefile: -x option of checkout is obsolete
+
+1992-02-27  ste_cm@software.org
+
+	* src/baseline/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-27  dickey@software.org
+
+	* src/Makefile: -x option of checkout is obsolete
+
+1992-02-27  ste_cm@software.org
+
+	* src/Makefile: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-27  dickey@software.org
+
+	* Makefile: -x option of checkout is obsolete
+
+1992-02-27  ste_cm@software.org
+
+	* Makefile: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-18  dickey@software.org
+
+	* user/Makefile: don't make tests/cat-files
+
+1992-02-18  ste_cm@software.org
+
+	* user/Makefile: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-18  dickey@software.org
+
+	* src/vcs/test/delete.ref: leading-dot
+
+1992-02-18  ste_cm@software.org
+
+	* src/vcs/test/delete.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-18  dickey@software.org
+
+	* src/vcs/test/insert.ref: leading-dot
+
+1992-02-18  ste_cm@software.org
+
+	* src/vcs/test/insert.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-17  dickey@software.org
+
+	* Makefile: top-level clean-rule (for log-files)
+
+	* src/permit/src/permit.c: lint
+
+1992-02-17  ste_cm@software.org
+
+	* src/permit/src/permit.c:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-17  dickey@software.org
+
+	* src/vcs/src/delete.c: lint
+
+1992-02-17  ste_cm@software.org
+
+	* src/vcs/src/delete.c:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-17  dickey@software.org
+
+	* src/copy/src/copy.c: dropped redefinition of isDIR, isFILE and isLINK
+
+1992-02-17  ste_cm@software.org
+
+	* src/copy/src/copy.c:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-17  dickey@software.org
+
+	* certify/Makefile: cleanup rules
+
+1992-02-17  ste_cm@software.org
+
+	* certify/Makefile: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-17  dickey@software.org
+
+	* certify/release.txt: fixes to 'ded' rename of directory/file-lists
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/Makefile:
+	breakdown into a reasonable set of test-cases
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/README: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/README:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	supply value for 'opt_opt[]' if no REV_OPT matches
+
+	* src/checkin/test/all_tests.sh: New file.
+
+	* src/checkin/test/case3_e.ref: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3_e.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case3_e.sh: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3_e.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case3_f.ref: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3_f.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/run_test.sh: oops?
+
+	* src/checkin/test/case3_f.sh: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3_f.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case3.sh: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case1.sh: remove RCS-directory first
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case1.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case2.sh: remove RCS-directory first
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case2.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case3_d.ref: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3_d.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case3_c.ref: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3_c.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case3_b.ref: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3_b.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case3_a.ref: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3_a.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/run_test.sh: tidy
+
+	* src/checkin/src/checkin.c:
+	ensure I have something from 'PostProcess()' for 'Filter()'
+	to edit with.
+
+	* src/checkin/test/case3_d.sh: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3_d.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case3_c.sh: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3_c.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case3_b.sh: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3_b.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case3_a.sh: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case3_a.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/run_test.sh: nail down environment a little
+
+	* src/checkin/test/case1_b.ref: picked up ignored copy of 'opt_rev[]'
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case1_b.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case1_b.sh: change version to be > 10.1
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case1_b.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case2_d.ref: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case2_d.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case2_d.sh: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case2_d.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	ensure that 'opt_rev[]' has an even number of dot-separated
+	numbers on return from 'GetLock()'
+
+	* src/checkin/src/checkin.c:
+	corrected placement of code to apply ci's "-d" option
+
+	* src/checkin/test/case2_c.ref: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case2_c.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case2_b.ref: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case2_b.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case2_b.sh: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case2_b.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case2_c.sh: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case2_c.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case2_a.sh: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case2_a.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case2_a.ref: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case2_a.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case2.sh: RCS_BASE
+
+	* src/checkin/test/case1_a.sh: make this quiet
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case1_a.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case1_b.sh, src/checkin/test/case1_b.ref, src/checkin/test/case_1_b.ref, support/set_date.c:
+	RCS_BASE
+
+	* src/checkin/test/set_date.c: added "-q" option
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/set_date.c:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  Thomas E. Dickey  <dickey@software.org>
+
+	* src/checkin/test/set_date.c: module-id
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/run_test.sh: modified so I can specify a single-case
+
+	* src/checkin/test/case_1_a.ref, src/checkin/test/case1_a.sh: RCS_BASE
+
+	* src/checkin/test/run_test.sh:
+	recoding this to make it work with lots of cases
+
+	* src/checkin/test/case1_a.ref: RCS_BASE
+
+1992-02-11  ste_cm@software.org
+
+	* src/checkin/test/case1_a.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-11  dickey@software.org
+
+	* src/checkin/test/case1.sh: RCS_BASE
+
+	* src/checkin/src/checkin.c:
+	reordered some stuff for linting/prototypes
+	modified debug-trace
+
+	* src/checkin/src/checkin.c: RCS_BASE
+
+	* src/checkin/test/set_date.c: *** empty log message ***
+
+1992-02-10  dickey@software.org
+
+	* user/checkin.man: changed "-d" to "-D" option
+
+1992-02-10  ste_cm@software.org
+
+	* user/checkin.man: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-10  dickey@software.org
+
+	* src/checkin/test/Makefile: added 'show_date'
+
+	* src/checkin/test/run_test.sh:
+	show rlog at end, with intermediate dates via 'show_date'
+
+	* src/checkin/test/show_date.c: RCS_BASE
+
+	* src/checkin/src/checkin.c:
+	tinkering with logic for RCS_BASE vs new_file
+
+	* src/checkin/test/run_test.sh: nail down some of the environment
+
+	* src/checkin/src/checkin.c:
+	made a special kludge for "-q" option w/o version
+
+	* src/checkin/src/checkin.c:
+	lots of little changes to make the symbolic and branch
+	revisions work properly (still testing!)
+
+	* src/checkin/test/run_test.sh: forgot "-m" option for last case
+
+	* certify/README: change 'checkin' "-d" to "-D"
+
+1992-02-10  ste_cm@software.org
+
+	* certify/README: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-10  dickey@software.org
+
+	* src/checkin/test/run_test.sh:
+	adding a case for testing symbolic-revision and branches
+
+	* src/checkin/src/checkin.c: renamed "-d" option to "-D"
+	beginning of mods to make symbolic revisions and branches
+	work
+
+1992-02-07  dickey@software.org
+
+	* src/checkout/src/checkout.c: applied wrong mode when locking
+
+	* src/checkout/src/checkout.c: update the other path
+
+	* src/checkout/src/checkout.c:
+	added no-op option; make this handle -w and/or -s option
+	correctly (was not updating the save_rev value.
+
+	* src/checkout/src/checkout.c: typo
+
+	* src/checkin/src/checkin.c: chopped out code for new module 'rcstime'
+
+	* src/checkout/src/checkout.c:
+	chopped out code for new module 'rcstime()'
+
+	* src/checkout/src/checkout.c:
+	made a guess for 'same_branch()' -- may need more work
+
+	* src/checkout/src/checkout.c:
+	make an access-check more efficient for the special-case
+	when the archive does not exist
+
+	* src/checkout/src/checkout.c: pruning some flags in 'PreProcess()'
+
+	* src/checkout/src/checkout.c:
+	first cut of recode to do actual revision-lookup (needed for
+	symbolic revisions) to control arguments passed to 'co'.
+
+	* src/checkin/src/rcsput.c: lint
+
+	* src/checkin/src/rcsput.c:
+	use dyn-strings to avoid overflow of command-line
+
+	* src/checkin/src/checkin.c: use macros for simpler dyn-strings
+
+	* src/checkin/src/checkin.c: use dyn-strings for building argument-list
+
+	* certify/README:
+	obsoleted "-x" option in checkin/checkout/rcsput/rcsget
+
+	* src/checkout/src/checkout.c:
+	use new procedures 'access_mode()' and 'show_uids()'
+
+	* src/checkin/src/checkin.c:
+	tinkering with 'MakeDirectory()' to ensure that if the
+	effective-user has no rights on a directory, but the real
+	user does, then we revert.
+
+1992-02-06  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	function 'TestOwner()' and calls on it were not really needed --
+	deleted this code.
+
+	* src/checkin/src/checkin.c:
+	last change did not work (testing by checking this file in!)
+
+	* src/checkin/src/checkin.c:
+	suppressed a special case of 'ReProcess()' -- when "-d" is
+	applicable, non-root set-uid is not needed.
+
+	* src/checkin/src/checkin.c: debug-print
+
+	* src/checkin/src/checkin.c:
+	oops: forgot to call 'MakeDirectory()' on alternate path to
+	ensure that I set RCSprot
+
+	* src/checkout/src/checkout.c: working on non-root setuid mode
+
+	* src/checkout/src/rcsget.c: first cut of rewrite to use 'rcsargpair()'
+
+1992-02-06  ste_cm@software.org
+
+	* src/checkout/src/rcsget.c:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-06  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	first cut of rewrite to use 'rcsargpair()'
+
+	* user/rcsput.man: force this to not have a literal Id-keyword
+
+1992-02-06  ste_cm@software.org
+
+	* user/rcsput.man: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-06  dickey@software.org
+
+	* user/rcsput.man, user/checkin.man: obsoleted "-x" option
+
+	* certify/release.txt: to-do
+
+	* certify/release.txt: obsoleted "-x" option of checkin/checkout
+
+	* src/checkin/src/checkin.c:
+	oops: corrected order of ops for making directory, etc.
+
+	* src/checkin/src/checkin.c: got rid of 'SetAccess()' for inline-code
+
+	* src/checkin/src/checkin.c: use new functions 'stat_file()'
+
+	* src/checkin/src/rcsput.c: use new defs in "ptypes.h"
+
+1992-02-05  dickey@software.org
+
+	* src/checkin/src/checkin.c: lint
+
+	* src/checkin/src/rcsput.c:
+	rewrote filename-parsing with 'rcsfilepair()'; obsoleted "-x"
+	option.
+
+	* src/checkin/test/run_test.sh: make "-x" option obsolete
+
+	* src/checkin/src/checkin.c:
+	rewrote filename-parsing with "rcsfilepair()"; obsoleted the
+	"-x" option.
+
+1992-02-04  dickey@software.org
+
+	* user/Makefile: make this quieter
+
+	* certify/release.txt: hack for "-m" option 
+
+	* src/checkin/src/checkin.c, src/checkin/src/rcsput.c:
+	made this work properly in batch-mode
+
+	* src/checkin/test/run_test.sh: comment
+
+	* src/checkin/test/run_test.sh: added a simple test for 'rcsput'
+
+	* src/checkin/src/rcsput.c:
+	mods to allow piped-in text to supply missing "-m" option
+	to per-process "checkin".  also, ensure that we get to see
+	the calls via 'shoarg()' even in no-op mode.
+
+	* src/checkin/src/checkin.c: corrected logic which sets 'new_file'
+
+	* src/checkin/src/checkin.c: make "-m" option only at one point
+
+	* src/checkin/src/checkin.c:
+	make knowledge of "-m" option local to 'SetOpts()'
+
+	* src/checkin/src/checkin.c:
+	save stdin-text for instances of "-m" option
+
+	* COPYING: updated language
+
+1992-02-04  ste_cm@software.org
+
+	* COPYING: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-04  Thomas E. Dickey  <dickey@software.org>
+
+	* COPYING: update notice
+
+1992-02-04  dickey@software.org
+
+	* Makefile, src/Makefile, user/Makefile, src/link2rcs/Makefile, src/copy/Makefile, src/checkup/Makefile, src/checkout/Makefile, src/checkin/Makefile, src/permit/Makefile, src/baseline/Makefile, src/vcs/Makefile:
+	*** empty log message ***
+
+	* src/vcs/Makefile: consistency COPY, GET
+
+	* src/baseline/Makefile, src/permit/Makefile, src/checkin/Makefile, src/checkout/Makefile, src/checkup/Makefile, src/copy/Makefile, src/link2rcs/Makefile, user/Makefile, src/Makefile, Makefile:
+	consistent COPY, GET
+
+	* bin/Makefile: corrected default install-path
+
+1992-02-04  ste_cm@software.org
+
+	* bin/Makefile: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-02-04  dickey@software.org
+
+	* Makefile: added top-level 'lintlib' rule
+
+	* src/Makefile: added 'lintlib' rule
+
+1992-02-03  dickey@software.org
+
+	* certify/release.txt: fix to 'copy'
+
+	* src/copy/src/copy.c:
+	leave dir-mode executable if I was overwriting a non-directory.
+	also, save/restore umask when making directory
+
 1992-01-17  dickey@software.org
 
 	* src/checkout/src/checkout.c: oops: forgot to init 'log_fp'

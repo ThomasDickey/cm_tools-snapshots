@@ -1,0 +1,15 @@
+
+RCS file:        junk/RCS/dummy,v;   Working file:    junk/dummy
+head:            1.1
+branch:          
+locks:           USER: 1.1;  strict
+access list:     USER
+symbolic names:
+comment leader:  "# "
+total revisions: 1;    selected revisions: 1
+description:
+----------------------------
+revision 1.1        locked by: USER;       
+date: 88/01/01 12:34:56;  author: USER;  state: Exp;  
+RCS_BASE
+=============================================================================

@@ -1,4 +1,4 @@
-$Id: release.txt,v 10.3 1992/01/17 14:23:30 dickey Exp $
+$Id: release.txt,v 10.9 1992/02/28 11:12:17 dickey Exp $
 
 --------------------------------------------------------------------------------
 
@@ -6,6 +6,15 @@ Version 11.0:
 ------------
 Modified all tools to use same letter for recursion (R), and links (L) options,
 where applicable.
+
+If 'copy' writes a directory where a file was, ensure that the directory-mode
+is executable.
+
+Modified 'checkin' and 'rcsput' to allow piped-in text to set default for
+log-message (i.e., "-m" option).
+
+Modified working+archive parsing in 'checkout', 'checkin', 'rcsput' and 'rcsget'
+so that it more closely matches normal rcs convention (obsoleted "-x" option).
 
 Added "-p" option to 'checkout'.
 
@@ -17,6 +26,11 @@ New features in 'ded':
 	  scan-pattern to match.
 	* Corrected error which caused ditto-able commands to be broken if an
 	  error was reported in the 'c' commands.
+	* modified 'Z' sort to difference between checkin/modification times.
+	* rename file-lists as needed to track directory-renaming with the '='
+	  command.
+	* modified shell-command prompt to accept arbitrarily-long strings,
+	  showing ellipsis for long "#" substitutions.
 
 Version 10.0:
 ------------

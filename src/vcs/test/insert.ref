@@ -5,8 +5,8 @@
 .. name=foo
 .. head=.
 % chdir .
-% access ./FOO/FOO,v
-% mkdir ./foo
+% access FOO/FOO,v
+% mkdir foo
 % mkdir foo/FOO
 % permit -b2 foo/FOO 
 ** path = foo/FOO
@@ -46,9 +46,9 @@ done
 ** processing foo/test
 .. name=foo/test
 .. head=foo
-% chdir ./foo
-% access ./FOO/FOO,v
-% mkdir ./test
+% chdir foo
+% access FOO/FOO,v
+% mkdir test
 % mkdir test/FOO
 % permit -b2 test/FOO 
 ** path = test/FOO
@@ -70,8 +70,8 @@ done
 .. name=foo2
 .. head=.
 % chdir .
-% access ./FOO/FOO,v
-% mkdir ./foo2
+% access FOO/FOO,v
+% mkdir foo2
 % mkdir foo2/FOO
 % permit -b2 foo2/FOO 
 ** path = foo2/FOO

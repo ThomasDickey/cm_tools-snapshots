@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 10.4 1992/01/17 14:59:52 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 10.17 1992/02/07 16:34:26 dickey Exp $";
 #endif
 
 /*
@@ -7,8 +7,10 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		06 Feb 1992, revise filename-parsing with 'rcsargpair()',
+ *			     obsoleted "-x" option.
  *		17 Jan 1992, make this interpret "-p" option.
- *		21 Oct 1991, corrected uid-use in 'PreProcess()'.  Handle case
+ *		21 Oct 1991, corrected uid-use in pre-processing.  Handle case
  *			     in which user has write-access in the RCS directory
  *			     even if he owns none of the files.
  *		09 Oct 1991, convert to ANSI. Correct non-root setuid in the
@@ -79,6 +81,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
 #define		STR_PTYPES
 #include	<ptypes.h>
 #include	<rcsdefs.h>
+#include	<dyn_string.h>
 
 #include	<errno.h>
 #include	<ctype.h>
@@ -89,39 +92,72 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
 #define	WARN	FPRINTF(stderr,
 #define	TELL	if (!silent) FPRINTF
 #define	DEBUG(s)	if(debug) FPRINTF s;
+#define	DEBUG2(s)	if(debug > 1) FPRINTF s;
 
-#define	CO	"co"
+#define	EMPTY(s)	(s == 0 || *s == EOS)
+#define	MISMATCH(a,b)	((!EMPTY(a)) && strcmp(a,b))
 
-static	char	*Null;
-static	time_t	opt_c	= 0;
+#define	REVSIZ	80
+
+#define	CO_TOOL	"co"
+
+static	time_t	opt_date;
 static	int	silent;
 static	int	debug;			/* set from environment RCS_DEBUG */
-static	int	x_opt;			/* extended pathnames */
+static	int	no_op;			/* suppress actual "co" invocation */
 static	int	locked;			/* TRUE if user is locking file */
 static	int	to_stdout;		/* TRUE if 'co' writes to stdout */
 static	FILE	*log_fp;		/* normally stdout, unless "-p" */
 
-static	int	mode;			/* mode with which 'co' sets file */
+static	int	co_mode;		/* mode with which 'co' sets file */
 static	int	Effect, Caller;		/* effective/real uid's	*/
-static	char	*Working, *Archive;	/* current names we are using */
+static	char	Working[MAXPATHLEN],	/* current names we are using */
+		Archive[MAXPATHLEN];
 static	char	*UidHack;		/* intermediate file for setuid	*/
-static	char	options[BUFSIZ];	/* options to pass to 'co' */
-static	char	opt_rev[BUFSIZ];	/* revision to find */
-static	char	opt_who[BUFSIZ];	/* "-w[login] value	*/
-static	char	opt_sta[BUFSIZ];	/* "-s[state] value	*/
+static	char	*opt_rev;		/* revision to find */
+static	char	*opt_who;		/* "-w[login] value	*/
+static	char	*opt_sta;		/* "-s[state] value	*/
 
 /************************************************************************
  *	local procedures						*
  ************************************************************************/
 
+static
+void
+noPERM(
+_AR1(char *,	name))
+_DCL(char *,	name)
+{
+	errno	= EPERM;
+	failed(name);
+}
+
+static
+void
+noFILE(
+_AR1(char *,	name))
+_DCL(char *,	name)
+{
+	WARN "?? file not found: \"%s\"\n", name);
+	exit(FAIL);
+}
+
+static
+WhoAmI(_AR0)
+{
+	if (debug)
+		show_uids(stdout);
+}
+
 /*
  * Cleanup handler
  */
 static
+void
 clean_file(_AR0)
 {
 	if ((UidHack != 0 && *UidHack)
-	&&  (Working != 0)
+	&&  (*Working != 0)
 	&&  strcmp(UidHack,Working)) {
 		(void)unlink(UidHack);
 	}
@@ -141,6 +177,7 @@ _DCL(int,	sig)
 }
 
 static
+int
 TestAccess(
 _ARX(char *,	name)
 _AR1(int,	flag)
@@ -149,11 +186,29 @@ _DCL(char *,	name)
 _DCL(int,	flag)
 {
 	int	code = access(name, flag);
-	DEBUG((log_fp, ".. access(%s,%o) = %d\n", name, flag, code))
+	DEBUG((log_fp, ".. access(%s,%s) = %d\n", name,access_mode(flag), code))
 	return code;
 }
 
 static
+char *
+path_of(
+_ARX(char *,	dst)
+_AR1(char *,	src)
+	)
+_DCL(char *,	dst)
+_DCL(char *,	src)
+{
+	register char *s = strrchr(strcpy(dst, src), '/');
+	if (s == 0)
+		(void)strcpy(dst, ".");
+	else
+		*s = EOS;
+	return dst;
+}
+
+static
+void
 GiveBack(
 _ARX(int,	tell)
 _AR1(char *,	why)
@@ -161,88 +216,166 @@ _AR1(char *,	why)
 _DCL(int,	tell)
 _DCL(char *,	why)
 {
-	revert((tell || debug) ? why : (char *)0);
-	Effect = geteuid();
+	if (revert((tell || debug) ? why : (char *)0)) {
+		Effect = geteuid();
+		WhoAmI();
+	}
 }
 
 /*
- * Postprocess the checkout by scanning the RCS file to find the delta-date
- * to which the checked-out file corresponds, then touching the checked-out
- * file to make it correspond.
+ * Trim the portion of a version off that 'same_branch()' does not match.
  */
 static
-PostProcess(_AR0)
+void
+trim_branch(
+_AR1(char *,	s))
+_DCL(char *,	s)
 {
-	time_t	ok	= 0;		/* must set this to touch file */
+	register char *t = strrchr(s, '.');
+	if (t != 0) {
+		*t = EOS;
+		if (t = strrchr(s, '.')) {
+			;
+		} else
+			*s = EOS;	/* trunk (i.e., "9.1") */
+	} else
+		*s = EOS;		/* trunk (i.e., "9") */
+}
+
+/*
+ * Check two versions to see that they are on the same branch.
+ */
+static
+int
+same_branch(
+_ARX(char *,	a)
+_AR1(char *,	b)
+	)
+_DCL(char *,	a)
+_DCL(char *,	b)
+{
+	char	temp1[BUFSIZ],
+		temp2[BUFSIZ];
+	trim_branch(strcpy(temp1, a));
+	trim_branch(strcpy(temp2, b));
+	return !strcmp(temp1, temp2);
+}
+
+/*
+ * Find the revision which the user has selected.
+ */
+static
+int
+PreProcess(
+_ARX(time_t *,	revtime)	/* date with which to touch file */
+_AR1(char *,	save_rev)	/* revision we ask 'co' to retrieve */
+	)
+_DCL(time_t *,	revtime)
+_DCL(char *,	save_rev)
+{
+	int	ok_vers	= FALSE,
+		ok_date	= FALSE;
 	char	key[BUFSIZ],
 		tmp[BUFSIZ],
-		dft_rev[BUFSIZ],
-		tmp_rev[BUFSIZ],
+		this_rev[REVSIZ],
 		*s	= 0;
 	int	header	= TRUE;
-	time_t	tt	= 0;
-	int	yd, md, dd, ht, mt, st;
 
-	if (!rcsopen(Archive, -debug, TRUE))
-		return;
+	if (!rcsopen(Archive, -debug, TRUE)) {
+		FPRINTF(stderr, "? cannot open archive %s\n", Archive);
+		return FALSE;
+	}
+
+	*save_rev = EOS;
+	if (!EMPTY(opt_rev))
+		(void)strcpy(save_rev, opt_rev);
 
 	while (header && (s = rcsread(s))) {
 		s = rcsparse_id(key, s);
 
 		switch (rcskeys(key)) {
+		/*
+		 * Begin an admin description.  If the user did not specify a
+		 * revision, we assume the 'tip' version, unless he had one
+		 * locked, in which case we assume that.
+		 */
 		case S_HEAD:
-			s = rcsparse_num(tmp, s);
-			(void)strcpy(dft_rev, tmp);
+			s = rcsparse_num(this_rev, s);
+			if (EMPTY(save_rev))
+				(void)strcpy(save_rev, this_rev);
+			break;
+		case S_BRANCH:
+		case S_ACCESS:
+			/* ignored */
+			break;
+		case S_SYMBOLS:
+			s = rcssymbols(s, save_rev, save_rev);
 			break;
 		case S_LOCKS:
 			/* see if this was locked by the user */
 			(void)strcpy(tmp, getuser());
-			*tmp_rev = EOS;
-			s = rcslocks(s, tmp, tmp_rev);
-			if (*tmp_rev) {
-				TELL(log_fp, "** revision %s is locked\n", tmp_rev);
-				mode |= S_IWRITE;
+			*this_rev = EOS;
+			s = rcslocks(s, tmp, this_rev);
+			if (*this_rev && EMPTY(opt_rev)) {
+				TELL(log_fp, "** revision %s is locked\n", this_rev);
+				co_mode |= S_IWRITE;
+				(void)strcpy(save_rev, this_rev);
 			}
 			break;
 		case S_COMMENT:
 			s = rcsparse_str(s, NULL_FUNC);
 			break;
-			/* begin a delta description */
+		/*
+		 * Begin a delta description.  We are looking (like 'co') for
+		 * the last version along a branch which matches the cutoff,
+		 * state, and who-options.  Since the rcs file stores deltas
+		 * in reverse-order, the first one we can match the options
+		 * against is the right one.
+		 */
 		case S_VERS:
-			tt = 0;
-			(void)strcpy(tmp_rev, key);
-			DEBUG((log_fp, "version = %s\n", tmp_rev))
+			(void)strcpy(this_rev, key);
+			DEBUG((log_fp, "version = %s\n", this_rev))
+			ok_vers = same_branch(save_rev, this_rev);
+			ok_date	= FALSE;
 			break;
 		case S_DATE:
 			s = rcsparse_num(tmp, s);
-			if (sscanf(tmp, FMT_DATE,
-				&yd, &md, &dd, &ht, &mt, &st) == 6) {
-				newzone(5,0,FALSE);
-				tt = packdate(1900+yd, md,dd, ht,mt,st);
-				oldzone();
-				DEBUG((log_fp, "date    = %s", ctime(&tt)))
-				if (opt_c != 0 && tt > opt_c)
-					tt = 0;
-			} else
-				header = FALSE;
+			if (ok_vers) {
+				*revtime = rcs2time(tmp);
+				DEBUG((log_fp, "date    = %s", ctime(revtime)))
+				ok_date  = ((opt_date == 0)
+					 || (*revtime <= opt_date));
+			}
 			break;
 		case S_AUTHOR:
 			s = rcsparse_id(key, s);
-			if (*opt_who && strcmp(opt_who,key))	tt = 0;
+			if (ok_vers && MISMATCH(opt_who,key))	ok_vers = FALSE;
+			DEBUG((log_fp, "author  = %s\n", key))
 			break;
 		case S_STATE:
 			s = rcsparse_id(key, s);
-			if (*opt_sta && strcmp(opt_sta,key))	tt = 0;
+			DEBUG((log_fp, "state   = %s\n", key))
+			if (ok_vers && MISMATCH(opt_sta,key))	ok_vers = FALSE;
+			break;
+		case S_BRANCHES:
+			/* ignored */
 			break;
 			/* 'next' is the last keyword in a delta description */
 		case S_NEXT:
-			if (tt != 0) {
-				char	*rev = *opt_rev ? opt_rev : dft_rev;
+			if (ok_vers && ok_date) {
+				if (EMPTY(opt_rev)) {
+					if (strcmp(save_rev, this_rev)) {
+						co_mode &= ~S_IWRITE;
+					}
+					(void)strcpy(save_rev,this_rev);
+					header = FALSE;
+					break;
+				}
 				DEBUG((log_fp, "compare %s %s => %d (for equality)\n",
-					tmp_rev, rev,
-					vercmp(tmp_rev, rev, TRUE)))
-				if (vercmp(tmp_rev, rev, TRUE) == 0) {
-					ok = tt;
+					this_rev, save_rev,
+					vercmp(this_rev, save_rev, TRUE)))
+				if (vercmp(this_rev, save_rev, TRUE) == 0) {
+					(void)strcpy(save_rev,this_rev);
 					header = FALSE;	/* force an exit */
 				}
 			}
@@ -254,57 +387,71 @@ PostProcess(_AR0)
 	}
 	rcsclose();
 
-	if (ok) {
-		if (userprot(Working, mode, ok) < 0)
-			noPERM(Working);
+	if (!(ok_vers && ok_date)) {
+		FPRINTF(stderr, "? cannot match requested revision\n");
+		return FALSE;
 	}
+	return TRUE;
 }
 
 /*
  * Check out the file using the RCS 'co' utility.  If 'co' does something, then
- * it will delete or modify the checked-in file -- return TRUE.  If no action
- * is taken, return false.
+ * it will delete or modify the checked-in file.
  */
 static
+void
 Execute(
-_AR1(time_t,	mtime))
-_DCL(time_t,	mtime)
+_ARX(char *,	revision)
+_ARX(time_t,	newtime)
+_AR1(time_t,	oldtime)
+	)
+_DCL(char *,	revision)
+_DCL(time_t,	newtime)
+_DCL(time_t,	oldtime)
 {
-	char	cmds[BUFSIZ];
-	struct	stat	sb;
+	static	DYN	*cmds;
+	auto	STAT	sb;
+	auto	char	*opt	= to_stdout ? "-p" : (locked ? "-l" : "-r");
 
 	UidHack = to_stdout ? "" : rcstemp(Working, FALSE);
-	FORMAT(cmds, "%s%s %s", options, UidHack, Archive);
-	if (!silent) shoarg(log_fp, CO, cmds);
-	if (execute(rcspath(CO), cmds) >= 0) {
+
+	dyn_init(&cmds, BUFSIZ);
+	if (silent)	CATARG(cmds, "-q");
+	CATARG2(cmds, opt, revision);
+	CATARG(cmds, UidHack);
+	CATARG(cmds, Archive);
+
+	if (!silent) shoarg(log_fp, CO_TOOL, dyn_string(cmds));
+	if (no_op)
+		;
+	else if (execute(rcspath(CO_TOOL), dyn_string(cmds)) >= 0) {
 		if (to_stdout)
-			return FALSE;
+			return;
 		if (stat(UidHack, &sb) >= 0) {
 			DEBUG((log_fp, "=> file \"%s\"\n", UidHack))
 			DEBUG((log_fp, "=> size = %d\n", sb.st_size))
 			DEBUG((log_fp, "=> date = %s", ctime(&sb.st_mtime)))
-			if (sb.st_mtime == mtime) {
+			if (sb.st_mtime == oldtime) {
 				TELL(log_fp, "** checkout was not performed\n");
-				return (FALSE);
+				return;
 			}
 			if (strcmp(UidHack,Working)) {
 				if (usercopy(UidHack, Working) < 0)
 					failed(Working);
 				clean_file();
 			}
-			mode = (sb.st_mode & 0777);
-			if (!locked)
-				mode &= 0555;	/* strip writeable mode */
-			if (!mode)
-				mode = 0400;	/* leave at least readonly! */
-			return (TRUE);
+			if (userprot(Working, co_mode, newtime) < 0)
+				noPERM(Working);
+			return;
 		}
 	}
 	clean_file();
-	return (FALSE);
+	return;
 }
 
 /*
+ * Process a single file.
+ *
  * Before checkout, verify that the file exists, and obtain its modification
  * time/date.  Also (since this looks at the working/archive files before
  * invoking 'co'), see if we have nominal permissions to work upon the files:
@@ -319,126 +466,66 @@ _DCL(time_t,	mtime)
  *	out with root-uid.
  */
 static
-time_t
-PreProcess(
-_ARX(char *,	name)
-_AR1(int,	effective)		/* TRUE if euid, FALSE if uid */
-	)
-_DCL(char *,	name)
-_DCL(int,	effective)
+void
+do_file(_AR0)
 {
-	struct	stat	sb;
-	int	wideopen = FALSE;
+	STAT	sb;
+	int	ok;
+	char	rev_buffer[REVSIZ];
+	char	temp[MAXPATHLEN];
+	time_t	revtime;
 
-	DEBUG((log_fp, "...PreProcess(%s,%d)\n", name, effective))
-	if (stat(name, &sb) >= 0) {
-		if ((S_IFMT & sb.st_mode) != S_IFREG) {
-			TELL (log_fp, "** ignored (not a file)\n");
-			return (FALSE);
+	/*
+	 * Ensure that we can find the RCS-file.  Note that this program may be
+	 * setuid'd to a user who has no rights in the working directory...
+	 */
+	ok = (rcs_archive(Archive, &sb) >= 0);
+	if (!ok && (errno != EISDIR)) {
+		if (TestAccess(Archive, R_OK) == 0) {
+			GiveBack(FALSE, "directory access");
+			ok = (rcs_archive(Archive, &sb) >= 0);
 		}
-		if (effective) {	/* setup for archive: effective */
-			char	RCSdir[BUFSIZ],
-				*s = strrchr(strcpy(RCSdir, name),'/');
-			if (s != 0)
-				*s = EOS;
-			else
-				(void)strcpy(RCSdir, "./");
-				DEBUG((log_fp, "++ RCSdir='%s'\n", RCSdir))
-
-			if (Effect != Caller) {
-				if (locked
-				&& (wideopen = (TestAccess(RCSdir, W_OK) >= 0)))
-					GiveBack(FALSE, "RCS-directory is writable");
-				else if (Effect != sb.st_uid && Effect != 0)
-					GiveBack(FALSE, "non-CM use");
-				else if (!rcspermit(RCSdir,Null))
-					GiveBack(Effect && locked,
-						"not listed in permit-file");
-			}
-			if (!wideopen && locked)
-				TestOwner(name, &sb, Effect);
-
-		} else {	/* setup for working: real */
-			TestOwner(name, &sb, Caller);
-		}
-		DEBUG((log_fp, "=> date = %s", ctime(&sb.st_mtime)))
-		return (sb.st_mtime);
 	}
-	if (!effective) {
-		name = pathhead(name, &sb);
-		if (TestAccess(name, W_OK) < 0)
-			TestOwner(name, &sb, Caller);
-	}
-	return (TRUE);	/* file was not already checked out */
-}
+	if (!ok)
+		noFILE(Archive);
 
-static
-TestOwner(
-_ARX(char *,		name)
-_ARX(struct stat *,	sb_)
-_AR1(int,		uid)
-	)
-_DCL(char *,		name)
-_DCL(struct stat *,	sb_)
-_DCL(int,		uid)
-{
-	if (uid != sb_->st_uid && Effect != 0) {
-		DEBUG((log_fp, "=> uid = %d(%s), file = %d(%s)\n",
-			uid,		uid2s(uid),
-			sb_->st_uid,	uid2s(sb_->st_uid)))
-		noPERM(name);
-	}
-}
-
-static
-noPERM(
-_AR1(char *,	name))
-_DCL(char *,	name)
-{
-	errno	= EPERM;
-	failed(name);
-}
-
-/*
- * Process a single file.
- */
-static
-do_file(
-_AR1(char *,	name))
-_DCL(char *,	name)
-{
-	char		*s, dirname[BUFSIZ];
-	time_t		mtime;
-
-	Working = rcs2name(name,x_opt);
-	Archive = name2rcs(name,x_opt);
-
-	if (s = strrchr(strcpy(dirname, Working),'/'))
-		s[1] = EOS;
+	co_mode = (sb.st_mode & 0777);
+	if (locked)
+		co_mode |= S_IWRITE;
 	else
-		(void)strcpy(dirname, ".");
-	if (TestAccess(dirname, W_OK) < 0)
-		failed(dirname);
+		co_mode &= 0555;	/* strip writeable mode */
+	if (!co_mode)
+		co_mode = 0400;		/* leave at least readonly! */
 
-	DEBUG((log_fp, "...do_file(%s) => %s %s\n", name, Working, Archive))
-
-	if (PreProcess(Archive,TRUE) == TRUE) {
-		GiveBack(FALSE, "directory access");
-		if (PreProcess(Archive,TRUE) == TRUE) {
-			WARN "?? can't find archive \"%s\"\n", Archive);
-			(void)exit(FAIL);
-		}
+	/*
+	 * If we have the file, ensure that we have proper access:
+	 */
+	if (Effect != Caller) {
+		if (locked
+		&& (TestAccess(path_of(temp, Archive), W_OK) >= 0))
+			GiveBack(FALSE, "RCS-directory is writable");
+		else if (!rcspermit(temp,(char *)0))
+			GiveBack(Effect && locked, "not listed in permit-file");
 	}
 
-	if (mtime = PreProcess (Working,FALSE)) {
-		if (!locked && TestAccess(Archive, R_OK) >= 0)
-			GiveBack(FALSE, "normal rights suffice");
-		if (Execute(mtime))
-			PostProcess ();
+	/*
+	 * Check to see if the working-file exists
+	 */
+	if (rcs_working(Working, &sb) >= 0) {
+		DEBUG((log_fp, "=> date = %s", ctime(&sb.st_mtime)))
+	} else if (errno == EISDIR) {
+		noFILE(Working);
 	}
+
+	if (!locked && TestAccess(Archive, R_OK) >= 0)
+		GiveBack(FALSE, "normal rights suffice");
+
+	if (PreProcess (&revtime, rev_buffer))
+		Execute(rev_buffer, revtime, sb.st_mtime);
 }
 
 static
+void
 usage(_AR0)
 {
 	static	char	*tbl[] = {
@@ -462,15 +549,13 @@ usage(_AR0)
 ,"  -jjoinlist generates a new revision which is the join of the revisions on"
 ,"           joinlist"
 ,""
-,"Non-\"co\" options:"
-,"  -x       assume archive and working file are in path2/RCS and path2"
-,"           (normally assumes ./RCS and .)"
+,"Special:"
+,"  -D       debug/no-op"
 	};
 	register int	j;
-	setbuf(stderr, options);
 	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
 		FPRINTF(stderr, "%s\n", tbl[j]);
-	(void)fflush(stderr);
+	FFLUSH(stderr);
 	(void)exit(FAIL);
 }
 
@@ -481,60 +566,78 @@ usage(_AR0)
 _MAIN
 {
 	register int	j;
-	char		tmp[BUFSIZ];
-	register char	*s, *d;
+	register char	*s;
+
+	char	who[BUFSIZ],
+		tmp[BUFSIZ];
+	int	code;
 
 	debug  = RCS_DEBUG;
-	*options = EOS;
 	Caller = getuid();
 	Effect = geteuid();
 	if (Caller != Effect)
 		catchall(cleanup);
 
 	log_fp = stdout;
-	for (j = 1; j < argc; j++) {
-		s = argv[j];
-		d = 0;
-		if (*s == '-') {
-			if (*(++s) == 'c') {
-				optind = j;
+	WhoAmI();
+
+	/* process options */
+	for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
+
+		(void)strcpy(tmp, s++);
+		code = *s++;
+
+		switch (code) {
+		case 'D':	no_op++;
+				break;
+
+		case 'c':	optind = j;
 				optarg = ++s;
-				opt_c = cutoff(argc, argv);
+				opt_date = cutoff(argc, argv);
 				j = optind;
-				FORMAT(tmp, "-d%s", ctime(&opt_c));
-				tmp[strlen(tmp)-1] = EOS;
-				TELL(log_fp, "++ cutoff: %s", ctime(&opt_c));
-				catarg(options, tmp);
-			} else {
-				if (*s == 'q')
-					silent++;
-				if (strchr("lpqr", *s)) {
-					if (*s == 'l')
-						locked++;
-					else if (*s == 'p') {
-						to_stdout = TRUE;
-						log_fp = stderr;
-					}
-					d = opt_rev;
-				} else if (*s == 's') {
-					d = opt_sta;
-				} else if (*s == 'w') {
-					d = opt_who;
-				} else if (*s == 'x') {
-					x_opt++;
-					continue;
-				} else {
-					WARN "?? Unknown option: %s\n", s-1);
-					usage();
-				}
-				catarg(options, argv[j]);
-				if (d)
-					(void)strcpy(d,++s);
-			}
-		} else {
-			do_file(s);
+				FORMAT(tmp, "-d%s", ctime(&opt_date));
+				(void)strtrim(tmp);
+				TELL(log_fp, "++ cutoff: %s", ctime(&opt_date));
+				break;
+
+		case 'q':	silent++;
+				if (!EMPTY(s))	opt_rev = s;
+				break;
+
+		case 'l':	locked++;
+		case 'r':	if (!EMPTY(s))	opt_rev = s;
+				break;
+
+		case 'p':	to_stdout = TRUE;
+				log_fp = stderr;
+				if (!EMPTY(s))	opt_rev = s;
+				break;
+
+		case 's':	if (!EMPTY(s))	opt_sta = s;
+				else		usage();
+				DEBUG((log_fp, ">state:%s\n", opt_sta))
+				break;
+
+		case 'w':	if (!EMPTY(s))	opt_who = s;
+				else		opt_who = strcpy(who,getuser());
+				DEBUG((log_fp, ">who:%s\n", opt_who))
+				break;
+
+		default:	WARN "?? Unknown option: %s\n", argv[j]);
+				usage();
 		}
 	}
+	DEBUG((log_fp, ">rev:%s\n", opt_rev))
+
+	/* process files */
+	if (j < argc) {
+		while (j < argc) {
+			j = rcsargpair(j, argc, argv);
+			do_file();
+		}
+	} else
+		usage();
+
 	(void)exit(SUCCESS);
 	/*NOTREACHED*/
 }

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: delete.c,v 10.0 1991/10/17 13:50:20 ste_cm Rel $";
+static	char	Id[] = "$Id: delete.c,v 11.0 1992/02/17 15:23:29 ste_cm Rel $";
 #endif
 
 /*
@@ -143,7 +143,7 @@ WALK_FUNC(do_tree)
 		else if (geteuid() != 0 && RCS_uid != geteuid())
 			UserCannot(full, uid2s(RCS_uid), "not owner");
 		else if (!rcspermit(path, part))
-			UserCannot(full, uid2s(getuid()), "not on access-list");
+			UserCannot(full, uid2s((int)getuid()), "not on access-list");
 		else
 			Append(full, TRUE);
 	} else

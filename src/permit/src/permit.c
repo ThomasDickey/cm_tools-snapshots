@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 10.0 1991/10/30 07:28:12 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 11.0 1992/02/17 15:25:55 ste_cm Rel $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/
  * Author:	T.E.Dickey
  * Created:	09 Mar 1989
  * Modified:
+ *		17 Feb 1992, lint
  *		30 Oct 1991, allow "-b" value to be "1" (for initial-creation)
  *		15 Oct 1991, convert to ANSI.  Use 'shoarg()'
  *		06 Sep 1991, changed interface to 'rcsopen()'
@@ -270,7 +271,7 @@ _DCL(char *,	s)
 	}
 
 	/* if we are expunging ourselves, no sense in making permit-file */
-	(void)strcpy(owner, uid2s(sb.st_uid));
+	(void)strcpy(owner, uid2s((int)(sb.st_uid)));
 	if (expunge_opt && on_list(user_name, owner))
 		return;
 
@@ -403,7 +404,7 @@ _DCL(int,	level)
 	||  strcmp(name + num, RCS_SUFFIX))
 		return(readable);
 
-	(void)strcpy(owner, uid2s(sp->st_uid));
+	(void)strcpy(owner, uid2s((int)(sp->st_uid)));
 	(void)strcpy(to_find, user_name);
 	*list = EOS;
 	*found = EOS;
@@ -752,7 +753,7 @@ _MAIN
 		}
 	}
 
-	revert("does not run in set-uid mode");
+	(void) revert("does not run in set-uid mode");
 
 	if (optind < argc) {
 		for (j = optind; j < argc; j++)

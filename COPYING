@@ -1,13 +1,12 @@
-$Id: COPYING,v 10.0 1991/10/18 16:41:11 ste_cm Rel $
+$Id: COPYING,v 11.1 1992/02/04 11:00:02 tom Exp $
 
 CM_TOOLS
 
 --------------------------------------------------------------------------------
 
-Proprietary property of the Software Productivity Consortium, Inc.
-Copyright 1991 Software Productivity Consortium, Inc.  All rights reserved.
+Copyright 1992 by Thomas E. Dickey.  All Rights Reserved.
 
-The contents of this software shall be kept confidential pursuant to the terms
-of the Technology Management and License Agreement with the Software
-Productivity Consortium Limited Partnership.  This software shall only be
-disseminated in accordance with the terms and conditions of that Agreement.
+You may freely copy or redistribute this software, so long as there is no profit
+made from its use, sale trade or reproduction. You may not change this copyright
+notice, and it must be included in any copy made.
+

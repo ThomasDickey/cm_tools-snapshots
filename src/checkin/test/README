@@ -1,0 +1,16 @@
+$Id: README,v 11.0 1992/02/11 13:17:55 ste_cm Rel $
+
+--------------------------------------------------------------------------------
+
+These scripts test the non-privileged operation of 'checkin'.
+
+The following work remains to be done (1992/02/11):
+
+	* branch logic is incomplete; 'checkin' does not allow a branch to be
+	  made unless a lock is placed on the trunk at that point.  This is
+	  not the correct behavior (cf: case3_e.sh)
+
+	* need a test-case for "-B" option, both for initial insertion, and
+	  update within a baseline.
+
+	* need simple test cases for 'rcsput'
