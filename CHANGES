@@ -1,3 +1,54 @@
+1992-01-17  dickey@software.org
+
+	* src/checkout/src/checkout.c: oops: forgot to init 'log_fp'
+
+	* src/checkout/src/checkout.c:
+	missed a place where I could redirect stdout
+
+	* certify/release.txt: fixed a bug in 'checkin'.
+
+	* src/checkin/src/checkin.c:
+	fixed a place where my use of "-d" option of 'ci' broke the
+	"-k" option.
+
+	* src/checkout/src/checkout.c:
+	redirect stdout to stderr (at least in this module) if "-p"
+	option is set.
+
+	* certify/README: implemented "-p" option of 'co' in 'checkout'
+
+	* certify/release.txt: current bugs/fixed
+
+	* src/checkout/src/checkout.c:
+	make this interpret "-p" option, since I need it for RCSHIST
+
+	* certify/README: updated options for 'baseline'
+
+	* src/baseline/src/baseline.c: usage-message
+
+1992-01-17  ste_cm@software.org
+
+	* src/baseline/src/baseline.c:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-01-17  dickey@software.org
+
+	* src/baseline/src/baseline.c: only needed to test "-L" in one place
+
+	* user/baseline.man: added "-L" option
+	renamed "-r" to "-R" and "-f" to "-p" for consistency
+
+1992-01-17  ste_cm@software.org
+
+	* user/baseline.man: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-01-17  dickey@software.org
+
+	* src/baseline/src/baseline.c:
+	added "-L" option (so I don't accidentally baseline dbs as
+	part of ebpm3!), and changed "-r" to "-R", "-f" to "-p" for
+	consistency with other CM_TOOLS programs.
+
 1992-01-02  dickey@software.org
 
 	* certify/README: added a table of common options (to rework)

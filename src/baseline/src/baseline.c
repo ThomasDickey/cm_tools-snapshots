@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/src/RCS/baseline.c,v 10.0 1991/10/22 09:29:46 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/src/RCS/baseline.c,v 11.0 1992/01/17 12:50:02 ste_cm Rel $";
 #endif
 
 /*
@@ -7,6 +7,8 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/sr
  * Author:	T.E.Dickey
  * Created:	24 Oct 1989
  * Modified:
+ *		17 Jan 1992, added "-L" option.  Renamed "-r" to "-R" option
+ *			     and "-f" to "-p" for consistency.
  *		22 Oct 1991, use 'shoarg()'
  *		11 Oct 1991, converted to ANSI
  *		20 May 1991, apollo sr10.3 cpp complains about endif-tags
@@ -42,6 +44,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/sr
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
+#define	isLINK(mode)	((mode & S_IFMT) == S_IFLNK)
 #define	WARN		FPRINTF(stderr,
 
 typedef	struct	_list	{
@@ -59,14 +62,18 @@ static	char	r_option[80];
 
 				/* options */
 static	int	a_opt;		/* all-directory scan */
-static	int	fast_opt;
 static	int	lock_up;	/* leave files locked */
 static	char	*m_text;	/* message-text */
 static	int	no_op;		/* no-op mode */
+#ifdef	S_IFLNK
+static	int	L_opt;
+#endif
+static	int	purge_opt;
 static	int	recur;
 static	int	verbose;
 
 static
+void
 doit(
 _ARX(char *,	verb)
 _ARX(char *,	args)
@@ -87,6 +94,7 @@ _DCL(int,	really)
 }
 
 static
+void
 quiet_opt(
 _AR1(char *,	args))
 _DCL(char *,	args)
@@ -95,6 +103,7 @@ _DCL(char *,	args)
 }
 
 static
+void
 purge_rights(
 _AR1(char *,	path))
 _DCL(char *,	path)
@@ -115,13 +124,14 @@ _DCL(char *,	path)
 
 	quiet_opt(args);
 	if (no_op)	catarg(args, "-n");
-	if (!fast_opt)	catarg(args, "-p");
+	if (purge_opt)	catarg(args, "-p");
 	catarg(args, m_option);
 	catarg(args, rcs_dir());
 	doit("permit", args, no_op < 2);
 }
 
 static
+void
 baseline(
 _ARX(char *,	path)
 _ARX(char *,	name)
@@ -197,11 +207,24 @@ WALK_FUNC(scan_tree)
 		else if (sameleaf(s, sccs_dir())
 		    ||   sameleaf(s, rcs_dir())) {
 			readable = -1;
-		} else if (level > recur) {
-			PRINTF("** %s (ignored)\n", name);
-			readable = -1;
-		} else if (recur > level)
-			track_wd(s);
+		} else {
+			if (level > recur) {
+				PRINTF("** %s (ignored)\n", name);
+				readable = -1;
+			} else {
+#ifdef	S_IFLNK
+				if (!L_opt) {
+					struct	stat	sb;
+					if (lstat(name, &sb) < 0
+					 || isLINK(sb.st_mode)) {
+						PRINTF("** %s (link)\n", name);
+						readable = -1;
+					}
+				} else
+#endif
+				track_wd(s);
+			}
+		}
 	} else if (isFILE(sp->st_mode)) {
 		if (level > 0)
 			track_wd(path);
@@ -213,6 +236,7 @@ WALK_FUNC(scan_tree)
 }
 
 static
+void
 do_arg(
 _AR1(char *,	name))
 _DCL(char *,	name)
@@ -248,6 +272,8 @@ _DCL(char *,	name)
 		revision = -1;
 }
 
+static
+void
 usage(_AR0)
 {
 	static	char	*tbl[] = {
@@ -258,11 +284,15 @@ usage(_AR0)
 ,""
 ,"Options are:"
 ,"  -{integer}  baseline version (must be higher than last baseline)"
-,"  -m{text}    append reason for baseline to date-message"
-,"  -f          fast (don't run \"permit\" first)"
+,"  -a          process directories beginning with \".\""
 ,"  -l          leave files locked after baselining"
+,"  -m TEXT     append reason for baseline to date-message"
+#ifdef	S_IFLNK
+,"  -L          traverse symbolic links to directories"
+#endif
 ,"  -n          no-op (show what would be done, but don't do it)"
-,"  -r          recur when lower-level directories are found"
+,"  -p          run \"permit\" first to purge access lists"
+,"  -R          recur when lower-level directories are found"
 ,"  -v          verbose (shows details)"
 			};
 	register int	j;
@@ -299,10 +329,13 @@ _MAIN
 				} else {
 					switch (*s) {
 					case 'a':	a_opt++;	break;
-					case 'f':	fast_opt++;	break;
 					case 'l':	lock_up++;	break;
 					case 'n':	no_op++;	break;
-					case 'r':	recur = 999;	break;
+#ifdef	S_IFLNK
+					case 'L':	L_opt++;	break;
+#endif
+					case 'p':	purge_opt++;	break;
+					case 'R':	recur = 999;	break;
 					case 'v':	verbose++;	break;
 					default:	usage();
 					}

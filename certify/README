@@ -1,4 +1,4 @@
-$Id: README,v 10.1 1992/01/02 10:38:29 dickey Exp $
+$Id: README,v 10.3 1992/01/17 13:39:12 dickey Exp $
 
 CM_TOOLS
 -------------------------------------------------------------------------------
@@ -12,10 +12,12 @@ Common options:
 	* = lowest-level/not common
 	+ = mapped into lower-level application (common)
 	C = common option (with common meaning in different applications)
+	_ = unimplemented
 
 	A = all-directories (includes "." ones)
 	L = follow links
 	N = no-op
+	O = output-redirection
 	Q = quiet
 	R = recur
 	T = trace/log
@@ -29,14 +31,14 @@ ci       ---*-*----*C* *--C****-*---  ------------- *------------
 co       ---*-*---*-C- --*C**-*-*---  ------------- -------------
 rcs      ***-*---*--C- **-C-***-----  *----------*- *------*-----
 -------------------------------------------------------------------------------
-baseline -----*-----** N---R---V----  ------------- -------------  checkin/out
+baseline A----------** N--C----V----  -----------L- ----R--------  checkin/out
 checkin  ---N-+----+++ +--Q++++--X--  -*----------- +------------  ci
-checkout --*------_-+- --_Q++---+X--  ------------- -------------  co
+checkout --*------_-+- --+Q++---+X--  ------------- -------------  co
 checkup  A-*?----*--T- -**Q*Q*-V-*--  ------------- -------------
 copy     ---*----*--** N----*-*V----  ------------- -------------
 link2rcs A*-***------* N--Q**--V----  ------------- -------------
 permit   +*--+-------* N-*Q---*V----  ------------- -------------  rcs
-rcsget   A--*-------L- N--QR--------  ------------- ------*------  checkout
+rcsget   A--*--------- N--Q---------  -----------L- ----R-*------  checkout
 rcsput   A+*N---+---T- -------------  ------------- ------*------  checkin,diff
 vcs      ---*----*---- N--Q---*--X--  ------------- -------------  rcs
 
