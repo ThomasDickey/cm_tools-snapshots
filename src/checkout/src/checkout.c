@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkout.c	1.4 88/05/21 13:54:53";
+static	char	sccs_id[] = "@(#)checkout.c	1.7 88/05/27 12:19:18";
 #endif	lint
 
 /*
@@ -7,6 +7,7 @@ static	char	sccs_id[] = "@(#)checkout.c	1.4 88/05/21 13:54:53";
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		27 May 1988, recoded using 'rcsedit' module.
  *
  * Function:	Display the date of a specified SCCS-sid of a given file,
  *		optionally altering the modification date to correspond with
@@ -22,7 +23,8 @@ static	char	sccs_id[] = "@(#)checkout.c	1.4 88/05/21 13:54:53";
  *		Must translate '-c' option to RCS's '-d' option.
  */
 
-#include	<ptypes.h>
+#include	"ptypes.h"
+#include	"rcsdefs.h"
 
 #include	<stdio.h>
 #include	<ctype.h>
@@ -30,6 +32,7 @@ static	char	sccs_id[] = "@(#)checkout.c	1.4 88/05/21 13:54:53";
 extern	long	packdate();
 extern	char	*ctime();
 extern	char	*doalloc();
+extern	char	*rcsread(), *rcsparse_id(), *rcsparse_num(), *rcsparse_str();
 extern	char	*strcat();
 extern	char	*strcpy();
 extern	char	*strchr();
@@ -40,6 +43,7 @@ extern	char	*optarg;
 extern	int	optind;
 
 /* local definitions */
+#define	EOS	'\0'
 #define	TRUE	1
 #define	FALSE	0
 #define	CHECKOUT	"co"
@@ -57,102 +61,56 @@ static	char	opt_rev[BUFSIZ];	/* revision to find */
  ************************************************************************/
 
 /*
- * Parse for a keyword, converting the buffer to hold the value of the keyword
- * if it is found.
- */
-static
-keyRCS(string, key)
-char	*string, *key;
-{
-char	*s,
-	first[BUFSIZ],
-	second[BUFSIZ];
-
-	if (s = strchr(string, ';')) {
-		*s = '\0';
-		if (sscanf(string, "%s %s;", first, second) == 2)
-			if (!strcmp(first, key)) {
-				(void)strcpy(string, second);
-				return (TRUE);
-			}
-	}
-	return (FALSE);
-}
-
-#define	S_HEAD	0	/* head <version_string>;	*/
-#define	S_HEAD2	1	/* <more header lines>		*/
-#define	S_SKIP	2	/* <blank lines>		*/
-#define	S_VERS	3	/* <version_string>		*/
-#define	S_DATE	4	/* date <date>; <some text>	*/
-#define	S_COPY	5
-#define	S_FAIL	6
-
-/*
  * Postprocess the checkout by scanning the RCS file to find the delta-date
  * to which the checked-out file corresponds, then touching the checked-out
  * file to make it correspond.
  */
+static
 PostProcess(name)
 char	*name;
 {
-FILE	*fpS;
 time_t	ok	= 0;		/* must set this to touch file */
-char	bfr[BUFSIZ],
+char	key[BUFSIZ],
 	tmp[BUFSIZ],
-	*s;
-int	state	= S_HEAD;
+	*s	= 0;
+int	header	= TRUE;
+time_t	tt;
+int	yd, md, dd, ht, mt, st;
 
-	(void)strcat(strcat(strcpy(bfr, "RCS/"), name), ",v");
-	if (!(fpS = fopen(bfr, "r"))) {
-		PRINTF("?? Cannot open \"%s\"\n", bfr);
+	if (!rcsopen(name, !silent))
 		return;
-	}
 
-	while ((state < S_FAIL) && fgets (bfr, sizeof(bfr), fpS)) {
+	while (header && (s = rcsread(s))) {
+		s = rcsparse_id(key, s);
 
-		switch (state) {
+		switch (rcskeys(key)) {
 		case S_HEAD:
-			if (keyRCS(strcpy(tmp, bfr), "head")) {
-				(void)strcat(tmp, "\n");
-				if (!*opt_rev)
-					(void)strcpy(opt_rev, tmp);
-				state = S_HEAD2;
-				for (s = tmp; s[1]; s++) {
-					if (!isdigit(*s) && *s != '.') {
-						state = S_FAIL;
-						break;
-					}
-				}
-			} else
-				state = S_FAIL;
+			s = rcsparse_num(tmp, s);
+			if (!*opt_rev)
+				(void)strcpy(opt_rev, tmp);
 			break;
-		case S_HEAD2:
-			if (!strcmp(bfr,"\n"))		state = S_SKIP;
+		case S_COMMENT:
+			s = rcsparse_str(s);
 			break;
-		case S_SKIP:
-			if (!strcmp(bfr,"\n"))		break;
-			/* fall-thru */
 		case S_VERS:
-			if (!strcmp(bfr, "desc\n"))	state = S_FAIL;
-			else if (dotcmp(bfr, opt_rev) >= 0)	state = S_DATE;
-			else				state = S_FAIL;
+			if (dotcmp(key, opt_rev) < 0)
+				header = FALSE;
 			break;
 		case S_DATE:
-			if (keyRCS(strcpy(tmp, bfr), "date")) {
-			time_t	tt;
-			int	yd, md, dd, ht, mt, st;
-				if (sscanf(tmp,
-					"%02d.%02d.%02d.%02d.%02d.%02d",
-					&yd, &md, &dd, &ht, &mt, &st) == 6) {
-					tt = packdate(1900+yd, md,dd, ht,mt,st);
-					ok = tt;	/* patch: cutoff? */
-					state = S_HEAD2;
-				} else
-					state = S_FAIL;
+			s = rcsparse_num(tmp, s);
+			if (sscanf(tmp, FMT_DATE,
+				&yd, &md, &dd, &ht, &mt, &st) == 6) {
+				tt = packdate(1900+yd, md,dd, ht,mt,st);
+				ok = tt;	/* patch: cutoff? */
 			} else
-				state = S_FAIL;
+				header = FALSE;
+			break;
+		case S_DESC:
+			header = FALSE;
 		}
+		if (!s)	break;
 	}
+	rcsclose();
 
 	if (ok)
 		if (setmtime(name, ok + adj2est(TRUE)) < 0)
@@ -164,6 +122,7 @@ int	state	= S_HEAD;
  * it will delete or modify the checked-in file -- return TRUE.  If no action
  * is taken, return false.
  */
+static
 Execute(name, mtime)
 char	*name;
 time_t	mtime;
@@ -187,6 +146,7 @@ struct	stat	sb;
  * Before checkout, verify that the file exists, and obtain its modification
  * time/date.
  */
+static
 time_t
 PreProcess(name)
 char	*name;
@@ -197,9 +157,9 @@ struct	stat	sb;
 		if ((S_IFMT & sb.st_mode) == S_IFREG)
 			return (sb.st_mtime);
 		TELL ("** ignored (not a file)\n");
-		return (0);
+		return (FALSE);
 	}
-	return (1);	/* file was not already checked out */
+	return (TRUE);	/* file was not already checked out */
 }
 
 /************************************************************************
@@ -223,12 +183,12 @@ time_t	mtime;
 				j = optind - 1;
 				TELL("cutoff: %s", ctime(&opt_c));
 			} else {
-				(void)strcat(strcat(options, argv[j]), " ");
+				catarg(options, argv[j]);
 				if (*s == 'q')
 					silent++;
 				if (strchr("lqr", *s)) {
-					if (s[1])
-						(void)strcat(strcpy(opt_rev, s+1),"\n");
+					if (*++s)
+						(void)strcpy(opt_rev, s);
 				} else if (strchr("swj", *s)) {
 					PRINTF("Option not implemented: %s\n",
 						argv[j]);

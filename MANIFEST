@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19880521
+MANIFEST for cm_tools, version t19880527
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 src/checkin/src                 subdirectory
@@ -9,3 +9,8 @@ src/checkout/src                subdirectory
 src/checkout/src/Makefile       
 src/checkout/src/checkout.c     wrapper for 'co'
 src/checkout/src/rcsget.sh      
+user                            subdirectory
+user/checkin.doc                
+user/checkout.doc               
+user/rcsget.doc                 
+user/rcsput.doc                 

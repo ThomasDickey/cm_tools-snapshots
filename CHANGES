@@ -1,3 +1,27 @@
+1988-05-27  dickey@software.org
+
+	* user/checkout.doc, user/checkin.doc, user/rcsget.doc, user/rcsput.doc:
+	New file.
+
+	* src/checkin/src/rcsput.sh:
+	Apollo doesn't like passing options in PAGER-expression.
+
+	* src/checkout/src/checkout.c:
+	removed code which edited lock-author (leads to a too-complex solution).
+
+	* src/checkin/src/checkin.c:
+	recoded, using 'rcsedit()' to make this smarter about the revision which
+	is being checked-in.  Still does not know about branches and access lists.
+
+	* src/checkout/src/checkout.c: added verbose-flag to 'rcsopen()'.
+
+	* src/checkout/src/checkout.c:
+	recoded, using 'rcsedit' module, so we translate lock-authors if the
+	login-id does not agree with the current id.
+
+	* src/checkin/src/rcsput.sh:
+	correctly delete diff-file after test & display.
+
 1988-05-21  dickey@software.org
 
 	* src/checkout/src/checkout.c:

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkin.c	1.3 88/05/21 12:30:33";
+static	char	sccs_id[] = "@(#)checkin.c	1.4 88/05/27 10:54:31";
 #endif	lint
 
 /*
@@ -7,6 +7,7 @@ static	char	sccs_id[] = "@(#)checkin.c	1.3 88/05/21 12:30:33";
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		27 May 1988, recoded using 'rcsedit' module.
  *		21 May 1988, broke out common routines for 'checkout.c'.
  *
  * Function:	Invoke RCS checkin 'ci', then modify the last delta-date of the
@@ -17,22 +18,32 @@ static	char	sccs_id[] = "@(#)checkin.c	1.3 88/05/21 12:30:33";
  *			name => RCS/name,v
  *
  * Options:	those recognized by 'ci', as well as '-d' for debugging.
+ *
+ * patch:
+ *		Should check access-list in pre-process part to ensure that
+ *		user is permitted to check file in.  Or, Pyster wants to
+ *		prohibit users from checkin files in (though they may have the
+ *		right to make locks for checking files out).
  */
 
-#include	<ptypes.h>
+#include	"ptypes.h"
+#include	"rcsdefs.h"
 
 #include	<stdio.h>
 #include	<ctype.h>
 #include	<time.h>
-#include	<signal.h>
 extern	struct	tm *localtime();
 extern	FILE	*tmpfile();
 extern	long	adj2est();
+extern	char	*getuser();
+extern	char	*rcsname();
+extern	char	*rcsread(), *rcsparse_id(), *rcsparse_num(), *rcsparse_str();
 extern	char	*strcat();
-extern	char	*strchr();
+extern	char	*strchr(), *strrchr();
 extern	char	*strcpy();
 
 /* local declarations: */
+#define	EOS	'\0'
 #define	TRUE	1
 #define	FALSE	0
 #define	CHECKIN	"ci"
@@ -43,75 +54,16 @@ extern	char	*strcpy();
 #define	TELL	if (ShowIt(name,FALSE)) PRINTF
 
 static	FILE	*fpT;
-static	int	copy_opt = TRUE,
-		silent   = FALSE, ShowedIt;
+static	int	silent   = FALSE,
+		ShowedIt;
 static	char	options[BUFSIZ];	/* options for 'ci' */
-static	char	old_date[BUFSIZ],
+static	char	opt_rev[BUFSIZ],
+		old_date[BUFSIZ],
 		new_date[BUFSIZ];
 
 /************************************************************************
  *	local procedures						*
  ************************************************************************/
-
-/*
- * Parse for a keyword, converting the buffer to hold the value of the keyword
- * if it is found.
- */
-static
-keyRCS(string, key)
-char	*string, *key;
-{
-char	*s,
-	first[BUFSIZ],
-	second[BUFSIZ];
-
-	if (s = strchr(string, ';')) {
-		*s = '\0';
-		if (sscanf(string, "%s %s;", first, second) == 2)
-			if (!strcmp(first, key)) {
-				(void)strcpy(string, second);
-				return (TRUE);
-			}
-	}
-	return (FALSE);
-}
-
-snag (sig)			/* ignore signals we don't want */
-{
-	(void) signal (sig, snag);
-	PRINTF("\007");
-}
-
-/*
- * Copy the temporary file back to the specified name
- */
-static
-copyback (name, mode, lines)
-char	*name;
-{
-FILE	*fpS;
-char	bfr[BUFSIZ];
-
-	if (chmod(name, 0644)) {
-		TELL ("** cannot write-enable \"%s\"\n", name);
-		return (FALSE);
-	}
-	(void) signal (SIGINT, snag);
-	(void) signal (SIGQUIT, snag);
-	if (fpS = fopen (name, "w")) {
-		(void) rewind (fpT);
-		while (lines-- > 0) {
-			(void) fgets (bfr, sizeof(bfr), fpT);
-			(void) fputs (bfr, fpS);
-		}
-		(void) fclose (fpS);
-		(void) chmod (name, mode);
-		(void) signal (SIGINT, SIG_DFL);
-		(void) signal (SIGQUIT, SIG_DFL);
-		return (TRUE);
-	}
-	return (FALSE);
-}
 
 /*
  * Show the current filename, once before the first message applying to it.
@@ -121,11 +73,12 @@ char	bfr[BUFSIZ];
 ShowIt (name,doit)
 char	*name;
 {
-	if (!ShowedIt && (doit || !silent)) {
+int	show	= (doit || !silent);
+	if (show && !ShowedIt) {
 		PRINTF ("File \"%s\"\n", name);
 		ShowedIt++;
 	}
-	return (doit || !silent);
+	return (show);
 }
 
 /*
@@ -179,7 +132,7 @@ char	*s, *d,
 
 	(void)stat(name, &sb);
 	if (changed) {
-		(void)copyback(name, (int)(sb.st_mode & 0777), lines);
+		(void)copyback(fpT, name, (int)(sb.st_mode & 0777), lines);
 	}
 	(void)setmtime (name, mtime); /* update the file modification times */
 }
@@ -188,105 +141,61 @@ char	*s, *d,
  * Post-process a single RCS-file, replacing its check-in date with the file's
  * modification date.
  */
-#define	S_HEAD	0	/* head <version_string>;	*/
-#define	S_HEAD2	1	/* <more header lines>		*/
-#define	S_SKIP	2	/* <blank lines>		*/
-#define	S_VERS	3	/* <version_string>		*/
-#define	S_DATE	4	/* date <date>; <some text>	*/
-#define	S_COPY	5
-#define	S_FAIL	6
-
+static
 PostProcess (name, mtime)
 char	*name;
 time_t	mtime;
 {
-FILE	*fpS;
-int	lines	= 0;
-unsigned
-int	j,
-	state	= S_HEAD,
-	changed = FALSE;
-char	*s,
-	path[BUFSIZ],
-	vstring[BUFSIZ],
-	bfr[BUFSIZ];
+int	header	= TRUE,
+	match	= FALSE;
+char	*s	= 0,
+	*old,
+	revision[BUFSIZ],
+	token[BUFSIZ];
 
-	ShowedIt = FALSE;
-	FORMAT (path, "RCS/%s,v", name);
-
-	(void) rewind (fpT);
-	if ((fpS = fopen (path, "r")) == 0) {
-		TELL ("** cannot open: %s\n", path);
+	if (!rcsopen(name, !silent))
 		return;
-	}
+	(void)strcpy(revision, opt_rev);
 
-	while ((state < S_FAIL) && fgets (bfr, sizeof(bfr), fpS)) {
-		lines++;
-		switch (state) {
+	while (header && (s = rcsread(s))) {
+		s = rcsparse_id(token, s);
+
+		switch (rcskeys(token)) {
 		case S_HEAD:
-			if (keyRCS(strcpy(vstring, bfr), "head")) {
-				(void)strcat(vstring, "\n");
-				state = S_HEAD2;
-				for (s = vstring; s[1]; s++) {
-					if (!isdigit(*s) && *s != '.') {
-						state = S_FAIL;
-						break;
-					}
-				}
-			} else
-				state = S_FAIL;
+			s = rcsparse_num(token, s);
+			if (!*revision)
+				(void)strcpy(revision, token);
 			break;
-		case S_HEAD2:
-			if (!strcmp(bfr,"\n"))		state = S_SKIP;
+		case S_COMMENT:
+			s = rcsparse_str(s);
 			break;
-		case S_SKIP:
-			if (!strcmp(bfr,"\n"))		break;
-			/* fall-thru */
 		case S_VERS:
-			if (!strcmp(bfr, vstring))	state = S_DATE;
-			else				state = S_FAIL;
+			if (dotcmp(token, revision) < 0)
+				header = FALSE;
+			match = !strcmp(token, revision);
 			break;
 		case S_DATE:
-			if (keyRCS(strcpy(old_date, bfr), "date")) {
-				for (s = bfr; !isdigit(*s) && *s; s++);
-				if (*s) {
-				time_t	xtime	= mtime + adj2est(FALSE);
-				struct	tm *t	= localtime(&xtime);
-				TELL ("   old: %s", bfr);
-					FORMAT(new_date,
-						"%02d.%02d.%02d.%02d.%02d.%02d",
-						t->tm_year, t->tm_mon + 1,
-						t->tm_mday, t->tm_hour,
-						t->tm_min,  t->tm_sec);
-					for (j = 0; new_date[j]; j++)
-						s[j] = new_date[j];
-				}
-				state = S_COPY;
-				TELL ("   new: %s", bfr);
-				changed++;
-			} else
-				state = S_FAIL;
+			if (!match)
+				break;
+			s = rcsparse_num(old_date, old = s);
+			if (*old_date) {
+			time_t	xtime	= mtime + adj2est(FALSE);
+			struct	tm *t	= localtime(&xtime);
+				FORMAT(new_date, FMT_DATE,
+					t->tm_year, t->tm_mon + 1,
+					t->tm_mday, t->tm_hour,
+					t->tm_min,  t->tm_sec);
+				rcsedit(old, old_date, new_date);
+				set2est();	/* patch: restore my timezone */
+				TELL("** revision %s\n", revision);
+				TELL("** modified %s", ctime(&mtime));
+			}
+			break;
+		case S_DESC:
+			header = FALSE;
 		}
-		(void) fputs (bfr, fpT);
 	}
-	(void) fclose (fpS);
-
-	/*
-	 * If we wrote an altered delta-date to the temp-file, recopy it
-	 * back over the original RCS-file:
-	 */
-	if (changed && copy_opt) {
-		if (copyback(path, 0444, lines)) {
-			SHOW ("** %d lines processed\n", lines);
-			(void) fflush (stdout);
-		}
-	} else if (copy_opt) {
-		TELL ("** no changes made to \"%s\"\n", name);
-	} else if (!changed) {
-		TELL ("** no changes would be made\n");
-	} else {
-		SHOW ("** change would be made\n");
-	}
+	rcsclose();
 }
 
 /*
@@ -294,6 +203,7 @@ char	*s,
  * it will delete or modify the checked-in file -- return TRUE.  If no action
  * is taken, return false.
  */
+static
 Execute(name, mtime)
 char	*name;
 time_t	mtime;
@@ -314,9 +224,77 @@ struct	stat	sb;
 }
 
 /*
+ * Ensure that we have a unique lock-value.  If the user did not specify one,
+ * we must get it from the archived-file.
+ */
+static
+GetLock(name)
+char	*name;
+{
+struct	stat	sb;
+int	header	= TRUE;
+char	*s	= 0,
+	*user	= getuser(),
+	tip[BUFSIZ],
+	key[BUFSIZ],
+	tmp[BUFSIZ];
+
+	if (*opt_rev == EOS) {
+		if (stat(rcsname(name), &sb) < 0)
+			return (TRUE);	/* initial checkin */
+
+		if (!rcsopen(name, !silent))
+			return (FALSE);	/* could not open file anyway */
+
+		while (header && (s = rcsread(s))) {
+			s = rcsparse_id(key, s);
+
+			switch (rcskeys(key)) {
+			case S_HEAD:
+				s = rcsparse_num(tip, s);
+				break;
+			case S_LOCKS:
+				do {
+					s = rcsparse_id(key, s);
+					if (*s == ':')	s++;
+					s = rcsparse_num(tmp, s);
+					if (!strcmp(key, user))
+						header = FALSE;
+				} while (*key && header);
+				if (header) {
+					SHOW("?? no lock set by %s\n", user);
+					header = FALSE;
+				} else {
+					TELL("** revision %s was locked\n",tmp);
+					if (!strcmp(tip, tmp)) {
+					char	*t = strrchr(tmp, '.');
+					int	last;
+						(void)sscanf(t, ".%d", &last);
+						FORMAT(t, ".%d", last+1);
+						(void)strcpy(opt_rev, tmp);
+					} else {
+						SHOW("?? branching not supported\n");
+						/* patch:finish this later... */
+					}
+				}
+				break;
+			case S_COMMENT:
+				s = rcsparse_str(s);
+				break;
+			case S_VERS:
+				header = FALSE;
+			}
+		}
+		rcsclose();
+	}
+	return (*opt_rev != EOS);
+}
+
+/*
  * Before checkin, verify that the file exists, and obtain its modification
  * time/date.
  */
+static
 time_t
 PreProcess(name)
 char	*name;
@@ -342,25 +320,29 @@ char	*argv[];
 {
 int	j;
 time_t	mtime;
+char	revision[BUFSIZ];
 
 	fpT = tmpfile();
-
 	(void)strcpy(options, " ");
+	*revision = EOS;
 
 	for (j = 1; j < argc; j++) {
 	char	*s = argv[j];
 		if (*s == '-') {
-			if (*(++s) == 'd')
-				copy_opt = FALSE;
-			else {
-				(void)strcat(strcat(options, argv[j]), " ");
-				if (*s == 'q')
-					silent++;
-			}
-		} else if (mtime = PreProcess (s)) {
-			if (Execute(s, mtime)) {
-				PostProcess (s, mtime);
-				ReProcess(s, mtime);
+			catarg(options, argv[j]);
+			if (*++s == 'q')
+				silent++;
+			else if (strchr("rfluq", *s))
+				(void)strcpy(revision, s+1);
+		} else {
+			(void)strcpy(opt_rev, revision);
+			ShowedIt = FALSE;
+			if (mtime = PreProcess (s)) {
+				if (GetLock(s)
+				&&  Execute(s, mtime)) {
+					PostProcess (s, mtime);
+					ReProcess(s, mtime);
+				}
 			}
 		}
 	}
