@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.5 1993/09/22 13:46:22 dickey Exp $
+# $Id: Makefile,v 11.6 1994/06/18 19:34:50 tom Exp $
 # MAKE-file for enhanced unix copy utility
 
 THIS	= copy
@@ -13,7 +13,7 @@ MAIN_O	= $(THIS).o $(LIBS)
 
 ####### (Standard Productions) #################################################
 all\
-install:	$(SOURCES) $(ALL)
+install:	$B $(SOURCES) $(ALL)
 
 clean:				; rm -f $(CLEAN)
 clobber: 	clean		; rm -f $(ALL)
@@ -22,6 +22,7 @@ run_test:
 sources: 	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
+$B:				; mkdir $@
 $B/$(THIS):	$(MAIN_O)	; $(LINK) -o $@ $(MAIN_O)
 $(THIS).o:	$(PTYPES_H)
 

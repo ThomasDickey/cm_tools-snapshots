@@ -1,12 +1,15 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.7 1994/05/12 11:17:01 tom Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.11 1994/06/18 20:51:43 tom Exp $";
 #endif
 
 /*
  * Title:	copy.c (enhanced unix copy utility)
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
- * Modified:
+ * Modified:	18 Jun 1994, removed 'S' setuid option.  Corrected test for
+ *			     overwrite of same-inode.  Added S/D MSDOS
+ *			     compatibility options for Linux. Make trace to
+ *			     standard output.
  *		12 May 1994, made "nothing copied" message less verbose
  *		22 Sep 1993, gcc warnings
  *		02 Dec 1992, use 'rmdir()' rather than 'unlink()'.  Added logic
@@ -100,16 +103,29 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RC
 #define		ACC_PTYPES	/* include access-definitions */
 #define		DIR_PTYPES	/* include directory-definitions */
 #define		STR_PTYPES	/* include string-definitions */
+#define		TIM_PTYPES	/* include time-definitions */
 #include	<ptypes.h>
 #include	<errno.h>
 
-#define	TELL	FPRINTF(stderr,
-#define	VERBOSE	if (v_opt) TELL
-#define	DEBUG	if (v_opt > 1)	TELL
+#define	if_Verbose	if (v_opt)
+#define	if_Debug	if (v_opt > 1)
+
+#define	VERBOSE	if_Verbose PRINTF
+#define	DEBUG	if_Debug   PRINTF
 
 #ifndef	S_IFLNK
 #define	lstat	stat
 #endif	/* S_IFLNK */
+
+#ifdef	linux
+#define	DOS_VISIBLE 1
+#endif
+
+#if DOS_VISIBLE
+typedef	enum _systype { Unix, MsDos} SysType;
+static	SysType	dst_type;
+static	SysType	src_type;
+#endif
 
 static	long	total_dirs,
 		total_links,
@@ -129,9 +145,9 @@ static	int	d_opt,		/* obtain source from destination arg */
  *	local procedures						*
  ************************************************************************/
 
-static	int	copyit(
+static	int	copyit(		/* forward-reference */
 		_arx(char *,	parent)
-		_arx(STAT *,	parent_sb)
+		_arx(Stat_t *,	parent_sb)
 		_arx(char *,	src)
 		_arx(char *,	dst)
 		_arx(int,	no_dir_yet)
@@ -185,7 +201,7 @@ char *	convert(
 		} else
 			(void)name2s(dst, BUFSIZ, src, 6);
 	}
-	DEBUG "++ \"%s\" => \"%s\"\n", src, dst);
+	DEBUG("++ \"%s\" => \"%s\"\n", src, dst);
 	return (dst);
 }
 #else		/* apollo sr10.x or unix */
@@ -237,17 +253,18 @@ char *	skip_dots(
 }
 
 /*
- * Enable protection of a file temporarily, so we can write into it
+ * Enable protection of a file temporarily, so we can write into it, or
+ * set the protection after we're done copying.
  */
 static
-int	ForceMode(
+int	SetMode(
 	_ARX(char *,	path)
 	_AR1(int,	mode)
 		)
 	_DCL(char *,	path)
 	_DCL(int,	mode)
 {
-	DEBUG "++ chmod %03o %s\n", mode, path);
+	DEBUG("++ chmod %03o %s\n", mode, path);
 	if (!n_opt)
 		if (chmod(path, mode) < 0) {
 			perror(path);
@@ -257,17 +274,53 @@ int	ForceMode(
 }
 
 /*
+ * Set the file's date.
+ */
+static
+int	SetDate(
+	_ARX(char *,	path)
+	_AR1(time_t,	when)
+		)
+	_DCL(char *,	path)
+	_DCL(time_t,	when)
+{
+#if	DOS_VISIBLE
+	if (dst_type != src_type) {
+		if (dst_type == MsDos) {	/* Linux to MsDos */
+			when &= ~1L;
+			when -= gmt_offset(when);
+		} else {			/* MsDos to Linux */
+			when += gmt_offset(when);
+		}
+	}
+#endif
+	if_Debug {
+		struct	tm split;
+		split = *localtime(&when);
+		PRINTF("++ touch %02d%02d%02d%02d%04d.%02d %s\n",
+			split.tm_mon + 1,
+			split.tm_mday,
+			split.tm_hour,
+			split.tm_min,
+			split.tm_year + 1900,
+			split.tm_sec,
+			path);
+	}
+	return n_opt ? 0 : setmtime(path, when);
+}
+
+/*
  * Restore protection of a file that we changed temporarily
  */
 static
 void	RestoreMode(
 	_ARX(char *,	path)
-	_AR1(STAT *,	sb)
+	_AR1(Stat_t *,	sb)
 		)
 	_DCL(char *,	path)
-	_DCL(STAT *,	sb)
+	_DCL(Stat_t *,	sb)
 {
-	(void)ForceMode(path, (int)(sb->st_mode & 0777));
+	(void)SetMode(path, (int)(sb->st_mode & 0777));
 }
 
 /*
@@ -280,12 +333,12 @@ int	copyfile(
 	_ARX(char *,	src)
 	_ARX(char *,	dst)
 	_ARX(int,	previous)
-	_AR1(STAT *,	new_sb)
+	_AR1(Stat_t *,	new_sb)
 		)
 	_DCL(char *,	src)
 	_DCL(char *,	dst)
 	_DCL(int,	previous)
-	_DCL(STAT *,	new_sb)
+	_DCL(Stat_t *,	new_sb)
 {
 	int	retval	= -1;
 	char	bfr1[BUFSIZ];
@@ -304,7 +357,7 @@ int	copyfile(
 		catarg(bfr1, "-f");
 	catarg(bfr1, convert(bfr2, src));
 	catarg(bfr1, convert(bfr2, dst));
-	DEBUG "++ cp %s\n", bfr1);
+	DEBUG("++ cp %s\n", bfr1);
 	if (execute("/bin/cp", bfr1) < 0)
 #else	/* apollo sr9 */
 	catarg(bfr1, convert(bfr2,src));
@@ -312,15 +365,15 @@ int	copyfile(
 	catarg(bfr1, "-pdt");	/* ...so we can test for success of copy */
 	if (previous)
 		catarg(bfr1, "-r");
-	DEBUG "++ cpf %s\n", bfr1);
+	DEBUG("++ cpf %s\n", bfr1);
 	if (execute("/com/cpf", bfr1) < 0)
 #endif	/* apollo sr10/sr9 */
 	{
-		TELL "?? copy to %s failed\n", dst);
+		FPRINTF(stderr, "?? copy to %s failed\n", dst);
 		return (-1);
 	}
 	if (previous) {		/* verify that we copied file */
-		STAT	sb;
+		Stat_t	sb;
 		if (stat(dst, &sb) < 0)
 			return (-1);
 		if ((sb.st_mtime != new_sb->st_mtime)
@@ -336,14 +389,14 @@ int	copyfile(
 
 	if ((ifp = fopen(src, "r")) == 0) {
 		perror(src);
-	} else if (previous && ForceMode(dst, tmp_mode) < 0) {
+	} else if (previous && SetMode(dst, tmp_mode) < 0) {
 		perror(dst);
 	} else if ((ofp = fopen(dst, previous ? "w+" : "w")) == 0) {
 		perror(dst);
 	} else {
 		retval = 0;		/* probably will go ok now */
 		while ((num = fread(bfr1, 1, sizeof(bfr1), ifp)) > 0)
-			if (fwrite(bfr1, 1, num, ofp) != num) {
+			if (fwrite(bfr1, 1, (size_t)num, ofp) != num) {
 					/* no, error found anyway */
 				retval = -1;
 				perror(dst);
@@ -413,10 +466,10 @@ int	copylink(
 static
 int	dir_exists(	/* patch: like 'stat_dir()', but uses lstat */
 	_ARX(char *,	path)
-	_AR1(STAT *,	sb)
+	_AR1(Stat_t *,	sb)
 		)
 	_DCL(char *,	path)
-	_DCL(STAT *,	sb)
+	_DCL(Stat_t *,	sb)
 {
 	if (lstat(path, sb) >= 0) {
 		if (isDIR(sb->st_mode))
@@ -432,11 +485,11 @@ int	dir_exists(	/* patch: like 'stat_dir()', but uses lstat */
 static
 void	FindDir(
 	_ARX(char *,	parent)
-	_ARX(STAT *,	parent_sb)
+	_ARX(Stat_t *,	parent_sb)
 	_AR1(char *,	path)
 		)
 	_DCL(char *,	parent)
-	_DCL(STAT *,	parent_sb)
+	_DCL(Stat_t *,	parent_sb)
 	_DCL(char *,	path)
 {
 	if (dir_exists(path, parent_sb) >= 0)
@@ -460,16 +513,16 @@ int	copydir(
 	_DCL(int,	previous)
 {
 	auto	DIR	*dp;
-	auto	DIRENT	*de;
-	auto	STAT	dst_sb;
+	auto	Dirent_t *de;
+	auto	Stat_t	dst_sb;
 	auto	char	bfr1[BUFSIZ],
 			bfr2[BUFSIZ];
 	auto	int	no_dir_yet = FALSE;
 
-	DEBUG "copydir(%s, %s, %d)\n", src, dst, previous);
+	DEBUG("copydir(%s, %s, %d)\n", src, dst, previous);
 	abshome(strcpy(bfr1, dst));
 	if (previous > 0) {
-		DEBUG "++ rmdir %s\n", bfr1);
+		DEBUG("++ rmdir %s\n", bfr1);
 		if (!n_opt) {
 			if (rmdir(bfr1) < 0) {
 				perror(dst);
@@ -480,7 +533,7 @@ int	copydir(
 
 	if (previous >= 0) {	/* called from 'copyit()' */
 		if (dir_exists(bfr1, &dst_sb) < 0) {
-			VERBOSE "** make directory \"%s\"\n", dst);
+			VERBOSE("** make directory \"%s\"\n", dst);
 			if (!n_opt) {
 				int	omask	= umask(0);
 				int	ok_make	= (mkdir(bfr1, 0755) >= 0);
@@ -530,20 +583,20 @@ int	copydir(
 static
 int	copyit(
 	_ARX(char *,	parent)
-	_ARX(STAT *,	parent_sb)
+	_ARX(Stat_t *,	parent_sb)
 	_ARX(char *,	src)
 	_ARX(char *,	dst)
 	_ARX(int,	no_dir_yet)	/* true if we can test access */
 	_AR1(int,	tested_acc)	/* true iff we already tested */
 		)
 	_DCL(char *,	parent)
-	_DCL(STAT *,	parent_sb)
+	_DCL(Stat_t *,	parent_sb)
 	_DCL(char *,	src)
 	_DCL(char *,	dst)
 	_DCL(int,	no_dir_yet)
 	_DCL(int,	tested_acc)
 {
-	STAT	dst_sb, src_sb;
+	Stat_t	dst_sb, src_sb;
 	int	num,
 		ok1, ok2,
 		forced	= FALSE;
@@ -560,14 +613,32 @@ int	copyit(
 	ok1 = stat(bfr1, &src_sb) >= 0;
 	ok2 = stat(bfr2, &dst_sb) >= 0;
 	if (ok1 && ok2) {
-		if (src_sb.st_ino == dst_sb.st_ino
-		&&  src_sb.st_dev == dst_sb.st_dev) {
-			TELL "?? %s and %s are identical (not copied)\n",
+		int same_inode	=  (src_sb.st_ino == dst_sb.st_ino)
+				&& (src_sb.st_dev == dst_sb.st_dev);
+		if (same_inode) {
+			FPRINTF(stderr, "?? %s and %s are identical (not copied)\n",
 				src, dst);
-			exit(FAIL);
+			return FALSE;
 		}
 		if (u_opt) {
+#ifdef	S_IFLNK
+			lstat(bfr1, &src_sb);
+			lstat(bfr2, &dst_sb);
+#endif
 			if (isFILE(src_sb.st_mode) && isFILE(dst_sb.st_mode)) {
+#if DOS_VISIBLE
+				if (dst_type != src_type) {
+					time_t it = dst_sb.st_mtime;
+					it &= ~1L;
+					if (dst_type == MsDos) {
+						it += gmt_offset(it);
+					} else {
+						it -= gmt_offset(it);
+					}
+					dst_sb.st_mtime = it;
+					src_sb.st_mtime &= ~1L;
+				}
+#endif
 				if ((src_sb.st_size  == dst_sb.st_size)
 				 && (src_sb.st_mtime == dst_sb.st_mtime))
 					return FALSE;
@@ -580,33 +651,33 @@ int	copyit(
 #endif
 		}
 	}
-	DEBUG "** src: \"%s\"\n** dst: \"%s\"\n", bfr1, bfr2);
+	DEBUG("** src: \"%s\"\n** dst: \"%s\"\n", bfr1, bfr2);
 
 	if (!no_dir_yet && !tested_acc) { /* we must test-access */
 		int	writeable;
 		if (!*parent)	/* ...we haven't tested-access here yet */
 			FindDir(parent, parent_sb, bfr2);
 		writeable = (access(parent, W_OK | X_OK | R_OK) >= 0);
-		DEBUG ".. ACC: \"%s\" %s\n", parent, writeable ? "YES" : "NO");
+		DEBUG(".. ACC: \"%s\" %s\n", parent, writeable ? "YES" : "NO");
 		if (!writeable) {
 			if (f_opt) {
-				if (ForceMode(parent, 0755) < 0)
+				if (SetMode(parent, 0755) < 0)
 					return FALSE;
 				forced = TRUE;
 			} else {
-				TELL "?? directory is not writeable: \"%s\"\n",
+				FPRINTF(stderr, "?? directory is not writeable: \"%s\"\n",
 					parent);
 				return FALSE;
 			}
 		}
 	}
 
-	VERBOSE "** copy \"%s\" to \"%s\"\n", src, dst);
+	VERBOSE("** copy \"%s\" to \"%s\"\n", src, dst);
 
 	/* Verify that the source is a legal file */
 #ifdef	S_IFLNK
 	if ((!l_opt && (lstat(bfr1, &src_sb) < 0)) || src_sb.st_mode == 0) {
-		TELL "?? file not found: \"%s\"\n", src);
+		FPRINTF(stderr, "?? file not found: \"%s\"\n", src);
 		return forced;
 	}
 #endif
@@ -615,7 +686,7 @@ int	copyit(
 	&&  !isLINK(src_sb.st_mode)
 #endif
 	&&  !isDIR(src_sb.st_mode)) {
-		TELL "?? not a file: \"%s\"\n", src);
+		FPRINTF(stderr, "?? not a file: \"%s\"\n", src);
 		return forced;
 	}
 	src = bfr1;		/* correct tilde, if any */
@@ -629,7 +700,7 @@ int	copyit(
 #endif
 		) {
 			if (i_opt) {
-				TELL "%s ? ", dst);
+				FPRINTF(stderr, "%s ? ", dst);
 				if (gets(temp)) {
 					if (*temp != 'y' && *temp != 'Y')
 						return forced;
@@ -639,7 +710,7 @@ int	copyit(
 		} else if (isDIR(dst_sb.st_mode) && isDIR(src_sb.st_mode)) {
 			num = FALSE;	/* we will merge directories */
 		} else {
-			TELL "?? cannot overwrite \"%s\"\n", dst);
+			FPRINTF(stderr, "?? cannot overwrite \"%s\"\n", dst);
 			return forced;
 		}
 	} else
@@ -664,17 +735,18 @@ int	copyit(
 #endif	/* S_IFLNK */
 		if (isFILE(src_sb.st_mode) && copyfile(src,dst,num,&src_sb) < 0)
 			return forced;
-		if (isFILE(src_sb.st_mode) || isDIR(src_sb.st_mode)) {
-			int	mode	= dst_sb.st_mode & 0777;
-			if (isFILE(src_sb.st_mode) && s_opt) {
-				mode	&= ~0222;	/* can't be writeable */
-				mode	|=  (S_ISUID | S_ISGID);
-			}
-			if (isDIR(src_sb.st_mode) && !isDIR(dst_sb.st_mode))
-				mode	&= 0111;
-			(void)chmod(dst, mode);
-			(void)setmtime(dst, src_sb.st_mtime);
+	}
+
+	if (isFILE(src_sb.st_mode) || isDIR(src_sb.st_mode)) {
+		int	mode	= dst_sb.st_mode & 0777;
+		if (isFILE(src_sb.st_mode) && s_opt) {
+			mode	&= ~0222;	/* can't be writeable */
+			mode	|=  (S_ISUID | S_ISGID);
 		}
+		if (isDIR(src_sb.st_mode) && !isDIR(dst_sb.st_mode))
+			mode	&= 0111;
+		(void)SetMode(dst, mode);
+		(void)SetDate(dst, src_sb.st_mtime);
 	}
 
 	if (isDIR(src_sb.st_mode))
@@ -699,18 +771,22 @@ void	usage(_AR0)
  "Usage: copy [options] {[-d] | source [...]} destination"
 ,""
 ,"Options:"
-,"  -d  infer source (leaf) from destination path"
-,"  -f  force (write into protected destination"
-,"  -i  interactive (prompt before overwriting)"
+,"  -d      infer source (leaf) from destination path"
+,"  -f      force (write into protected destination"
+,"  -i      interactive (prompt before overwriting)"
 #ifdef	S_IFLNK
-,"  -l  copy link-targets"
+,"  -l      copy link-targets (otherwise, copy links as-is)"
 #endif
-,"  -m  merge directories"
-,"  -n  no-op (show what would be copied)"
-,"  -s  enable set-uid/gid in target"
-,"  -S  reset effective uid before executing"
-,"  -u  update-only (copies only new files or those differing in size or date)"
-,"  -v  verbose"
+,"  -m      merge directories"
+,"  -n      no-op (show what would be copied)"
+,"  -s      enable set-uid/gid in target"
+,"  -u      update-only (copies only new files or those differing in size or date)"
+,"  -v      verbose"
+#if	DOS_VISIBLE
+,"  -S      source is MSDOS"
+,"  -D      destination is MSDOS"
+,"  -F file specify MSDOS/Unix name-conversions"
+#endif
 		};
 	register int	j;
 	setbuf(stderr, bfr);
@@ -732,7 +808,7 @@ void	arg_pairs(
 	_DCL(char **,	argv)
 {
 	register int	j;
-	auto	STAT	parent_sb,
+	auto	Stat_t	parent_sb,
 			dst_sb,
 			src_sb;
 	auto	int	num, ok_dst;
@@ -740,7 +816,7 @@ void	arg_pairs(
 	auto	char	dst[BUFSIZ];
 
 	if ((num = (argc - optind)) < 2) {
-		TELL "?? You must give both source and destination names\n");
+		FPRINTF(stderr, "?? You must give both source and destination names\n");
 		usage();
 	}
 
@@ -759,7 +835,7 @@ void	arg_pairs(
 
 		if (m_opt) {
 			if (num == 2 && isDIR(dst_sb.st_mode)) {
-				VERBOSE "** merge directories\n");
+				VERBOSE("** merge directories\n");
 				if ((lstat(argv[optind], &src_sb) >= 0)
 				&&  (isDIR(src_sb.st_mode))) {
 					(void)copydir(
@@ -768,7 +844,7 @@ void	arg_pairs(
 					return;
 				}
 			}
-			TELL "?? both arguments must be directories with -m\n");
+			FPRINTF(stderr, "?? both arguments must be directories with -m\n");
 			usage();
 		}
 
@@ -789,7 +865,7 @@ void	arg_pairs(
 			if (forced)
 				RestoreMode(parent, &dst_sb);
 		} else if (num != 2) {
-			TELL "?? Destination is not a directory\n");
+			FPRINTF(stderr, "?? Destination is not a directory\n");
 			usage();
 		} else if (isFILE(dst_sb.st_mode)
 #ifdef	S_IFLNK
@@ -801,12 +877,12 @@ void	arg_pairs(
 					argv[optind], dst, FALSE, FALSE))
 				RestoreMode(parent, &parent_sb);
 		} else {
-			TELL "?? Destination is not a file\n");
+			FPRINTF(stderr, "?? Destination is not a file\n");
 			usage();
 		}
 	} else {
 		if (num != 2) {
-			TELL "?? Wrong number of arguments\n");
+			FPRINTF(stderr, "?? Wrong number of arguments\n");
 			usage();
 		}
 		*parent = EOS;
@@ -833,7 +909,7 @@ void	derived(
 			forced	= 0;
 	auto	char	parent[MAXPATHLEN],
 			dst[BUFSIZ];
-	auto	STAT	parent_sb;
+	auto	Stat_t	parent_sb;
 
 	FindDir(parent, &parent_sb, dst);
 	for (j = optind; j < argc; j++) {
@@ -849,7 +925,7 @@ void	derived(
 				*s = EOS;
 		}
 		if (s == 0)
-			TELL "?? No destination directory: \"%s\"\n", argv[j]);
+			FPRINTF(stderr, "?? No destination directory: \"%s\"\n", argv[j]);
 	}
 	if (forced)
 		RestoreMode(parent, &parent_sb);
@@ -863,7 +939,7 @@ _MAIN
 {
 	register int	j;
 
-	while ((j = getopt(argc, argv, "dfilmnsSuv")) != EOF) switch (j) {
+	while ((j = getopt(argc, argv, "dfilmnsuvSDF:")) != EOF) switch (j) {
 	case 'd':	d_opt = TRUE;	break;
 	case 'f':	f_opt = TRUE;	break;
 	case 'i':	i_opt = TRUE;	break;
@@ -873,9 +949,13 @@ _MAIN
 	case 'm':	m_opt = TRUE;	break;
 	case 'n':	n_opt = TRUE;	break;
 	case 's':	s_opt = TRUE;	break;
-	case 'S':	(void)setuid(getuid());	break;
 	case 'u':	u_opt = TRUE;	break;
 	case 'v':	v_opt++;	break;
+#if	DOS_VISIBLE
+	case 'S':	src_type = MsDos;		break;
+	case 'D':	dst_type = MsDos;		break;
+	case 'F':	/* patch */			break;
+#endif
 	default:	usage();
 	}
 
@@ -888,17 +968,17 @@ _MAIN
 #define	WOULD(n,y,s)	n, n == 1 ? y : s, MAY
 #define	SUMMARY(n)	WOULD(n, "", "s")
 
-	if (total_dirs)	VERBOSE "** %d director%s %scopied\n",
+	if (total_dirs)	VERBOSE("** %ld director%s %scopied\n",
 			WOULD(total_dirs,"y","ies"));
 #ifdef	S_IFLNK
-	if (total_links)VERBOSE "** %ld link%s %scopied\n",
+	if (total_links)VERBOSE("** %ld link%s %scopied\n",
 			SUMMARY(total_links));
 #endif
-	if (total_files)VERBOSE "** %ld file%s %scopied, %ld bytes\n",
+	if (total_files)VERBOSE("** %ld file%s %scopied, %ld bytes\n",
 			SUMMARY(total_files),
 			total_bytes);
 	if (!(total_dirs || total_links || total_files))
-		DEBUG "** nothing %scopied\n", MAY);
+		DEBUG("** nothing %scopied\n", MAY);
 
 	(void)exit(SUCCESS);
 	/*NOTREACHED*/
