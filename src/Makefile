@@ -1,9 +1,9 @@
-# $Id: Makefile,v 11.3 1992/10/16 09:32:37 dickey Exp $
+# $Id: Makefile,v 11.4 1993/04/27 10:38:04 dickey Exp $
 # Top-level makefile for CM_TOOLS src-directory
 
 ####### (Development) ##########################################################
 TOP	= ../..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 ####### (Standard Lists) #######################################################
 MFILES	=\
@@ -30,7 +30,7 @@ destroy\
 sources\
 lint.out\
 lincnt.out\
-run_tests\
+run_test\
 install\
 deinstall::	$(MFILES)
 	cd baseline;	$(MAKE) $@

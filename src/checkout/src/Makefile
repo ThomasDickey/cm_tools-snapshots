@@ -1,9 +1,9 @@
-# $Id: Makefile,v 11.3 1992/10/16 09:26:45 dickey Exp $
+# $Id: Makefile,v 11.4 1993/04/27 10:38:05 dickey Exp $
 # Make-file for RCS checkout utilities
 
 THIS	= checkout
 TOP	= ../../../..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 ####### (Standard Lists) #######################################################
 ALL	= $B/$(THIS)   $B/rcsget
@@ -17,7 +17,7 @@ install:	$(SOURCES) $(ALL)
 clean:				; rm -f $(CLEAN)
 clobber: 	clean		; rm -f $(ALL)
 destroy:			; $(DESTROY)
-run_tests:
+run_test:
 sources: 	$(SOURCES)
 
 ####### (Details of Productions) ###############################################

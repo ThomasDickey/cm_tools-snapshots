@@ -1,6 +1,0 @@
-$Id: reusable.txt,v 11.0 1989/08/22 08:34:54 ste_cm Rel $
-
--------------------------------------------------------------------------------
-
-The 'interface' and 'lib' directories of this prototype are used by other
-prototypes as a common library.

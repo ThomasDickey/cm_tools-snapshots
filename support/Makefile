@@ -1,19 +1,19 @@
-# $Id: Makefile,v 11.2 1992/12/04 11:12:32 ste_cm Exp $
+# $Id: Makefile,v 11.3 1993/04/27 10:47:12 dickey Exp $
 
 TOP	= ../..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 ####### (Standard Lists) #######################################################
 SCRIPTS	= \
-	test_path.sh\
-	test_setup.sh\
-	whose_suid.sh
+	testpath.sh\
+	testinit.sh\
+	who_suid.sh
 
 C_SRC	= \
 	run_tool.c \
 	set_date.c
 
-SOURCES	= $(SCRIPTS) $(C_SRC)
+SOURCES	= $(SCRIPTS)
 
 ALL	= \
 	run_tool \

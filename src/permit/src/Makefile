@@ -1,9 +1,9 @@
-# $Id: Makefile,v 11.3 1992/10/16 09:24:41 dickey Exp $
+# $Id: Makefile,v 11.4 1993/04/27 10:37:10 dickey Exp $
 # MAKE-file for RCS directory-permissions utility
 
 ####### (Environment) ##########################################################
 TOP	= ../../../..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 THIS	= permit
 

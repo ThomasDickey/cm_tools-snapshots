@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 11.0 1992/03/04 10:07:40 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 11.1 1993/04/27 11:02:12 dickey Exp $";
 #endif
 
 /*
@@ -42,7 +42,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
 #include	<ptypes.h>
 #include	<rcsdefs.h>
 #include	<sccsdefs.h>
-#include	<dyn_string.h>
+#include	<dyn_str.h>
 extern	FILE	*popen(_arx(char *,cmd) _ar1(char *,mode));
 extern	char	*tmpnam(_ar1(char *,name));
 

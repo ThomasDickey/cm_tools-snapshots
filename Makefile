@@ -1,20 +1,19 @@
-# $Id: Makefile,v 11.5 1992/12/04 10:35:38 ste_cm Exp $
+# $Id: Makefile,v 11.6 1993/04/27 10:39:03 dickey Exp $
 # Top-level make-file for CM_TOOLS
 
 THIS	= cm_tools
 TOP	= ..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 ####### (Standard Lists) #######################################################
 SOURCES	=\
-	COPYRIGHT\
+	COPYING\
 	README
 
 MFILES	=\
 	bin/Makefile\
-	certificate/Makefile\
+	certify/Makefile\
 	src/Makefile\
-	support/Makefile\
 	user/Makefile
 
 ####### (Standard Productions) #################################################
@@ -25,11 +24,11 @@ all\
 clean\
 clobber\
 destroy\
-run_tests\
+run_test\
 install\
 deinstall\
 sources::	$(MFILES)
-	cd certificate;	$(MAKE) $@
+	cd certify;	$(MAKE) $@
 	cd support;	$(MAKE) $@
 	cd src;		$(MAKE) $@
 	cd user;	$(MAKE) $@ INSTALL_MAN=`cd ..;cd $(INSTALL_MAN);pwd`

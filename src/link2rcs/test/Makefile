@@ -1,9 +1,9 @@
-# $Id: Makefile,v 11.4 1992/12/04 14:06:27 ste_cm Exp $
+# $Id: Makefile,v 11.5 1993/04/27 11:32:15 dickey Exp $
 # make-file for testing RCS skeleton tree utility
 
 ####### (Development) ##########################################################
 TOP	= ../../../..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 ####### (Standard Lists) #######################################################
 REF_FILES =\
@@ -11,10 +11,8 @@ REF_FILES =\
 	case2.ref
 
 SCRIPTS	=\
-	case1.sh\
-	case2.sh\
-	list_tree.sh\
-	run_tests.sh
+	listtree.sh\
+	run_test.sh
 
 SOURCES	= Makefile $(SCRIPTS) $(REF_FILES)
 
@@ -26,7 +24,7 @@ destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
 lincnt.out:
-run_tests:	$(SOURCES)	; $(RUN_TESTS)
+run_test:	$(SOURCES)	; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################
 $(SOURCES):			; $(GET) $@
