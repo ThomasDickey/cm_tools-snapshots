@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.4 1993/04/27 10:37:07 dickey Exp $
+# $Id: Makefile,v 11.5 1993/09/22 13:46:22 dickey Exp $
 # MAKE-file for RCS/SCCS tree display
 
 THIS	= checkup
@@ -22,7 +22,7 @@ run_test:
 sources:	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
-$B/$(THIS):	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
+$B/$(THIS):	$(MAIN_O)	; $(LINK) -o $@ $(MAIN_O)
 $(THIS).o:	$(RCSDEFS_H)
 
 ####### (Development) ##########################################################

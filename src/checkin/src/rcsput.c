@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 11.1 1993/04/27 11:02:12 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 11.2 1993/09/22 14:19:23 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		22 Sep 1993, gcc warnings
  *		04 Mar 1992, test "-f" after 'different()'
  *		05 Feb 1992, revised filename-parsing with 'rcsargpair()',
  *			     obsoleted "-x".
@@ -59,18 +60,18 @@ static	int	force;
 static	int	quiet;
 
 static
-cat2fp(
-_ARX(FILE *,	fp)
-_AR1(char *,	name)
-	)
-_DCL(FILE *,	fp)
-_DCL(char *,	name)
+void	cat2fp(
+	_ARX(FILE *,	fp)
+	_AR1(char *,	name)
+		)
+	_DCL(FILE *,	fp)
+	_DCL(char *,	name)
 {
 	auto	FILE	*ifp;
 	auto	char	t[BUFSIZ];
 	auto	size_t	n;
 
-	if (ifp = fopen(name, "r")) {
+	if ((ifp = fopen(name, "r")) != NULL) {
 		while ((n = fread(t, sizeof(char), sizeof(t), ifp)) > 0)
 			if (fwrite(t, sizeof(char), n, fp) != n)
 				break;
@@ -79,9 +80,9 @@ _DCL(char *,	name)
 }
 
 static
-different(
-_AR1(char *,	working))
-_DCL(char *,	working)
+int	different(
+	_AR1(char *,	working))
+	_DCL(char *,	working)
 {
 	static	DYN	*cmds, *opts;
 	static	char	*prog = "rcsdiff";
@@ -105,8 +106,10 @@ _DCL(char *,	working)
 	(void) bldcmd(dyn_string(cmds) + dyn_length(cmds),
 		      dyn_string(opts),  dyn_length(opts));
 
-	if (!tmpnam(out_diff) || !(ofp = fopen(out_diff,"w")))
+	if (!tmpnam(out_diff))
 		failed("tmpnam");
+	if (!(ofp = fopen(out_diff,"w")))
+		failed("open-tmpnam");
 
 	if (!(ifp = popen(dyn_string(cmds), "r")))
 		failed("popen");
@@ -142,19 +145,19 @@ _DCL(char *,	working)
 }
 
 static
-checkin(
-_ARX(char *,	path)
-_ARX(char *,	working)
-_AR1(char *,	archive)
-	)
-_DCL(char *,	path)
-_DCL(char *,	working)
-_DCL(char *,	archive)
+void	checkin(
+	_ARX(char *,	path)
+	_ARX(char *,	working)
+	_AR1(char *,	archive)
+		)
+	_DCL(char *,	path)
+	_DCL(char *,	working)
+	_DCL(char *,	archive)
 {
 	static	DYN	*args;
 	auto	int	first;
 
-	if (first = (filesize(archive) < 0)) {
+	if ((first = (filesize(archive) < 0)) != 0) {
 		if (!force && !istextfile(working)) {
 			PRINTF("*** \"%s\" does not seem to be a text file\n",
 				working);
@@ -218,7 +221,7 @@ _DCL(char *,	path)
 
 /*ARGSUSED*/
 static
-WALK_FUNC(scan_tree)
+int	WALK_FUNC(scan_tree)
 {
 	auto	char	tmp[BUFSIZ],
 			*s = pathcat(tmp, path, name);
@@ -251,16 +254,17 @@ WALK_FUNC(scan_tree)
 }
 
 static
-do_arg(
-_AR1(char *,	name))
-_DCL(char *,	name)
+void	do_arg(
+	_AR1(char *,	name))
+	_DCL(char *,	name)
 {
 	(void)walktree((char *)0, name, scan_tree, "r", 0);
 }
 
-usage(
-_AR1(int,	option))
-_DCL(int,	option)
+static
+void	usage(
+	_AR1(int,	option))
+	_DCL(int,	option)
 {
 	static	char	*tbl[] = {
  "Usage: rcsput [options] files_or_directories"

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.5 1992/12/03 13:49:32 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.6 1993/09/22 13:46:22 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RC
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		22 Sep 1993, gcc warnings
  *		02 Dec 1992, use 'rmdir()' rather than 'unlink()'.  Added logic
  *			     to ensure that we don't try to recreate a directory
  *			     that already exists.  Added "-f" (force) option.
@@ -126,6 +127,14 @@ static	int	d_opt,		/* obtain source from destination arg */
 /************************************************************************
  *	local procedures						*
  ************************************************************************/
+
+static	int	copyit(
+		_arx(char *,	parent)
+		_arx(STAT *,	parent_sb)
+		_arx(char *,	src)
+		_arx(char *,	dst)
+		_arx(int,	no_dir_yet)
+		_ar1(int,	tested_acc));
 
 #ifdef	apollo
 #ifndef apollo_sr10
@@ -492,13 +501,13 @@ int	copydir(
 		failed(dst);
 	}
 
-	if (dp = opendir(src)) {
+	if ((dp = opendir(src)) != NULL) {
 		char	parent[MAXPATHLEN];
 		int	tested	= 0,
 			forced	= 0;
 
 		(void)strcpy(parent, bfr1);
-		while (de = readdir(dp)) {
+		while ((de = readdir(dp)) != NULL) {
 			if (!dotname(de->d_name))
 				forced |= copyit(parent, &dst_sb,
 					pathcat(bfr1, src, de->d_name),
@@ -612,7 +621,7 @@ int	copyit(
 	dst = bfr2;
 
 	/* Check to see if we can overwrite the destination */
-	if (num = (lstat(dst, &dst_sb) >= 0)) {
+	if ((num = (lstat(dst, &dst_sb) >= 0)) != 0) {
 		if (isFILE(dst_sb.st_mode)
 #ifdef	S_IFLNK
 		||  isLINK(dst_sb.st_mode)
@@ -828,7 +837,7 @@ void	derived(
 	FindDir(parent, &parent_sb, dst);
 	for (j = optind; j < argc; j++) {
 		(void)strcpy(dst, argv[j]);
-		while (s = strrchr(dst, '/')) {
+		while ((s = strrchr(dst, '/')) != NULL) {
 			if (s[1]) {
 				forced |= copyit(parent, &parent_sb,
 					s+1,

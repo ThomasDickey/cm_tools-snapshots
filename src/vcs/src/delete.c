@@ -1,12 +1,9 @@
-#ifndef	lint
-static	char	Id[] = "$Id: delete.c,v 11.1 1992/11/12 13:20:14 dickey Exp $";
-#endif
-
 /*
  * Title:	vcs_delete.c (version-control-system utility)
  * Author:	T.E.Dickey
  * Created:	17 Oct 1991 (from 'vcs.c'
  * Modified:
+ *		22 Sep 1993, gcc warnings
  *
  * Function:	Deletes a directory-tree from the archive if the following
  *		conditions are met:
@@ -17,7 +14,9 @@ static	char	Id[] = "$Id: delete.c,v 11.1 1992/11/12 13:20:14 dickey Exp $";
  *		c) the real user is on the access-list of each vcs-file.
  */
 
-#include "vcs.h"
+#include <vcs.h>
+
+MODULE_ID("$Id: delete.c,v 11.3 1993/09/22 14:46:59 tom Exp $")
 
 typedef	struct	_item	{
 	struct	_item	*link;
@@ -33,9 +32,9 @@ static	int	can_do;
 
 /******************************************************************************/
 static
-RemoveFile(
-_AR1(char *,	name))
-_DCL(char *,	name)
+void	RemoveFile(
+	_AR1(char *,	name))
+	_DCL(char *,	name)
 {
 	ShowPath("rm -f", name);
 	if (!no_op && (unlink(name) < 0))
@@ -44,9 +43,9 @@ _DCL(char *,	name)
 
 /******************************************************************************/
 static
-RemoveDir(
-_AR1(char *,	name))
-_DCL(char *,	name)
+void	RemoveDir(
+	_AR1(char *,	name))
+	_DCL(char *,	name)
 {
 	ShowPath("rmdir", name);
 	if (!no_op && (rmdir(name) < 0))
@@ -55,15 +54,14 @@ _DCL(char *,	name)
 
 /******************************************************************************/
 static
-int
-PurgeList(_AR0)
+void	PurgeList(_AR0)
 {
 	ITEM	*p;
 
 	if (!can_do && items != 0)
 		VERBOSE(".. purging list (no deletion performed)\n");
 
-	while (p = items) {
+	while ((p = items) != NULL) {
 		if (can_do) {
 			if (p->is_file)
 				RemoveFile(p->name);
@@ -77,12 +75,12 @@ PurgeList(_AR0)
 
 /******************************************************************************/
 static
-Append(
-_ARX(char *,	path)
-_AR1(int,	flag)
-	)
-_DCL(char *,	path)
-_DCL(int,	flag)
+void	Append(
+	_ARX(char *,	path)
+	_AR1(int,	flag)
+		)
+	_DCL(char *,	path)
+	_DCL(int,	flag)
 {
 	ITEM	*p = ALLOC(ITEM,1);
 	p->link = items;
@@ -93,12 +91,12 @@ _DCL(int,	flag)
 
 /******************************************************************************/
 static
-Cannot(
-_ARX(char *,	path)
-_AR1(char *,	why)
-	)
-_DCL(char *,	path)
-_DCL(char *,	why)
+void	Cannot(
+	_ARX(char *,	path)
+	_AR1(char *,	why)
+		)
+	_DCL(char *,	path)
+	_DCL(char *,	why)
 {
 	if (can_do || verbose) {
 		can_do = FALSE;
@@ -108,14 +106,14 @@ _DCL(char *,	why)
 
 /******************************************************************************/
 static
-UserCannot(
-_ARX(char *,	path)
-_ARX(char *,	who)
-_AR1(char *,	what)
-	)
-_DCL(char *,	path)
-_DCL(char *,	who)
-_DCL(char *,	what)
+void	UserCannot(
+	_ARX(char *,	path)
+	_ARX(char *,	who)
+	_AR1(char *,	what)
+		)
+	_DCL(char *,	path)
+	_DCL(char *,	who)
+	_DCL(char *,	what)
 {
 	char	temp[BUFSIZ];
 	FORMAT(temp, "user \"%s\" %s", who, what);
@@ -125,7 +123,7 @@ _DCL(char *,	what)
 /******************************************************************************/
 /*ARGSUSED*/
 static
-WALK_FUNC(do_tree)
+int	WALK_FUNC(do_tree)
 {
 	auto	int	mode;
 	auto	char	part[MAXPATHLEN],
@@ -152,10 +150,9 @@ WALK_FUNC(do_tree)
 }
 
 /******************************************************************************/
-void
-DeleteDir(
-_AR1(char *,	name))
-_DCL(char *,	name)
+void	DeleteDir(
+	_AR1(char *,	name))
+	_DCL(char *,	name)
 {
 	if (!(can_do = DirExists(name))) {
 		VERBOSE(".. %s does not exist\n", name);

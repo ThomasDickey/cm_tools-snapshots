@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 11.1 1992/10/30 07:47:01 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 11.2 1993/09/22 14:30:54 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * Modified:
+ *		22 Sep 1992, gcc warnings
  *		30 Oct 1992, added checks for RCS version 5 (GMT dates).
  *		01 May 1992, added "-L" option.
  *		11 Oct 1991, converted to ANSI
@@ -256,7 +257,7 @@ void	do_obs(
 		return;
 	}
 
-	while (de = readdir(dp)) {
+	while ((de = readdir(dp)) != NULL) {
 		if (dotname(de->d_name))	continue;
 		if (stat(pathcat(tname, name, de->d_name), &sb) >= 0) {
 			auto	int	show	= FALSE;
@@ -311,7 +312,7 @@ void	do_obs(
  * filename.
  */
 static
-WALK_FUNC(do_stat)
+int	WALK_FUNC(do_stat)
 {
 	char	*change	= 0,
 		*vers,
@@ -319,7 +320,7 @@ WALK_FUNC(do_stat)
 		*locked_by = 0;
 	time_t	cdate;
 	int	mode	= (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
-	int	ok_text;
+	int	ok_text = TRUE;
 
 	if (mode == S_IFDIR) {
 		auto	char	tmp[BUFSIZ],
@@ -368,7 +369,6 @@ WALK_FUNC(do_stat)
 			owner = "";
 
 		if (cdate != 0) {
-			ok_text = TRUE;	/* assume this anyway */
 			if (cdate == sp->st_mtime) {
 				if (obsolete)
 					;	/* interpret as obsolete-rev */
@@ -385,7 +385,7 @@ WALK_FUNC(do_stat)
 				if (sp->st_mtime - cdate != gmt_offset(cdate))
 					change	= compared("newer", vers);
 			}
-		} else if (ok_text = istextfile(name)) {
+		} else if ((ok_text = istextfile(name)) != 0) {
 			change	= "not archived";
 		}
 #ifdef	S_IFLNK
@@ -423,6 +423,7 @@ void	do_arg(
 	(void)walktree((char *)0, name, do_stat, "r", 0);
 }
 
+static
 void	usage(_AR0)
 {
 	static	char	*msg[] = {
@@ -553,7 +554,7 @@ _MAIN
 
 		revision = strcpy(tmp, revision);
 		revision[j] = EOS;
-		if (s = strrchr(revision, '.')) {
+		if ((s = strrchr(revision, '.')) != NULL) {
 			if (s[1] == EOS)
 				(void)strcat(revision, "0");
 		} else

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.4 1993/04/27 11:54:24 dickey Exp $
+# $Id: Makefile,v 11.5 1993/09/22 13:46:21 dickey Exp $
 # Make-file for RCS/vcs utility
 
 THIS	= vcs
@@ -36,7 +36,7 @@ run_tests:
 sources:	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
-$B/$(THIS):	$(OBJS) $(LIBS)	; $(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
+$B/$(THIS):	$(OBJS) $(LIBS)	; $(LINK) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 $(OBJS):	$(H_SRC) $(RCSDEFS_H)
 

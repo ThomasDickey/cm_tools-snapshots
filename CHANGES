@@ -1,3 +1,70 @@
+1993-09-24  ste_cm@software.org
+
+	* certify/config.txt: document this configuration
+
+1993-09-24  dickey@software.org
+
+	* certify/reusable.txt: forgot to mention that TD_LIB was split out
+
+1993-09-23  dickey@software.org
+
+	* certify/release.txt: gcc + purify
+
+	* src/checkin/src/checkin.c: gcc warnings
+
+1993-09-22  dickey@software.org
+
+	* src/link2rcs/src/link2rcs.c: gcc+Purify
+
+	* src/vcs/src/unlock.c: gcc-warnings
+
+1993-09-22  Thomas E. Dickey  <dickey@software.org>
+
+	* src/vcs/src/unlock.c: module-id
+
+1993-09-22  dickey@software.org
+
+	* src/vcs/src/insert.c: gcc-warnings
+
+1993-09-22  Thomas E. Dickey  <dickey@software.org>
+
+	* src/vcs/src/insert.c: module-id
+
+1993-09-22  dickey@software.org
+
+	* src/vcs/src/vcs.c: gcc-warnings
+
+1993-09-22  Thomas E. Dickey  <dickey@software.org>
+
+	* src/vcs/src/vcs.c: module-id
+
+1993-09-22  dickey@software.org
+
+	* src/vcs/src/delete.c: gcc-warnings
+
+1993-09-22  Thomas E. Dickey  <dickey@software.org>
+
+	* src/vcs/src/delete.c: module-id
+
+1993-09-22  dickey@software.org
+
+	* src/permit/src/permit.c, src/checkup/src/checkup.c, src/checkout/src/rcsget.c, src/checkout/src/checkout.c:
+	gcc-warnings
+
+	* src/checkin/src/rcsput.c: gcc warnings
+
+	* src/baseline/src/baseline.c, support/set_date.c, src/checkout/src/Makefile, src/checkup/src/Makefile, src/copy/src/Makefile, src/copy/src/copy.c, src/link2rcs/src/Makefile:
+	gcc-warnings
+
+	* src/checkin/src/Makefile: use LINK rather than CC symbol
+
+	* src/baseline/src/Makefile, src/permit/src/Makefile, src/vcs/src/Makefile:
+	gcc-warnings
+
+1993-09-03  dickey@software.org
+
+	* src/link2rcs/src/link2rcs.c: prototypes with <td_qsort.h>
+
 1993-06-24  dickey@software.org
 
 	* src/checkout/src/checkout.c:

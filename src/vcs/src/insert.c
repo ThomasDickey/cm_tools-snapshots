@@ -1,24 +1,23 @@
-#ifndef	lint
-static	char	Id[] = "$Id: insert.c,v 11.1 1992/11/12 13:20:35 dickey Exp $";
-#endif
-
 /*
  * Title:	vcs_insert.c (version-control-system utility)
  * Author:	T.E.Dickey
  * Created:	17 Oct 1991, broke out from 'vcs.c'
  * Modified:
+ *		22 Sep 1993, gcc warnings
  *
  * Function:	performs insert-directory function for 'vcs'.
  */
 
-#include "vcs.h"
+#include <vcs.h>
+
+MODULE_ID("$Id: insert.c,v 11.3 1993/09/22 14:50:24 tom Exp $")
 
 /******************************************************************************/
 /* we have to change directories to keep fooling rcs about the vcs-file */
 static
-ChangeWd(
-_AR1(char *,	name))
-_DCL(char *,	name)
+void	ChangeWd(
+	_AR1(char *,	name))
+	_DCL(char *,	name)
 {
 	ShowPath("chdir", name);
 	if (!no_op) {
@@ -29,9 +28,9 @@ _DCL(char *,	name)
 
 /******************************************************************************/
 static
-MakeDirectory(
-_AR1(char *,	name))
-_DCL(char *,	name)
+void	MakeDirectory(
+	_AR1(char *,	name))
+	_DCL(char *,	name)
 {
 	int	old = umask(0);
 
@@ -45,12 +44,12 @@ _DCL(char *,	name)
 
 /******************************************************************************/
 static
-MakePermit(
-_ARX(char *,	dst)
-_AR1(char *,	base)
-	)
-_DCL(char *,	dst)
-_DCL(char *,	base)
+void	MakePermit(
+	_ARX(char *,	dst)
+	_AR1(char *,	base)
+		)
+	_DCL(char *,	dst)
+	_DCL(char *,	base)
 {
 	static	char	*prefix = "../..";
 	char	src[MAXPATHLEN],
@@ -76,12 +75,12 @@ _DCL(char *,	base)
 /************************************************************************
  *	public entrypoints						*
  ************************************************************************/
-InsertDir(
-_ARX(char *,	name)
-_AR1(char *,	base)
-	)
-_DCL(char *,	name)
-_DCL(char *,	base)
+int	InsertDir(
+	_ARX(char *,	name)
+	_AR1(char *,	base)
+		)
+	_DCL(char *,	name)
+	_DCL(char *,	base)
 {
 	char		*Name = name,
 			*s,
@@ -110,7 +109,7 @@ _DCL(char *,	base)
 	if (len > 0)
 		Name += len + 1;
 
-	if (s = strchr(Name, '/')) {	/* immediate-parent not found */
+	if ((s = strchr(Name, '/')) != NULL) {	/* immediate-parent not found */
 		*s = EOS;
 		VERBOSE(".. recur:%s\n", name);
 		if (!InsertDir(name, base))
@@ -136,7 +135,7 @@ _DCL(char *,	base)
 	else if (!rcspermit(ref_path, base, (char **)0)) {
 		WARN "? no permission on %s\n", ref_path);
 		return FALSE;
-	} else if (s = strchr(base, '.')) {
+	} else if ((s = strchr(base, '.')) != NULL) {
 		*s = EOS;	/* trim version to baseline (3.1 => 3) */
 	}
 

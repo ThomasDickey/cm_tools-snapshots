@@ -1,12 +1,12 @@
 #ifndef	lint
-static	char	*Id = "$Id: set_date.c,v 11.1 1992/02/11 10:14:43 dickey Exp $";
+static	char	*Id = "$Id: set_date.c,v 11.2 1993/09/22 13:57:02 dickey Exp $";
 #endif
 
 #include "ptypes.h"
 #include <time.h>
 
 static
-usage(_AR0)
+void	usage(_AR0)
 {
 	FPRINTF(stderr, "usage: set_date [-m mode] [-t date] file1 [...]\n");
 	exit(FAIL);

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/link2rcs.c,v 11.0 1991/10/18 11:20:46 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/link2rcs.c,v 11.2 1993/09/22 15:26:26 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,8 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/sr
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * Modified:
+ *		22 Sep 1993, gcc warnings.  Purify found an alloc-too-small.
+ *		03 Sep 1993, qsort-definitions.
  *		15 Oct 1991, converted to ANSI
  *		04 Jun 1991, check for the special case in which the
  *			     environment-variable is the current path.
@@ -55,13 +57,12 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/sr
  *		(in a fixed position) to be used as the src-pointer.
  */
 
+#define	QSORT_SRC LIST
 #define	STR_PTYPES
 #include	<ptypes.h>
 #include	<rcsdefs.h>
+#include	<td_qsort.h>
 #include	<ctype.h>
-
-extern	int	optind;		/* 'getopt()' index to argv */
-extern	char	*optarg;	/* 'getopt()' argument in argv */
 
 /************************************************************************
  *	local definitions						*
@@ -107,7 +108,7 @@ static	char	*fmt_file = "link-to-file";
 /*
  * Print normal-trace using a common format
  */
-static
+static void
 tell_it(
 _ARX(char *,	tag)
 _AR1(char *,	path)
@@ -121,7 +122,7 @@ _DCL(char *,	path)
 /*
  * Check for leaf-names suppressed if "-a" option is not given.
  */
-static
+static int
 suppress_dots(
 _AR1(char *,	src))
 _DCL(char *,	src)
@@ -193,7 +194,7 @@ _DCL(char *,	src)
  * sorted-order.
  */
 /*ARGSUSED*/
-static
+static int
 src_stat(
 _ARX(char *,	path)
 _ARX(char *,	name)
@@ -235,7 +236,7 @@ _DCL(int,	level)
 /*
  * Process a single argument to obtain the list of source-directory names
  */
-static
+static void
 find_src(
 _ARX(char *,	path)
 _AR1(char *,	name)
@@ -261,7 +262,7 @@ _DCL(char *,	name)
 	(void)walktree((char *)0, name, src_stat, "r", 0);
 }
 
-static
+static void
 exists(
 _AR1(char *,	name))
 _DCL(char *,	name)
@@ -271,7 +272,7 @@ _DCL(char *,	name)
 	exit(FAIL);
 }
 
-static
+static int
 tell_merged(
 _AR1(char *,	path))
 _DCL(char *,	path)
@@ -280,7 +281,7 @@ _DCL(char *,	path)
 	return (TRUE);
 }
 
-static
+static int
 samelink(
 _ARX(char *,	dst)
 _AR1(char *,	src)
@@ -302,7 +303,7 @@ _DCL(char *,	src)
  * Check for conflicts with existing directory or link-names.  We can replace
  * a link with a link, but directories should not be modified!
  */
-static
+static int
 conflict(
 _ARX(char *,	path)
 _ARX(int,	mode)
@@ -341,7 +342,7 @@ _DCL(char *,	from)
 /*
  * Create a single directory
  */
-static
+static void
 make_dir(
 _AR1(char *,	path))
 _DCL(char *,	path)
@@ -361,7 +362,7 @@ _DCL(char *,	path)
 /*
  * Create a symbolic link
  */
-static
+static void
 make_lnk(
 _ARX(char *,	src)
 _ARX(char *,	dst)
@@ -401,25 +402,22 @@ _DCL(LIST *,	p)
 }
 
 static
-compar_LIST(
-_ARX(LIST *,	a)
-_AR1(LIST *,	b)
-	)
-_DCL(LIST *,	a)
-_DCL(LIST *,	b)
+QSORT_FUNC(compar_LIST)
 {
+	QSORT_CAST(q1,p1)
+	QSORT_CAST(q2,p2)
 	char	x[BUFSIZ], y[BUFSIZ];
-	return (strcmp(deslash(x,a), deslash(y,b)));
+	return (strcmp(deslash(x,p1), deslash(y,p2)));
 }
 
 /* compress duplicate items out of the LIST-vector, returns the resulting len */
 static
-unique_LIST(
-_ARX(LIST *,	vec)
-_AR1(unsigned,	count)
-	)
-_DCL(LIST *,	vec)
-_DCL(unsigned,	count)
+int	unique_LIST(
+	_ARX(LIST *,	vec)
+	_AR1(unsigned,	count)
+		)
+	_DCL(LIST *,	vec)
+	_DCL(unsigned,	count)
 {
 	register int	j, k;
 	for (j = k = 0; k < count; j++, k++) {
@@ -432,7 +430,7 @@ _DCL(unsigned,	count)
 }
 
 /* given a directory-entry, find if a subordinate RCS-directory exists */
-static
+static int
 has_children(
 _ARX(LIST *,	vec)
 _ARX(unsigned,	count)
@@ -464,7 +462,7 @@ _DCL(int,	old)
 }
 
 /* skip past the specified directory-entry and all of its children */
-static
+static int
 skip_children(
 _ARX(LIST *,	vec)
 _ARX(unsigned,	count)
@@ -485,7 +483,7 @@ _DCL(int,	old)
 }
 
 /* purge entries which do not have an underlying RCS-directory */
-static
+static int
 purge_LIST(
 _ARX(LIST *,	vec)
 _AR1(unsigned,	count)
@@ -507,7 +505,7 @@ _DCL(unsigned,	count)
  * Process the list of source/target pairs to construct the required directories
  * and links.
  */
-static
+static void
 make_dst(
 _AR1(char *,	path))
 _DCL(char *,	path)
@@ -526,12 +524,14 @@ _DCL(char *,	path)
 	if (count == 0)
 		return;
 	else if (count > 1) {
-		auto	LIST	*vec = ALLOC(LIST,count);
+		static	LIST	dummy;
+		auto	LIST	*vec = ALLOC(LIST,count+1);
 		for (p = list, count = 0; p; p = q) {
 			vec[count++] = *p;
 			q = p->link;
 			dofree((char *)p);
 		}
+		vec[count] = dummy;
 		qsort((char *)vec, (LEN_QSORT)count, sizeof(LIST), compar_LIST);
 		count = unique_LIST(vec,count);
 		if (baseline >= 0)
@@ -553,7 +553,7 @@ _DCL(char *,	path)
 		} else {		/* symbolic-link */
 			register char *s;
 			(void)pathcat(dst, path, p->path);
-			if (s = strrchr(dst, '/'))
+			if ((s = strrchr(dst, '/')) != NULL)
 				*s = EOS;
 			make_lnk(relative ? relpath(tmp, dst, p->from)
 					  : p->from,
@@ -583,7 +583,7 @@ _DCL(char *,	buffer)
 /*
  * Display the options recognized by this utility
  */
-static
+static void
 usage(_AR0)
 {
 	static	char	*msg[] = {

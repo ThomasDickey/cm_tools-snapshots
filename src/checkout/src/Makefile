@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.4 1993/04/27 10:38:05 dickey Exp $
+# $Id: Makefile,v 11.5 1993/09/22 13:46:22 dickey Exp $
 # Make-file for RCS checkout utilities
 
 THIS	= checkout
@@ -21,8 +21,8 @@ run_test:
 sources: 	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
-$B/$(THIS):	$(THIS).o $(LIBS)	; $(CC) -o $@ $(THIS).o $(LIBS)
-$B/rcsget:	rcsget.o $(LIBS)	; $(CC) -o $@ rcsget.o $(LIBS)
+$B/$(THIS):	$(THIS).o $(LIBS)	; $(LINK) -o $@ $(THIS).o $(LIBS)
+$B/rcsget:	rcsget.o $(LIBS)	; $(LINK) -o $@ rcsget.o $(LIBS)
 
 $(THIS).o \
 rcsget.o:	$(RCSDEFS_H)

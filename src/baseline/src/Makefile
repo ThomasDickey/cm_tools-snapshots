@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.4 1993/04/27 10:38:04 dickey Exp $
+# $Id: Makefile,v 11.5 1993/09/22 13:46:21 dickey Exp $
 # Make-file for RCS baseline utility
 
 THIS	= baseline
@@ -21,7 +21,7 @@ run_test:
 sources:	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
-$B/$(THIS):	$(THIS).o $(LIBS)	; $(CC) -o $@ $(THIS).o $(LIBS)
+$B/$(THIS):	$(THIS).o $(LIBS)	; $(LINK) -o $@ $(THIS).o $(LIBS)
 
 $(THIS).o:	$(RCSDEFS_H)
 
