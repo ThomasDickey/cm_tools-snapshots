@@ -1,18 +1,18 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.7 1992/11/24 08:35:45 dickey Exp $
+# $Id: run_test.sh,v 11.8 1993/04/27 11:55:53 dickey Exp $
 #
 #	test-script for 'vcs' utility
 #
 if test $# != 0
 then
 	echo '** '`date`
-	PATH=`../../../support/test_path.sh checkin permit`;	export PATH
-	. ../../../support/test_setup.sh
+	PATH=`../../../support/testpath.sh checkin permit`;	export PATH
+	. ../../../support/testinit.sh
 	RCS_DIR=FOO; export RCS_DIR
 
-	SETUID=`whose_suid.sh vcs`
+	SETUID=`who_suid.sh vcs`
 	if test -n "$SETUID"
-	then	SETUID2=`whose_suid.sh checkin`
+	then	SETUID2=`who_suid.sh checkin`
 		if test "$SETUID" != "$SETUID2"
 		then	echo '? both vcs and checkin must be same setuid-sense'
 			SETUID=""

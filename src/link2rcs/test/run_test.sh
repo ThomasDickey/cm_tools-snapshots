@@ -1,11 +1,11 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.1 1992/11/24 16:13:54 dickey Exp $
+# $Id: run_test.sh,v 11.2 1993/04/27 11:35:04 dickey Exp $
 # test-script for link2rcs (RCS skeleton tree utility)
 #
 if test $# != 0
 then
 	echo '** '`date`
-	PATH=`../../../support/test_path.sh`;	export PATH
+	PATH=`../../../support/testpath.sh`;	export PATH
 
 	# initialize
 	WD=`pwd`
@@ -14,7 +14,7 @@ then
 	cd ..
 	rm -rf junk junk.*
 
-	list_tree.sh test >junk.old
+	listtree.sh test >junk.old
 
 	for name in $*
 	do
@@ -26,6 +26,7 @@ then
 			then	echo '** ok:  '$name
 				rm -f $name.tst
 			else	echo '?? fail:'$name
+				diff $name.tst $WD/$name.ref
 			fi
 		else	echo '** save:'$name
 			mv $name.tst $WD/$name.ref

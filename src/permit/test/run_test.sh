@@ -1,12 +1,12 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.2 1992/11/24 09:29:34 dickey Exp $'
+# $Id: run_test.sh,v 11.3 1993/04/27 11:42:53 dickey Exp $'
 # run regression test for RCS permission utility
 #
 if test $# != 0
 then
 	echo '** '`date`
-	PATH=`../../../support/test_path.sh checkin`; export PATH
-	. test_setup.sh
+	PATH=`../../../support/testpath.sh checkin`; export PATH
+	. testinit.sh
 	Q="-q";		export Q
 	RCS_DIR=FOO;	export RCS_DIR
 

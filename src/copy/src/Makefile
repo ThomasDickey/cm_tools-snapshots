@@ -1,9 +1,9 @@
-# $Id: Makefile,v 11.3 1992/10/16 09:26:14 dickey Exp $
+# $Id: Makefile,v 11.4 1993/04/27 10:37:08 dickey Exp $
 # MAKE-file for enhanced unix copy utility
 
 THIS	= copy
 TOP	= ../../../..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 ####### (Standard Lists) #######################################################
 ALL	= $B/$(THIS)
@@ -18,7 +18,7 @@ install:	$(SOURCES) $(ALL)
 clean:				; rm -f $(CLEAN)
 clobber: 	clean		; rm -f $(ALL)
 destroy:			; $(DESTROY)
-run_tests:
+run_test:
 sources: 	$(SOURCES)
 
 ####### (Details of Productions) ###############################################

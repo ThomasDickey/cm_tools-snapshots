@@ -1,8 +1,8 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.2 1992/10/28 12:02:52 dickey Exp $
+# $Id: run_test.sh,v 11.3 1993/04/27 11:20:33 dickey Exp $
 # test-script for RCS baseline utility
 #
-F="Makefile run_tests.sh"
+F="Makefile run_test.sh"
 date
 #
 # run from test-versions:
@@ -18,7 +18,7 @@ touch junk/not_baselined
 if test -f RCS/Makefile,v
 then
 	copy RCS/Makefile,v junk/RCS
-	copy RCS/run_tests.sh,v junk/RCS
+	copy RCS/run_test.sh,v junk/RCS
 	cd junk
 else
 	copy $F junk
@@ -31,7 +31,7 @@ chmod -w $F
 run_tool rcs -e -q RCS/Makefile,v
 #
 touch not_baselined
-N=`grep 'head[ 	]*[0-9.]*;$' RCS/Makefile,v | sed -f ../run_tests.sed`
+N=`grep 'head[ 	]*[0-9.]*;$' RCS/Makefile,v | sed -f ../run_test.sed`
 if test -n "$N"
 then
 	B=`expr $N + 1` 

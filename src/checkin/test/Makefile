@@ -1,9 +1,9 @@
-# $Id: Makefile,v 11.7 1992/11/24 08:06:47 dickey Exp $
+# $Id: Makefile,v 11.8 1993/04/27 10:38:05 dickey Exp $
 # make-file for testing RCS checkin utility
 
 ####### (Development) ##########################################################
 TOP	= ../../../..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 ####### (Standard Lists) #######################################################
 REF_FILES=\
@@ -38,7 +38,7 @@ SCRIPTS	=\
 	case3_e.sh\
 	case3_f.sh\
 	clean.sh\
-	run_tests.sh
+	run_test.sh
 
 SOURCES	= Makefile $(SCRIPTS) $(REF_FILES) README
 ALL	=
@@ -51,7 +51,7 @@ destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
 lincnt.out:
-run_tests:	$(SOURCES) $(ALL) ; $(RUN_TESTS)
+run_test:	$(SOURCES) $(ALL) ; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################
 $(SOURCES):			; $(GET) $@

@@ -1,9 +1,9 @@
-# $Id: Makefile,v 11.3 1992/11/24 09:31:25 dickey Exp $
+# $Id: Makefile,v 11.4 1993/04/27 10:53:50 dickey Exp $
 # make-file for testing RCS permission utility
 
 ####### (Development) ##########################################################
 TOP	= ../../../..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 ####### (Standard Lists) #######################################################
 REF_FILES =\
@@ -21,7 +21,7 @@ SCRIPTS	=\
 	case3.sh \
 	case4.sh \
 	case5.sh \
-	run_tests.sh
+	run_test.sh
 
 SOURCES	= $(SCRIPTS) $(REF_FILES)
 
@@ -33,7 +33,7 @@ destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
 lincnt.out:
-run_tests:	$(SOURCES)	; $(RUN_TESTS)
+run_test:	$(SOURCES)	; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################
 $(SOURCES):			; $(GET) $@

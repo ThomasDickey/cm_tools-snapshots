@@ -1,8 +1,8 @@
-# $Id: Makefile,v 11.2 1992/10/16 09:30:30 dickey Exp $
+# $Id: Makefile,v 11.3 1993/04/27 10:37:09 dickey Exp $
 
 THIS	= cm_tools
 TOP	= ../..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 ####### (Development) ##########################################################
 USE	= man

@@ -1,13 +1,13 @@
-# $Id: Makefile,v 11.2 1992/10/09 12:48:30 dickey Exp $
+# $Id: Makefile,v 11.3 1993/04/27 10:37:08 dickey Exp $
 # make-file for testing unix copy utility
 
 ####### (Development) ##########################################################
 TOP	= ../../../..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 ####### (Standard Lists) #######################################################
 SCRIPTS	=\
-	run_tests.sh
+	run_test.sh
 
 SOURCES	= Makefile $(SCRIPTS)
 
@@ -19,7 +19,7 @@ destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
 lincnt.out:
-run_tests:	$(SOURCES)	; $(RUN_TESTS)
+run_test:	$(SOURCES)	; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################
 $(SOURCES):			; $(GET) $@

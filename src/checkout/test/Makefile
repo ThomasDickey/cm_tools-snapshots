@@ -1,13 +1,13 @@
-# $Id: Makefile,v 11.4 1992/11/24 07:43:58 dickey Exp $
+# $Id: Makefile,v 11.5 1993/04/27 10:38:05 dickey Exp $
 # make-file for testing RCS checkout utility
 
 ####### (Development) ##########################################################
 TOP	= ../../../..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 ####### (Standard Lists) #######################################################
 SCRIPTS	=\
-	run_tests.sh
+	run_test.sh
 
 SOURCES	= Makefile $(SCRIPTS)
 ALL	=
@@ -20,7 +20,7 @@ destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
 lincnt.out:
-run_tests:	$(SOURCES) $(ALL) ; $(RUN_TESTS)
+run_test:	$(SOURCES) $(ALL) ; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################
 $(SOURCES):			; $(GET) $@

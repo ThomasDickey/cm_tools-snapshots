@@ -1,24 +1,24 @@
-# $Id: Makefile,v 11.3 1992/10/16 09:28:11 dickey Exp $
+# $Id: Makefile,v 11.4 1993/04/27 11:54:24 dickey Exp $
 # Make-file for RCS/vcs utility
 
 THIS	= vcs
 TOP	= ../../../..
-include $(TOP)/cm_library/support/cm_library.mk
+include $(TOP)/td_lib/support/td_lib.mk
 
 ####### (Standard Lists) #######################################################
 ALL	= $B/$(THIS)
 
 OBJS	= \
 	$(THIS).o \
-	vcs_delete.o \
-	vcs_insert.o \
-	vcs_unlock.o
+	delete.o \
+	insert.o \
+	unlock.o
 
 C_SRC	= \
 	$(THIS).c \
-	vcs_delete.c \
-	vcs_insert.c \
-	vcs_unlock.c
+	delete.c \
+	insert.c \
+	unlock.c
 
 H_SRC	= \
 	$(THIS).h

@@ -1,15 +1,15 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.6 1992/11/24 08:25:44 dickey Exp $
+# $Id: run_test.sh,v 11.7 1993/04/27 11:24:42 dickey Exp $
 #
 #	Runs regression tests for 'checkin' and 'rcsput'
 #
 if test $# != 0
 then
 	echo '** '`date`
-	PATH=`../../../support/test_path.sh`; export PATH
-	. test_setup.sh
+	PATH=`../../../support/testpath.sh`; export PATH
+	. testinit.sh
 
-	SETUID=`whose_suid.sh checkin`
+	SETUID=`who_suid.sh checkin`
 	if test -n "$SETUID"
 	then	ADMIN=$SETUID
 	fi
