@@ -1,27 +1,35 @@
 
-RCS file:        junk/RCS/dummy,v;   Working file:    junk/dummy
-head:            4.1
-branch:          
-locks:           USER: 4.1;  strict
-access list:     USER
-symbolic names:  case3_d: 4.1;  case3_c: 2.3;  case3_b: 2.2;
-comment leader:  "# "
-total revisions: 4;    selected revisions: 4
+RCS file: junk/RCS/dummy,v
+Working file: junk/dummy
+head: 4.1
+branch:
+locks: strict
+	USER: 4.1
+access list:
+	ADMIN
+	USER
+symbolic names:
+	case3_d: 4.1
+	case3_c: 2.3
+	case3_b: 2.2
+comment leader: "# "
+keyword substitution: kv
+total revisions: 4;	selected revisions: 4
 description:
 ----------------------------
-revision 4.1        locked by: USER;       
-date: 90/02/02 12:34:56;  author: USER;  state: Exp;  lines added/del: 0/0
+revision 4.1	locked by: USER;
+date: 1990/02/02 17:34:56;  author: USER;  state: Exp;  lines: +0 -0
 no-change
 ----------------------------
-revision 2.3        
-date: 90/02/02 12:34:56;  author: USER;  state: Exp;  lines added/del: 1/0
+revision 2.3
+date: 1990/02/02 17:34:56;  author: USER;  state: Exp;  lines: +1 -0
 new-line
 ----------------------------
-revision 2.2        
-date: 89/02/02 12:34:56;  author: USER;  state: Exp;  lines added/del: 2/2
+revision 2.2
+date: 1989/02/02 17:34:56;  author: USER;  state: Exp;  lines: +2 -2
 new-date
 ----------------------------
-revision 2.1        
-date: 88/01/01 12:34:56;  author: USER;  state: Exp;  
+revision 2.1
+date: 1988/01/01 17:34:56;  author: USER;  state: Exp;
 RCS_BASE
 =============================================================================

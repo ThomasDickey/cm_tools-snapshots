@@ -1,3 +1,197 @@
+1992-11-24  dickey@software.org
+
+	* src/link2rcs/test/Makefile, src/link2rcs/test/run_test.sh:
+	split out test-cases
+
+	* src/link2rcs/test/case1.sh, src/link2rcs/test/case2.ref, src/link2rcs/test/case1.ref, src/link2rcs/test/case2.sh, src/link2rcs/test/listtree.sh:
+	RCS_BASE
+
+	* src/permit/test/Makefile: split test-cases out of 'run_tests.sh'
+
+	* src/permit/test/run_test.sh:
+	rewrote so I can do regression test w/o looking at this script's output
+
+	* src/permit/test/case5.ref, src/permit/test/case4.ref, src/permit/test/case3.ref, src/permit/test/case2.ref, src/permit/test/case1.ref, src/permit/test/case0.ref, src/permit/test/case0.sh, src/permit/test/case5.sh, src/permit/test/case4.sh, src/permit/test/case3.sh, src/permit/test/case2.sh, src/permit/test/case1.sh:
+	RCS_BASE
+
+	* support/testpath.sh: forgot to put the local tool into the path...
+
+	* src/vcs/test/run_test.sh: RCS_DIR must be FOO here for good testing
+
+	* src/checkin/test/case3_e.sh: moved 'run_tool'
+
+	* support/testinit.sh: use default for RCS_DIR
+
+	* src/checkin/test/run_test.sh: moved test-support
+
+	* support/Makefile: revised this to provide support for tests
+
+	* src/checkin/test/Makefile: moved test-support (run_tool, set_date)
+
+	* src/checkout/test/run_test.sh: use support/test_path.sh
+
+	* src/checkout/test/Makefile: moved 'run_tool' to ../../../support
+
+	* src/vcs/test/run_test.sh:
+	moved some supporting scripts to ../../../support
+
+	* support/testpath.sh: fixed comment
+
+	* support/testpath.sh, support/testinit.sh: RCS_BASE
+
+	* src/vcs/test/Makefile:
+	moved setuid.sh to ../../../support/whose_suid.sh
+
+	* Makefile: added-back 'support' directory
+
+1992-11-23  dickey@software.org
+
+	* src/vcs/test/run_test.sh: typo
+
+	* src/vcs/test/run_test.sh:
+	got this to regress with vcs,checkin setuid'd to 'set_cm'
+
+	* src/vcs/test/Makefile: added 'setuid.sh'
+
+	* src/vcs/test/run_test.sh:
+	second pass: setup/cleanup of setuid code (not done yet!)
+
+	* src/vcs/test/delete.ref: delete.tst is obsolete
+
+	* src/vcs/test/insert.ref: insert.tst is obsolete
+
+	* src/vcs/test/compare.sh: catch use of "$ADMIN"
+
+	* src/permit/src/permit.c:
+	Don't require that user-names be in the passwd file (for testability).
+	Corrected potention place in 'on_list()' that clobbered its input.
+	Fixed a place where "-a" option broke if it contained the owner-name
+
+	* src/vcs/test/run_test.sh: parameterize this a little better
+	will rewrite to support setuid testing
+
+	* src/checkin/src/checkin.c:
+	ifdef'd out the GetLock() procedure, since we should be
+	able to work w/o this in RCS version 5.
+
+1992-11-12  dickey@software.org
+
+	* src/vcs/src/insert.c, src/vcs/src/delete.c: rcspermit-interface
+
+	* src/checkout/src/checkout.c: modified interface of 'rcspermit()'
+
+	* src/checkin/test/case3_e.sh:
+	rephrase this so I don't get prompted in setuid-tests for RCS-4
+
+	* src/checkin/test/case3_f.sh: added a comment
+
+	* src/checkin/test/run_test.sh:
+	modified so I don't filter out the ADMIN from rlog's display of access-list
+	also, invoke new script 'clean.sh'
+
+	* src/checkin/src/checkin.c:
+	mods to pass along access-list from permit-file to the
+	newly created archive; simplifies comparison of rlog
+	output in setuid/non-setuid modes.
+
+1992-11-11  dickey@software.org
+
+	* src/checkin/test/case3_a.ref, src/checkin/test/case3_b.ref, src/checkin/test/case3_c.ref, src/checkin/test/case3_d.ref, src/checkin/test/case3_e.ref, src/checkin/test/case3_f.ref:
+	RCS-5.6.4-beta
+
+	* src/checkin/test/clean.sh: RCS_BASE
+
+	* src/checkin/src/checkin.c:
+	for RCS 4, don't invoke 'ci' as admin-only.
+	it would result in the wrong user for a lock.
+
+	* src/checkin/test/case3_f.ref, src/checkin/test/case3_e.ref, src/checkin/test/case3_d.ref, src/checkin/test/case3_c.ref, src/checkin/test/case3_b.ref, src/checkin/test/case3_a.ref:
+	access-list
+
+	* src/checkin/src/checkin.c:
+	added call on 'rcsaccess()' to copy the permit-file's access
+	list so I can make RCS-4 scripts look more alike.
+
+	* src/checkin/test/Makefile: added new script 'clean.sh'
+	added deps on LIBS for local tools
+
+1992-11-10  dickey@software.org
+
+	* src/checkin/src/checkin.c: begin re-regression of RCS version 4
+
+	* src/checkin/test/Makefile: added 'setuid.sh'
+
+	* src/checkin/test/admin.sh: shortened some pathnames
+
+	* src/checkin/test/run_test.sh:
+	derive the name of the setuid-variable from the environment
+
+	* src/vcs/test/setuid.sh, support/who_suid.sh: RCS_BASE
+
+	* src/checkin/test/setuid.sh:
+	rewrote into c-shell because I could not get the apollo bourne-shell to
+	work with the 'read' properly.
+
+	* src/checkin/test/setuid.sh: RCS_BASE
+
+1992-11-09  dickey@software.org
+
+	* src/checkin/test/Makefile: added 'admin.sh'
+
+	* src/checkin/test/admin.sh:
+	modified so this can detect if the RCS directory is owned by the setuid-admin
+
+	* src/checkin/test/run_test.sh:
+	partial mods to make this work for setuid-binary
+
+	* src/checkin/test/case1.sh: use new script 'admin.sh'
+
+	* src/checkin/test/case1_a.sh:
+	handles special case for apollo sr10.3 where we cannot set -k and -w both
+
+	* src/checkin/test/case3_e.sh:
+	make this work (sort of) with setuid code
+
+	* src/checkin/test/case3.sh, src/checkin/test/case2.sh:
+	use script 'admin.sh'
+
+1992-11-05  dickey@software.org
+
+	* src/checkin/test/admin.sh: RCS_BASE
+
+	* src/checkin/src/checkin.c:
+	for RCS version 5, always copy back from the temp-file,
+	since we cannot tell from the modification date if anything
+	was substituted.
+
+	* src/checkin/src/checkin.c:
+	added "-w" option so that I can override the setuid
+	behavior on the apollo: to make this work properly with
+	RCS version 5, I must invoke 'ci' in an admin-only subprocess.
+	This means I must set "-w" option to tell the actual user.
+	However, this conflicts with "-k", so I added my own "-w"
+	option to allow me to re-override it (sigh).
+
+	* src/checkin/src/checkin.c:
+	chopped out procedure 'Checkin()' so I can run this as
+	admin-only, to fool 'ci' in RCS version 5.
+
+1992-11-04  dickey@software.org
+
+	* src/checkin/src/checkin.c: collapsed some global variables
+
+	* src/checkin/src/checkin.c:
+	ensure that we use "-d" option always in RCS version 5
+
+1992-11-02  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	first cut of ifdefs for suppressing unneeded post-processing
+	when we have version-5 of RCS
+
+	* src/checkout/src/checkout.c: folded global 'co_mode' into arg-list
+	use "-M" option of 'co' if we have version-5
+
 1992-10-30  dickey@software.org
 
 	* src/vcs/test/run_test.sh, src/permit/test/run_test.sh: corrected path

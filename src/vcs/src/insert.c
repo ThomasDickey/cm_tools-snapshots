@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: insert.c,v 11.0 1991/10/17 16:41:02 ste_cm Rel $";
+static	char	Id[] = "$Id: insert.c,v 11.1 1992/11/12 13:20:35 dickey Exp $";
 #endif
 
 /*
@@ -133,7 +133,7 @@ _DCL(char *,	base)
 
 	if (no_op && !DirExists(ref_path))
 		;	/* assume we could if we wanted to */
-	else if (!rcspermit(ref_path, base)) {
+	else if (!rcspermit(ref_path, base, (char **)0)) {
 		WARN "? no permission on %s\n", ref_path);
 		return FALSE;
 	} else if (s = strchr(base, '.')) {

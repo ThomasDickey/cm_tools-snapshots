@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.2 1992/10/09 13:05:39 dickey Exp $
+# $Id: Makefile,v 11.4 1992/11/24 07:23:08 dickey Exp $
 # make-file for testing RCS permission utility
 
 ####### (Development) ##########################################################

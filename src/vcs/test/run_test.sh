@@ -1,46 +1,77 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.1 1992/10/30 08:22:42 dickey Exp $
-# test-script for RCS baseline utility
+# $Id: run_test.sh,v 11.7 1992/11/24 08:35:45 dickey Exp $
 #
-date
+#	test-script for 'vcs' utility
 #
-# run from test-versions:
-for n in .. ../../.. ../../permit
-do	PATH=`cd $n/bin;pwd`:$PATH
-done
-PATH=:`pwd`:$PATH
-export PATH
-#
-JUNK='foo* FOO *.tst'
-TTY=/tmp/test$$
-CLEANUP="rm -rf $JUNK; rm -f $TTY"
-RCS_DIR=FOO;export RCS_DIR
-RCS_DEBUG=0;export RCS_DEBUG
-#
-echo '** initializing tests'
-trap "$CLEANUP" 0
-$CLEANUP
-mkdir FOO
-permit -q -b2 .
-#
-echo '** Testing INSERT'
-#rm -f insert.tst
-vcs -i foo/src foo/test foo2 >insert.tst 2>&1
-echo '** resulting tree:' >>insert.tst
-find $JUNK -print         >>insert.tst
-#
-compare.sh insert
-#
-echo '** Testing UNLOCK'
-cp compare.sh foobar
-checkin -q -l -tMakefile foobar 2>$TTY
-vcs -u foobar             >unlock.tst    2>&1
-#
-compare.sh unlock
-#
-echo '** Testing DELETE'
-vcs -d foo/src foo2 foo >delete.tst 2>&1
-echo '** resulting tree:' >>delete.tst
-find $JUNK -print         >>delete.tst
-#
-compare.sh delete
+if test $# != 0
+then
+	echo '** '`date`
+	PATH=`../../../support/test_path.sh checkin permit`;	export PATH
+	. ../../../support/test_setup.sh
+	RCS_DIR=FOO; export RCS_DIR
+
+	SETUID=`whose_suid.sh vcs`
+	if test -n "$SETUID"
+	then	SETUID2=`whose_suid.sh checkin`
+		if test "$SETUID" != "$SETUID2"
+		then	echo '? both vcs and checkin must be same setuid-sense'
+			SETUID=""
+		else	ADMIN=$SETUID
+		fi
+	fi
+	export	ADMIN
+	export	SETUID
+
+	WD=`pwd`
+	JUNK='foo* FOO'
+	TTY=/tmp/test$$
+	TMP=/tmp/TEST$$
+	CLEANUP="$SETUID rm -rf $TMP; rm -f $TTY"
+
+	echo '** initializing tests'
+	trap "$CLEANUP" 0 1 2 5 15
+	Q="-q"
+	$CLEANUP
+	umask 000
+	$SETUID mkdir $TMP
+	umask 022
+	cd $TMP
+	$SETUID mkdir FOO
+	$SETUID permit $Q -a$USER,$ADMIN -b2 .
+
+	for name in $*
+	do
+		name=`basename $name .ref`
+		echo '** Testing '`echo $name |tr '[a-z]' '[A-Z]'`
+		LOG=$WD/$name.tst
+		rm -f $LOG
+		cd $TMP
+		case $name in
+		insert)
+			(
+				vcs -i foo/src foo/test foo2 2>&1
+				echo '** resulting tree:'
+				find $JUNK -print
+			) >>$LOG
+			;;
+		unlock)
+			(
+				cp $WD/compare.sh foobar
+				checkin $Q -l -t$WD/Makefile foobar 2>$TTY
+				vcs -u foobar 2>&1
+			) >>$LOG
+			;;
+		delete)
+			(
+				vcs -d foo/src foo2 foo 2>&1
+				echo '** resulting tree:'
+				find $JUNK -print
+			) >>$LOG
+			;;
+		esac
+		cd $WD
+		./compare.sh $name
+	done
+else
+	$0 insert unlock delete
+fi

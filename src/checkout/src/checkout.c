@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 11.1 1992/10/27 08:38:19 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 11.3 1992/11/12 12:54:49 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		02 Nov 1992, mods for RCS version 5.
  *		16 Jul 1992, corrected call on 'cutoff()'
  *		06 Feb 1992, revise filename-parsing with 'rcsargpair()',
  *			     obsoleted "-x" option.
@@ -107,10 +108,9 @@ static	int	silent;
 static	int	debug;			/* set from environment RCS_DEBUG */
 static	int	no_op;			/* suppress actual "co" invocation */
 static	int	locked;			/* TRUE if user is locking file */
-static	int	to_stdout;		/* TRUE if 'co' writes to stdout */
 static	FILE	*log_fp;		/* normally stdout, unless "-p" */
+static	int	to_stdout;		/* TRUE if 'co' writes to stdout */
 
-static	int	co_mode;		/* mode with which 'co' sets file */
 static	int	Effect, Caller;		/* effective/real uid's	*/
 static	char	Working[MAXPATHLEN],	/* current names we are using */
 		Archive[MAXPATHLEN];
@@ -266,13 +266,14 @@ _DCL(char *,	b)
  * Find the revision which the user has selected.
  */
 static
-int
-PreProcess(
-_ARX(time_t *,	revtime)	/* date with which to touch file */
-_AR1(char *,	save_rev)	/* revision we ask 'co' to retrieve */
-	)
-_DCL(time_t *,	revtime)
-_DCL(char *,	save_rev)
+int	PreProcess(
+	_ARX(time_t *,	revtime)	/* date with which to touch file */
+	_ARX(char *,	save_rev)	/* revision we ask 'co' to retrieve */
+	_AR1(int *,	co_mode)
+		)
+	_DCL(time_t *,	revtime)
+	_DCL(char *,	save_rev)
+	_DCL(int *,	co_mode)
 {
 	int	ok_vers	= FALSE,
 		ok_date	= FALSE;
@@ -316,7 +317,7 @@ _DCL(char *,	save_rev)
 			s = rcslocks(s, tmp, this_rev);
 			if (*this_rev && EMPTY(opt_rev)) {
 				TELL(log_fp, "** revision %s is locked\n", this_rev);
-				co_mode |= S_IWRITE;
+				*co_mode |= S_IWRITE;
 				(void)strcpy(save_rev, this_rev);
 			}
 			break;
@@ -359,7 +360,7 @@ _DCL(char *,	save_rev)
 			if (ok_vers && ok_date) {
 				if (EMPTY(opt_rev)) {
 					if (strcmp(save_rev, this_rev)) {
-						co_mode &= ~S_IWRITE;
+						*co_mode &= ~S_IWRITE;
 					}
 					(void)strcpy(save_rev,this_rev);
 					header = FALSE;
@@ -393,15 +394,16 @@ _DCL(char *,	save_rev)
  * it will delete or modify the checked-in file.
  */
 static
-void
-Execute(
-_ARX(char *,	revision)
-_ARX(time_t,	newtime)
-_AR1(time_t,	oldtime)
-	)
-_DCL(char *,	revision)
-_DCL(time_t,	newtime)
-_DCL(time_t,	oldtime)
+void	Execute(
+	_ARX(char *,	revision)
+	_ARX(time_t,	newtime)
+	_ARX(time_t,	oldtime)
+	_AR1(int,	co_mode)
+		)
+	_DCL(char *,	revision)
+	_DCL(time_t,	newtime)
+	_DCL(time_t,	oldtime)
+	_DCL(int,	co_mode)
 {
 	static	DYN	*cmds;
 	auto	STAT	sb;
@@ -410,6 +412,9 @@ _DCL(time_t,	oldtime)
 	UidHack = to_stdout ? "" : rcstemp(Working, FALSE);
 
 	dyn_init(&cmds, BUFSIZ);
+#if	RCS_VERSION >= 5
+	CATARG(cmds, "-M");
+#endif
 	if (silent)	CATARG(cmds, "-q");
 	CATARG2(cmds, opt, revision);
 	CATARG(cmds, UidHack);
@@ -425,6 +430,7 @@ _DCL(time_t,	oldtime)
 			DEBUG((log_fp, "=> file \"%s\"\n", UidHack))
 			DEBUG((log_fp, "=> size = %d\n", sb.st_size))
 			DEBUG((log_fp, "=> date = %s", ctime(&sb.st_mtime)))
+			DEBUG((log_fp, "..(comp)  %s", ctime(&oldtime)))
 			if (sb.st_mtime == oldtime) {
 				TELL(log_fp, "** checkout was not performed\n");
 				return;
@@ -460,14 +466,14 @@ _DCL(time_t,	oldtime)
  *	out with root-uid.
  */
 static
-void
-do_file(_AR0)
+void	do_file(_AR0)
 {
 	STAT	sb;
 	int	ok;
 	char	rev_buffer[REVSIZ];
 	char	temp[MAXPATHLEN];
 	time_t	revtime;
+	int	co_mode;		/* mode with which 'co' sets file */
 
 	/*
 	 * Ensure that we can find the RCS-file.  Note that this program may be
@@ -498,7 +504,7 @@ do_file(_AR0)
 		if (locked
 		&& (TestAccess(path_of(temp, Archive), W_OK) >= 0))
 			GiveBack(FALSE, "RCS-directory is writable");
-		else if (!rcspermit(temp,(char *)0))
+		else if (!rcspermit(temp,(char *)0, (char **)0))
 			GiveBack(Effect && locked, "not listed in permit-file");
 	}
 
@@ -514,8 +520,8 @@ do_file(_AR0)
 	if (!locked && TestAccess(Archive, R_OK) >= 0)
 		GiveBack(FALSE, "normal rights suffice");
 
-	if (PreProcess (&revtime, rev_buffer))
-		Execute(rev_buffer, revtime, sb.st_mtime);
+	if (PreProcess (&revtime, rev_buffer, &co_mode))
+		Execute(rev_buffer, revtime, sb.st_mtime, co_mode);
 }
 
 static

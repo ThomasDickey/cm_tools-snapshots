@@ -1,13 +1,9 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.1 1992/10/28 12:08:18 dickey Exp $
+# $Id: run_test.sh,v 11.2 1992/11/24 08:03:32 dickey Exp $
 # test-script for RCS checkout utility
 #
 # run from test-versions:
-for n in .. ../../.. ../../checkin
-do	PATH=`cd $n/bin;pwd`:$PATH
-done
-PATH=`pwd`:$PATH
-export PATH
+PATH=`../../../support/test_path.sh checkin`; export PATH
 #
 date
 rm -rf junk

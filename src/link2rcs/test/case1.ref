@@ -1,0 +1,17 @@
+** SRC=.
+** DST=junk
+** src-path = PWD/test
+** dst-path = PWD/junk
+** make directory: test
+** link-to-RCS:    test/RCS
+** make directory: test/other
+** make directory: test/subdir
+** link-to-RCS:    test/subdir/RCS
+** make directory: test/subdir/first
+Resulting tree:
+test/
+test/RCS/
+test/other/
+test/subdir/
+test/subdir/RCS/
+test/subdir/first/
