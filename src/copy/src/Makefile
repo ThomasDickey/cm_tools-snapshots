@@ -1,5 +1,5 @@
-# @(#)Makefile	1.6 88/08/17 09:28:14
-# Make-file for RCS checkout utilities
+# $Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/Makefile,v 1.4 1988/08/23 07:49:23 dickey Exp $
+# MAKE-file for enhanced unix copy utility
 #
 ####### (Environment) ##########################################################
 B	= ../../bin
@@ -11,14 +11,13 @@ INCLUDES= -I$I
 CFLAGS  = $(DEFINES) $(INCLUDES) -O
 LIBS	= ../lib/lib.a
 DATE	= echo '****'`date` >> $@
-LINTOPT	= $(DEFINES) $(INCLUDES) -ltd
+LINTOPT	= $(DEFINES) $(INCLUDES) -ltd -lapollo
 #
 ####### (Standard Lists) #######################################################
-ALL	= checkout
-SCRIPTS	= rcsget.sh
-CSRC	= checkout.c
-SRCS	= $(CSRC) $(SCRIPTS)
-MAIN_O	= checkout.o $(LIBS)
+ALL	= copy
+CSRC	= copy.c
+SRCS	= $(CSRC)
+MAIN_O	= copy.o $(LIBS)
 #
 ####### (Standard Productions) #################################################
 all:		$(ALL)
@@ -28,15 +27,13 @@ clobber: 	clean		; rm -f $(ALL)
 destroy:			; rm -f *
 sources: 	$(SRCS)
 #
-install:	$B/checkout\
-		$B/rcsget
+install:	$B/copy
 #
 ####### (Details of Productions) ###############################################
-checkout:	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
-checkout.o:	$I/ptypes.h
+copy:	$(MAIN_O)		; $(CC) -o $@ $(MAIN_O)
+copy.o:	$I/ptypes.h
 #
-$B/checkout:	checkout	; copy -d $@
-$B/rcsget:	rcsget.sh	; copy $? $@
+$B/copy:	copy		; copy -d $@
 #
 ####### (Development) ##########################################################
 $(SRCS):			; $(GET) -s sccs/s.$@

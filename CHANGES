@@ -1,3 +1,136 @@
+1988-08-31  dickey@software.org
+
+	* src/checkup/src/checkup.c, src/checkup/src/Makefile: New file.
+
+1988-08-30  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	Added 'SetAccess()' function, which initializes the access list for an
+	archive file which is created for the first time.  (If no access list is given,
+	rcs doesn't look at it!).
+
+	* src/checkout/src/checkout.c:
+	oops: broke out 'userprot()' so we can fix protection/time after checkout.
+
+	* src/checkin/src/checkin.c: made this work as a setuid process.
+	fixed interaction of "-k" with RCS_BASE, etc., in 'SetOpts()'.
+	moved working/archive names to module-level variables to ease clutter.
+
+	* src/checkout/src/checkout.c:
+	mods to make this able to function properly as a setuid program.
+	to do: check RCS's access list (since we want to be stricter).
+
+1988-08-25  dickey@software.org
+
+	* src/copy/src/copy.c:
+	added '-u' option to simplify copying files in a setuid-program.
+
+	* user/copy.doc: New file.
+
+1988-08-24  dickey@software.org
+
+	* user/link2rcs.doc, user/baseline.doc: New file.
+
+	* src/checkout/src/checkout.c:
+	make a crude check to see if the file is locked; make it writeable if so.
+
+	* src/checkin/src/checkin.c: broke out 'rcslocks()' procedure.
+
+	* src/checkin/src/checkin.c:
+	verify that RCS directory exists; create it if it doesn't.
+
+	* src/checkout/src/checkout.c:
+	corrected interaction of '-c' and '-r' options; added '-s' and '-w'.
+
+	* src/checkout/src/checkout.c:
+	added 'usage()', implemented cutoff date.
+
+	* src/checkin/src/checkin.c:
+	added a 'usage()' message which is more useful than 'ci'.
+
+1988-08-23  dickey@software.org
+
+	* src/copy/src/copy.c:
+	use naming-server translation to cover up hole in apollo's treatment
+	of symbolic links; added 2-level verbose option so I can see the apollo translations.
+
+	* src/copy/src/Makefile: sccs2rcs keywords
+
+	* src/copy/src/Makefile:
+	use '-lapollo' in the lint rules to cover my use of naming-server.
+
+1988-08-19  dickey@software.org
+
+	* src/checkout/src/checkout.c, src/checkin/src/checkin.c:
+	added NULL_FUNC arg to 'rcsparse_str()'.
+
+	* src/copy/src/copy.c: cleanup 'name2s()' call.
+
+1988-08-18  dickey@software.org
+
+	* src/copy/src/copy.c:
+	added calls on 'name2s()' so we can handle mixed-case names on AEGIS.
+
+1988-08-17  dickey@software.org
+
+	* src/checkin/src/rcsput.sh: corrected comment.
+
+	* src/checkout/src/rcsget.sh: removed explicit pathname for 'checkout'.
+
+	* src/checkin/src/rcsput.sh: don't use explicit pathname for 'checkin'.
+
+	* src/checkin/src/Makefile, src/checkout/src/Makefile:
+	use 'copy' in install.
+
+	* src/copy/src/copy.c:
+	on APOLLO, use native copy-file so we get object-types propagated.
+
+	* src/copy/src/Makefile: use 'copy' to install itself.
+
+1988-08-16  dickey@software.org
+
+	* src/copy/src/copy.c: added "-d" and "-n" options.
+
+	* src/copy/src/copy.c, src/copy/src/Makefile: New file.
+
+1988-08-15  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	Corrected handling of 'ci' "-k" option; we now use the date which 'ci'
+	finds in the checked-in file.  Also, fix side-effect by supplying a default
+	(for the "-k" usage) "-m" option a la RCS_BASE: "-mFROM_KEYS".
+
+	* src/checkout/src/checkout.c: use CO_PATH (defined in "rcsdefs.h")
+
+	* src/checkin/src/checkin.c: use "CI_PATH" (defined in "rcsdefs.h")
+
+1988-08-09  dickey@software.org
+
+	* src/checkout/src/checkout.c, src/checkin/src/checkin.c:
+	absorbed some definitions into "ptypes.h"
+
+1988-08-05  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	use new 'rcsname.c' module: rcs2name(), name2rcs().
+
+	* src/checkout/src/checkout.c:
+	use new version of 'rcsname.c': rcs2name(), name2rcs().
+
+1988-08-04  dickey@software.org
+
+	* user/rcsput.doc: added "-h" option (for diff).
+
+	* user/checkin.doc: added note about RCS_BASE environment variable.
+
+	* user/ded.doc:
+	modifications since 31-may-1988, while on reuse project.
+
+1988-08-03  dickey@software.org
+
+	* src/checkout/src/Makefile, src/checkin/src/Makefile:
+	rewrote into standard format.
+
 1988-07-29  dickey@software.org
 
 	* src/checkout/src/Makefile: forgot 'rcsput.sh' in GET-list.

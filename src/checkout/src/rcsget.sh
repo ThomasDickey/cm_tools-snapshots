@@ -1,4 +1,4 @@
-: '@(#)rcsget.sh	1.4 88/07/08 10:29:09'
+: '@(#)rcsget.sh	1.5 88/08/17 10:06:20'
 # Check files out of RCS (T.E.Dickey)
 #
 # Use 'checkout' to checkout one or more files from the RCS-directory which is
@@ -8,15 +8,9 @@
 #
 # Options are designed to feed-thru to 'co(1)'.
 #
-# Modified:
-#
-# Environment:
-#	RUNLIB	- location of this & supporting code
-#
 TRACE=
 #
 WD=`pwd`
-BASE=${RUNLIB-//dickey/local/dickey/bin}/checkout
 OPTS=
 #
 OPTS=
@@ -57,7 +51,7 @@ then
 			fi
 			echo '** checkout '$OPTS $i \($s\)
 			if [ -f $i ]
-			then	$BASE $OPTS $s
+			then	checkout $OPTS $s
 			else	echo '?? "'$i'" not found'
 			fi
 		fi

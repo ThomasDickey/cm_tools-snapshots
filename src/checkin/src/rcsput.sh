@@ -1,4 +1,4 @@
-: '@(#)rcsput.sh	1.6 88/06/02 15:09:24'
+: '@(#)rcsput.sh	1.8 88/08/17 10:07:39'
 # Check-in one or more modules to RCS (T.E.Dickey).
 # This uses 'checkin' to maintain file modification dates as the checkin times.
 # 
@@ -16,13 +16,10 @@
 #
 # Environment:
 #	PAGER	- may override to use in difference listing
-#	RUNLIB	- location of this & supporting code
 #
 # hacks to make this run on Apollo:
 if [ -f /com/vt100 ]
 then	PATH=$PATH:/sys5/bin
-	BASE=${RUNLIB-//dickey/local/dickey/bin}/checkin
-else	BASE=${RUNLIB-/u1/dickey/bin}/checkin
 fi
 #
 BLANKS=
@@ -126,7 +123,7 @@ do
 		then	echo '*** Initial RCS insertion of "'$i'"'
 		else	echo '*** Applying RCS delta to "'$i'"'
 		fi
-		$BASE $REV $i
+		checkin $REV $i
 	elif [ -n "$ACT" ]
 	then
 		if [ "$ACT" = "I" ]

@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19880729
+MANIFEST for cm_tools, version t19880831
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 src/baseline/src                subdirectory
@@ -11,11 +11,20 @@ src/checkout/src                subdirectory
 src/checkout/src/Makefile       
 src/checkout/src/checkout.c     wrapper for 'co'
 src/checkout/src/rcsget.sh      
+src/checkup/src                 subdirectory
+src/checkup/src/Makefile        
+src/checkup/src/checkup.c       utility to find files not checked-in
+src/copy/src                    subdirectory
+src/copy/src/Makefile           
+src/copy/src/copy.c             a better version of 'cp'.
 src/link2rcs/src                subdirectory
 src/link2rcs/src/link2rcs.sh    makes a template-tree, in which all of the RCS-directories are replaced by
 user                            subdirectory
+user/baseline.doc               
 user/checkin.doc                
 user/checkout.doc               
+user/copy.doc                   
 user/ded.doc                    
+user/link2rcs.doc               
 user/rcsget.doc                 
 user/rcsput.doc                 
