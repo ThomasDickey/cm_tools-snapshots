@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 9.3 1991/09/19 11:00:26 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 10.0 1991/10/25 15:20:18 ste_cm Rel $";
 #endif
 
 /*
@@ -7,6 +7,29 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		25 Oct 1991, 'tmpfile()' resets effective uid/gid (don't use!)
+ *		24 Oct 1991, corrected exit-condition in 'GetLock()' - was
+ *			     reading past header.  Also, test for "-f" option in
+ *			     'GetLock()' to ensure that we pick up lock_date
+ *			     even if no locks were made.
+ *		22 Oct 1991, corrected initial-access if root-uid (should be the
+ *			     owner of the directory, not "root").
+ *		22 Oct 1991, corrected recent change which caused working-files
+ *			     which had no changes in 'Filtered()' to be written
+ *			     as empty (since fpT was closed).
+ *		18 Oct 1991, corrected conditions under which mismatch between
+ *			     effect/real group-id causes reversion.  Also, fixed
+ *			     so that we don't call HackMode for SetAccess.
+ *		15 Oct 1991, debug-traces for uid/gid
+ *		11 Oct 1991, must not use "-d" option generally, since 'ci' will
+ *			     not check in files which have no change in date.
+ *			     Converted to ANSI.
+ *		07 Oct 1991, use "-d" option available in RCS 4.x to set the
+ *			     checkin date w/o having to edit the archive.
+ *		01 Oct 1991, if baseline was made since last version, and no
+ *			     "-r" option specified, use RCS_BASE.  Also, if
+ *			     running as root-set-uid  don't change mode of the
+ *			     directories. Added "-B" option.
  *		19 Sep 1991, correct spurious introduction of "-x" option into
  *			     command to create first delta.
  *		06 Sep 1991, modified interface to 'rcsopen()'
@@ -44,7 +67,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  *		15 Mar 1989, if no tip-version found, assume we can create
  *			     initial revision.
  *		08 Mar 1989, use 'revert()' and 'rcspermit()' to implement
- *			     CM-restrictions to setuid.
+ *			     CM-restrictions to set-uid 
  *		27 Feb 1989, Set comment for VMS filetypes .COM, .MMS, as well
  *			     as unix+VMS types ".mk" and ".e".  Also, test for
  *			     the special case of Makefile/makefile.
@@ -54,11 +77,11 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  *		27 Sep 1988, forgot to make "rcs" utility perform "-t" option.
  *		13 Sep 1988, for ADA-files (".a" or ".ada", added rcs's comment
  *			     header (not in rcs's default table).  Catch signals
- *			     to do cleanup.  Correctly 'rm_work()' for setuid.
+ *			     to do cleanup.  Correctly 'rm_work()' for set-uid 
  *			     Added newtime/oldtime logic to cover up case in
  *			     which 'ci' aborts but does not return error.
  *		09 Sep 1988, use 'rcspath()'
- *		30 Aug 1988, make this work as a setuid process.  If file has
+ *		30 Aug 1988, make this work as a set-uid process.  If file has
  *			     not been checked-in, initialize its access list
  *			     first.
  *		24 Aug 1988, added 'usage()'; create directory if not found.
@@ -91,20 +114,15 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
 
 #define		SIG_PTYPES
 #define		STR_PTYPES
-#include	"ptypes.h"
-#include	"rcsdefs.h"
+#include	<ptypes.h>
+#include	<rcsdefs.h>
 
 #include	<ctype.h>
 #include	<pwd.h>
 #include	<signal.h>
 #include	<time.h>
-extern	struct	tm *localtime();
-extern	long	packdate();
-extern	int	errno;
-extern	char	*ftype();
-extern	char	*getuser();
+#include	<errno.h>
 extern	char	*mktemp();
-extern	char	*pathleaf();
 
 /* local declarations: */
 #define	CI	"ci"
@@ -113,48 +131,72 @@ extern	char	*pathleaf();
 #define	REV_OPT	"rfluqk"
 #define	is_option(s)	(*(s) == '-')
 #define	is_t_opt(s)	(s[1] == 't')
-#define	is_my_opt(s)	(s[1] == 'x' || s[1] == 'd')
+#define	is_my_opt(s)	(s[1] == 'B' || s[1] == 'x' || s[1] == 'd')
 
 #define	WARN	FPRINTF(stderr,
 #define	TELL	if (!silent) PRINTF
 #define	DEBUG(s)	if (debug) PRINTF s;
 
+#if	RCS_VERSION >= 4
+#define	if_D_option(s)	if (lock_date < modtime) s;
+#else
+#define	if_D_option(s)
+#endif
+
 static	int	silent	= FALSE,
 		debug,			/* set by RCS_DEBUG environment */
 		no_op,			/* show, but don't do */
+		use_base = TRUE,	/* use RCS_BASE for base-version */
 		x_opt,			/* extended pathnames */
 		locked	= FALSE,	/* set if file is re-locked */
 		from_keys = FALSE,	/* set if we get date from RCS file */
 		new_file,		/* per-file, true if no archive */
 		TMP_mode,		/* saved protection of RCS-directory */
+		HIS_uid,		/* working-file's owner */
+		HIS_gid,		/* working-file's group */
 		RCS_uid,		/* archive's owner */
 		RCS_gid,		/* archive's group */
 		RCSprot;		/* protection of RCS-directory */
-static	time_t	modtime,		/* timestamp of working file */
+static	time_t	lock_date,		/* timestamp from prior version */
+		modtime,		/* timestamp of working file */
 		oldtime;		/* timestamp of archive file */
 static	char	*Working,
 		*Archive,
 		*TMP_file,		/* temp-file used to fix uid/access */
 		*t_option,		/* "-t" option used for "ci" or "rcs" */
-		RCSdir[BUFSIZ],
+		RCSdir[MAXPATHLEN],
 		RCSbase[20],		/* base+ version number */
 		opt_all[BUFSIZ],	/* options for 'ci' */
-		opt_rev[BUFSIZ],
-		old_date[BUFSIZ],
+		opt_rev[BUFSIZ];
+static	char	old_date[BUFSIZ],
 		new_date[BUFSIZ];
 
 /************************************************************************
  *	local procedures						*
  ************************************************************************/
 
+static
+WhoAmI(_AR0)
+{
+	if (debug) {
+		PRINTF("...uid=%d(%s)",		 getuid(), uid2s(getuid()));
+		if (geteuid() != getuid())
+			PRINTF(", euid=%d(%s)", geteuid(), uid2s(geteuid()));
+		PRINTF(", gid=%d(%s)",		 getgid(), gid2s(getgid()));
+		if (getegid() != getgid())
+			PRINTF(", egid=%d(%s)", getegid(), gid2s(getegid()));
+		PRINTF("\n");
+	}
+}
+
 /*
  * Remove working-file for set-uid process if the matching temp-file was.
  */
 static
-rm_work() { return (unlink(Working)); }
+rm_work(_AR0) { return (unlink(Working)); }
 
 static
-clean_file()
+clean_file(_AR0)
 {
 	if ((Working  != 0)
 	&&  (TMP_file != 0)
@@ -170,15 +212,160 @@ clean_file()
  * If interrupted, clean up and exit
  */
 static
-SIG_T
-cleanup(sig)
+SIGNAL_FUNC(cleanup)
 {
-	(void)signal(sig, SIG_IGN);
-	if (TMP_file)	clean_file();
-	if (TMP_mode)	HackMode(FALSE);
-	WARN "checkin: cleaned up\n\n");
+	static	int	latch;
+	if (!latch++) {
+		(void)signal(sig, SIG_IGN);
+		if (TMP_file)	clean_file();
+		if (TMP_mode)	HackMode(FALSE);
+		WARN "checkin: cleaned up\n\n");
+	}
 	(void)exit(FAIL);
 	/*NOTREACHED*/
+}
+
+/*
+ * Restore ownership of a file to the "natural" owner after a check-in
+ */
+static
+FixOwnership(
+_ARX(char *,	name)
+_ARX(int,	uid)
+_AR1(int,	gid)
+	)
+_DCL(char *,	name)
+_DCL(int,	uid)
+_DCL(int,	gid)
+{
+	DEBUG(("...fix ownership of %s\n", name))
+	WhoAmI();
+	if (!geteuid()) {
+		DEBUG(("%% chown %s %s\n", uid2s(uid), name))
+		DEBUG(("%% chgrp %s %s\n", gid2s(gid), name))
+		if (!no_op)
+			(void)chown(name, uid, gid);
+	}
+}
+
+static
+OwnWorking(_AR0)
+{
+	FixOwnership(Working, HIS_uid, HIS_gid);
+}
+
+static
+OwnArchive(_AR0)
+{
+	FixOwnership(Archive, RCS_uid, RCS_gid);
+}
+
+/*
+ * Decode an rcs archive-date
+ */
+static
+time_t
+DecodeArcDate(
+_AR1(char *,	from))
+_DCL(char *,	from)
+{
+	time_t	the_time;
+	int	year, mon, day, hour, min, sec;
+
+	newzone(5,0,FALSE);	/* format for EST5EDT */
+
+	if (sscanf(from, FMT_DATE, &year, &mon, &day, &hour, &min, &sec) == 6)
+		the_time = packdate(1900+year, mon, day, hour, min, sec);
+
+	oldzone();
+	return the_time;
+}
+
+/*
+ * Convert a unix time to an rcs archive-date
+ */
+static
+EncodeArcDate(
+_ARX(char *,	to)
+_AR1(time_t,	from)
+	)
+_DCL(char *,	to)
+_DCL(time_t,	from)
+{
+	struct	tm *t;
+
+	newzone(5,0,FALSE);	/* format for EST5EDT */
+	t = localtime(&from);
+	FORMAT(to, FMT_DATE,
+		t->tm_year, t->tm_mon + 1,
+		t->tm_mday, t->tm_hour,
+		t->tm_min,  t->tm_sec);
+	oldzone();
+}
+
+/*
+ * If we could not persuade 'ci' to check-in the file with "-d", filter a copy
+ * of it so that the date-portion of the identifiers is set properly.
+ */
+static
+Filter(_AR0)
+{
+	auto	FILE	*fpS, *fpT;
+	auto	size_t	len	= strlen(old_date);
+	auto	int	changed	= 0;	/* number of substitutions done */
+	register char	*s, *d;
+	auto	char	name[MAXPATHLEN];
+	auto	char	bfr[BUFSIZ];
+	auto	int	lines = 0;
+
+	if_D_option(return)
+
+	if (from_keys || !(fpS = fopen(Working, "r"))) {
+		errno = 0;
+		return;
+	}
+
+	/* Alter the delta-header to match RCS's substitution */
+	/* 0123456789.123456789. */
+	/* yy.mm.dd.hh.mm.ss */
+	new_date[ 2] = old_date[ 2] =
+	new_date[ 5] = old_date[ 5] = '/';
+	new_date[ 8] = old_date[ 8] = ' ';
+	new_date[11] = old_date[11] =
+	new_date[14] = old_date[14] = ':';
+
+	if (!(fpT = fopen(TMP_file = strcat(strcpy(name, Working), ",,"), "w")))
+		GiveUp("Could not create tmp-file", name);
+
+	DEBUG(("...filtering date-strings to %s\n", new_date))
+	while (fgets(bfr, sizeof(bfr), fpS)) {
+		char	*last = bfr + strlen(bfr) - len;
+
+		lines += 1;
+		if ((last > bfr)
+		&&  (d = strchr(bfr, '$'))) {
+			while (d <= last) {
+				if (!strncmp(d, old_date, len)) {
+					DEBUG(("...edit date at line %d\n%s",
+						lines, bfr))
+					for (s = new_date; *s; s++)
+						*d++ = *s;
+					changed++;
+				}
+				d++;
+			}
+		}
+		(void) fputs(bfr, fpT);
+	}
+	FCLOSE(fpS);
+
+	if (changed) {
+		if (rename(name, Working) < 0)
+			GiveUp("Could not rename", name);;
+	} else
+		(void)unlink(name);
+	TMP_file = 0;
+	FCLOSE(fpT);
 }
 
 /*
@@ -186,79 +373,24 @@ cleanup(sig)
  * patch: should do keyword substitution for Header, Date a la 'co'.
  */
 static
-ReProcess ()
+ReProcess (_AR0)
 {
-	auto	char	tmp_name[L_tmpnam];
-	auto	FILE	*fpS, *fpT = 0;
 	auto	struct	stat	sb;
-	auto	size_t	len	= strlen(old_date);
-	auto	int	mode,
-			lines	= 0,
-			changed	= 0;	/* number of substitutions done */
-	register char	*s, *d;
-	auto	char	bfr[BUFSIZ];
-
-	if (!from_keys) {
-
-		/* Alter the delta-header to match RCS's substitution */
-		/* 0123456789.123456789. */
-		/* yy.mm.dd.hh.mm.ss */
-		new_date[ 2] = old_date[ 2] =
-		new_date[ 5] = old_date[ 5] = '/';
-		new_date[ 8] = old_date[ 8] = ' ';
-		new_date[11] = old_date[11] =
-		new_date[14] = old_date[14] = ':';
-
-		if (!(fpS = fopen(Working, "r")))
-			return;
-		FORMAT(tmp_name, "%s/pci%d", P_tmpdir, getpid());
-		(void)unlink(tmp_name);
-		if (!(fpT = fopen(tmp_name, "w+")))
-			GiveUp("Could not create tmp-file", tmp_name);
-
-		while (fgets(bfr, sizeof(bfr), fpS)) {
-		char	*last = bfr + strlen(bfr) - len;
-
-			lines++;
-			if ((last > bfr)
-			&&  (d = strchr(bfr, '$'))) {
-				while (d <= last) {
-					if (!strncmp(d, old_date, len)) {
-						DEBUG(("...edit date at %d\n",
-							lines))
-						for (s = new_date; *s; s++)
-							*d++ = *s;
-						changed++;
-					}
-					d++;
-				}
-			}
-			(void) fputs(bfr, fpT);
-		}
-		FCLOSE(fpS);
-	}
+	auto	int	mode;
 
 	if ((stat(Working, &sb) >= 0)
 	&&  ((sb.st_mode & S_IFMT) == S_IFREG)) {
 		mode = sb.st_mode & 0777;
-		if (changed) {
-			TMP_file = rcstemp(Working, FALSE);
-			DEBUG(("...copyback %d lines to %s\n", lines, TMP_file))
-			(void)copyback(fpT, TMP_file, mode, lines);
-			if (strcmp(TMP_file,Working)) {
-				if (usercopy(TMP_file, Working) < 0)
-					GiveUp("recopy", Working);
-			}
-			clean_file();
-		}
+
+		OwnWorking();
+		if (for_user(Filter) < 0)
+			GiveUp("cannot reprocess", Working);
 		if (!locked)		/* cover up bugs on Apollo acls */
 			mode &= ~0222;
+
+		DEBUG(("%% chmod %03o %s\n", mode, Working))
 		if (userprot(Working, mode, modtime) < 0)
 			GiveUp("touch failed", Working);
-	}
-	if (fpT != 0) {
-		FCLOSE(fpT);
-		(void)unlink(tmp_name);
 	}
 }
 
@@ -267,14 +399,17 @@ ReProcess ()
  * modification date.
  */
 static
-PostProcess ()
+PostProcess (_AR0)
 {
 int	header	= TRUE,
-	match	= FALSE;
+	match	= FALSE,
+	changed	= FALSE;
 char	*s	= 0,
 	*old,
 	revision[BUFSIZ],
 	token[BUFSIZ];
+
+	if_D_option(return)
 
 	if (!rcsopen(Archive, debug, FALSE))
 		return;
@@ -302,28 +437,15 @@ char	*s	= 0,
 				break;
 			s = rcsparse_num(old_date, old = s);
 			if (*old_date) {
-			struct	tm *t;
-				newzone(5,0,FALSE);	/* format for EST5EDT */
 				if (from_keys) {
-				int	year, mon, day, hour, min, sec;
-					if (sscanf(old_date, FMT_DATE,
-						&year, &mon, &day,
-						&hour, &min, &sec) == 6) {
-						modtime = packdate(1900+year,
-							mon, day, hour, min,
-							sec);
-					}
+					modtime = DecodeArcDate(old_date);
 				} else {
-					t = localtime(&modtime);
-					FORMAT(new_date, FMT_DATE,
-						t->tm_year, t->tm_mon + 1,
-						t->tm_mday, t->tm_hour,
-						t->tm_min,  t->tm_sec);
+					EncodeArcDate(new_date, modtime);
 					rcsedit(old, old_date, new_date);
 				}
-				oldzone();
 				TELL("** revision %s\n", revision);
 				TELL("** modified %s", ctime(&modtime));
+				changed++;
 			}
 			break;
 		case S_DESC:
@@ -331,20 +453,26 @@ char	*s	= 0,
 		}
 	}
 	rcsclose();
+	if (changed || no_op)
+		OwnArchive();
 }
 
 /*
  * The RCS utilities (ci and rcs) use the unix 'access()' function to test if
  * the caller has access to the archive-directory.  This is not done properly,
- * but I cannot easily code around it other than by temporarily changing the
- * directory's protection.
+ * (particularly for non-root set-uid  but I cannot easily code around it other
+ * than by temporarily changing the directory's protection.
  */
 static
-HackMode(save)
+HackMode(
+_AR1(int,	save))
+_DCL(int,	save)
 {
 	int	need;
 
-	if (save) {
+	if (!geteuid()) {
+		;
+	} else if (save) {
 		if ((RCSdir[0] != EOS)
 		&&  (getuid()  != RCS_uid)) {
 			need = (getgid() == RCS_gid) ? 0775 : 0777;
@@ -369,12 +497,46 @@ HackMode(save)
 }
 
 /*
+ * RCS 4 does not check permissions properly on the RCS directory even when
+ * running in set-uid mode (sigh).
+ */
+DoIt (
+_ARX(char *,	verb)
+_ARX(char *,	args)
+_AR1(int,	if_noop)
+	)
+_DCL(char *,	verb)
+_DCL(char *,	args)
+_DCL(int,	if_noop)
+{
+	int	code;
+	int	fix_id;
+
+	if (fix_id = (!geteuid() && getuid())) {
+		if (!no_op) {
+			(void)setruid(geteuid());
+			(void)setrgid(getegid());
+		}
+		WhoAmI();
+	}
+
+	if (!silent) shoarg(stdout, verb, args);
+	code = no_op ? if_noop : execute(rcspath(verb), args);
+
+	if (!no_op && fix_id) {
+		(void)setruid(HIS_uid);
+		(void)setrgid(HIS_gid);
+	}
+	return code;
+}
+
+/*
  * Check in the file using the RCS 'ci' utility.  If 'ci' does something, then
  * it will delete or modify the checked-in file -- return TRUE.  If no action
  * is taken, return false.
  */
 static
-Execute()
+Execute(_AR0)
 {
 	char	cmds[BUFSIZ];
 	struct	stat	sb;
@@ -384,11 +546,11 @@ Execute()
 	TMP_file = rcstemp(Working, TRUE);
 
 	FORMAT(cmds, "%s%s %s", opt_all, Archive, TMP_file);
-	if (!silent) shoarg(stdout, CI, cmds);
-	if (no_op)
-		code = -1;
-	else
-		code = execute(rcspath(CI), cmds);
+	code = DoIt(CI, cmds, -1);
+
+	if (code >= 0 || no_op)
+		OwnArchive();
+
 	HackMode(FALSE);		/* ...restore protection */
 
 	if (code >= 0) {			/* ... check-in file ok */
@@ -418,12 +580,18 @@ Execute()
  * This procedure is invoked only if 'SetAccess()' finds an RCS-archive.
  * Ensure that we have a unique lock-value.  If the user did not specify one,
  * we must get it from the archived-file.
+ *
+ * returns:
+ *	+1 - a lock is present
+ *	 0 - no lock was set (or can be forced)
  */
 static
-GetLock()
+GetLock(_AR0)
 {
 	int	header	= TRUE,
-		strict	= FALSE;
+		strict	= FALSE,
+		match;
+
 	char	*s	= 0,
 		lock_rev[80],
 		lock_by[80],
@@ -432,8 +600,9 @@ GetLock()
 
 	(void)strcpy(lock_by, getuser());
 	*lock_rev = EOS;
+	lock_date = 0;
 
-	if (*opt_rev == EOS) {
+	if (*opt_rev == EOS) {	/* patch: do I need this level ? */
 
 		if (!rcsopen(Archive, -debug, TRUE))
 			return (FALSE);	/* could not open file anyway */
@@ -442,33 +611,71 @@ GetLock()
 			s = rcsparse_id(key, s);
 
 			switch (rcskeys(key)) {
+			case S_DESC:
+			case S_LOG:
+			case S_TEXT:
+				header = FALSE;
+				break;
 			case S_HEAD:
 				s = rcsparse_num(tip, s);
 				if (!*tip)
 					header = FALSE;
-				DEBUG(("...GetLock tip = %s\n", tip))
+				DEBUG(("...GetLock tip = %s %s\n",
+					tip,
+					vercmp(RCSbase, tip, FALSE) < 0
+						? "base"
+						: ""))
+				if (vercmp(RCSbase, tip, FALSE) < 0) {
+					next_version(RCSbase, tip);
+					DEBUG(("=>%s (next)\n", RCSbase))
+				}
 				break;
 			case S_STRICT:
 				strict = TRUE;
 				break;
+
 			case S_LOCKS:
 				s = rcslocks(s, lock_by, lock_rev);
-				if (*lock_rev) {
-					TELL("** revision %s was locked\n",lock_rev);
-					if (!strcmp(tip, lock_rev)) {
-					char	*t = strrchr(lock_rev, '.');
-					int	last;
-						(void)sscanf(t, ".%d", &last);
-						FORMAT(t, ".%d", last+1);
-						(void)strcpy(opt_rev, lock_rev);
-					} else {
-						TELL("?? branching not supported\n");
-						/* patch:finish this later... */
-					}
+				if (!*lock_rev)
+					break;
+
+				TELL("** revision %s was locked\n",lock_rev);
+				DEBUG(("...%s (%d:%d)\n",
+					RCSbase,
+					use_base,
+					vercmp(RCSbase, lock_rev, FALSE)))
+				if (!strcmp(tip, lock_rev)) {
+					if (use_base
+					&& (vercmp(RCSbase, lock_rev, FALSE) > 0))
+						(void)strcpy(opt_rev, RCSbase);
+					else
+						next_version(opt_rev, lock_rev);
+					DEBUG(("=>%s (locked)\n", opt_rev))
+				} else {
+					TELL("?? branching not supported\n");
+					/* patch:finish this later... */
 				}
 				break;
+
 			case S_VERS:
-				header = FALSE;
+				if (*lock_rev)
+					match = !strcmp(key, lock_rev);
+				else
+					match = TRUE;
+				break;
+			case S_DATE:
+				if (match) {
+					time_t	at;
+					s = rcsparse_num(key, s);
+					at = DecodeArcDate(key);
+					/* if no lock, choose highest date */
+					if (!*lock_rev) {
+						if (lock_date < at)
+							lock_date = at;
+					} else
+						lock_date = at;
+					header = FALSE;
+				}
 				break;
 			case S_COMMENT:
 				s = rcsparse_str(s, NULL_FUNC);
@@ -479,6 +686,7 @@ GetLock()
 	}
 	if (strict && !*lock_rev)
 		TELL("?? no lock set by %s\n", lock_by);
+	DEBUG(("=> lock = %s", lock_date != 0 ? ctime(&lock_date) : "(none)\n"))
 	return (!strict || (*opt_rev != EOS));
 }
 
@@ -488,12 +696,13 @@ GetLock()
  */
 static
 time_t
-PreProcess(name)
-char	*name;
+DateOf(
+_AR1(char *,	name))
+_DCL(char *,	name)
 {
 	auto	struct	stat	sb;
 
-	DEBUG(("...PreProcess(%s)\n", name))
+	DEBUG(("...DateOf(%s)\n", name))
 	errno = 0;
 	if (stat(name, &sb) >= 0) {
 		if ((S_IFMT & sb.st_mode) == S_IFREG) {
@@ -527,10 +736,13 @@ static	PREFIX	*clist;
 	def_ALLOC(PREFIX)
 
 static
-define_prefix(suffix, prefix)
-char	*suffix, *prefix;
+define_prefix(
+_ARX(char *,	suffix)
+_AR1(char *,	prefix)
+	)
+_DCL(char *,	suffix)
+_DCL(char *,	prefix)
 {
-	extern	char	*stralloc();
 	auto	char	tmp[BUFSIZ];
 	register PREFIX	*new = ALLOC(PREFIX,1);
 	new->link = clist;
@@ -541,8 +753,12 @@ char	*suffix, *prefix;
 
 static
 char	*
-copy_to(dst, src)
-char	*dst, *src;
+copy_to(
+_ARX(char *,	dst)
+_AR1(char *,	src)
+	)
+_DCL(char *,	dst)
+_DCL(char *,	src)
 {
 	char	delim;
 	if (delim = *src) {
@@ -559,8 +775,9 @@ char	*dst, *src;
 
 static
 char	*
-get_prefix(suffix)
-char	*suffix;
+get_prefix(
+_AR1(char *,	suffix))
+_DCL(char *,	suffix)
 {
 	PREFIX	*new;
 	for (new = clist; new != 0; new = new->link) {
@@ -576,7 +793,7 @@ char	*suffix;
  * RCS directory.  Returns FALSE if the archive already exists.
  */
 static
-SetAccess()
+RcsInitialize(_AR0)
 {
 	static	char	list[BUFSIZ];	/* static so we do list once */
 	auto	char	cmds[BUFSIZ],
@@ -603,22 +820,23 @@ SetAccess()
 		}
 	}
 
-	if ((oldtime = PreProcess(Archive)) != 0)
-		return (FALSE);
-
-	HackMode(TRUE);			/* ...save protection */
 	*cmds = EOS;
 	if (t_option != 0)
 		catarg(cmds, t_option);
 	catarg(cmds, "-i");
 	if (!*list) {
-		FORMAT(list, "-a%s", getuser());
-		if (getuid() != geteuid()) {
-			register struct passwd *p;
-			if (p = getpwuid(RCS_uid))
+		register struct passwd *p;
+
+		if (p = getpwuid(geteuid() ? geteuid() : RCS_uid))
+			FORMAT(list, "-a%s", p->pw_name);
+		else
+			GiveUp("owner of RCS directory for", Working);
+
+		if (getuid() != HIS_uid) {
+			if (p = getpwuid(HIS_uid))
 				FORMAT(list + strlen(list), ",%s", p->pw_name);
 			else
-				GiveUp("owner of RCS directory for", Working);
+				GiveUp("owner of directory for", Working);
 		}
 	}
 	catarg(cmds, list);
@@ -634,21 +852,28 @@ SetAccess()
 
 	if (silent) catarg(cmds, "-q");
 	catarg(cmds, Archive);
-	if (!silent) shoarg(stdout, RCS, cmds);
-	if (!no_op) {
-		if (execute(rcspath(RCS), cmds) < 0)
-			GiveUp("rcs initialization for", Working);
-	}
-	HackMode(FALSE);		/* ...restore protection */
+	if (DoIt(RCS, cmds, 0) < 0)
+		GiveUp("rcs initialization for", Working);
+}
+
+static
+int
+SetAccess(_AR0)
+{
+	if ((oldtime = DateOf(Archive)) != 0)
+		return (FALSE);
+
+	if (for_admin(RcsInitialize) < 0)
+		failed(Archive);
 	return (TRUE);
 }
 
 /*
  * If the RCS-directory does not exist, make it.  Save the name in 'RCSdir[]'
- * in case we need it for the setuid-hack in 'Execute()'.
+ * in case we need it for the set-uid hack in 'Execute()'.
  */
 static
-MakeDirectory()
+MakeDirectory(_AR0)
 {
 	struct	stat	sb;
 	char	*s;
@@ -663,11 +888,17 @@ MakeDirectory()
 		(strncpy(RCSdir, Archive, len))[len] = EOS;
 
 		if (stat(RCSdir, &sb) >= 0) {
-			if (sb.st_uid != geteuid()
-			||  sb.st_gid != getegid())
+			if (getegid() != sb.st_gid) {
+				(void)setegid(sb.st_gid);
+				WhoAmI();
+			}
+			if (geteuid() != 0
+			&&  sb.st_uid != geteuid())
 				revert(debug ? "non-CM use" : (char *)0);
 			if (!rcspermit(RCSdir,RCSbase))
-				revert("not listed in permit-file");
+				revert(geteuid() || debug
+					? "not listed in permit-file"
+					: (char *)0);
 			DEBUG((".. RCSbase='%s'\n", RCSbase))
 			RCS_uid = sb.st_uid;
 			RCS_gid = sb.st_gid;
@@ -700,17 +931,23 @@ MakeDirectory()
  * RCS_BASE is set, we use this for the revision code rather than "1.1".
  */
 static
-SetOpts(argc,argv,code)
-char	*argv[];
+SetOpts(
+_ARX(int,	argc)
+_ARX(char **,	argv)
+_AR1(int,	code)
+	)
+_DCL(int,	argc)
+_DCL(char **,	argv)
+_DCL(int,	code)
 {
 	int	last	= 0;
-	int	logmsg	= 0;
+	int	logmsg	= FALSE;
+	int	got_rev	= FALSE;
 	register int	j;
 	char	bfr[BUFSIZ];
-	char	*dft	= (code < 0) ? RCSbase : 0;
+	char	*dft;
 	register char *s;
 
-	*opt_rev = EOS;
 	*opt_all = EOS;
 	for (j = 1; j < argc; j++) {
 		if (is_option(s = argv[j])) {
@@ -724,6 +961,7 @@ char	*argv[];
 			if (strchr(REV_OPT, *s)) {
 				if (*s == 'l')	locked = TRUE;
 				if (*(++s)) {
+					got_rev = TRUE;
 					s = strcpy(opt_rev, s);
 					s += strlen(opt_rev) - 2;
 					if (s > opt_rev && !strcmp(s, ".0"))
@@ -735,16 +973,22 @@ char	*argv[];
 		}
 	}
 
+	if (!*opt_rev)
+		(void)strcpy(opt_rev, RCSbase);
+
 	/*
 	 * If no revision was specified, and there is a default in effect,
 	 * reprocess the list of options so that it includes the default
 	 * revision.  Also, if no log-message was specified, add one so we
 	 * don't get prompted unnecessarily.
 	 */
-	if ((*opt_rev == EOS)
-	&&  (!from_keys)
-	&&  ((dft != 0) && (*dft != EOS))) {
-		if (last) {
+	if (!got_rev && !from_keys && (code < 0 || use_base))
+		dft = opt_rev;
+	else
+		dft = 0;	/* don't supply a default-version */
+
+	if ((dft != 0) && (*dft != EOS)) {
+		if (last != 0) {
 			*opt_all = EOS;
 			for (j = 1; j < argc; j++) {
 				if (is_option(s = argv[j])) {
@@ -763,23 +1007,29 @@ char	*argv[];
 			FORMAT(bfr, "-r%s", dft);
 			catarg(opt_all, bfr);
 		}
-		if (!logmsg) {
+		if (!logmsg && code < 0) {
 			catarg(opt_all, "-mRCS_BASE");
 		}
-	} else if (from_keys && (*opt_rev == EOS) && (!logmsg))
+	} else if (from_keys && !got_rev && !logmsg)
 		catarg(opt_all, "-mFROM_KEYS");
+
+	if_D_option(catarg(opt_all, "-d"))
 }
 
 static
-GiveUp(msg,arg)
-char	*msg, *arg;
+GiveUp(
+_ARX(char *,	msg)
+_AR1(char *,	arg)
+	)
+_DCL(char *,	msg)
+_DCL(char *,	arg)
 {
 	TELL("?? %s \"%s\"\n", msg, arg);
 	(void)exit(FAIL);
 }
 
 static
-usage()
+usage(_AR0)
 {
 	static	char	*tbl[] = {
 "Usage: checkin [-options] [working_or_archive [...]]",
@@ -798,6 +1048,7 @@ usage()
 "  -t[txtfile] writes descriptive text into the RCS file",
 "",
 "Non-\"ci\" options:",
+"  -B       ignore existing baseline version when defaulting revision",
 "  -d       debug/no-op (show actions, but don't do)",
 "  -x       assume archive and working file are in path2/RCS and path2",
 "           (normally assumes ./RCS and .)"
@@ -813,19 +1064,20 @@ usage()
  *	main program							*
  ************************************************************************/
 
-main (argc, argv)
-char	*argv[];
+/*ARGSUSED*/
+_MAIN
 {
 	register int	j;
-	int		code;
 	register char	*s;
 
 	debug = RCS_DEBUG;
 	if (s = getenv("RCS_BASE"))
 		(void)strcpy(RCSbase,s);
 	catchall(cleanup);
-	DEBUG(("uid=%d, euid=%d, gid=%d, egid=%d\n",
-		getuid(), geteuid(), getgid(), getegid()))
+	WhoAmI();
+
+	HIS_uid = getuid();
+	HIS_gid = getgid();
 
 	/*
 	 * Process the argument list
@@ -839,7 +1091,10 @@ char	*argv[];
 			if (is_t_opt(argv[j]))
 				t_option = argv[j];
 			if (strchr("rfkluqmnNst", *s) == 0) {
-				if (*s == 'd') {
+				if (*s == 'B') {
+					use_base = FALSE;
+					continue;
+				} else if (*s == 'd') {
 					no_op++;
 					continue;
 				} else if (*s == 'x') {
@@ -850,31 +1105,32 @@ char	*argv[];
 				usage();
 			}
 		} else {
+			int	code = -1;
 
 			Working = rcs2name(s,x_opt),
 			Archive = name2rcs(s,x_opt);
-			code = -1;
 
-			if (!(modtime = PreProcess (Working))) {
+			if (!(modtime = DateOf (Working))) {
 				revert(debug ? "directory access" : (char *)0);
-				if (!(modtime = PreProcess (Working))) {
+				if (!(modtime = DateOf (Working))) {
 					GiveUp("file not found:", Working);
 				}
 			}
 
 			oldtime = 0;	/* assume we don't find archive */
+			*opt_rev = EOS;	/* assume we don't find version */
 			if (MakeDirectory()
-			&&  (new_file = SetAccess()
-			||   (code = GetLock()))) {
+			&&  (new_file = SetAccess() || (code = GetLock()))) {
 				SetOpts(j,argv,code);
 				if (Execute()) {
-					time_t	newtime = PreProcess(Archive);
+					time_t	newtime = DateOf(Archive);
 					if (newtime != 0
 					&&  newtime != oldtime) {
 						PostProcess();
 						ReProcess();
 					}
-				}
+				} else if (no_op)
+					OwnWorking();
 			}
 		}
 	}

@@ -1,51 +1,41 @@
-# $Id: Makefile,v 9.0 1991/06/05 14:35:32 ste_cm Rel $
+# $Id: Makefile,v 10.0 1991/10/18 12:28:08 ste_cm Rel $
 # Top-level makefile for RCS checkin utility
-#
-# $Log: Makefile,v $
-# Revision 9.0  1991/06/05 14:35:32  ste_cm
-# BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
-#
-#	Revision 8.1  91/06/05  14:35:32  dickey
-#	cleanup install-rule
-#	
-#	Revision 8.0  89/08/22  10:17:11  ste_cm
-#	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
 
 ####### (Development) ##########################################################
 B	= ../../bin
 L	= ../common/lib
-PUT	= ../$B/copy -d ../$@
-GET	= checkout
-MAKE	= make $(MFLAGS) -k$(MAKEFLAGS)	GET=$(GET)
+
+COPY	= cp -p
+MAKE	= make $(MFLAGS) -k$(MAKEFLAGS)	CFLAGS="$(CFLAGS)" COPY="$(COPY)"
 
 ####### (Standard Lists) #######################################################
 PROG	= checkin
 ALL	=\
 	$B/rcsput\
 	$B/$(PROG)
-FIRST	=\
-	bin\
+MFILES	=\
 	src/Makefile\
 	test/Makefile
 
 ####### (Standard Productions) #################################################
-all:		$L/lib.a
+all\
+run_tests::	bin $L/lib.a
 
 all\
 clean\
 clobber\
+destroy\
 sources\
 run_tests\
 lincnt.out\
-lint.out:	$(FIRST)
+lint.out::	$(MFILES)
 	cd src;		$(MAKE) $@
 	cd test;	$(MAKE) $@
 
-rdestroy\
-destroy:	$(FIRST)
-	cd src;		$(MAKE) destroy
-	cd test;	$(MAKE) destroy
+clobber\
+destroy::
 	rm -rf bin
+destroy::
 	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 
 install:	all $(ALL)
@@ -53,7 +43,6 @@ deinstall:		; rm -f $(ALL)
 
 ####### (Details of Productions) ###############################################
 bin:				; mkdir $@
-src/Makefile:			; cd src;	$(GET) Makefile
-test/Makefile:			; cd test;	$(GET) Makefile
-$B/$(PROG):	bin/$(PROG)	; cd bin;	$(PUT)
-$B/rcsput:	bin/rcsput	; cd bin;	$(PUT)
+$(MFILES):			; checkout -x $@
+$B/$(PROG):	bin/$(PROG)	; $(COPY) $? $@
+$B/rcsput:	bin/rcsput	; $(COPY) $? $@

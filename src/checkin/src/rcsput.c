@@ -1,21 +1,16 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 9.2 1991/09/13 07:50:21 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 10.0 1991/10/18 07:42:28 ste_cm Rel $";
 #endif
 
 /*
  * Title:	rcsput.c (rcs put-tree)
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
- * $Log: rcsput.c,v $
- * Revision 9.2  1991/09/13 07:50:21  dickey
- * moved 'filesize()' to common-lib
- *
- *		Revision 9.1  91/06/20  11:26:12  dickey
- *		use 'shoarg()'
- *		
- *		Revision 9.0  91/06/06  07:25:27  ste_cm
- *		BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
- *
+ * Modified:
+ *		11 Oct 1991, converted to ANSI
+ *		01 Oct 1991, added "-B" option for 'checkin'
+ *		13 Sep 1991, moved 'filesize()' to common-lib
+ *		20 Jun 1991, use 'shoarg()'
  *		06 Jun 1991, use "-x" option in local name-checking
  *		03 Jun 1991, pass-thru "-x" to 'checkin'
  *		20 May 1991, mods to compile on apollo sr10.3
@@ -40,14 +35,10 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  */
 
 #define	STR_PTYPES
-#include	"ptypes.h"
-#include	"rcsdefs.h"
+#include	<ptypes.h>
+#include	<rcsdefs.h>
+#include	<sccsdefs.h>
 extern	FILE	*popen();
-extern	off_t	filesize();
-extern	char	*dftenv();
-extern	char	*pathcat();
-extern	char	*pathleaf();
-extern	char	*sccs_dir();
 extern	char	*tmpnam();
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
@@ -66,9 +57,12 @@ static	int	quiet;
 static	int	x_opt;
 
 static
-cat2fp(fp, name)
-FILE	*fp;
-char	*name;
+cat2fp(
+_ARX(FILE *,	fp)
+_AR1(char *,	name)
+	)
+_DCL(FILE *,	fp)
+_DCL(char *,	name)
 {
 	auto	FILE	*ifp;
 	auto	char	t[BUFSIZ];
@@ -83,8 +77,9 @@ char	*name;
 }
 
 static
-different(working)
-char	*working;
+different(
+_AR1(char *,	working))
+_DCL(char *,	working)
 {
 	auto	FILE	*ifp, *ofp;
 	auto	char	buffer[BUFSIZ],
@@ -130,9 +125,12 @@ char	*working;
 }
 
 static
-checkin(path,name)
-char	*path;
-char	*name;
+checkin(
+_ARX(char *,	path)
+_AR1(char *,	name)
+	)
+_DCL(char *,	path)
+_DCL(char *,	name)
 {
 	auto	char	args[BUFSIZ];
 	auto	char	*working = rcs2name(name,x_opt);
@@ -181,45 +179,45 @@ char	*name;
 
 /*ARGSUSED*/
 static
-scan_tree(path, name, sp, ok_acc, level)
-char	*path;
-char	*name;
-struct	stat	*sp;
+WALK_FUNC(scan_tree)
 {
 	auto	char	tmp[BUFSIZ],
 			*s = pathcat(tmp, path, name);
 
-	if (sp == 0 || ok_acc < 0) {
-		ok_acc = -1;
+	if (sp == 0 || readable < 0) {
+		readable = -1;
 		perror(name);
 		if (!force)
 			exit(FAIL);
 	} else if (isDIR(sp->st_mode)) {
 		abspath(s);		/* get rid of "." and ".." names */
 		if (!a_opt && *pathleaf(s) == '.')
-			ok_acc = -1;
+			readable = -1;
 		else if (sameleaf(s, sccs_dir())
 		    ||	 sameleaf(s, rcs_dir()))
-			ok_acc = -1;
+			readable = -1;
 		else
 			track_wd(path);
 	} else if (isFILE(sp->st_mode)) {
 		track_wd(path);
 		checkin(path,name);
 	} else
-		ok_acc = -1;
+		readable = -1;
 
-	return(ok_acc);
+	return(readable);
 }
 
 static
-do_arg(name)
-char	*name;
+do_arg(
+_AR1(char *,	name))
+_DCL(char *,	name)
 {
 	(void)walktree((char *)0, name, scan_tree, "r", 0);
 }
 
-usage(option)
+usage(
+_AR1(int,	option))
+_DCL(int,	option)
 {
 	static	char	*tbl[] = {
  "Usage: rcsput [options] files_or_directories"
@@ -242,8 +240,8 @@ usage(option)
 	exit(FAIL);
 }
 
-main(argc, argv)
-char	*argv[];
+/*ARGSUSED*/
+_MAIN
 {
 	register int	j;
 	register char	*s;
@@ -253,7 +251,7 @@ char	*argv[];
 	pager = dftenv("more -l", "PAGER");
 	for (j = 1; j < argc; j++) {
 		if (*(s = argv[j]) == '-') {
-			if (strchr("qrfklumnNstx", s[1]) != 0) {
+			if (strchr("BqrfklumnNstx", s[1]) != 0) {
 				catarg(ci_opts, s);
 				switch (s[1]) {
 				case 'f':

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 9.1 1991/09/24 13:11:57 dickey Exp $
+# $Id: Makefile,v 9.3 1991/10/21 08:15:49 ste_cm Exp $
 #
 
 ####### (Development) ##########################################################
@@ -8,8 +8,9 @@ GET	= checkout
 PUT	= rm -f $@; $(COPY) $? $@
 THIS	= cm_tools
 
+USE	= man
 SECTION	= 1
-PREFIX	= $(INSTALL_MAN)/man$(SECTION)/
+PREFIX	= $(INSTALL_MAN)/$(USE)$(SECTION)/
 
 .SUFFIXES:
 .SUFFIXES: .man .cat
@@ -29,7 +30,8 @@ IT	=\
 	$(PREFIX)link2rcs.$(SECTION)\
 	$(PREFIX)permit.$(SECTION)\
 	$(PREFIX)rcsget.$(SECTION)\
-	$(PREFIX)rcsput.$(SECTION)
+	$(PREFIX)rcsput.$(SECTION)\
+	$(PREFIX)vcs.$(SECTION)
 
 ALL	=\
 	baseline.cat\
@@ -41,7 +43,8 @@ ALL	=\
 	link2rcs.cat\
 	permit.cat\
 	rcsget.cat\
-	rcsput.cat
+	rcsput.cat\
+	vcs.cat
 
 SOURCES	=\
 	baseline.man\
@@ -53,7 +56,8 @@ SOURCES	=\
 	link2rcs.man\
 	permit.man\
 	rcsget.man\
-	rcsput.man
+	rcsput.man\
+	vcs.man
 
 ####### (Standard Productions) #################################################
 all:		$(ALL)			; @echo '** use "make install"'
@@ -67,15 +71,16 @@ install:	$(IT)
 deinstall:		; rm -f $(IT)
 
 ####### (Details of Productions) ###############################################
-$(PREFIX)baseline.$(SECTION):	baseline.man	; $(PUT)
-$(PREFIX)checkin.$(SECTION):	checkin.man	; $(PUT)
-$(PREFIX)checkout.$(SECTION):	checkout.man	; $(PUT)
-$(PREFIX)checkup.$(SECTION):	checkup.man	; $(PUT)
-$(PREFIX)copy.$(SECTION):	copy.man	; $(PUT)
-$(PREFIX)ded.$(SECTION):	ded.man		; $(PUT)
-$(PREFIX)link2rcs.$(SECTION):	link2rcs.man	; $(PUT)
-$(PREFIX)permit.$(SECTION):	permit.man	; $(PUT)
-$(PREFIX)rcsget.$(SECTION):	rcsget.man	; $(PUT)
-$(PREFIX)rcsput.$(SECTION):	rcsput.man	; $(PUT)
+$(PREFIX)baseline.$(SECTION):	baseline.$(USE)	; $(PUT)
+$(PREFIX)checkin.$(SECTION):	checkin.$(USE)	; $(PUT)
+$(PREFIX)checkout.$(SECTION):	checkout.$(USE)	; $(PUT)
+$(PREFIX)checkup.$(SECTION):	checkup.$(USE)	; $(PUT)
+$(PREFIX)copy.$(SECTION):	copy.$(USE)	; $(PUT)
+$(PREFIX)ded.$(SECTION):	ded.$(USE)	; $(PUT)
+$(PREFIX)link2rcs.$(SECTION):	link2rcs.$(USE)	; $(PUT)
+$(PREFIX)permit.$(SECTION):	permit.$(USE)	; $(PUT)
+$(PREFIX)rcsget.$(SECTION):	rcsget.$(USE)	; $(PUT)
+$(PREFIX)rcsput.$(SECTION):	rcsput.$(USE)	; $(PUT)
+$(PREFIX)vcs.$(SECTION):	vcs.$(USE)	; $(PUT)
 
 $(SOURCES):				; $(GET) $@

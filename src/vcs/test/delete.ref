@@ -1,0 +1,25 @@
+** processing foo/src
+% access ./foo/src/FOO/FOO,v
+% rm -f ./foo/src/FOO/FOO,v
+% rmdir ./foo/src/FOO
+% rmdir ./foo/src
+** processing foo2
+% access ./foo2/FOO/FOO,v
+% rm -f ./foo2/FOO/FOO,v
+% rmdir ./foo2/FOO
+% rmdir ./foo2
+** processing foo
+% access ./foo/FOO/FOO,v
+% access ./foo/test/FOO/FOO,v
+% rm -f ./foo/test/FOO/FOO,v
+% rmdir ./foo/test/FOO
+% rmdir ./foo/test
+% rm -f ./foo/FOO/FOO,v
+% rmdir ./foo/FOO
+% rmdir ./foo
+** resulting tree:
+foobar
+FOO
+FOO/FOO,v
+FOO/foobar,v
+delete.tst

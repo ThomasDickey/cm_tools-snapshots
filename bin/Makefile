@@ -1,9 +1,15 @@
-# $Id: Makefile,v 9.0 1989/10/13 13:57:35 ste_cm Rel $
+# $Id: Makefile,v 10.0 1991/10/11 12:03:36 ste_cm Rel $
 #
 # $Log: Makefile,v $
-# Revision 9.0  1989/10/13 13:57:35  ste_cm
-# BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+# Revision 10.0  1991/10/11 12:03:36  ste_cm
+# BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
 #
+#	Revision 9.1  91/10/11  12:03:36  dickey
+#	added 'vcs' program
+#	
+#	Revision 9.0  89/10/13  13:57:35  ste_cm
+#	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+#	
 #	Revision 8.0  89/10/13  13:57:35  ste_cm
 #	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
 #	
@@ -39,7 +45,8 @@ ALL	=\
 	$B/link2rcs\
 	$B/permit\
 	$B/rcsget\
-	$B/rcsput
+	$B/rcsput\
+	$B/vcs
 
 ####### (Standard Productions) #################################################
 all:		; @echo '** use "make install"'
@@ -67,3 +74,4 @@ $B/link2rcs:	link2rcs	; $(USER)
 $B/permit:	permit		; $(USER)
 $B/rcsget:	rcsget		; $(USER)
 $B/rcsput:	rcsput		; $(USER)
+$B/vcs:		vcs		; $(ADMIN)

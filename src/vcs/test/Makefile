@@ -1,32 +1,24 @@
-# $Id: Makefile,v 4.1 1989/09/06 13:09:27 dickey Exp $
+# $Id: Makefile,v 11.0 1991/10/17 17:11:06 ste_cm Rel $
 # make-file for testing RCS permission utility
 #
-# $Log: Makefile,v $
-# Revision 4.1  1989/09/06 13:09:27  dickey
-# RCS_BASE
-#
-#	Revision 4.0  89/08/22  09:01:33  ste_cm
-#	BASELINE Thu Aug 24 10:41:43 EDT 1989 -- support:navi_011(rel2)
-#	
-#	Revision 3.1  89/08/22  09:01:33  dickey
-#	corrected 'destroy' rule
-#	
-#	Revision 3.0  89/04/03  08:32:04  ste_cm
-#	BASELINE Mon Jun 19 14:50:57 EDT 1989
-#	
 
 ####### (Development) ##########################################################
 GET	= checkout
 
 ####### (Standard Lists) #######################################################
+REF_FILES = \
+	delete.ref\
+	insert.ref\
+	unlock.ref
 SCRIPTS	=\
+	compare.sh \
 	run_tests.sh
 
-SOURCES	= $(SCRIPTS)
+SOURCES	= $(SCRIPTS) $(REF_FILES)
 
 ####### (Standard Productions) #################################################
 all:		sources
-clean:				; rm -f *.out
+clean:				; rm -rf *.bak *.log *.out core foo* FOO
 clobber:	clean
 destroy:
 	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'

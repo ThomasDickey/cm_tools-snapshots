@@ -1,58 +1,23 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 9.2 1991/09/06 14:51:08 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 10.0 1991/10/30 07:28:12 ste_cm Rel $";
 #endif
 
 /*
  * Title:	permit.c (RCS directory-permissions)
  * Author:	T.E.Dickey
  * Created:	09 Mar 1989
- * $Log: permit.c,v $
- * Revision 9.2  1991/09/06 14:51:08  dickey
- * changed interface to 'rcsopen()'
- *
- *		Revision 9.1  91/09/06  14:50:34  dickey
- *		lint
- *		
- *		Revision 9.0  91/05/31  16:09:56  ste_cm
- *		BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
- *		
- *		Revision 8.2  91/05/31  16:09:56  dickey
- *		lint (unused arg of 'do_arcs()')
- *		
- *		Revision 8.1  91/05/20  12:56:15  dickey
- *		mods to compile on apollo sr10.3
- *		
- *		Revision 8.0  89/07/25  14:28:33  ste_cm
- *		BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
- *		
- *		Revision 7.0  89/07/25  14:28:33  ste_cm
- *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
- *		
- *		Revision 6.0  89/07/25  14:28:33  ste_cm
- *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
- *		
- *		Revision 5.0  89/07/25  14:28:33  ste_cm
- *		BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
- *		
- *		Revision 4.0  89/07/25  14:28:33  ste_cm
- *		BASELINE Thu Aug 24 10:40:29 EDT 1989 -- support:navi_011(rel2)
- *		
- *		Revision 3.1  89/07/25  14:28:33  dickey
- *		L_cuserid is not defined in apollo SR10 (bsd4.3)
- *		
- *		Revision 3.0  89/06/16  09:38:50  ste_cm
- *		BASELINE Mon Jun 19 14:49:13 EDT 1989
- *		
- *		Revision 2.2  89/06/16  09:38:50  dickey
- *		corrected copy to 'm_buffer[]'; removed redundant 'failed()'.
- *		
- *		Revision 2.1  89/06/13  08:58:12  dickey
- *		added -m option to allow override of BASELINE rlog-message
- *		restructured usage-code to make it faster
- *		
- *		Revision 2.0  89/03/31  09:09:53  ste_cm
- *		BASELINE Thu Apr  6 13:54:53 EDT 1989
- *		
+ * Modified:
+ *		30 Oct 1991, allow "-b" value to be "1" (for initial-creation)
+ *		15 Oct 1991, convert to ANSI.  Use 'shoarg()'
+ *		06 Sep 1991, changed interface to 'rcsopen()'
+ *		31 May 1991, lint (unused arg of 'do_arcs()')
+ *		20 May 1991, mods to compile on apollo sr10.3
+ *		25 Jul 1989, L_cuserid is not defined in apollo SR10 (bsd4.3)
+ *		16 Jun 1989, corrected copy to 'm_buffer[]'; removed redundant
+ *			     'failed()'.
+ *		13 Jun 1989, added -m option to allow override of BASELINE rlog-
+ *			     message.  Restructured usage-code to make it
+ *			     faster.
  *		13 Mar 1989, cleanup of code which handles multiple usernames.
  *
  * Function:	This program maintains a file in each RCS directory named
@@ -73,29 +38,24 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/
  */
 
 #define		STR_PTYPES
-#include	"ptypes.h"
-#include	"rcsdefs.h"
+#include	<ptypes.h>
+#include	<rcsdefs.h>
 #include	<ctype.h>
 #include	<time.h>
-extern	time_t	time();
-extern	long	strtol();
 extern	char	*mktemp();
-extern	char	*pathcat();
-extern	char	*pathleaf();
-extern	char	*rcs_dir();
 extern	char	*strtok();
-extern	char	*uid2s();
-extern	char	*vcs_file();
-
-extern	int	optind;		/* 'getopt()' index to argv */
-extern	char	*optarg;	/* 'getopt()' argument in argv */
 
 /************************************************************************
  *	local definitions						*
  ************************************************************************/
 
+#define	CI	"ci"
+#define	CO	"co"
+#define	RCS	"rcs"
+
 #define	WARN	FPRINTF(stderr,
 #define	TELL	if(verbose >= 0) PRINTF(
+#define	SHOW	if(verbose >= 0) shoarg(stdout,
 #define	VERBOSE	if(verbose >  0) PRINTF(
 
 static	int	add_opt;		/* "-a" option */
@@ -118,9 +78,12 @@ static	char	m_buffer[BUFSIZ];	/* baseline-message */
  * to the given argument.
  */
 static
-on_list(list, s)
-char	*list;
-char	*s;
+on_list(
+_ARX(char *,	list)
+_AR1(char *,	s)
+	)
+_DCL(char *,	list)
+_DCL(char *,	s)
 {
 	if (list != 0) {
 		auto	char	bfr[BUFSIZ];
@@ -139,8 +102,12 @@ char	*s;
  * Append to a comma-separated access-list
  */
 static
-cat_list(dst, src)
-char	*dst, *src;
+cat_list(
+_ARX(char *,	dst)
+_AR1(char *,	src)
+	)
+_DCL(char *,	dst)
+_DCL(char *,	src)
 {
 	if (*src) {
 		if (*dst)
@@ -154,8 +121,12 @@ char	*dst, *src;
  * track of the ones we have found.
  */
 static
-del_list(list, key)
-char	*list, *key;
+del_list(
+_ARX(char *,	list)
+_AR1(char *,	key)
+	)
+_DCL(char *,	list)
+_DCL(char *,	key)
 {
 	register size_t	len = strlen(key);
 	register char	*next;
@@ -185,7 +156,9 @@ char	*list, *key;
  * Indent the report for the given number of directory-levels.
  */
 static
-indent(level)
+indent(
+_AR1(int,	level))
+_DCL(int,	level)
 {
 	++lines;
 	if (verbose >= 0) {
@@ -200,8 +173,12 @@ indent(level)
  * updated properly.
  */
 static
-set_revision(dst, opt)
-char	*dst, *opt;
+set_revision(
+_ARX(char *,	dst)
+_AR1(char *,	opt)
+	)
+_DCL(char *,	dst)
+_DCL(char *,	opt)
 {
 	auto	char	*d;
 	auto	char	bfr[20];
@@ -226,8 +203,9 @@ char	*dst, *opt;
  * Initialize an RCS-command string
  */
 static
-set_command(dst)
-char	*dst;
+set_command(
+_AR1(char *,	dst))
+_DCL(char *,	dst)
 {
 	*dst = EOS;
 	if (verbose < 0)
@@ -238,7 +216,7 @@ char	*dst;
  * The permit-file has no tip-version.  Force it to have one.
  */
 static
-set_baseline()
+set_baseline(_AR0)
 {
 	auto	char	tmp[BUFSIZ],
 			acc_file[BUFSIZ];
@@ -249,16 +227,16 @@ set_baseline()
 	set_command(tmp);
 	catarg(tmp, "-l");
 	catarg(tmp, acc_file);
-	TELL "co %s\n", tmp);
-	if (!null_opt && (execute(rcspath("co"), tmp) < 0))
+	SHOW CO, tmp);
+	if (!null_opt && (execute(rcspath(CO), tmp) < 0))
 		failed(msg);
 
 	set_command(tmp);
 	set_revision(tmp, "-f");
 	catarg(tmp, m_buffer);
 	catarg(tmp, acc_file);
-	TELL "ci %s\n", tmp);
-	if (!null_opt && (execute(rcspath("ci"), tmp) < 0))
+	SHOW CI, tmp);
+	if (!null_opt && (execute(rcspath(CI), tmp) < 0))
 		failed(msg);
 }
 
@@ -267,8 +245,9 @@ set_baseline()
  * history of this file.
  */
 static
-create_permit(s)
-char	*s;
+create_permit(
+_AR1(char *,	s))
+_DCL(char *,	s)
 {
 	auto	char	tmp[BUFSIZ];
 	auto	char	bfr[BUFSIZ];
@@ -318,8 +297,8 @@ char	*s;
 	set_revision(tmp, "-r");
 	catarg(tmp, tmp_file);
 	catarg(tmp, acc_file);
-	TELL "ci %s\n", tmp);
-	if (!null_opt && (execute(rcspath("ci"), tmp) < 0))
+	SHOW CI, tmp);
+	if (!null_opt && (execute(rcspath(CI), tmp) < 0))
 		failed("creating permit-file");
 	(void)unlink(tmp_file);
 	(void)unlink(tmp_desc);
@@ -331,8 +310,8 @@ char	*s;
 			cat_list(bfr, user_name);
 		catarg(tmp, bfr);
 		catarg(tmp, acc_file);
-		TELL "rcs %s\n", tmp);
-		if (!null_opt && (execute(rcspath("rcs"), tmp) < 0))
+		SHOW RCS, tmp);
+		if (!null_opt && (execute(rcspath(RCS), tmp) < 0))
 			failed("modifying permit-file");
 	}
 }
@@ -342,7 +321,7 @@ char	*s;
  * known value of tip-version from the RCS archive files.
  */
 static
-compute_base()
+compute_base(_AR0)
 {
 	register char *s;
 
@@ -358,8 +337,14 @@ compute_base()
  * list.
  */
 static
-modify_access(file, name, opt)
-char	*file, *name, *opt;
+modify_access(
+_ARX(char *,	file)
+_ARX(char *,	name)
+_AR1(char *,	opt)
+	)
+_DCL(char *,	file)
+_DCL(char *,	name)
+_DCL(char *,	opt)
 {
 	char	cmd[BUFSIZ], tmp[BUFSIZ];
 
@@ -367,8 +352,8 @@ char	*file, *name, *opt;
 		set_command(cmd);
 		catarg(cmd, strcat(strcpy(tmp, opt), name));
 		catarg(cmd, file);
-		TELL "rcs %s\n", cmd);
-		if (!null_opt && (execute(rcspath("rcs"), cmd) < 0))
+		SHOW RCS, cmd);
+		if (!null_opt && (execute(rcspath(RCS), cmd) < 0))
 			failed("adding to access list");
 	}
 }
@@ -382,10 +367,18 @@ char	*file, *name, *opt;
  */
 static
 /*ARGSUSED*/
-do_arcs(path, name, sp, readable, level)
-char	*path;
-char	*name;
-struct	stat	*sp;
+do_arcs(
+_ARX(char *,	path)
+_ARX(char *,	name)
+_ARX(struct stat *,sp)
+_ARX(int,	readable)
+_AR1(int,	level)
+	)
+_DCL(char *,	path)
+_DCL(char *,	name)
+_DCL(struct stat *,sp)
+_DCL(int,	readable)
+_DCL(int,	level)
 {
 #ifdef	PATCH
 	int	got_lock= FALSE;	/* true if lock found */
@@ -498,8 +491,14 @@ struct	stat	*sp;
  * the specified user from the access lists, and incidentally computing the
  * highest version, from which the most recent baseline can be inferred.
  */
-scan_arcs(path, name, level)
-char	*path, *name;
+scan_arcs(
+_ARX(char *,	path)
+_ARX(char *,	name)
+_AR1(int,	level)
+	)
+_DCL(char *,	path)
+_DCL(char *,	name)
+_DCL(int,	level)
 {
 	*high_ver = EOS;
 	(void)walktree(path, name, do_arcs, "r", level);
@@ -518,10 +517,16 @@ char	*path, *name;
  * the RCS directory is on the access list of the permit-file.
  */
 static
-do_base(path, parent, level, flag_)
-char	*path;
-char	*parent;
-int	*flag_;
+do_base(
+_ARX(char *,	path)
+_ARX(char *,	parent)
+_ARX(int,	level)
+_AR1(int *,	flag_)
+	)
+_DCL(char *,	path)
+_DCL(char *,	parent)
+_DCL(int,	level)
+_DCL(int *,	flag_)
 {
 	char		nextpath[BUFSIZ];
 	char		acc_file[BUFSIZ];
@@ -550,10 +555,18 @@ int	*flag_;
  * directory-tree, and looking for RCS-directories at each point, to process.
  */
 static
-do_tree(path, name, sp, readable, level)
-char	*path;
-char	*name;
-struct	stat	*sp;
+do_tree(
+_ARX(char *,	path)
+_ARX(char *,	name)
+_ARX(struct stat *,sp)
+_ARX(int,	readable)
+_AR1(int,	level)
+	)
+_DCL(char *,	path)
+_DCL(char *,	name)
+_DCL(struct stat *,sp)
+_DCL(int,	readable)
+_DCL(int,	level)
 {
 	char	*notes;
 	int	mode	= (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
@@ -620,8 +633,9 @@ struct	stat	*sp;
  * Process a single argument: a directory name.
  */
 static
-do_arg(name)
-char	*name;
+do_arg(
+_AR1(char *,	name))
+_DCL(char *,	name)
 {
 	TELL "** path = %s\n", name);
 	lines	= 0;
@@ -639,7 +653,7 @@ usage()
 	"",
 	"options:",
 	"  -aUSER  add specified user(s) to access list",
-	"  -bBASE  set baseline value for directory",
+	"  -bBASE  set baseline value for directory (must be > 0)",
 	"  -eUSER  expunge specified user(s) from access list",
 	"  -mTEXT  specifies baseline-message (default: BASELINE {date}",
 	"  -n      no-op mode (shows actions that would be done)",
@@ -656,7 +670,7 @@ usage()
 }
 
 static
-disjoint()
+disjoint(_AR0)
 {
 	if (add_opt || expunge_opt || purge_opt)
 		usage();
@@ -667,8 +681,8 @@ disjoint()
  *	public entrypoints						*
  ************************************************************************/
 
-main(argc, argv)
-char	*argv[];
+/*ARGSUSED*/
+_MAIN
 {
 	register int	j;
 	auto	 char	*user_opt = 0;
@@ -685,7 +699,7 @@ char	*argv[];
 			add_opt = TRUE;		/* add permissions */
 			break;
 		case 'b':
-			if (((base_opt = strtol(optarg, &d, 10)) < 2)
+			if (((base_opt = strtol(optarg, &d, 10)) < 1)
 			||  (*d != EOS))
 				usage();
 			break;

@@ -1,55 +1,29 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/src/RCS/baseline.c,v 9.0 1991/05/20 12:30:41 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/src/RCS/baseline.c,v 10.0 1991/10/22 09:29:46 ste_cm Rel $";
 #endif
 
 /*
  * Title:	baseline.c (rcs baseline)
  * Author:	T.E.Dickey
  * Created:	24 Oct 1989
- * $Log: baseline.c,v $
- * Revision 9.0  1991/05/20 12:30:41  ste_cm
- * BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
- *
- *		Revision 8.1  91/05/20  12:30:41  dickey
- *		apollo sr10.3 cpp complains about endif-tags
- *		
- *		Revision 8.0  90/04/16  09:55:21  ste_cm
- *		BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
- *		
- *		Revision 7.0  90/04/16  09:55:21  ste_cm
- *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
- *		
- *		Revision 6.1  90/04/16  09:55:21  dickey
- *		"-f" option must allow 'permit' to run, otherwise the RCS,v
- *		file won't be updated.  Made "-f" only suppress 'permit' "-p"
- *		option.
- *		
- *		Revision 6.0  90/01/03  12:53:06  ste_cm
- *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
- *		
- *		Revision 5.7  90/01/03  12:53:06  dickey
- *		corrected code which infers baseline revision (if no rcs
- *		directory existed, this did not notice!)
- *		
- *		Revision 5.6  90/01/03  11:58:27  dickey
- *		added logic (for "-l" option) so that we can allow a locked
- *		file to be baselined (if it is locked, but not changed).
- *		
- *		Revision 5.5  90/01/03  11:31:29  dickey
- *		added "-l" option for stluka
- *		
- *		Revision 5.4  89/11/07  08:19:19  dickey
- *		corrected code which infers current-baseline
- *		
- *		Revision 5.3  89/11/07  08:08:50  dickey
- *		corrected treatment of "-r" option (recur only when asked)
- *		
- *		Revision 5.2  89/11/07  07:53:52  dickey
- *		added "-f" option, tuned some verboseness.
- *		
- *		Revision 5.1  89/11/01  15:00:30  dickey
- *		walktree passes null-pointer to stat-block if no-access.
- *		
+ * Modified:
+ *		22 Oct 1991, use 'shoarg()'
+ *		11 Oct 1991, converted to ANSI
+ *		20 May 1991, apollo sr10.3 cpp complains about endif-tags
+ *		16 Apr 1990, "-f" option must allow 'permit' to run, otherwise
+ *			     the RCS,v file won't be updated.  Made "-f" only
+ *			     suppress 'permit' "-p" option.
+ *		03 Jan 1990, added "-l" option for stluka. added logic (for "-l"
+ *			     option) so that we can allow a locked file to be
+ *			     baselined (if it is locked, but not changed).
+ *			     Corrected code which infers baseline revision (if
+ *			     no rcs directory existed, this did not notice!)
+ *		07 Nov 1989, added "-f" option, tuned some verboseness.
+ *			     Corrected treatment of "-r" option (recur only
+ *			     when asked).  Corrected code which infers current-
+ *			     baseline version.
+ *		01 Nov 1989, walktree passes null-pointer to stat-block if
+ *			     no-access.
  *
  * Function:	Use checkin/checkout to force a tree of files to have a common
  *		baseline-version number.
@@ -60,16 +34,11 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/sr
  */
 
 #define	STR_PTYPES
-#include	"ptypes.h"
-#include	"rcsdefs.h"
+#include	<ptypes.h>
+#include	<rcsdefs.h>
+#include	<sccsdefs.h>
 #include	<ctype.h>
 #include	<time.h>
-extern	time_t	time();
-extern	long	strtol();
-extern	char	*pathcat();
-extern	char	*pathleaf();
-extern	char	*sccs_dir();
-extern	char	*txtalloc();
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
@@ -98,11 +67,17 @@ static	int	recur;
 static	int	verbose;
 
 static
-doit(verb, args, really)
-char	*verb, *args;
+doit(
+_ARX(char *,	verb)
+_ARX(char *,	args)
+_AR1(int,	really)
+	)
+_DCL(char *,	verb)
+_DCL(char *,	args)
+_DCL(int,	really)
 {
 	if (verbose)
-		PRINTF("%% %s %s\n", verb, args);
+		shoarg(stdout, verb, args);
 	if (really) {
 		if (execute(verb, args) < 0) {
 			WARN "?? %s\n", verb);
@@ -112,15 +87,17 @@ char	*verb, *args;
 }
 
 static
-quiet_opt(args)
-char	*args;
+quiet_opt(
+_AR1(char *,	args))
+_DCL(char *,	args)
 {
 	if (!verbose)	catarg(args, "-q");
 }
 
 static
-purge_rights(path)
-char	*path;
+purge_rights(
+_AR1(char *,	path))
+_DCL(char *,	path)
 {
 	auto	char	args[BUFSIZ];
 	static	LIST	*purged;
@@ -145,10 +122,14 @@ char	*path;
 }
 
 static
-baseline(path, name, edited)
-char	*path;
-char	*name;
-time_t	edited;
+baseline(
+_ARX(char *,	path)
+_ARX(char *,	name)
+_AR1(time_t,	edited)
+	)
+_DCL(char *,	path)
+_DCL(char *,	name)
+_DCL(time_t,	edited)
 {
 	auto	char	args[BUFSIZ];
 	auto	char	*version,
@@ -202,26 +183,23 @@ time_t	edited;
 }
 
 static
-scan_tree(path, name, sp, ok_acc, level)
-char	*path;
-char	*name;
-struct	stat	*sp;
+WALK_FUNC(scan_tree)
 {
 	auto	char	tmp[BUFSIZ],
 			*s = pathcat(tmp, path, name);
 
 	if (sp == 0 || level > recur)
-		ok_acc = -1;
+		readable = -1;
 	else if (isDIR(sp->st_mode)) {
 		abspath(s);		/* get rid of "." and ".." names */
 		if (!a_opt && *pathleaf(s) == '.')
-			ok_acc = -1;
+			readable = -1;
 		else if (sameleaf(s, sccs_dir())
 		    ||   sameleaf(s, rcs_dir())) {
-			ok_acc = -1;
+			readable = -1;
 		} else if (level > recur) {
 			PRINTF("** %s (ignored)\n", name);
-			ok_acc = -1;
+			readable = -1;
 		} else if (recur > level)
 			track_wd(s);
 	} else if (isFILE(sp->st_mode)) {
@@ -229,14 +207,15 @@ struct	stat	*sp;
 			track_wd(path);
 		baseline(path,name, sp->st_mtime);
 	} else
-		ok_acc = -1;
+		readable = -1;
 
-	return(ok_acc);
+	return(readable);
 }
 
 static
-do_arg(name)
-char	*name;
+do_arg(
+_AR1(char *,	name))
+_DCL(char *,	name)
 {
 	auto	int	infer_rev = FALSE;
 
@@ -269,7 +248,7 @@ char	*name;
 		revision = -1;
 }
 
-usage()
+usage(_AR0)
 {
 	static	char	*tbl[] = {
  "Usage: baseline [options] [files]"
@@ -289,12 +268,12 @@ usage()
 	register int	j;
 	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
 		WARN "%s\n", tbl[j]);
-	(void)fflush(stderr);
+	FFLUSH(stderr);
 	exit(FAIL);
 }
 
-main(argc, argv)
-char	*argv[];
+/*ARGSUSED*/
+_MAIN
 {
 	register int	j;
 	register char	*s;

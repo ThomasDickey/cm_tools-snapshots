@@ -1,3 +1,884 @@
+1991-10-30  dickey@software.org
+
+	* src/permit/src/permit.c:
+	allow "-b" value to be "1", so we can make 'vcs' create
+	initial-directories
+
+1991-10-30  ste_cm@software.org
+
+	* src/permit/src/permit.c: BASELINE Wed Oct 30 07:31:24 1991
+
+1991-10-25  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	revised code of 'Filter(ed)', which used 'tmpfile()' to
+	simplify the code which unlinked the filtered-file if no
+	changes were made.  The 'tmpfile()' procedure resets the
+	effective uid/gid, so I could not do this properly with
+	setuid-mode.  However, the resulting rewrite is simpler...
+
+1991-10-25  ste_cm@software.org
+
+	* src/checkin/src/checkin.c: BASELINE Fri Oct 25 15:31:36 1991
+
+1991-10-25  dickey@software.org
+
+	* src/checkin/src/checkin.c: debug-traces
+	moved file-ownership (for working-file) before chmod
+
+1991-10-24  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	two corrections to 'GetLock()' -- from testing sccs2rcs
+	1) added cases for exiting from header (was reading past)
+	2) added logic to set 'lock_date' even if no locks were
+	   found (assumes "-f" option), since this is used to control
+	   the use of the "-d" option.
+
+1991-10-22  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	correction to initial access-list (if we are running as
+	root-setuid, must use the directory-owner instead of "root")
+
+	* src/vcs/test/run_test.sh: make this work ok in batch-mode
+
+1991-10-22  ste_cm@software.org
+
+	* src/vcs/test/run_test.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+	* src/vcs/test/run_test.sh: BASELINE Tue Oct 22 12:35:33 1991
+
+1991-10-22  dickey@software.org
+
+	* src/checkup/test/run_test.sh:
+	modified so this will run in batch-mode on SunOs (cannot open /dev/tty)
+
+1991-10-22  ste_cm@software.org
+
+	* src/checkup/test/run_test.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+	* src/checkup/test/run_test.sh: BASELINE Tue Oct 22 10:35:37 1991
+
+1991-10-22  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	fixed bug which ignored return-value of 'Filtered()', causing
+	the working-file to be zeroed if it had no identifier.
+
+	* src/baseline/src/baseline.c:
+	use 'shoarg()' to get rid of non-ASCII chars from traces
+
+1991-10-22  ste_cm@software.org
+
+	* src/baseline/src/baseline.c: BASELINE Wed Oct 30 07:23:36 1991
+
+1991-10-21  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	if we have already reverted because we had permission to
+	write in the RCS-directory, it is redundant (and erroneous)
+	to see if we are also owner of the archive files therein
+	(though we can get into trouble if they are unreadable).
+
+1991-10-21  ste_cm@software.org
+
+	* src/checkout/src/checkout.c: BASELINE Mon Oct 21 13:41:44 1991
+
+1991-10-21  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	oops: last correction left unnecessary check for group-id
+
+	* Makefile: trying to obsolete 'INSTALL_PATH'
+
+1991-10-21  ste_cm@software.org
+
+	* Makefile: BASELINE Mon Oct 21 08:34:40 1991 -- ANSI conversion; vcs
+
+	* user/Makefile:
+	added symbol "USE" to control whether we install cat-file or man-file
+
+1991-10-21  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	oops: fixed logic in 'PreProcess()' which used variable 'who'
+	(wrong solution, since it was not updated by 'GiveBack()'
+
+1991-10-18  dickey@software.org
+
+	* README: added 'vcs'
+
+1991-10-18  ste_cm@software.org
+
+	* README: BASELINE Fri Oct 18 16:48:46 1991 -- ANSI conversion; vcs
+
+	* README: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* COPYING: set current date
+
+1991-10-18  ste_cm@software.org
+
+	* COPYING: BASELINE Fri Oct 18 16:48:46 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/permit/test/run_test.sh: substitute USER=`whoami` for $LOGNAME
+
+1991-10-18  ste_cm@software.org
+
+	* src/permit/test/run_test.sh:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/permit/test/run_test.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/vcs/test/delete.ref: oops
+
+1991-10-18  ste_cm@software.org
+
+	* src/vcs/test/delete.ref:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/vcs/test/compare.sh:
+	map both $USER and $LOGNAME to "{LOGNAME}" so I can test this while under
+	setuid to ste_cm
+
+1991-10-18  ste_cm@software.org
+
+	* src/vcs/test/compare.sh:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/vcs/test/compare.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	oops: corrected last change (had accidentally killed the
+	test for which SetAccess returned false.
+
+	* src/checkin/src/checkin.c:
+	modified code of SetAccess so that it is run for the effective
+	user (so that for that window, at least, I don't have to
+	chmod the RCS-directory)
+
+	* src/checkin/src/checkin.c:
+	corrected a place where I called 'revert()' if I had a
+	mismatch between group-id and decided that it was "non-CM"
+	use.  Now this should work if I can set the effective
+	group-id to the same value as the real group-id.
+
+	* certify/release.txt: final notes for baseline 10
+
+1991-10-18  ste_cm@software.org
+
+	* certify/release.txt:
+	BASELINE Fri Oct 18 16:49:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* certify/config.txt: we don't have SunOs 4.0.3 any more
+
+1991-10-18  ste_cm@software.org
+
+	* certify/config.txt:
+	BASELINE Fri Oct 18 16:49:43 1991 -- ANSI conversion; vcs
+
+	* certify/config.txt:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/link2rcs/Makefile: cleanup recursion
+
+1991-10-18  ste_cm@software.org
+
+	* src/link2rcs/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/copy/Makefile: cleanup recursion
+
+1991-10-18  ste_cm@software.org
+
+	* src/copy/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/checkup/Makefile: cleanup recursion
+
+1991-10-18  ste_cm@software.org
+
+	* src/checkup/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/checkout/Makefile: cleanup recursion
+
+1991-10-18  ste_cm@software.org
+
+	* src/checkout/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/checkin/Makefile: cleanup recursion
+
+1991-10-18  ste_cm@software.org
+
+	* src/checkin/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/permit/Makefile: cleanup recursion
+
+1991-10-18  ste_cm@software.org
+
+	* src/permit/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/baseline/Makefile: cleanup recursion
+
+1991-10-18  ste_cm@software.org
+
+	* src/baseline/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/permit/test/run_test.sh: forgot to add "no_dummy" 
+
+	* src/permit/test/run_test.sh:
+	first cut of changes makes this use FOO rather than RCS
+
+	* src/permit/src/permit.c: lint
+
+	* src/permit/src/Makefile: removed CFLAGS override
+
+1991-10-18  ste_cm@software.org
+
+	* src/permit/src/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/permit/src/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/link2rcs/test/run_test.sh: removed log-comment
+	run from test-versions
+
+1991-10-18  ste_cm@software.org
+
+	* src/link2rcs/test/run_test.sh:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/link2rcs/test/run_test.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/link2rcs/src/Makefile: undid override of CFLAGS
+
+1991-10-18  ste_cm@software.org
+
+	* src/link2rcs/src/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/link2rcs/src/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/link2rcs/src/link2rcs.c: lint
+
+1991-10-18  ste_cm@software.org
+
+	* src/link2rcs/src/link2rcs.c:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/link2rcs/src/link2rcs.c:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/copy/test/run_test.sh: eliminated log-comment
+	corrected exec-line
+	run from test-versions
+
+1991-10-18  ste_cm@software.org
+
+	* src/copy/test/run_test.sh:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/copy/test/run_test.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/copy/test/Makefile:
+	made run_tests rule consistent with other test-dirs
+
+1991-10-18  ste_cm@software.org
+
+	* src/copy/test/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/copy/test/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/copy/src/copy.c: removed log-comment
+	lint
+
+1991-10-18  ste_cm@software.org
+
+	* src/copy/src/copy.c:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/copy/src/Makefile: eliminated override of CFLAGS
+
+1991-10-18  ste_cm@software.org
+
+	* src/copy/src/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/copy/src/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/checkup/test/run_test.sh: run from test-versions
+
+	* src/checkup/src/checkup.c: lint
+
+1991-10-18  ste_cm@software.org
+
+	* src/checkup/src/checkup.c:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/checkup/src/Makefile: eliminate CFLAGS override
+
+1991-10-18  ste_cm@software.org
+
+	* src/checkup/src/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/checkup/src/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/checkout/test/run_test.sh: removed log-comment
+	corrected exec-line
+	run from test-versions
+
+1991-10-18  ste_cm@software.org
+
+	* src/checkout/test/run_test.sh:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/checkout/test/run_test.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/checkout/src/checkout.c, src/checkout/src/rcsget.c: lint
+
+1991-10-18  ste_cm@software.org
+
+	* src/checkout/src/rcsget.c:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/checkout/src/Makefile: suppress override of CFLAGS
+
+1991-10-18  ste_cm@software.org
+
+	* src/checkout/src/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/checkout/src/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/checkin/test/run_test.sh: eliminated log-comment
+	fixed exec-line
+
+1991-10-18  ste_cm@software.org
+
+	* src/checkin/test/run_test.sh:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/checkin/src/checkin.c: lint
+
+	* src/checkin/src/Makefile: eliminated override of CFLAGS
+
+1991-10-18  ste_cm@software.org
+
+	* src/checkin/src/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/checkin/src/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/checkin/src/rcsput.c: lint
+
+1991-10-18  ste_cm@software.org
+
+	* src/checkin/src/rcsput.c:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-18  dickey@software.org
+
+	* src/baseline/src/Makefile: undid override of CFLAGS
+
+1991-10-18  ste_cm@software.org
+
+	* src/baseline/src/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/baseline/src/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-18  dickey@software.org
+
+	* src/baseline/src/baseline.c: lint
+
+1991-10-17  dickey@software.org
+
+	* src/vcs/test/unlock.ref: access-message
+
+1991-10-17  ste_cm@software.org
+
+	* src/vcs/test/unlock.ref:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/vcs/test/unlock.ref:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-17  dickey@software.org
+
+	* src/vcs/test/insert.ref: access-message
+
+1991-10-17  ste_cm@software.org
+
+	* src/vcs/test/insert.ref:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-17  dickey@software.org
+
+	* src/vcs/test/delete.ref: access-message
+
+	* src/vcs/src/vcs.c:
+	use 'ShowPath()' for access-message to take advantage of relpath (makes
+	regression tests simpler)
+
+1991-10-17  ste_cm@software.org
+
+	* src/vcs/src/vcs.c:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/vcs/src/vcs.c: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-17  dickey@software.org
+
+	* src/vcs/test/Makefile: added ref-files for tests
+
+1991-10-17  ste_cm@software.org
+
+	* src/vcs/test/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/vcs/test/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-17  dickey@software.org
+
+	* src/vcs/test/unlock.ref: RCS_BASE
+
+	* src/vcs/test/run_test.sh: fleshed out test-cases
+
+	* src/vcs/test/delete.ref, src/vcs/test/insert.ref, src/vcs/test/compare.sh:
+	RCS_BASE
+
+	* src/vcs/src/insert.c:
+	fix bug in the code I commented out (must simply set 'head'
+	to "." after using it in chdir command, since I used up the
+	leaf).
+
+1991-10-17  ste_cm@software.org
+
+	* src/vcs/src/insert.c:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/vcs/src/insert.c:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-17  dickey@software.org
+
+	* src/vcs/src/vcs.c: made failure to find vcs-file fatal
+
+	* src/vcs/src/insert.c:
+	added comments, patched out a chdir that appears to be wrong
+
+	* src/vcs/test/Makefile: updated clean-rule
+
+	* src/vcs/test/run_test.sh: first cut of real tests
+
+	* user/rcsput.man: added "-x" option
+
+1991-10-17  ste_cm@software.org
+
+	* user/rcsput.man:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-17  dickey@software.org
+
+	* user/vcs.man: RCS_BASE
+
+1991-10-17  ste_cm@software.org
+
+	* user/vcs.man:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* user/vcs.man: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-17  dickey@software.org
+
+	* user/checkin.man: made -B, -d, -x options in TP-format
+
+1991-10-17  ste_cm@software.org
+
+	* user/checkin.man:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-17  dickey@software.org
+
+	* user/Makefile: added vcs.man
+
+	* src/vcs/src/vcs.c:
+	moved ShowPath here; use it to show either concisely (with 'relpath'),
+	or precisely (with 'pathcat')
+
+	* src/vcs/src/insert.c: use 'ShowPath()'
+
+	* src/vcs/src/vcs.h: added extern for 'ShowPath()'
+
+1991-10-17  ste_cm@software.org
+
+	* src/vcs/src/vcs.h:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/vcs/src/vcs.h: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-17  dickey@software.org
+
+	* src/vcs/src/delete.c: moved 'ShowPath' to vcs.c
+
+1991-10-17  ste_cm@software.org
+
+	* src/vcs/src/delete.c:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-17  dickey@software.org
+
+	* src/vcs/src/insert.c:
+	show protection I use in creating RCS-directory (should be
+	inherited!)
+
+	* src/vcs/src/vcs.h: added 'RCS_prot' to globals
+
+	* src/vcs/src/vcs.c:
+	save protection from access (of RCS-directory) for use in 'vcs_insert.c'
+
+	* src/vcs/src/delete.c:
+	added logic to actually make the unlink/rmdir calls (works too)
+
+	* src/vcs/src/delete.c:
+	made this check the access-list in the vcs-file;
+	made more detailed error-messages.
+
+	* src/vcs/src/delete.c:
+	make this walk the tree; must check access-list and do the
+	actual unlink/rmdir calls
+
+	* src/vcs/src/vcs.h: DeleteDir returns no value
+
+	* src/vcs/src/insert.c:
+	prepend ".." to ref_path in case we did not begin with an
+	absolute pathname.
+
+	* src/vcs/src/delete.c: RCS_BASE
+
+	* src/vcs/src/vcs.h: broke out 'DeleteDir()' as vcs_delete.c
+
+	* src/vcs/src/insert.c: ident
+
+	* src/vcs/src/vcs.c: broke out 'DeleteDir()' as vcs_delete.c
+
+	* src/vcs/src/Makefile: broke out 'vcs_delete.c'
+
+1991-10-17  ste_cm@software.org
+
+	* src/vcs/src/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/vcs/src/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-17  dickey@software.org
+
+	* src/vcs/src/unlock.c: RCS_BASE
+
+1991-10-17  ste_cm@software.org
+
+	* src/vcs/src/unlock.c:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/vcs/src/unlock.c:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-17  dickey@software.org
+
+	* src/vcs/src/vcs.h: RCS_BASE
+
+	* src/vcs/src/vcs.c: split out vcs.h, vcs_insert.c, vcs_unlock.c
+
+	* src/vcs/src/insert.c: RCS_BASE
+
+	* src/vcs/src/Makefile: split 'vcs.c' into modules, per-function
+
+	* certify/release.txt: stuff I've done in the past week
+
+1991-10-16  dickey@software.org
+
+	* user/ded.man: mods to inline-edit commands
+
+1991-10-16  ste_cm@software.org
+
+	* user/ded.man:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-15  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	adjusted debug-traces to better show uid/gid
+
+	* src/link2rcs/src/link2rcs.c: convert to ANSI
+
+	* src/permit/test/run_test.sh: got rid of log-comment
+
+	* src/permit/src/permit.c: converted to ANSI
+	use 'shoarg()'
+
+1991-10-11  ste_cm@software.org
+
+	* src/permit/src/permit.c, src/link2rcs/src/link2rcs.c: lint
+
+	* src/copy/src/copy.c: convert to ANSI
+
+1991-10-11  dickey@software.org
+
+	* src/checkup/src/checkup.c, src/checkout/src/rcsget.c, src/checkin/src/rcsput.c:
+	converted to ANSI
+
+	* src/checkin/src/checkin.c: simplified with a macro the lock-date code
+
+	* src/checkin/src/checkin.c:
+	modified so that we use the "-d" option if we can find the
+	the date of the locked version and of the current file are
+	different (still slows up 'baseline')
+
+	* src/baseline/test/run_test.sh:
+	tried to make this work even if I cannot read the RCS directory (but can
+	read the archive-files)
+	also, reduced the PATH drastically.
+
+1991-10-11  ste_cm@software.org
+
+	* src/baseline/test/run_test.sh:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/baseline/test/run_test.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-10-11  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	converted to ANSI, temporarily (?) undid the use of "-d"
+	option.
+
+	* src/baseline/src/baseline.c: converted to ANSI
+
+	* bin/Makefile: added 'vcs' program
+
+1991-10-11  ste_cm@software.org
+
+	* bin/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-11  dickey@software.org
+
+	* src/vcs/test/run_test.sh: RCS_BASE
+
+	* src/vcs/test/Makefile: *** empty log message ***
+
+	* src/vcs/src/vcs.c:
+	lint; restore original directory after each insertion is completed
+
+	* src/vcs/src/vcs.c:
+	modified directory-changing to keep rcs from seeing "RCS/RCS,v"
+
+	* src/vcs/src/vcs.c:
+	first cut of logic which implements the "-i" option (must test)
+
+	* src/Makefile: added rule to make 'vcs'
+
+1991-10-11  ste_cm@software.org
+
+	* src/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-11  dickey@software.org
+
+	* src/vcs/src/vcs.c:
+	restrict this to options u/i/d (have not yet implemented the last two)
+
+	* src/vcs/src/vcs.c: have a working version of "-u" operation
+
+1991-10-10  dickey@software.org
+
+	* src/vcs/src/vcs.c:
+	added check to ensure that "rcs" command works (by inspecting dates)
+
+	* src/vcs/src/vcs.c:
+	got this down to where I can start testing the unlock function and adjust
+	the setuid behavior
+
+	* src/vcs/src/vcs.c: make unlock-command
+
+	* src/vcs/src/vcs.c:
+	coded up logic to find lock (derived from 'checkin.c')
+
+	* src/vcs/src/Makefile, src/vcs/Makefile: cleanup
+
+1991-10-10  ste_cm@software.org
+
+	* src/vcs/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-10-10  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	suppress some tests for 'revert()' if we are not set-uid'd
+
+1991-10-09  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	If the RCS-directory is writeable, assume we will be able to
+	make locks on files w/o a uid-hack
+
+	* src/checkout/src/checkout.c: converted to ANSI form.
+	corrected a bug which prevented the ste_cm-version of this
+	from letting user checkout a file w/o a lock on it.
+
+1991-10-08  dickey@software.org
+
+	* src/Makefile: corrected recursive-rules
+
+	* src/checkout/src/checkout.c: stifled a 'revert()' message
+
+	* src/checkin/src/checkin.c:
+	stifle message about reverting-setuid when we actually
+	started from roo.
+
+1991-10-07  dickey@software.org
+
+	* certify/release.txt: got 'checkin' to work properly (I think...)
+
+	* src/checkin/src/checkin.c:
+	use RCS Version-4 "-d" option to set the checkin-date of a
+	file, making it not necessary to edit the archive, or to
+	postprocess the working-file.
+
+	* src/checkin/src/checkin.c:
+	corrected initial value on 'logmsg' (broke recently...)
+
+	* src/checkin/src/checkin.c: corrected debug-trace in 'DoIt()'
+
+1991-10-03  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	partly decoupled the default-revision (still have bugs,
+	mostly by not supplying logmsg)
+
+1991-10-01  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	encapsulate both ci and rcs command with setuid hack because
+	rcs version 4 does not do the directory-permission check
+	correctly
+
+	* src/checkin/src/checkin.c:
+	fixes to "-B" option when file is already locked
+
+	* src/checkin/src/rcsput.c: pass "-B" to 'checkin'
+
+	* user/checkin.man: documented the "-B" option.
+
+	* src/checkin/src/checkin.c:
+	made this work (?) properly for root-setuid mode
+
+	* src/checkin/src/checkin.c: add/use "-B" option
+
+	* src/checkin/src/checkin.c:
+	corrected code which inadvertantly set "-m" option when we
+	use the result of RCSbase for the revision.
+
+	* src/checkin/src/checkin.c: RCS_BASE
+
+	* src/checkin/src/checkin.c:
+	override RCS_BASE value with tip-version if it exists
+
+	* src/checkin/src/checkin.c:
+	mods to make root-setuid work (prevent call on 'revert()',
+	change ownership of files after checkin)
+
+	* src/checkin/src/checkin.c:
+	suppress logic of 'HackMode()' if we are running in root-setuid
+
+	* src/checkin/src/checkin.c:
+	modified 'SetOpts()' so that we use the RCS_BASE version if
+	any checkin occurs when no revision is specified and if no
+	"-k" option is given.
+
 1991-09-25  dickey@software.org
 
 	* src/checkout/src/rcsget.c:

@@ -1,4 +1,4 @@
-.\" $Id: checkin.man,v 9.3 1991/09/25 08:58:18 dickey Exp $
+.\" $Id: checkin.man,v 10.0 1991/10/17 15:26:05 ste_cm Rel $
 .de DS
 .RS
 .nf
@@ -114,11 +114,19 @@ a default log-message
 FROM_KEYS
 .DE
 .PP
-The "\-\fBd\fR" option of \fBcheckin\fR causes it to display
-the actions it would perform, but not to do them (e.g., invocation
-of \fBrcs\fR and \fBci\fR).
-.PP
-Use the "\-\fBx\fR" option of \fBcheckin\fR to direct it
+Options specific to \fBcheckin\fR are:
+.TP
+.B \-B
+directs \fBcheckin\fR to ignore the \fBbaseline\fR version.
+Normally, \fBcheckin\fR supplies a default version number which
+augments that of \fBci\fR, by looking at the \fBbaseline\fR version.
+.TP
+.B \-d
+causes it to display the actions it would perform,
+but not to do them (e.g., invocation of \fBrcs\fR and \fBci\fR).
+.TP
+.B \-x
+direct \fBcheckin\fR
 to retain the pathname when translating between working and archive
 files, e.g, "\fBpath/name\fR" becomes "\fBpath/RCS/name,v\fR".
 If the "\-\fBx\fR" option is not set, "\fBpath/name\fR"

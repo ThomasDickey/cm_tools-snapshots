@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.c,v 9.4 1991/09/25 13:48:08 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.c,v 10.0 1991/10/18 07:52:26 ste_cm Rel $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		11 Oct 1991, converted to ANSI
  *		25 Sep 1991, added options R and L. Ensure that RCS-directory
  *			     exists before trying to extract the file.
  *			     Make this show normal-trace when "-n -q" are set.
@@ -37,11 +38,9 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  */
 
 #define	STR_PTYPES
-#include	"ptypes.h"
-#include	"rcsdefs.h"
-extern	char	*pathcat();
-extern	char	*pathleaf();
-extern	char	*sccs_dir();
+#include	<ptypes.h>
+#include	<rcsdefs.h>
+#include	<sccsdefs.h>
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
@@ -63,8 +62,9 @@ static	int	quiet;		/* "-q" option */
 static	int	x_opt;		/* "-x" option */
 
 static
-set_wd(path)
-char	*path;
+set_wd(
+_AR1(char *,	path))
+_DCL(char *,	path)
 {
 	if (!n_opt)
 		if (chdir(path) < 0)
@@ -72,8 +72,9 @@ char	*path;
 }
 
 static
-checkout(name)
-char	*name;
+checkout(
+_AR1(char *,	name))
+_DCL(char *,	name)
 {
 	auto	char	args[BUFSIZ];
 
@@ -87,8 +88,9 @@ char	*name;
 }
 
 static
-an_archive(name)
-char	*name;
+an_archive(
+_AR1(char *,	name))
+_DCL(char *,	name)
 {
 	register int	len_name = strlen(name),
 			len_type = strlen(RCS_SUFFIX);
@@ -97,42 +99,40 @@ char	*name;
 }
 
 static
-Ignore(name, why)
-char	*name, *why;
+Ignore(
+_ARX(char *,	name)
+_AR1(char *,	why)
+	)
+_DCL(char *,	name)
+_DCL(char *,	why)
 {
 	VERBOSE("?? ignored: %s%s\n", name, why);
 }
 
 static
 /*ARGSUSED*/
-scan_archive(path, name, sp, ok_acc, level)
-char	*path;
-char	*name;
-struct	stat	*sp;
+WALK_FUNC(scan_archive)
 {
 	auto	char	tmp[BUFSIZ];
 
 	if (!strcmp(working,path))	/* account for initial argument */
-		return (ok_acc);
+		return (readable);
 	if (!isFILE(sp->st_mode)
 	||  !an_archive(name)) {
 		Ignore(name, " (not an archive)");
 		return (-1);
 	}
 	if (!strcmp(vcs_file((char *)0, strcpy(tmp,name),FALSE), name))
-		return (ok_acc);
+		return (readable);
 
 	set_wd(working);
 	checkout(rcs2name(strcpy(tmp, name),x_opt));
 	set_wd(path);
-	return(ok_acc);
+	return(readable);
 }
 
 static
-scan_tree(path, name, sp, ok_acc, level)
-char	*path;
-char	*name;
-struct	stat	*sp;
+WALK_FUNC(scan_tree)
 {
 	auto	char	tmp[BUFSIZ],
 			*s = pathcat(tmp, path, name);
@@ -152,21 +152,21 @@ struct	stat	*sp;
 	} else if (isDIR(sp->st_mode)) {
 		abspath(s);		/* get rid of "." and ".." names */
 		if (!a_opt && *pathleaf(s) == '.')
-			ok_acc = -1;
+			readable = -1;
 		else if (sameleaf(s, sccs_dir()))
-			ok_acc = -1;
+			readable = -1;
 		else if (sameleaf(s, rcs_dir())) {
 			if (R_opt) {
 				(void)walktree(strcpy(working,path),
 					name, scan_archive, "r", level);
 			}
-			ok_acc = -1;
+			readable = -1;
 		} else {
 #ifdef	S_IFLNK
 			if (!L_opt
 			&&  (lstat(s, &sb) < 0 || isLINK(sb.st_mode))) {
 				Ignore(name, " (is a link)");
-				ok_acc = -1;
+				readable = -1;
 			} else
 #endif
 			if (!quiet || n_opt)
@@ -184,14 +184,15 @@ struct	stat	*sp;
 			Ignore(name, RCS_DEBUG ? " (no archive for it)" : "");
 	} else {
 		Ignore(name, RCS_DEBUG ? " (not a file)" : "");
-		ok_acc = -1;
+		readable = -1;
 	}
-	return(ok_acc);
+	return(readable);
 }
 
 static
-do_arg(name)
-char	*name;
+do_arg(
+_AR1(char *,	name))
+_DCL(char *,	name)
 {
 	VERBOSE("** process %s\n", name);
 #ifdef	S_IFLNK
@@ -207,7 +208,9 @@ char	*name;
 }
 
 static
-usage(option)
+usage(
+_AR1(int,	option))
+_DCL(int,	option)
 {
 	static	char	*tbl[] = {
  "usage: rcsget [options] files"
@@ -229,8 +232,8 @@ usage(option)
 	exit(FAIL);
 }
 
-main(argc, argv)
-char	*argv[];
+/*ARGSUSED*/
+_MAIN
 {
 	register int	j;
 	register char	*s, *t;

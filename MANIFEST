@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19910925
+MANIFEST for cm_tools, version t19911030
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -77,9 +77,18 @@ src/vcs                         subdirectory
 src/vcs/Makefile                top-level makefile for CM_TOOLS's VCS utility
 src/vcs/src                     subdirectory
 src/vcs/src/Makefile            makefile for VCS-tool
+src/vcs/src/delete.c            performs deletion-function for 'vcs'
+src/vcs/src/insert.c            performs insertion-function for 'vcs'
+src/vcs/src/unlock.c            performs unlock-function for 'vcs'
 src/vcs/src/vcs.c               first sketch of VCS tool (far from complete!)
+src/vcs/src/vcs.h               interface between vcs main + utilities + functions
 src/vcs/test                    subdirectory
 src/vcs/test/Makefile           makefile for VCS's test-directory
+src/vcs/test/compare.sh         compare test-results
+src/vcs/test/delete.ref         reference for 'vce' delete-test
+src/vcs/test/insert.ref         reference for 'vce' insert-test
+src/vcs/test/run_test.sh        simple script for testing 'vcs' (how do I regress?)
+src/vcs/test/unlock.ref         reference for 'vce' unlock-test
 support                         subdirectory
 support/Makefile                make-file for CM_TOOLS support utilities
 support/copy.sh                 copy-script to use til we have a working copy utility
@@ -98,3 +107,4 @@ user/permit.man                 manual for permit utility
 user/rcsget.man                 manual for rcsget utility
 user/rcsput.bug                 known problems to resolve
 user/rcsput.man                 manual for rcsput utility
+user/vcs.man                    manual for vcs utility

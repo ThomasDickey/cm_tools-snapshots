@@ -1,0 +1,7 @@
+** processing foobar
+% access FOO/foobar,v
+.. locked by {LOGNAME}
+% rcs -u2.1 FOO/foobar,v 
+RCS file: FOO/foobar,v
+2.1 unlocked
+done

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 9.1 1991/09/09 07:36:38 dickey Exp $
+# $Id: Makefile,v 11.0 1991/10/18 07:37:00 ste_cm Rel $
 # Make-file for RCS baseline utility
 #
 ####### (Environment) ##########################################################
@@ -9,11 +9,12 @@ GET	= checkout
 #
 ####### (Command-line Options) #################################################
 INCLUDES= -I$I
-CFLAGS  =
+CPP_OPTS= $(DEFINES) $(INCLUDES)
+
 LIBS	= $L/lib.a
 DATE	= echo '****'`date` >> $@
-LINTOPT	= $(DEFINES) $(INCLUDES) -ltd
-#
+LINTOPT	= $(CPP_OPTS) -ltd
+
 ####### (Standard Lists) #######################################################
 ALL	= $B/baseline
 CSRC	= baseline.c
@@ -42,4 +43,4 @@ lint.out:	$(CSRC)
 lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@
 
 .c.o:
-	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINES) -c $<
+	$(CC) $(CFLAGS) $(CPP_OPTS) -c $<
