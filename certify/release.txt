@@ -1,9 +1,11 @@
-$Id: release.txt,v 7.4 1990/05/14 13:52:53 dickey Exp $
+$Id: release.txt,v 8.0 1990/06/29 08:25:35 ste_cm Rel $
 
 --------------------------------------------------------------------------------
 
 Version 8.0:
 -----------
+Made 'copy' command recognize "~" expressions in pathnames.
+
 Added options "-b" "-e" and "-f" to 'link2rcs'.
 
 Added "-l" option to 'copy'; corrected handling of tilde in src/dst args there.
@@ -11,10 +13,19 @@ Modified treatment of destination-as-directory: if more than 2 args are given,
 or if the destination ends with '/', we assume the user wants to copy into the
 given destination-directory.
 
-Propagate "-t" option of 'ded' to ded-subprocesses.
+Made 'ded' recognize "~" expressions in its argument-list.
+Propagate "-t" option of 'ded' to ded-subprocesses.  Made CTL/E command of
+'ded' work from directory-tree to allow initial read-pattern.
+Modified code which follows symbolic links so that (on Apollo) it strips off
+the DSEE revision suffix, if present.
 
 Added/broke-out 'sccsdefs.h' and 'sccsname.c' for use in rewrite of 'sccsput'
 (see SCCS_TOOLS).
+
+Corrected (for Apollo SR10.x) a bug in uid2s() and s2uid() which prevented
+translation for accounts which had been disabled.
+
+Changed sccs-directory default name from "sccs" to "SCCS".
 
 Version 7.0:
 -----------
