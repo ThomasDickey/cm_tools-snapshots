@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.4 1993/04/27 10:38:04 dickey Exp $
+# $Id: Makefile,v 11.5 1993/05/06 13:47:17 dickey Exp $
 # Top-level makefile for CM_TOOLS src-directory
 
 ####### (Development) ##########################################################
@@ -12,7 +12,6 @@ MFILES	=\
 	checkout/Makefile\
 	checkup/Makefile\
 	copy/Makefile\
-	ded/Makefile\
 	link2rcs/Makefile\
 	permit/Makefile\
 	vcs/Makefile
@@ -38,7 +37,6 @@ deinstall::	$(MFILES)
 	cd checkout;	$(MAKE) $@
 	cd checkup;	$(MAKE) $@
 	cd copy;	$(MAKE) $@
-	cd ded;		$(MAKE) $@
 	cd link2rcs;	$(MAKE) $@
 	cd permit;	$(MAKE) $@
 	cd vcs;		$(MAKE) $@

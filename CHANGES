@@ -1,3 +1,21 @@
+1993-05-06  dickey@software.org
+
+	* bin/Makefile: split out DED
+
+	* user/Makefile: DED split-out
+
+	* src/Makefile, certify/README: DED no longer lives here
+
+	* README: split out DED
+
+	* certify/config.txt: TD_LIB split-out
+
+	* certify/release.txt: documented split-out of TD_LIB, DED
+
+1993-05-05  dickey@software.org
+
+	* certify/Makefile: split out common-lib as TD_LIB
+
 1993-04-27  dickey@software.org
 
 	* src/vcs/test/run_test.sh, src/vcs/src/Makefile, src/permit/test/run_test.sh, src/link2rcs/test/case2.sh, src/link2rcs/test/case1.sh, src/link2rcs/test/run_test.sh, src/link2rcs/test/Makefile, src/checkout/test/run_test.sh, src/checkin/test/run_test.sh, src/baseline/test/run_test.sh, src/checkout/src/checkout.c, src/checkin/src/checkin.c, src/checkin/src/rcsput.c, src/vcs/test/Makefile, src/permit/test/Makefile, src/baseline/Makefile, src/checkin/Makefile, src/checkout/Makefile, src/checkup/Makefile, src/copy/Makefile, src/link2rcs/Makefile, src/permit/Makefile, src/vcs/Makefile, support/Makefile, certify/Makefile, Makefile, src/baseline/test/Makefile, src/checkin/src/Makefile, src/checkin/test/Makefile, src/checkout/src/Makefile, src/checkout/test/Makefile, bin/Makefile, src/Makefile, src/baseline/src/Makefile, src/link2rcs/src/Makefile, src/permit/src/Makefile, user/Makefile, src/copy/src/Makefile, src/copy/test/Makefile, src/checkup/src/Makefile, src/checkup/test/Makefile:

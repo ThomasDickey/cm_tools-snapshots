@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.2 1993/04/27 10:40:51 dickey Exp $
+# $Id: Makefile,v 11.3 1993/05/05 11:19:50 dickey Exp $
 
 ####### (Development) ##########################################################
 TOP	= ../..
@@ -8,8 +8,7 @@ include $(TOP)/td_lib/support/td_lib.mk
 SOURCES	=\
 	README\
 	config.txt\
-	release.txt\
-	reusable.txt
+	release.txt
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES)
