@@ -1,0 +1,67 @@
+# $Id: makefile.in,v 11.4 1997/09/14 21:52:28 tom Exp $
+# user documentation
+
+THIS	= cm_tools
+
+@make_include_left@@TD_LIB_rules@/td_lib.mk@make_include_right@
+
+####### (Development) ##########################################################
+
+prefix		= @prefix@
+exec_prefix	= @exec_prefix@
+mandir		= @mandir@
+top_srcdir	= @top_srcdir@
+
+USE	= man
+SECTION	= 1
+MANDIR	= $(mandir)/$(USE)$(SECTION)/
+
+####### (Standard Lists) #######################################################
+IT	=\
+	$(MANDIR)baseline.$(SECTION)\
+	$(MANDIR)checkin.$(SECTION)\
+	$(MANDIR)checkout.$(SECTION)\
+	$(MANDIR)checkup.$(SECTION)\
+	$(MANDIR)copy.$(SECTION)\
+	$(MANDIR)link2rcs.$(SECTION)\
+	$(MANDIR)permit.$(SECTION)\
+	$(MANDIR)rcsget.$(SECTION)\
+	$(MANDIR)rcsput.$(SECTION)\
+	$(MANDIR)vcs.$(SECTION)
+
+SOURCES	=\
+	baseline.man\
+	checkin.man\
+	checkout.man\
+	checkup.man\
+	copy.man\
+	link2rcs.man\
+	permit.man\
+	rcsget.man\
+	rcsput.man\
+	vcs.man
+
+ALL	=
+
+####### (Standard Productions) #################################################
+all:		$(SOURCES) $(ALL)
+clean:					; -$(RM) $(CLEAN)
+distclean:	clean			; -$(RM) $(ALL) *.cat
+run_test:
+sources:	$(SOURCES)
+install:	$(MANDIR) $(IT)
+deinstall:				; -$(RM) $(IT)
+
+####### (Details of Productions) ###############################################
+$(MANDIR):				; $(top_srcdir)/mkdirs.sh $@
+
+$(MANDIR)baseline.$(SECTION):	baseline.$(USE)	; $(INSTALL_DATA) $? $@
+$(MANDIR)checkin.$(SECTION):	checkin.$(USE)	; $(INSTALL_DATA) $? $@
+$(MANDIR)checkout.$(SECTION):	checkout.$(USE)	; $(INSTALL_DATA) $? $@
+$(MANDIR)checkup.$(SECTION):	checkup.$(USE)	; $(INSTALL_DATA) $? $@
+$(MANDIR)copy.$(SECTION):	copy.$(USE)	; $(INSTALL_DATA) $? $@
+$(MANDIR)link2rcs.$(SECTION):	link2rcs.$(USE)	; $(INSTALL_DATA) $? $@
+$(MANDIR)permit.$(SECTION):	permit.$(USE)	; $(INSTALL_DATA) $? $@
+$(MANDIR)rcsget.$(SECTION):	rcsget.$(USE)	; $(INSTALL_DATA) $? $@
+$(MANDIR)rcsput.$(SECTION):	rcsput.$(USE)	; $(INSTALL_DATA) $? $@
+$(MANDIR)vcs.$(SECTION):	vcs.$(USE)	; $(INSTALL_DATA) $? $@

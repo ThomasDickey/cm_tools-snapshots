@@ -1,4 +1,4 @@
-.\" $Id: link2rcs.man,v 11.1 1997/05/10 12:53:27 tom Exp $
+.\" $Id: link2rcs.man,v 11.3 1997/09/14 22:06:52 tom Exp $
 .de DS
 .RS
 .nf
@@ -71,6 +71,11 @@ directory or link is found.
 and to display them (according to the setting of "-\fBq\fR"
 and "-\fBv\fR"), but not to modify the target directory tree.
 .TP
+.B \-o
+overwrite files and links in the destination, replacing them with
+links, either symbolic or hard, depending on whether you have specified
+the "-\fBf\fR" or "-\fBF\fR" option.
+.TP
 .B \-r
 directs link2rcs to compute relative pathnames for
 the symbolic links which it creates.  Normally the links are made
@@ -128,4 +133,4 @@ None.
 baseline, rcsget, checkout, permit, rcs\ (1)
 .SH AUTHOR:
 .PP
-Thomas Dickey (Software Productivity Consortium).
+Thomas Dickey <dickey@clark.net>

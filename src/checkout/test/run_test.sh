@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.3 1993/04/27 11:28:15 dickey Exp $
+# $Id: run_test.sh,v 11.4 1997/09/14 21:33:32 tom Exp $
 # test-script for RCS checkout utility
 #
 # run from test-versions:
@@ -8,12 +8,12 @@ PATH=`../../../support/testpath.sh checkin`; export PATH
 date
 rm -rf junk
 mkdir  junk
-cp Makefile junk/dummy
+cp makefile.in junk/dummy
 cd junk
 #
 cat <<eof/
 **
-**	Creating a copy of 'Makefile', checked-in via -k (keys) option.
+**	Creating a copy of 'makefile.in', checked-in via -k (keys) option.
 **	This will preserve the original checkin-date.
 eof/
 touch null_description

@@ -1,0 +1,32 @@
+# $Id: makefile.in,v 11.2 1997/09/13 17:08:49 tom Exp $
+# Make-file for RCS checkin utilities
+
+THIS	= checkin
+
+@make_include_left@@TD_LIB_rules@/td_lib.mk@make_include_right@
+
+####### (Standard Lists) #######################################################
+B	= ../bin
+ALL	= $B/$(THIS)   $B/rcsput
+CSRC	=    $(THIS).c    rcsput.c
+SOURCES	= $(CSRC)
+
+####### (Standard Productions) #################################################
+all\
+install:	$(SOURCES) $B $(ALL)
+
+clean:				; -$(RM) $(CLEAN)
+distclean:	clean		; -$(RM) $(ALL)
+run_test:
+sources:	$(SOURCES)
+
+####### (Details of Productions) ###############################################
+$B:				; mkdir $@
+$B/$(THIS):	$(THIS).o $(LIB_DEPS)	; $(LINK) -o $@ $(THIS).o $(LIB_ARGS)
+$B/rcsput:	rcsput.o  $(LIB_DEPS)	; $(LINK) -o $@ rcsput.o  $(LIB_ARGS)
+
+$(THIS).o \
+rcsput.o:	$(RCSDEFS_H)
+
+####### (Development) ##########################################################
+lint.out:	$(CSRC)		; $(DATE); $(LINT_EACH)

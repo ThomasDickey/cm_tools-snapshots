@@ -1,0 +1,37 @@
+# $Id: makefile.in,v 11.2 1997/09/13 17:34:54 tom Exp $
+# Top-level make-file for CM_TOOLS
+
+THIS	= cm_tools
+
+@make_include_left@@TD_LIB_rules@/td_lib.mk@make_include_right@
+
+####### (Standard Lists) #######################################################
+
+CLEAN		= *.bak *.log *.out *.tst .nfs* core
+PURE		= *.cache *.status
+
+####### (Standard Productions) #################################################
+
+all\
+clean\
+distclean\
+run_test\
+install\
+deinstall\
+sources::
+	cd certify &&	$(MAKE) $(MAKE_OPTS) $@
+	cd support &&	$(MAKE) $(MAKE_OPTS) $@
+	cd src &&	$(MAKE) $(MAKE_OPTS) $@
+	cd user &&	$(MAKE) $(MAKE_OPTS) $@
+	cd bin &&	$(MAKE) $(MAKE_OPTS) $@
+
+all::
+	cd src &&	$(MAKE) $(MAKE_OPTS) install
+
+lint.out::
+	cd src &&	$(MAKE) $(MAKE_OPTS) $@
+
+clean\
+distclean::			; -$(RM) $(CLEAN)
+distclean::			; -$(RM) $(PURE)
+distclean::			; -$(RM) makefile */makefile

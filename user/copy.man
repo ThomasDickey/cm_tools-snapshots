@@ -1,4 +1,4 @@
-.\" $Id: copy.man,v 11.3 1994/06/24 00:15:46 tom Exp $
+.\" $Id: copy.man,v 11.5 1997/09/14 22:01:51 tom Exp $
 .de DS
 .RS
 .nf
@@ -100,6 +100,10 @@ the target.
 copies files only if their size or modification date differs,
 and links only if the link-text differs.
 .TP
+.B \-U
+copies only files that are newer than the destination, or that
+do not exist in the destination.
+.TP
 .B \-v
 verbose mode directs \fBcopy\fR to print the
 names (to standard error) of the files which it copies.
@@ -145,4 +149,4 @@ while preserving their object types (see OBTY).
 cp\ (1)
 .SH AUTHOR:
 .PP
-Thomas Dickey (Software Productivity Consortium).
+Thomas Dickey <dickey@clark.net>

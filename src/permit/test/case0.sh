@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: case0.sh,v 11.1 1992/11/24 09:26:59 dickey Exp $'
+# $Id: case0.sh,v 11.2 1997/09/14 21:51:07 tom Exp $'
 #
 #	Initialize tests for 'permit'
 #
@@ -14,7 +14,7 @@
 #
 rm -rf junk
 mkdir junk junk/RCS
-cp Makefile junk/dummy
+cp makefile.in junk/dummy
 cd junk
 touch null
 checkin $Q -tnull dummy

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.8 1993/04/27 11:55:53 dickey Exp $
+# $Id: run_test.sh,v 11.9 1997/09/14 21:51:49 tom Exp $
 #
 #	test-script for 'vcs' utility
 #
@@ -57,7 +57,7 @@ then
 		unlock)
 			(
 				cp $WD/compare.sh foobar
-				checkin $Q -l -t$WD/Makefile foobar 2>$TTY
+				checkin $Q -l -t$WD/makefile.in foobar 2>$TTY
 				vcs -u foobar 2>&1
 			) >>$LOG
 			;;

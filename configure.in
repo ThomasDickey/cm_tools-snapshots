@@ -1,0 +1,42 @@
+dnl Process this file with 'autoconf' to produce a 'configure' script
+dnl $Id: configure.in,v 11.1 1997/09/13 16:08:20 tom Exp $
+AC_REVISION($Revision: 11.1 $)
+AC_PREREQ(2.12)
+AC_INIT(user/link2rcs.man)
+CF_CHECK_CACHE
+
+###	get special options
+
+###	program paths
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_AWK
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+
+###	extra things that we'll substitute in the makefile
+CF_DISABLE_ECHO
+CF_FIND_TDLIB
+CF_MAKE_INCLUDE
+CF_ALL_MAKEFILES
+
+###	use option -with-warnings to turn on all gcc warnings
+
+### Compiler characteristics
+
+### Headers
+
+### DataTypes
+
+### DataItems/Structs
+
+### Program locations
+
+AC_OUTPUT( \
+	$cf_cv_all_makefiles,[
+],[
+	cf_cv_all_makefiles="$cf_cv_all_makefiles"
+	make_include_left="$make_include_left"
+	make_include_right="$make_include_right"
+])
