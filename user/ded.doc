@@ -181,7 +181,7 @@ V6,
 <Page Header, Frame =
 V6,
 (g9,1,0
- (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,October\ 26\,\ 1989)
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,March\ 28\,\ 1990)
  (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,Directory\ Editor)
  (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,ded)
  (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,1,5,127,7,0,0,7,1,1,1,0.066667,0.06666
@@ -289,6 +289,8 @@ file protection in <F31>ls<F0>-style).
 -<F31>S<F0><Tab>toggle file size (in blocks) display field (normally 
 displays only the size in bytes).
 
+-<F31>T<F0><Tab>toggle date-display to long format.
+
 -<F31>c<F0> <F32>filename<F0><Tab>read user commands from the 
 specified file.  The commands are assumed to be in the same format 
 as the logfile generated with the <#7f>-<F31>l<F0>" option.  Subprocesses 
@@ -297,6 +299,8 @@ do not (currently) inherit this option.
 -<F31>l<F0> <F32>filename<F0><Tab>log user commands (and <F31>ded<F0> 
 messages) to the specified file.  <F31>Ded<F0> subprocesses invoked 
 with the <#7f>e" command inherit this option.
+
+-<F31>n<F0><Tab>disable prompt on <F31>ded<F0> quit command.
 
 -<F31>t<F0> <F32>path<F0><Tab>read the directory tree file <#7f>.ftree" 
 from the specified directory <F32>path<F0>.
@@ -367,7 +371,11 @@ back directly with <#7f><F31>D<F0>".  (A repeat <F32>count<F0> may
 be applied to the directory tree quit-command).
 
 To exit from <F31>ded'<F0>s file list display, type <#7f><F31>q<F0>" 
-(for <F31>quit<F0>).
+(for <F31>quit<F0>).  If you have entered any other file lists (or 
+a subprocess of <F31>ded<F0>), you will be prompted to ensure that 
+you really intend to quit the current process.  (If you specified 
+the <#7f>-<F31>n<F0>" option on invoking <F31>ded<F0>, this prompt 
+is bypassed).
 
 <subheader>
 
@@ -547,6 +555,10 @@ is ambiguous.
 <F31>S<F0><Tab>toggle the display of file size.  When active, an 
 additional column is shown, giving the file size in blocks.
 
+T<Tab>toggles the display of file-dates.  Normally <F31>ded<F0> displays 
+the file-dates in a compact form based on the relative dates.  The 
+long form shows all information returned by <F32>ctime (2)<F0>.
+
 <F31>@<F0><Tab>toggle the display of symbolic links.  When active, <F31>ded
 <F0> displays the mode, owner and group of the target of the link, 
 rather than the link itself.  To make this simple to see, <F31>ded<F0> 
@@ -680,6 +692,25 @@ with a <#7f><F31>+<F0>".  For example, <#7f>s+w" sorts the file list
 into two parts, with the tagged files at the beginning, and untagged 
 files following (both lists sorted by modification date).
 
+To make sorting simpler (there are, after all, a lot of possibilities), 
+ded recognizes the following special sort-keys:
+
+<options>
+
+<F31>?<F0><Tab>directs <F31>ded<F0> to show the current sort-key as 
+a message.
+
+<F31>:<F0><Tab>causes <F31>ded<F0> to prompt you for the sort-key.  
+In response to any legal sort-key, <F31>ded<F0> immediately shows 
+the message describing the sort.  You may scroll through the list 
+of possibilities using the up/down arrow keys.  To complete the selection, 
+press <F32>return<F0> (or <F32>newline<F0>).  To quit without sorting 
+the list, type <#7f>q".
+
+<F32>newline<F0><Tab>(or <F32>return<F0>) directs <F31>ded<F0> to 
+resort the file list using the current direction (i.e., <#7f>s" or 
+<#7f>r") specifier and the last sort-key.
+
 <subheader>
 
 Grouping Items in the Display
@@ -701,10 +732,13 @@ Grouped items are highlighted in the display.
 
 <F31>_<F0><Tab>Remove all entries from the <F32>group<F0>.
 
-<F31>#<F0><Tab>Tags all files which are currently sorted adjacent 
-in the file list, which have the same sort-key.  For instance, if 
-the list is sorted by modification date, the <#7f><F31>#<F0>" command 
-tags all files which have the same modification date as any neighbor.
+<F31>#<F0><Tab>Tags (or untags) all files which are currently sorted 
+adjacent in the file list, which have the same sort-key.  For instance, 
+if the list is sorted by modification date, the <#7f><F31>#<F0>" command 
+tags all files which have the same modification date as the current 
+entry.  To tag all files having the same sort-key as a neighbor in 
+the file list, use <#7f>2#".  To untag files having the same sort-key 
+as the current file, use <#7f>0#".
 
 <subheader>
 
@@ -947,9 +981,15 @@ The following commands use the workspace pager:
 
 <F31>h<F0><Tab>type <F31>ded<F0>'s help-file in the workspace.
 
-<F31>t<F0><Tab>type the current file, in the workspace
+<F31>t<F0><Tab>type the current file, in the workspace.  Sequences 
+of blank lines are compressed to a single blank line, and overstruck 
+text is highlighted.
 
-<F31>T<F0><Tab>type the current binary file, in the workspace
+<Tab>To type a binary-file, use <#7f>2t".  This causes <F31>ded<F0> 
+to display non-ASCII bytes highlighted.
+
+<Tab>Directory-files are displayed by showing the inode and filename 
+list via a temporary-file.
 
 <subheader>
 
@@ -975,6 +1015,18 @@ command, re-execute.
 
 <F31>.<F0><Tab>Re-execute last <#7f><F31>!<F0>" or <#7f><F31>%<F0>" 
 command.
+
+<paragraph>
+
+To re-execute a command while changing the flag which directs ded 
+to clear the screen, use a prefix-code:
+
+<options>
+
+<F31>0<F0><Tab>resets the repaint-screen flag (so that <F31>ded<F0> 
+won't repaint the screen).
+
+<F31>2<F0><Tab>sets the repaint-screen flag.
 
 <subheader>
 
@@ -1011,7 +1063,7 @@ which <F31>ded<F0> was invoked.
 	Same Page =		Yes,
 	Width =			5.70 Inches,
 	Height =		0.65 Inches,
-	Page # =		12,
+	Page # =		13,
 	Diagram =
 V6,
 (g9,1,0
@@ -1233,7 +1285,7 @@ of the first lock-owner
 	Same Page =		Yes,
 	Width =			5.70 Inches,
 	Height =		0.417 Inches,
-	Page # =		14,
+	Page # =		15,
 	Diagram =
 V6,
 (g9,1,0
@@ -1392,7 +1444,7 @@ waits until you have closed the pad before continuing
 	Same Page =		Yes,
 	Width =			5.70 Inches,
 	Height =		0.667 Inches,
-	Page # =		17,
+	Page # =		18,
 	Diagram =
 V6,
 (g9,1,0
@@ -1463,8 +1515,8 @@ command (<F31>vi<F0>)
 <F49>PAGER<F0><Tab>overrides default pager invoked by <#7f><F31>m<F0>" 
 command (more).
 
-<F49>TERM<F0><Tab>used to determine control sequences for cursor 
-keys.
+<F49>TERM<F0><Tab>used to determine control sequences for cursor keys 
+on computer systems which do not support this in <F32>curses (3x)<F0>.
 
 <F49>RCS_DIR<F0><Tab>gives the name of the <F32>rcs<F0> directories <F31>ded
 <F0> searches for the file list <#7f><F31>V<F0>", <#7f><F31>Y<F0>" 

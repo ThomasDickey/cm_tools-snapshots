@@ -1,18 +1,24 @@
-# $Id: Makefile,v 5.0 1989/08/22 09:42:22 ste_cm Rel $
+# $Id: Makefile,v 9.0 1990/03/05 11:13:07 ste_cm Rel $
 # MAKE-file for RCS/SCCS tree display
 #
 # $Log: Makefile,v $
-# Revision 5.0  1989/08/22 09:42:22  ste_cm
-# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+# Revision 9.0  1990/03/05 11:13:07  ste_cm
+# BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
 #
-# Revision 4.0  89/08/22  09:42:22  ste_cm
-# BASELINE Thu Aug 24 09:31:25 EDT 1989 -- support:navi_011(rel2)
+# Revision 8.0  90/03/05  11:13:07  ste_cm
+# BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
 # 
-# Revision 3.1  89/08/22  09:42:22  dickey
-# corrected 'destroy' rule
+# Revision 7.0  90/03/05  11:13:07  ste_cm
+# BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
 # 
-# Revision 3.0  89/03/28  14:22:50  ste_cm
-# BASELINE Mon Jun 19 13:17:34 EDT 1989
+# Revision 6.0  90/03/05  11:13:07  ste_cm
+# BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+# 
+# Revision 5.1  90/03/05  11:13:07  dickey
+# split CFLAGS from INCLUDES
+# 
+# Revision 5.0  89/08/22  09:42:22  ste_cm
+# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
 # 
 ####### (Environment) ##########################################################
 B	= ../bin
@@ -22,7 +28,7 @@ GET	= checkout
 #
 ####### (Command-line Options) #################################################
 INCLUDES= -I$I
-CFLAGS  = $(DEFINES) $(INCLUDES) -O
+CFLAGS  =
 LIBS	= $L/lib.a
 DATE	= echo '****'`date` >> $@
 LINTOPT	= $(DEFINES) $(INCLUDES) -ltd
@@ -51,3 +57,6 @@ checkup.o:	$I/ptypes.h	$I/rcsdefs.h
 $(SOURCES):			; $(GET) $@
 lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
 lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@
+
+.c.o:
+	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINES) -c $<

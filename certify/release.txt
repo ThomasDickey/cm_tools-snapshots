@@ -1,4 +1,4 @@
-$Id: release.txt,v 5.3 1990/01/03 11:33:49 dickey Exp $
+$Id: release.txt,v 6.0 1990/03/28 10:41:19 ste_cm Rel $
 
 --------------------------------------------------------------------------------
 
@@ -8,11 +8,15 @@ Rewrote 'link2rcs' into C-language to facilitate recreation of symbolic links
 if they are damaged, as well as to permit creation of relative links (rather
 than absolute).
 
-Enhanced sort-commands of ded by better prompting.
+Enhanced sort-commands of ded by better prompting.  Also, added 'T' toggles
+and revised '#' command.  Prompt user when quitting from file-list (unless
+disabled by '-n' option).
 
 Modified/corrected 'copy' utility to handle relative pathnames in source-paths.
 
 Added '-f' and '-l' options to 'baseline'.
+
+Added options to checkup: -c -i, -l, -p.
 
 Version 5.0:
 -----------
