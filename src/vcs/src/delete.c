@@ -16,147 +16,122 @@
 
 #include <vcs.h>
 
-MODULE_ID("$Id: delete.c,v 11.3 1993/09/22 14:46:59 tom Exp $")
+MODULE_ID("$Id: delete.c,v 11.4 2004/03/08 01:16:57 tom Exp $")
 
-typedef	struct	_item	{
-	struct	_item	*link;
-	char		*name;
-	int		is_file;
-	} ITEM;
+typedef struct _item {
+    struct _item *link;
+    char *name;
+    int is_file;
+} ITEM;
 
-	/*ARGSUSED*/
-	def_ALLOC(ITEM)
-
-static	ITEM	*items;
-static	int	can_do;
+static ITEM *items;
+static int can_do;
 
 /******************************************************************************/
-static
-void	RemoveFile(
-	_AR1(char *,	name))
-	_DCL(char *,	name)
+static void
+RemoveFile(char *name)
 {
-	ShowPath("rm -f", name);
-	if (!no_op && (unlink(name) < 0))
-		failed(name);
+    ShowPath("rm -f", name);
+    if (!no_op && (unlink(name) < 0))
+	failed(name);
 }
 
 /******************************************************************************/
-static
-void	RemoveDir(
-	_AR1(char *,	name))
-	_DCL(char *,	name)
+static void
+RemoveDir(char *name)
 {
-	ShowPath("rmdir", name);
-	if (!no_op && (rmdir(name) < 0))
-		failed(name);
+    ShowPath("rmdir", name);
+    if (!no_op && (rmdir(name) < 0))
+	failed(name);
 }
 
 /******************************************************************************/
-static
-void	PurgeList(_AR0)
+static void
+PurgeList(void)
 {
-	ITEM	*p;
+    ITEM *p;
 
-	if (!can_do && items != 0)
-		VERBOSE(".. purging list (no deletion performed)\n");
+    if (!can_do && items != 0)
+	VERBOSE(".. purging list (no deletion performed)\n");
 
-	while ((p = items) != NULL) {
-		if (can_do) {
-			if (p->is_file)
-				RemoveFile(p->name);
-			else
-				RemoveDir(p->name);
-		}
-		items = p->link;
-		free((char *)p);
+    while ((p = items) != NULL) {
+	if (can_do) {
+	    if (p->is_file)
+		RemoveFile(p->name);
+	    else
+		RemoveDir(p->name);
 	}
+	items = p->link;
+	free((char *) p);
+    }
 }
 
 /******************************************************************************/
-static
-void	Append(
-	_ARX(char *,	path)
-	_AR1(int,	flag)
-		)
-	_DCL(char *,	path)
-	_DCL(int,	flag)
+static void
+Append(char *path, int flag)
 {
-	ITEM	*p = ALLOC(ITEM,1);
-	p->link = items;
-	p->name = txtalloc(path);
-	p->is_file = flag;
-	items   = p;
+    ITEM *p = ALLOC(ITEM, 1);
+    p->link = items;
+    p->name = txtalloc(path);
+    p->is_file = flag;
+    items = p;
 }
 
 /******************************************************************************/
-static
-void	Cannot(
-	_ARX(char *,	path)
-	_AR1(char *,	why)
-		)
-	_DCL(char *,	path)
-	_DCL(char *,	why)
+static void
+Cannot(char *path, char *why)
 {
-	if (can_do || verbose) {
-		can_do = FALSE;
-		PRINTF("?? %s\nfile:%s\n", why, path);
-	}
+    if (can_do || verbose) {
+	can_do = FALSE;
+	PRINTF("?? %s\nfile:%s\n", why, path);
+    }
 }
 
 /******************************************************************************/
-static
-void	UserCannot(
-	_ARX(char *,	path)
-	_ARX(char *,	who)
-	_AR1(char *,	what)
-		)
-	_DCL(char *,	path)
-	_DCL(char *,	who)
-	_DCL(char *,	what)
+static void
+UserCannot(char *path, char *who, char *what)
 {
-	char	temp[BUFSIZ];
-	FORMAT(temp, "user \"%s\" %s", who, what);
-	Cannot(path, temp);
+    char temp[BUFSIZ];
+    FORMAT(temp, "user \"%s\" %s", who, what);
+    Cannot(path, temp);
 }
 
 /******************************************************************************/
 /*ARGSUSED*/
-static
-int	WALK_FUNC(do_tree)
+static int
+WALK_FUNC(do_tree)
 {
-	auto	int	mode;
-	auto	char	part[MAXPATHLEN],
-			tmp[BUFSIZ],
-			*full = pathcat(tmp, path, name);
+    auto int mode;
+    char part[MAXPATHLEN];
+    char tmp[BUFSIZ];
+    char *full = pathcat(tmp, path, name);
 
-	if (readable < 0 || sp == 0) {
-		Cannot(full, "not readable");
-	} else if ((mode = (sp->st_mode & S_IFMT)) == S_IFDIR) {
-		Append(full, FALSE);
-	} else if (mode == S_IFREG
-	     &&  !strcmp(name, vcs_file((char *)0, part, FALSE))) {
-		if (!Access(full, FALSE))
-			Cannot(full, "no access");
-		else if (geteuid() != 0 && RCS_uid != geteuid())
-			UserCannot(full, uid2s(RCS_uid), "not owner");
-		else if (!rcspermit(path, part, (char **)0))
-			UserCannot(full, uid2s((int)getuid()), "not on access-list");
-		else
-			Append(full, TRUE);
-	} else
-		Cannot(full, "unexpected type");
-	return (can_do ? readable : -1);
+    if (readable < 0 || sp == 0) {
+	Cannot(full, "not readable");
+    } else if ((mode = (sp->st_mode & S_IFMT)) == S_IFDIR) {
+	Append(full, FALSE);
+    } else if (mode == S_IFREG
+	       && !strcmp(name, vcs_file((char *) 0, part, FALSE))) {
+	if (!Access(full, FALSE))
+	    Cannot(full, "no access");
+	else if (geteuid() != 0 && RCS_uid != geteuid())
+	    UserCannot(full, uid2s(RCS_uid), "not owner");
+	else if (!rcspermit(path, part, (char **) 0))
+	    UserCannot(full, uid2s((int) getuid()), "not on access-list");
+	else
+	    Append(full, TRUE);
+    } else
+	Cannot(full, "unexpected type");
+    return (can_do ? readable : -1);
 }
 
 /******************************************************************************/
-void	DeleteDir(
-	_AR1(char *,	name))
-	_DCL(char *,	name)
+void
+DeleteDir(char *name)
 {
-	if (!(can_do = DirExists(name))) {
-		VERBOSE(".. %s does not exist\n", name);
-	} else
-		(void)walktree((char *)0, name, do_tree, "r", 0);
-	PurgeList();
+    if (!(can_do = DirExists(name))) {
+	VERBOSE(".. %s does not exist\n", name);
+    } else
+	(void) walktree((char *) 0, name, do_tree, "r", 0);
+    PurgeList();
 }

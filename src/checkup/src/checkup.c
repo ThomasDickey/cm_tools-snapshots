@@ -66,136 +66,130 @@
 #include	<sccsdefs.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: checkup.c,v 11.17 2002/07/05 13:55:00 tom Exp $")
+MODULE_ID("$Id: checkup.c,v 11.18 2004/03/08 00:36:34 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
  ************************************************************************/
 
-#define	WARN	FPRINTF(stderr,
-#define	TELL	if(verbose >= 0) WARN
-#define	VERBOSE	if(verbose >  0) WARN
+typedef struct _exts {
+    struct _exts *link;
+    char *if_ext,		/* conditional extension */
+     *no_ext;			/* extension to suppress */
+} EXTS;
 
-typedef	struct	_exts	{
-	struct	_exts	*link;
-	char		*if_ext,	/* conditional extension */
-			*no_ext;	/* extension to suppress */
-	} EXTS;
-
-	/*ARGSUSED*/
-#define	def_alloc EXTS_alloc
-	def_ALLOC(EXTS)
-
-static	EXTS	*exts;			/* "-x" and "-t" extension list */
-static	int	allnames;		/* "-a" option */
-static	int	config_rev;		/* "-c" option */
-static	int	debug;			/* "-d" option */
-static	int	obsolete;		/* "-o" option */
-static	int	verbose;		/* "-v" option */
+static EXTS *exts;		/* "-x" and "-t" extension list */
+static int allnames;		/* "-a" option */
+static int config_rev;		/* "-c" option */
+static int debug;		/* "-d" option */
+static int obsolete;		/* "-o" option */
+static int verbose;		/* "-v" option */
 #ifdef	S_IFLNK
-static	int	show_links;		/* "-L" option */
+static int show_links;		/* "-L" option */
 #endif
-static	int	lines;			/* line-number, for report */
-static	char	*revision = "0";	/* required revision level */
-static	int	reverse;		/* true if we reverse revision-test */
+static int lines;		/* line-number, for report */
+static char *revision = "0";	/* required revision level */
+static int reverse;		/* true if we reverse revision-test */
 
-static	int	redir_out;		/* true if stdout isn't tty */
-static	int	redir_err;		/* true if stderr isn't tty */
+static int redir_out;		/* true if stdout isn't tty */
+static int redir_err;		/* true if stderr isn't tty */
 
-static	char	*original;		/* original directory, for "-p" */
+static char *original;		/* original directory, for "-p" */
 
 /*
  * Define a new leaf-name to ignore.  Piggyback on the "-x" data structure by
  * defining the ".no_ext" member to null.
  */
-static
-void	ignore(
-	_AR1(char *,	string))
-	_DCL(char *,	string)
+static void
+ignore(char *string)
 {
-	EXTS	*savep = exts;
-	exts = ALLOC(EXTS,1);
-	exts->link = savep;
-	exts->no_ext = 0;
-	exts->if_ext = txtalloc(string);
-	if (debug) TELL "ignore leaf \"%s\"\n", string);
+    EXTS *savep = exts;
+    exts = ALLOC(EXTS, 1);
+    exts->link = savep;
+    exts->no_ext = 0;
+    exts->if_ext = txtalloc(string);
+    if (debug) {
+	if (verbose >= 0)
+	    FPRINTF(stderr, "ignore leaf \"%s\"\n", string);
+    }
 }
 
 /*
  * Define a new extension-to-ignore
  */
-static
-void	extension(
-	_AR1(char *,	string))
-	_DCL(char *,	string)
+static void
+extension(char *string)
 {
-	EXTS	*savep = exts;
-	char	*s = strrchr(string, *string);
-	char	bfr[BUFSIZ];
-	int	show = (debug || verbose > 0);
+    EXTS *savep = exts;
+    char *s = strrchr(string, *string);
+    char bfr[BUFSIZ];
+    int show = (debug || verbose > 0);
 
-	exts = ALLOC(EXTS,1);
-	exts->link = savep;
-	exts->no_ext = txtalloc(s);
-	exts->if_ext = 0;
-	if (s != string) {
-		strcpy(bfr, string)[s-string] = EOS;
-		exts->if_ext = txtalloc(bfr);
-		if (show) TELL "if(%s) ", exts->if_ext);
+    exts = ALLOC(EXTS, 1);
+    exts->link = savep;
+    exts->no_ext = txtalloc(s);
+    exts->if_ext = 0;
+    if (s != string) {
+	strcpy(bfr, string)[s - string] = EOS;
+	exts->if_ext = txtalloc(bfr);
+	if (show) {
+	    if (verbose >= 0)
+		FPRINTF(stderr, "if(%s) ", exts->if_ext);
 	}
-	if (show) TELL "extension(%s)\n", exts->no_ext);
+    }
+    if (show) {
+	if (verbose >= 0)
+	    FPRINTF(stderr, "extension(%s)\n", exts->no_ext);
+    }
 }
 
 /*
  * Test the given filename to see if it has any of the suffixes which the user
  * wishes to ignore.  If so, return TRUE.
  */
-static
-int	suppress(
-	_AR1(char *,	name))
-	_DCL(char *,	name)
+static int
+suppress(char *name)
 {
-	register EXTS	*p;
-	register int	len,
-			off = strlen(name);
-	auto	 char	bfr[BUFSIZ];
-	struct	stat	sb;
+    EXTS *p;
+    int len, off = strlen(name);
+    char bfr[BUFSIZ];
+    struct stat sb;
 
-	for (p = exts; p; p = p->link) {
-		if (p->no_ext == 0) {	/* "-i" test? */
-			if (!strwcmp(p->if_ext, name))
-				return (TRUE);
-		} else for (len = 0; len < off; len++) {
-			if (!strwcmp(p->no_ext, name + len)) {
-				if (p->if_ext) {	/* look for file */
-					(void)strcpy(strcpy(bfr, name) + len,
-						p->if_ext);
-					if (stat(bfr, &sb) >= 0
-					&& isFILE(sb.st_mode))
-						return (TRUE);
-				} else {		/* unconditional */
-					return (TRUE);
-				}
-			}
+    for (p = exts; p; p = p->link) {
+	if (p->no_ext == 0) {	/* "-i" test? */
+	    if (!strwcmp(p->if_ext, name))
+		return (TRUE);
+	} else {
+	    for (len = 0; len < off; len++) {
+		if (!strwcmp(p->no_ext, name + len)) {
+		    if (p->if_ext) {	/* look for file */
+			(void) strcpy(strcpy(bfr, name) + len,
+				      p->if_ext);
+			if (stat(bfr, &sb) >= 0
+			    && isFILE(sb.st_mode))
+			    return (TRUE);
+		    } else {	/* unconditional */
+			return (TRUE);
+		    }
 		}
+	    }
 	}
-	return (FALSE);
+    }
+    return (FALSE);
 }
 
 /*
  * Indent the report for the given number of directory-levels.
  */
-static
-void	indent(
-	_AR1(int,	level))
-	_DCL(int,	level)
+static void
+indent(int level)
 {
-	++lines;
-	if (verbose >= 0) {
-		WARN "%4d:\t", lines);
-		while (level-- > 0)
-			WARN "|--%c", (level > 0) ? '-' : ' ');
-	}
+    ++lines;
+    if (verbose >= 0) {
+	FPRINTF(stderr, "%4d:\t", lines);
+	while (level-- > 0)
+	    FPRINTF(stderr, "|--%c", (level > 0) ? '-' : ' ');
+    }
 }
 
 /*
@@ -203,48 +197,36 @@ void	indent(
  * send to the standard output a list of pathnames (with version numbers
  * prepended if the "-c" option is specified).
  */
-static
-void	pipes(
-	_ARX(char *,	path)
-	_ARX(char *,	name)
-	_AR1(char *,	vers)
-		)
-	_DCL(char *,	path)
-	_DCL(char *,	name)
-	_DCL(char *,	vers)
+static void
+pipes(char *path, char *name, char *vers)
 {
-	char	tmp[BUFSIZ];
-	int	fake_tee = (redir_out && (redir_out != redir_err));
+    char tmp[BUFSIZ];
+    int fake_tee = (redir_out && (redir_out != redir_err));
 
-	if ((verbose < 0) || fake_tee) {
-		if (!fake_tee)
-			fflush(stderr);
-		if (config_rev) {
-			if (*vers != '?')
-				PRINTF("%s ", vers);
-			else
-				return;
-		}
-		path = pathcat(tmp, path, name);
-		if (original != 0)
-			path = relpath(path, original, path);
-		PRINTF("%s\n", path);
-		if (!fake_tee)
-			fflush(stdout);
+    if ((verbose < 0) || fake_tee) {
+	if (!fake_tee)
+	    fflush(stderr);
+	if (config_rev) {
+	    if (*vers != '?')
+		PRINTF("%s ", vers);
+	    else
+		return;
 	}
+	path = pathcat(tmp, path, name);
+	if (original != 0)
+	    path = relpath(path, original, path);
+	PRINTF("%s\n", path);
+	if (!fake_tee)
+	    fflush(stdout);
+    }
 }
 
-static
-char *	compared(
-	_ARX(char *,	what)
-	_AR1(char *,	rev)
-		)
-	_DCL(char *,	what)
-	_DCL(char *,	rev)
+static char *
+compared(char *what, char *rev)
 {
-	static	char	buffer[80];
-	FORMAT(buffer, "%s than %s", what, rev);
-	return (buffer);
+    static char buffer[80];
+    FORMAT(buffer, "%s than %s", what, rev);
+    return (buffer);
 }
 
 /*
@@ -252,90 +234,81 @@ char *	compared(
  * handling, since the directory-name may be a symbolic link; thus we have to
  * be careful where we look for the working file!
  */
-static
-void	do_obs(
-	_ARX(char *,	working) /* current working directory, from 'do_stat()'*/
-	_ARX(char *,	archive) /* name of directory (may be symbolic link) */
-	_AR1(int,	level)
-		)
-	_DCL(char *,	working)
-	_DCL(char *,	archive)
-	_DCL(int,	level)
+static void
+do_obs(char *working,		/* current working directory, from 'do_stat()' */
+       char *archive,		/* name of directory (may be symbolic link) */
+       int level)
 {
-	auto	DIR	*dp;
-	auto	DirentT	*de;
-	auto	char	tpath[BUFSIZ],
-			tname[BUFSIZ];
-	auto	Stat_t	sb;
-	auto	char	*tag	= "?",
-			*vers,
-			*owner;
-	auto	time_t	cdate;
+    DIR *dp;
+    DirentT *de;
+    char tpath[BUFSIZ], tname[BUFSIZ];
+    Stat_t sb;
+    char *tag = "?", *vers, *owner;
+    time_t cdate;
 
-	if (!(dp = opendir(pathcat(tpath, working, archive)))) {
-		perror(tpath);
-		return;
-	}
+    if (!(dp = opendir(pathcat(tpath, working, archive)))) {
+	perror(tpath);
+	return;
+    }
 
-	while ((de = readdir(dp)) != NULL) {
-		if (dotname(de->d_name))	continue;
-		if (stat(pathcat(tname, archive, de->d_name), &sb) >= 0) {
-			auto	int	show	= FALSE;
+    while ((de = readdir(dp)) != NULL) {
+	if (dotname(de->d_name))
+	    continue;
+	if (stat(pathcat(tname, archive, de->d_name), &sb) >= 0) {
+	    int show = FALSE;
 
-			lastrev(working, tname, &vers, &cdate, &owner);
+	    lastrev(working, tname, &vers, &cdate, &owner);
 
-			/*
-			 * If 'cdate' is zero, then we could not (for whatever
-			 * reason) find a working file.  If 'vers' is "?", then
-			 * the file was not an archive, so we report this
-			 * always.  Filter the remaining files according to
-			 * revision codes.
-			 */
-			if (cdate == 0) {
-				show = TRUE;
-				tag = "obsolete";
-				if (*vers == '?') {
-					tag = "non-archive";
-				}
-			} else {
-				if (reverse) {
-					if (dotcmp(vers, revision) > 0)
-						show = TRUE;
-				} else {
-					if (dotcmp(vers, revision) < 0)
-						show = TRUE;
-				}
-			}
-
-			if (show) {
-				indent(level);
-				TELL "%s (%s:%s)\n", tname, tag, vers);
-				pipes(working, tname, vers);
-			} else if (debug) {
-				indent(level);
-				TELL "%s (%s)\n", tname, vers);
-			}
+	    /*
+	     * If 'cdate' is zero, then we could not (for whatever
+	     * reason) find a working file.  If 'vers' is "?", then
+	     * the file was not an archive, so we report this
+	     * always.  Filter the remaining files according to
+	     * revision codes.
+	     */
+	    if (cdate == 0) {
+		show = TRUE;
+		tag = "obsolete";
+		if (*vers == '?') {
+		    tag = "non-archive";
 		}
+	    } else {
+		if (reverse) {
+		    if (dotcmp(vers, revision) > 0)
+			show = TRUE;
+		} else {
+		    if (dotcmp(vers, revision) < 0)
+			show = TRUE;
+		}
+	    }
+
+	    if (show) {
+		indent(level);
+		if (verbose >= 0)
+		    FPRINTF(stderr, "%s (%s:%s)\n", tname, tag, vers);
+		pipes(working, tname, vers);
+	    } else if (debug) {
+		indent(level);
+		if (verbose >= 0)
+		    FPRINTF(stderr, "%s (%s)\n", tname, vers);
+	    }
 	}
-	(void)closedir(dp);
+    }
+    (void) closedir(dp);
 }
 
 static int
-cmp_date(
-	_ARX(time_t,	a)
-	_AR1(time_t,	b))
-	_DCL(time_t,	a)
-	_DCL(time_t,	b)
+cmp_date(time_t a, time_t b)
 {
-	int result = 0;
+    int result = 0;
 #define FIX_DATE(n) if ((n) & 1) ++n
-	FIX_DATE(a);
-	FIX_DATE(b);
-	if (a > b)
-		result = 1;
-	else if (a < b)
-		result = -1;
-	return result;
+    FIX_DATE(a);
+    FIX_DATE(b);
+    if (a > b)
+	result = 1;
+    else if (a < b)
+	result = -1;
+    return result;
 }
 
 /*
@@ -344,169 +317,166 @@ cmp_date(
  * be reported.  Report all directory names, so we can see the context of each
  * filename.
  */
-static
-int	WALK_FUNC(do_stat)
+static int
+WALK_FUNC(do_stat)
 {
-	char	*change	= 0,
-		*vers,
-		*owner,
-		*locked_by = 0;
-	time_t	cdate;
-	int	mode	= (sp != 0) ? sp->st_mode : 0;
-	int	ok_text = TRUE;
+    char *change = 0, *vers, *owner, *locked_by = 0;
+    time_t cdate;
+    int mode = (sp != 0) ? sp->st_mode : 0;
+    int ok_text = TRUE;
 
-	if (isDIR(mode)) {
-		auto	char	tmp[BUFSIZ],
-				*s = pathcat(tmp, path, name),
-				*t;
-		abspath(s);		/* get rid of "." and ".." names */
-		t = pathleaf(s);	/* obtain leaf-name for "-a" option */
-		if (*t == '.' && !allnames)
-			return (-1);
-		if (sameleaf(s, sccs_dir(path, name))
-		||  sameleaf(s, rcs_dir(path, name))) {
-			if (obsolete)
-				do_obs(path, name, level);
-			return (-1);
-		}
-		else if (strncmp(s, sccs_dir(path, name), strlen(s))
-			&& obsolete)
-			do_obs(s, sccs_dir(path, name), level);
+    if (isDIR(mode)) {
+	char tmp[BUFSIZ], *s = pathcat(tmp, path, name), *t;
+	abspath(s);		/* get rid of "." and ".." names */
+	t = pathleaf(s);	/* obtain leaf-name for "-a" option */
+	if (*t == '.' && !allnames)
+	    return (-1);
+	if (sameleaf(s, sccs_dir(path, name))
+	    || sameleaf(s, rcs_dir(path, name))) {
+	    if (obsolete)
+		do_obs(path, name, level);
+	    return (-1);
+	} else if (strncmp(s, sccs_dir(path, name), strlen(s))
+		   && obsolete)
+	    do_obs(s, sccs_dir(path, name), level);
+    }
+
+    if (readable < 0 || sp == 0) {
+	if (verbose > 0)
+	    FPRINTF(stderr, "?? %s/%s\n", path, name);
+    } else if (isDIR(mode)) {
+	change = (name[strlen(name) - 1] == '/') ? "" : "/";
+#ifdef	S_IFLNK
+	if ((lstat(name, sp) >= 0)
+	    && isLINK(sp->st_mode)) {
+	    change = " (link)";
+	    readable = -1;
 	}
+#endif
+	indent(level);
+	if (verbose >= 0)
+	    FPRINTF(stderr, "%s%s\n", name, change);
+    } else if (isFILE(mode) && !suppress(name)) {
+#ifdef	S_IFLNK
+	if (!show_links
+	    && (lstat(name, sp) >= 0)
+	    && isLINK(sp->st_mode)) {
+	    change = 0;
+	    vers = "link";
+	    readable = -1;
+	} else {
+#endif
+	    lastrev(path, name, &vers, &cdate, &owner);
+	    if (*owner != EOS && *owner != '?')
+		locked_by = owner;
+	    else
+		owner = "";
 
-	if (readable < 0 || sp == 0) {
-		VERBOSE "?? %s/%s\n", path, name);
-	} else if (isDIR(mode)) {
-		change = (name[strlen(name)-1] == '/') ? "" : "/";
+	    if (cdate != 0) {
+		int cmp = cmp_date(cdate, sp->st_mtime);
+		if (cmp == 0) {
+		    if (obsolete) ;	/* interpret as obsolete-rev */
+		    else if (reverse) {
+			if (dotcmp(vers, revision) > 0)
+			    change = vers;
+		    } else {
+			if (dotcmp(vers, revision) < 0)
+			    change = vers;
+		    }
+		} else if (cmp > 0) {
+		    change = compared("older", vers);
+		} else if (cmp < 0) {
+		    if (cmp_date(sp->st_mtime, cdate + gmt_offset(cdate)) != 0)
+			change = compared("newer", vers);
+		}
+	    } else if ((ok_text = istextfile(name)) != 0) {
+		change = "not archived";
+	    } else if (allnames) {
+		change = "not a text-file";
+	    }
 #ifdef	S_IFLNK
-		if ((lstat(name, sp) >= 0)
-		&&  isLINK(sp->st_mode)) {
-			change = " (link)";
-			readable = -1;
-		}
-#endif
-		indent(level);
-		TELL "%s%s\n", name, change);
-	} else if (isFILE(mode) && !suppress(name)) {
-#ifdef	S_IFLNK
-		if (!show_links
-		&&  (lstat(name, sp) >= 0)
-		&&  isLINK(sp->st_mode)) {
-			change = 0;
-			vers   = "link";
-			readable = -1;
-		} else {
-#endif
-		lastrev(path, name, &vers, &cdate, &owner);
-		if (*owner != EOS && *owner != '?')
-			locked_by = owner;
-		else
-			owner = "";
-
-		if (cdate != 0) {
-			int cmp = cmp_date(cdate, sp->st_mtime);
-			if (cmp == 0) {
-				if (obsolete)
-					;	/* interpret as obsolete-rev */
-				else if (reverse) {
-					if (dotcmp(vers, revision) > 0)
-						change = vers;
-				} else {
-					if (dotcmp(vers, revision) < 0)
-						change = vers;
-				}
-			} else if (cmp > 0) {
-				change	= compared("older", vers);
-			} else if (cmp < 0) {
-				if (cmp_date(sp->st_mtime, cdate + gmt_offset(cdate)) != 0)
-					change	= compared("newer", vers);
-			}
-		} else if ((ok_text = istextfile(name)) != 0) {
-			change	= "not archived";
-		} else if (allnames) {
-			change	= "not a text-file";
-		}
-#ifdef	S_IFLNK
-		}
-#endif
-		if ((change != 0) || locked_by != 0) {
-			if (change == 0)	change	= "no change";
-			indent(level);
-			TELL "%s (%s%s%s)\n",
-				name,
-				change,
-				(locked_by != 0) ? ", locked by " : "",
-				owner);
-			pipes(path, name, vers);
-		} else if (debug) {
-			indent(level);
-			TELL "%s (%s)\n", name, ok_text ? vers : "binary");
-			if (ok_text && config_rev && isdigit(UCH(*vers)))
-				pipes(path, name, vers);
-		}
 	}
-	return(readable);
+#endif
+	if ((change != 0) || locked_by != 0) {
+	    if (change == 0)
+		change = "no change";
+	    indent(level);
+	    if (verbose >= 0)
+		FPRINTF(stderr, "%s (%s%s%s)\n",
+			name,
+			change,
+			(locked_by != 0) ? ", locked by " : "",
+			owner);
+	    pipes(path, name, vers);
+	} else if (debug) {
+	    indent(level);
+	    if (verbose >= 0)
+		FPRINTF(stderr, "%s (%s)\n", name, ok_text ? vers : "binary");
+	    if (ok_text && config_rev && isdigit(UCH(*vers)))
+		pipes(path, name, vers);
+	}
+    }
+    return (readable);
 }
 
 /*
  * Process a single argument: a directory name.
  */
-static
-void	do_arg(
-	_AR1(char *,	name))
-	_DCL(char *,	name)
+static void
+do_arg(char *name)
 {
-	WARN "** path = %s\n", name);
-	lines	= 0;
-	(void)walktree((char *)0, name, do_stat, "r", 0);
+    FPRINTF(stderr, "** path = %s\n", name);
+    lines = 0;
+    (void) walktree((char *) 0, name, do_stat, "r", 0);
 }
 
-static
-void	usage(_AR0)
+static void
+usage(void)
 {
-	static	char	*msg[] = {
-"Usage: checkup [options] [directory [...]]",
-"",
-"A report is written to standard-error showing the directory trees which are",
-"scanned, and the check-in status of each source-file.  If standard-output is",
-"not a terminal (i.e., redirected to a file) it receives a list of the file",
-"names reported.",
-"",
-"Options:",
-"  -a      report files and directories beginning with \".\"",
-"  -c      display configuration-revisions of each file.  This causes the list",
-"          of files written to standard-output to include only checked-in",
-"          names, with their revision codes.",
-"  -d      debug (show all names)",
-"  -i TEXT suppress leaves matching \"TEXT\"",
-"  -l FILE write logfile of tree-of-files",
+    static char *msg[] =
+    {
+	"Usage: checkup [options] [directory [...]]",
+	"",
+	"A report is written to standard-error showing the directory trees which are",
+	"scanned, and the check-in status of each source-file.  If standard-output is",
+	"not a terminal (i.e., redirected to a file) it receives a list of the file",
+	"names reported.",
+	"",
+	"Options:",
+	"  -a      report files and directories beginning with \".\"",
+	"  -c      display configuration-revisions of each file.  This causes the list",
+	"          of files written to standard-output to include only checked-in",
+	"          names, with their revision codes.",
+	"  -d      debug (show all names)",
+	"  -i TEXT suppress leaves matching \"TEXT\"",
+	"  -l FILE write logfile of tree-of-files",
 #ifdef	S_IFLNK
-"  -L      process symbolic-link targets",
+	"  -L      process symbolic-link targets",
 #endif
-"  -o      reports obsolete files (no working file exists)",
-"  -p      generate pathnames relative to current directory",
-"  -q      quiet: suppresses directory-tree report",
-"  -r REV  specifies revision-level to check against, reporting all working",
-"          files whose highest checked-in version is below REV.",
-"          Use REV+ to reverse, showing files above REV.",
-"  -s      (same as -q)",
-"  -t      suppresses standard extensions: .bak .i .log .out .tmp",
-"  -v      verbose: prints names (to stderr) which cannot be processed (e.g.,",
-"          sockets and special devices).",
-"  -x TEXT specifies an extension to be ignored.  The first character in the",
-"          option-value is the delimiter.  If repeated, it marks off a second",
-"          extension which must correspond to an existing file before the",
-"          matching file is ignored. The cases are:",
-"          .EXT to suppress unconditionally,",
-"          .IF.THEN conditionally",
-"",
-"The -i \"TEXT\" and -x \".EXT\" and \".THEN\" strings permit the use of the",
-"wildcards \"*\" and \"?\".  The -i and -x options are processed in LIFO order."
-	};
-	unsigned j;
-	for (j = 0; j < sizeof(msg)/sizeof(msg[0]); j++)
-		WARN "%s\n", msg[j]);
-	(void)exit(FAIL);
+	"  -o      reports obsolete files (no working file exists)",
+	"  -p      generate pathnames relative to current directory",
+	"  -q      quiet: suppresses directory-tree report",
+	"  -r REV  specifies revision-level to check against, reporting all working",
+	"          files whose highest checked-in version is below REV.",
+	"          Use REV+ to reverse, showing files above REV.",
+	"  -s      (same as -q)",
+	"  -t      suppresses standard extensions: .bak .i .log .out .tmp",
+	"  -v      verbose: prints names (to stderr) which cannot be processed (e.g.,",
+	"          sockets and special devices).",
+	"  -x TEXT specifies an extension to be ignored.  The first character in the",
+	"          option-value is the delimiter.  If repeated, it marks off a second",
+	"          extension which must correspond to an existing file before the",
+	"          matching file is ignored. The cases are:",
+	"          .EXT to suppress unconditionally,",
+	"          .IF.THEN conditionally",
+	"",
+	"The -i \"TEXT\" and -x \".EXT\" and \".THEN\" strings permit the use of the",
+	"wildcards \"*\" and \"?\".  The -i and -x options are processed in LIFO order."
+    };
+    unsigned j;
+    for (j = 0; j < sizeof(msg) / sizeof(msg[0]); j++)
+	FPRINTF(stderr, "%s\n", msg[j]);
+    (void) exit(FAIL);
 }
 
 /************************************************************************
@@ -516,106 +486,106 @@ void	usage(_AR0)
 /*ARGSUSED*/
 _MAIN
 {
-	auto	char	tmp[BUFSIZ];
-	register int j;
+    char tmp[BUFSIZ];
+    int j;
 
-	/* make stderr line-buffered, since we send our report that way */
+    /* make stderr line-buffered, since we send our report that way */
 #if defined(_IOLBF) && defined(IOLBF) && HAVE_SETVBUF
-	char	bfr[BUFSIZ];
-	if (!(stderr->_flag & _IOLBF))
-		(void)setvbuf(stderr, bfr, _IOLBF, sizeof(bfr));
+    char bfr[BUFSIZ];
+    if (!(stderr->_flag & _IOLBF))
+	(void) setvbuf(stderr, bfr, _IOLBF, sizeof(bfr));
 #else
 #  if defined(HAVE_SETLINEBUF)
-	(void)setlinebuf(stderr);
+    (void) setlinebuf(stderr);
 #  endif
 #endif
 
-	redir_out = !isatty(fileno(stdout));
-	redir_err = !isatty(fileno(stderr));
+    redir_out = !isatty(fileno(stdout));
+    redir_err = !isatty(fileno(stderr));
 
-	while ((j = getopt(argc, argv, "acdi:l:Lopqr:stvx:")) != EOF)
-		switch (j) {
-		case 'a':
-			allnames++;
-			break;
-		case 'c':
-			config_rev++;
-			break;
-		case 'd':
-			debug++;
-			break;
-		case 'i':
-			ignore(optarg);
-			break;
-		case 'l':
-			if (fopen(optarg, "a+") == 0
-			 || freopen(optarg, "a+", stderr) == 0)
-				failed(optarg);
-			redir_err = -TRUE;
-			break;
+    while ((j = getopt(argc, argv, "acdi:l:Lopqr:stvx:")) != EOF)
+	switch (j) {
+	case 'a':
+	    allnames++;
+	    break;
+	case 'c':
+	    config_rev++;
+	    break;
+	case 'd':
+	    debug++;
+	    break;
+	case 'i':
+	    ignore(optarg);
+	    break;
+	case 'l':
+	    if (fopen(optarg, "a+") == 0
+		|| freopen(optarg, "a+", stderr) == 0)
+		failed(optarg);
+	    redir_err = -TRUE;
+	    break;
 #ifdef	S_IFLNK
-		case 'L':
-			show_links++;
-			break;
+	case 'L':
+	    show_links++;
+	    break;
 #endif
-		case 'o':
-			obsolete++;
-			break;
-		case 'p':
-			original = txtalloc(getwd(tmp));
-			break;
-		case 'r':
-			revision = optarg;
-			break;
-		case 'q':
-		case 's':
-			verbose--;
-			break;
-		case 'v':
-			verbose++;
-			break;
-		case 't':
-			extension(".bak");
-			extension(".i");
-			extension(".log");
-			extension(".out");
-			extension(".tmp");
-			break;
-		case 'x':
-			extension(optarg);
-			break;
-		default:
-			usage();
-			/*NOTREACHED*/
-		}
-
-	/*
-	 * If we are asked to do a reverse-comparison, we must juggle the
-	 * revision-level so that 'dotcmp()' can give us a useful return value.
-	 */
-	if (revision[j = strlen(revision)-1] == '+') {
-		register char	*s;
-
-		revision = strcpy(tmp, revision);
-		revision[j] = EOS;
-		if ((s = strrchr(revision, '.')) != NULL) {
-			if (s[1] == EOS)
-				(void)strcat(revision, "0");
-		} else
-			(void)strcat(revision, ".0");
-		revision = txtalloc(revision);
-		reverse  = TRUE;
+	case 'o':
+	    obsolete++;
+	    break;
+	case 'p':
+	    original = txtalloc(getwd(tmp));
+	    break;
+	case 'r':
+	    revision = optarg;
+	    break;
+	case 'q':
+	case 's':
+	    verbose--;
+	    break;
+	case 'v':
+	    verbose++;
+	    break;
+	case 't':
+	    extension(".bak");
+	    extension(".i");
+	    extension(".log");
+	    extension(".out");
+	    extension(".tmp");
+	    break;
+	case 'x':
+	    extension(optarg);
+	    break;
+	default:
+	    usage();
+	    /*NOTREACHED */
 	}
 
-	/*
-	 * Process the list of file-specifications:
-	 */
-	if (optind < argc) {
-		for (j = optind; j < argc; j++)
-			do_arg(argv[j]);
-	} else
-		do_arg(".");
+    /*
+     * If we are asked to do a reverse-comparison, we must juggle the
+     * revision-level so that 'dotcmp()' can give us a useful return value.
+     */
+    if (revision[j = strlen(revision) - 1] == '+') {
+	char *s;
 
-	(void)exit(SUCCESS);
-	/*NOTREACHED*/
+	revision = strcpy(tmp, revision);
+	revision[j] = EOS;
+	if ((s = strrchr(revision, '.')) != NULL) {
+	    if (s[1] == EOS)
+		(void) strcat(revision, "0");
+	} else
+	    (void) strcat(revision, ".0");
+	revision = txtalloc(revision);
+	reverse = TRUE;
+    }
+
+    /*
+     * Process the list of file-specifications:
+     */
+    if (optind < argc) {
+	for (j = optind; j < argc; j++)
+	    do_arg(argv[j]);
+    } else
+	do_arg(".");
+
+    (void) exit(SUCCESS);
+    /*NOTREACHED */
 }

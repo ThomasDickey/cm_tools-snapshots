@@ -10,138 +10,124 @@
 
 #include <vcs.h>
 
-MODULE_ID("$Id: insert.c,v 11.4 2001/12/11 14:57:31 tom Exp $")
+MODULE_ID("$Id: insert.c,v 11.5 2004/03/08 01:16:44 tom Exp $")
 
 /******************************************************************************/
 /* we have to change directories to keep fooling rcs about the vcs-file */
-static
-void	ChangeWd(
-	_AR1(char *,	name))
-	_DCL(char *,	name)
+static void
+ChangeWd(char *name)
 {
-	ShowPath("chdir", name);
-	if (!no_op) {
-		if (chdir(name) < 0)
-			failed(name);
-	}
+    ShowPath("chdir", name);
+    if (!no_op) {
+	if (chdir(name) < 0)
+	    failed(name);
+    }
 }
 
 /******************************************************************************/
-static
-void	MakeDirectory(
-	_AR1(char *,	name))
-	_DCL(char *,	name)
+static void
+MakeDirectory(char *name)
 {
-	int	old = umask(0);
+    int old = umask(0);
 
-	ShowPath("mkdir", name);
-	if (!no_op) {
-		if (mkdir(name, RCS_prot) < 0)
-			failed(name);
-	}
-	(void)umask(old);
+    ShowPath("mkdir", name);
+    if (!no_op) {
+	if (mkdir(name, RCS_prot) < 0)
+	    failed(name);
+    }
+    (void) umask(old);
 }
 
 /******************************************************************************/
-static
-void	MakePermit(
-	_ARX(char *,	dst)
-	_AR1(char *,	base)
-		)
-	_DCL(char *,	dst)
-	_DCL(char *,	base)
+static void
+MakePermit(char *dst, char *base)
 {
-	static	char	*prefix = "../..";
-	char	src[MAXPATHLEN],
-		buffer[BUFSIZ];
+    static char *prefix = "../..";
+    char src[MAXPATHLEN];
+    char buffer[BUFSIZ];
 
-	set_command();
-	set_option('b', base);
-	catarg(RCS_cmd, dst);
-	invoke_command(PERMIT, PERMIT);
+    set_command();
+    set_option('b', base);
+    catarg(RCS_cmd, dst);
+    invoke_command(PERMIT, PERMIT);
 
-	ChangeWd(dst);
+    ChangeWd(dst);
 
-	(void)pathcat(src, prefix, rcs_dir(NULL, NULL));
+    (void) pathcat(src, prefix, rcs_dir(NULL, NULL));
 
-	set_command();
-	set_option('A', vcs_file(src, buffer, FALSE));
-	catarg(RCS_cmd, vcs_file(".", buffer, FALSE));
-	invoke_command(RCS, rcspath(RCS));
+    set_command();
+    set_option('A', vcs_file(src, buffer, FALSE));
+    catarg(RCS_cmd, vcs_file(".", buffer, FALSE));
+    invoke_command(RCS, rcspath(RCS));
 
-	ChangeWd(prefix);
+    ChangeWd(prefix);
 }
 
 /************************************************************************
  *	public entrypoints						*
  ************************************************************************/
-int	InsertDir(
-	_ARX(char *,	name)
-	_AR1(char *,	base)
-		)
-	_DCL(char *,	name)
-	_DCL(char *,	base)
+int
+InsertDir(char *name, char *base)
 {
-	char		*Name = name,
-			*s,
-			temp	[BUFSIZ],
-			head	[MAXPATHLEN],
-			ref_path[MAXPATHLEN];
-	struct	stat	sb;
-	register int	len;
+    char *Name = name;
+    char *s;
+    char temp[BUFSIZ];
+    char head[MAXPATHLEN];
+    char ref_path[MAXPATHLEN];
+    struct stat sb;
+    register int len;
 
-	if (DirExists(name)) {
-		VERBOSE(".. %s already exists\n", name);
-		return FALSE;
-	}
+    if (DirExists(name)) {
+	VERBOSE(".. %s already exists\n", name);
+	return FALSE;
+    }
 
-	/*
-	 * See how much of the path exists already.  The 'pathhead()' function
-	 * will return the immediate-parent directory iff it exists; otherwise
-	 * it will iterate up til it finds an existing directory.
-	 */
-	(void)strcpy(head, pathhead(name, &sb));
+    /*
+     * See how much of the path exists already.  The 'pathhead()' function
+     * will return the immediate-parent directory iff it exists; otherwise
+     * it will iterate up til it finds an existing directory.
+     */
+    (void) strcpy(head, pathhead(name, &sb));
 
-	VERBOSE(".. name=%s\n", name);
-	VERBOSE(".. head=%s\n", head);
+    VERBOSE(".. name=%s\n", name);
+    VERBOSE(".. head=%s\n", head);
 
-	for (len = 0; (head[len] == name[len]) && (head[len] != EOS); len++);
-	if (len > 0)
-		Name += len + 1;
+    for (len = 0; (head[len] == name[len]) && (head[len] != EOS); len++) ;
+    if (len > 0)
+	Name += len + 1;
 
-	if ((s = strchr(Name, '/')) != NULL) {	/* immediate-parent not found */
-		*s = EOS;
-		VERBOSE(".. recur:%s\n", name);
-		if (!InsertDir(name, base))
-			return FALSE;
-		VERBOSE(".. done: %s\n", name);
-		*s = '/';
-		strcpy(head, name)[s-name] = EOS;
-	} else {
-		ChangeWd(head);
-		(void)strcpy(head, ".");/* avoid re-use in 'ref_path' */
-	}
+    if ((s = strchr(Name, '/')) != NULL) {	/* immediate-parent not found */
+	*s = EOS;
+	VERBOSE(".. recur:%s\n", name);
+	if (!InsertDir(name, base))
+	    return FALSE;
+	VERBOSE(".. done: %s\n", name);
+	*s = '/';
+	strcpy(head, name)[s - name] = EOS;
+    } else {
+	ChangeWd(head);
+	(void) strcpy(head, ".");	/* avoid re-use in 'ref_path' */
+    }
 
-	/* see if the head contains an RCS directory in which the real user has
-	 * permissions
-	 */
-	(void)pathcat(ref_path, head, rcs_dir(NULL, NULL));
-	/* patch (void)pathcat(ref_path, "..", ref_path); */
-	if (!Access(vcs_file(ref_path, temp, FALSE), no_op))
-		return FALSE;
+    /* see if the head contains an RCS directory in which the real user has
+     * permissions
+     */
+    (void) pathcat(ref_path, head, rcs_dir(NULL, NULL));
+    /* patch (void)pathcat(ref_path, "..", ref_path); */
+    if (!Access(vcs_file(ref_path, temp, FALSE), no_op))
+	return FALSE;
 
-	if (no_op && !DirExists(ref_path))
-		;	/* assume we could if we wanted to */
-	else if (!rcspermit(ref_path, base, (char **)0)) {
-		WARN "? no permission on %s\n", ref_path);
-		return FALSE;
-	} else if ((s = strchr(base, '.')) != NULL) {
-		*s = EOS;	/* trim version to baseline (3.1 => 3) */
-	}
+    if (no_op && !DirExists(ref_path)) ;	/* assume we could if we wanted to */
+    else if (!rcspermit(ref_path, base, (char **) 0)) {
+	FPRINTF(stderr, "? no permission on %s\n", ref_path);
+	return FALSE;
+    } else if ((s = strchr(base, '.')) != NULL) {
+	*s = EOS;		/* trim version to baseline (3.1 => 3) */
+    }
 
-	MakeDirectory(Name);
-	MakeDirectory(pathcat(temp, Name, rcs_dir(NULL, NULL)));
-	MakePermit(temp, base);
+    MakeDirectory(Name);
+    MakeDirectory(pathcat(temp, Name, rcs_dir(NULL, NULL)));
+    MakePermit(temp, base);
 
-	return TRUE;
+    return TRUE;
 }
