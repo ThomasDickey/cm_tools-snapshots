@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.3 1993/04/27 10:38:04 dickey Exp $
+# $Id: Makefile,v 11.4 1993/05/06 14:01:56 dickey Exp $
 
 ####### (Development) ##########################################################
 TOP	= ../..
@@ -13,8 +13,6 @@ IT	=\
 	$B/checkout\
 	$B/checkup\
 	$B/copy\
-	$B/ded\
-	$B/ded.hlp\
 	$B/link2rcs\
 	$B/permit\
 	$B/rcsget\
@@ -43,8 +41,6 @@ $B/checkin:	checkin		; $(ADMIN)
 $B/checkout:	checkout	; $(ADMIN)
 $B/checkup:	checkup		; $(USER)
 $B/copy:	copy		; $(USER)
-$B/ded:		ded		; $(USER)
-$B/ded.hlp:	ded.hlp		; $(USER)
 $B/link2rcs:	link2rcs	; $(USER)
 $B/permit:	permit		; $(USER)
 $B/rcsget:	rcsget		; $(USER)

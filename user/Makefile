@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.3 1993/04/27 10:37:09 dickey Exp $
+# $Id: Makefile,v 11.4 1993/05/06 13:51:01 dickey Exp $
 
 THIS	= cm_tools
 TOP	= ../..
@@ -16,7 +16,6 @@ IT	=\
 	$(PREFIX)checkout.$(SECTION)\
 	$(PREFIX)checkup.$(SECTION)\
 	$(PREFIX)copy.$(SECTION)\
-	$(PREFIX)ded.$(SECTION)\
 	$(PREFIX)link2rcs.$(SECTION)\
 	$(PREFIX)permit.$(SECTION)\
 	$(PREFIX)rcsget.$(SECTION)\
@@ -29,7 +28,6 @@ SOURCES	=\
 	checkout.man\
 	checkup.man\
 	copy.man\
-	ded.man\
 	link2rcs.man\
 	permit.man\
 	rcsget.man\
@@ -54,7 +52,6 @@ $(PREFIX)checkin.$(SECTION):	checkin.$(USE)	; $(PUT)
 $(PREFIX)checkout.$(SECTION):	checkout.$(USE)	; $(PUT)
 $(PREFIX)checkup.$(SECTION):	checkup.$(USE)	; $(PUT)
 $(PREFIX)copy.$(SECTION):	copy.$(USE)	; $(PUT)
-$(PREFIX)ded.$(SECTION):	ded.$(USE)	; $(PUT)
 $(PREFIX)link2rcs.$(SECTION):	link2rcs.$(USE)	; $(PUT)
 $(PREFIX)permit.$(SECTION):	permit.$(USE)	; $(PUT)
 $(PREFIX)rcsget.$(SECTION):	rcsget.$(USE)	; $(PUT)
