@@ -1,3 +1,11 @@
+1991-11-12  dickey@software.org
+
+	* user/Makefile: make cat-files as 'run_tests' rule, rather than 'all'
+
+1991-11-12  ste_cm@software.org
+
+	* user/Makefile: BASELINE Tue Nov 12 12:31:46 1991
+
 1991-10-30  dickey@software.org
 
 	* src/permit/src/permit.c:

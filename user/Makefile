@@ -1,4 +1,4 @@
-# $Id: Makefile,v 9.3 1991/10/21 08:15:49 ste_cm Exp $
+# $Id: Makefile,v 10.0 1991/11/12 12:30:02 ste_cm Rel $
 #
 
 ####### (Development) ##########################################################
@@ -33,7 +33,7 @@ IT	=\
 	$(PREFIX)rcsput.$(SECTION)\
 	$(PREFIX)vcs.$(SECTION)
 
-ALL	=\
+CAT_FILES =\
 	baseline.cat\
 	checkin.cat\
 	checkout.cat\
@@ -59,13 +59,15 @@ SOURCES	=\
 	rcsput.man\
 	vcs.man
 
+ALL	=
+
 ####### (Standard Productions) #################################################
 all:		$(ALL)			; @echo '** use "make install"'
 clean:
 clobber:	clean			; rm -f *.out *.cat core
 destroy:	clobber
 	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
-run_tests:
+run_tests:	$(CAT_FILES)
 sources:	$(SOURCES)
 install:	$(IT)
 deinstall:		; rm -f $(IT)
