@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 10.17 1992/02/07 16:34:26 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 10.19 1992/06/30 07:50:05 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		30 Jun 1992, corrected call on 'cutoff()'
  *		06 Feb 1992, revise filename-parsing with 'rcsargpair()',
  *			     obsoleted "-x" option.
  *		17 Jan 1992, make this interpret "-p" option.
@@ -592,7 +593,7 @@ _MAIN
 				break;
 
 		case 'c':	optind = j;
-				optarg = ++s;
+				optarg = *s ? s : argv[++optind];
 				opt_date = cutoff(argc, argv);
 				j = optind;
 				FORMAT(tmp, "-d%s", ctime(&opt_date));
@@ -635,8 +636,10 @@ _MAIN
 			j = rcsargpair(j, argc, argv);
 			do_file();
 		}
-	} else
+	} else {
+		FPRINTF(stderr, "? expected a filename\n");
 		usage();
+	}
 
 	(void)exit(SUCCESS);
 	/*NOTREACHED*/
