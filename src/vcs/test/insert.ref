@@ -1,0 +1,107 @@
+** processing foo/src
+.. name=foo/src
+.. head=.
+.. recur:foo
+.. name=foo
+.. head=.
+% chdir .
+% access ./FOO/FOO,v
+% mkdir ./foo
+% mkdir foo/FOO
+% permit -b2 foo/FOO 
+** path = foo/FOO
+   1:	foo/FOO/
+% ci -mPERMIT\ FILE -t{TEXT} -r2.1 ./FOO ./FOO,v 
+./FOO,v  <--  ./FOO
+initial revision: 2.1
+done
+% rcs -a{LOGNAME} ./FOO,v 
+RCS file: ./FOO,v
+done
+% chdir foo/FOO
+% rcs -A../../FOO/FOO,v ./FOO,v 
+RCS file: ./FOO,v
+done
+% chdir ../..
+.. done: foo
+% access foo/FOO/FOO,v
+% mkdir foo/src
+% mkdir foo/src/FOO
+% permit -b2 foo/src/FOO 
+** path = foo/src/FOO
+   1:	foo/src/FOO/
+% ci -mPERMIT\ FILE -t{TEXT} -r2.1 ./FOO ./FOO,v 
+./FOO,v  <--  ./FOO
+initial revision: 2.1
+done
+% rcs -a{LOGNAME} ./FOO,v 
+RCS file: ./FOO,v
+done
+% chdir foo/src/FOO
+% rcs -A../../FOO/FOO,v ./FOO,v 
+RCS file: ./FOO,v
+done
+% chdir ../..
+.. completed 2.x foo/src
+** processing foo/test
+.. name=foo/test
+.. head=foo
+% chdir ./foo
+% access ./FOO/FOO,v
+% mkdir ./test
+% mkdir test/FOO
+% permit -b2 test/FOO 
+** path = test/FOO
+   1:	test/FOO/
+% ci -mPERMIT\ FILE -t{TEXT} -r2.1 ./FOO ./FOO,v 
+./FOO,v  <--  ./FOO
+initial revision: 2.1
+done
+% rcs -a{LOGNAME} ./FOO,v 
+RCS file: ./FOO,v
+done
+% chdir test/FOO
+% rcs -A../../FOO/FOO,v ./FOO,v 
+RCS file: ./FOO,v
+done
+% chdir ../..
+.. completed 2.x foo/test
+** processing foo2
+.. name=foo2
+.. head=.
+% chdir .
+% access ./FOO/FOO,v
+% mkdir ./foo2
+% mkdir foo2/FOO
+% permit -b2 foo2/FOO 
+** path = foo2/FOO
+   1:	foo2/FOO/
+% ci -mPERMIT\ FILE -t{TEXT} -r2.1 ./FOO ./FOO,v 
+./FOO,v  <--  ./FOO
+initial revision: 2.1
+done
+% rcs -a{LOGNAME} ./FOO,v 
+RCS file: ./FOO,v
+done
+% chdir foo2/FOO
+% rcs -A../../FOO/FOO,v ./FOO,v 
+RCS file: ./FOO,v
+done
+% chdir ../..
+.. completed 2.x foo2
+** resulting tree:
+foo
+foo/FOO
+foo/FOO/FOO,v
+foo/src
+foo/src/FOO
+foo/src/FOO/FOO,v
+foo/test
+foo/test/FOO
+foo/test/FOO/FOO,v
+foo2
+foo2/FOO
+foo2/FOO/FOO,v
+FOO
+FOO/FOO,v
+insert.tst

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 9.1 1991/09/09 07:38:58 dickey Exp $
+# $Id: Makefile,v 11.0 1991/10/18 08:28:21 ste_cm Rel $
 # make-file for testing unix copy utility
 #
 ####### (Development) ##########################################################
@@ -19,7 +19,7 @@ destroy:
 sources:	$(SOURCES)
 lint.out:
 lincnt.out:
-run_tests:	$(SOURCES)	; $@.sh
+run_tests:	$(SOURCES)	; sh -c '$@.sh 2>&1 | tee -a $@.out'
 
 ####### (Details of Productions) ###############################################
 $(SOURCES):			; $(GET) $@

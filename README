@@ -1,4 +1,6 @@
-$Header: /users/source/archives/cm_tools.vcs/RCS/README,v 9.0 1989/03/28 10:49:15 ste_cm Rel $
+$Id: README,v 11.0 1991/10/18 16:42:16 ste_cm Rel $
+
+CM_TOOLS
 
 --------------------------------------------------------------------------------
 
@@ -14,12 +16,13 @@ This module consists of the following programs (or scripts):
 	permit
 	rcsget
 	rcsput
+	vcs
 
 To build the system from sources, do the following:
 
 	(1) Put the bin-directory of this module in your path.
 	(2) Adjust the top-level makefile, if necessary, to reflect the
-	    installation-path (INSTALL_PATH) of these programs
+	    installation-path (INSTALL_BIN) of these programs
 	(3) Adjust the top-level makefile, if necessary, to point to the
 	    directory containing the rcs binary programs (RCS_PATH).
 
@@ -48,4 +51,4 @@ installation, type (from this directory)
 	make install
 
 That will first copy from the staging directories, then from the top-level
-bin-directory to the $(INSTALL_PATH) directory.
+bin-directory to the $(INSTALL_BIN) directory.

@@ -1,0 +1,91 @@
+.\" $Id: vcs.man,v 11.0 1991/10/17 15:27:23 ste_cm Rel $
+.TH VCS 1
+.SH NAME
+.PP
+\fBvcs\fR \- version control system utility
+.SH USAGE
+.PP
+\fBvcs\fI [options] [file-specifications]
+.SH SYNOPSIS
+.PP
+\fBVcs\fR is a simple, easy to use interface to \fIrcs\fR
+(\fBr\fRevision \fBc\fRontrol \fBs\fRystem).
+.SH DESCRIPTION
+.PP
+\fBVcs\fR is a source-control tool which can be used by either
+the configuration manager or developers.
+Developers should be able to unlock files that they have locked
+(i.e., with \fBcheckin\fR), or to add new subdirectories to a
+configuration, or to delete them.
+.PP
+\fBVcs\fR uses the \fIrcs\fR utility to maintain
+a special file in the "RCS" directory (named "RCS,v").
+This file controls permission on the creation or deletion of
+files -- or of the entire directory.
+.SH OPTIONS
+.TP
+.B \-d
+delete archive-directory leaf.
+If you are on the access list of the vcs-file within which the directory
+is appended, and if no files have been archived in the RCS directories
+within, you may delete the given directories.
+.TP
+.B \-i
+insert archive-directory leaf.
+If you are on the access list of the vcs-file within which the directory
+is appended, \fBvcs\fR will create new archive directories, each of
+which has an RCS subdirectory.
+.TP
+.B \-n
+no-op mode
+shows the operations that would be performed, but does not attempt them.
+.TP
+.B \-q
+quiet mode
+suppresses messages.
+.TP
+.B \-u
+unlock specified files.
+You must be either the owner of the file, or of at least one lock.
+If the former, all locks are removed.
+.TP
+.B \-x
+direct \fBvcs\fR
+to retain the pathname when translating between working and archive
+files, e.g, "\fBpath/name\fR" becomes "\fBpath/RCS/name,v\fR".
+If the "\-\fBx\fR" option is not set, "\fBpath/name\fR"
+becomes "\fB./RCS/name,v\fR", and "\fBpath/RCS/name,v\fR"
+becomes "\fB./name\fR".
+.PP
+You must specify exactly one of the
+options "-\fBd\fR", "-\fBi\fR" or "-\fBu\fR".
+.SH ENVIRONMENT
+.PP
+\fBVcs\fR is written in C, and runs on UNIX\*R systems.
+.PP
+Environment variables imported by \fBvcs\fR include:
+.TP
+.B RCS_DEBUG
+set this variable (e.g., to 1 or 2) to activate debugging-traces in the tool.
+.TP
+.B RCS_DIR
+identifies the name of the RCS subdirectory, and indirectly the name of
+the \fBvcs\fR file within that directory.
+.SH FILES
+.PP
+\fBVcs\fR uses the following files
+.TP
+.B permit
+to initialize a new vcs-file (i.e., so that its baseline version is compatible).
+.TP
+.B rcs
+to copy access lists from a parent directory to a newly-inserted directory.
+.SH ANTICIPATED CHANGES
+.PP
+None.
+.SH SEE ALSO
+.PP
+checkin, checkout, ci\ (1), co\ (1), rcs\ (1)
+.SH AUTHOR:
+.PP
+Thomas Dickey (Software Productivity Consortium).

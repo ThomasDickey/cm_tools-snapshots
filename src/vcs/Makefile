@@ -1,54 +1,38 @@
-# $Id: Makefile,v 4.1 1989/09/06 13:08:55 dickey Exp $
-# Top-level makefile for unix directory-editor
-#
-# $Log: Makefile,v $
-# Revision 4.1  1989/09/06 13:08:55  dickey
-# RCS_BASE
-#
-#	Revision 4.0  89/08/22  09:14:53  ste_cm
-#	BASELINE Thu Aug 24 10:18:59 EDT 1989 -- support:navi_011(rel2)
-#	
-#	Revision 3.1  89/08/22  09:14:53  dickey
-#	corrected 'destroy' rule
-#	
-#	Revision 3.0  89/03/28  14:50:24  ste_cm
-#	BASELINE Mon Jun 19 14:20:36 EDT 1989
-#	
+# $Id: Makefile,v 10.0 1991/10/10 09:40:57 ste_cm Rel $
+# Top-level makefile for RCS admin utility
+
 ####### (Development) ##########################################################
 B	= ../../bin
 L	= ../common/lib
-PUT	= copy -v -d ../$@
-GET	= checkout
-MAKE	= make $(MFLAGS) -k$(MAKEFLAGS)	GET=$(GET)
+COPY	= cp -p
+MAKE	= make $(MFLAGS) -k$(MAKEFLAGS)	CFLAGS="$(CFLAGS)" COPY="$(COPY)"
 
 ####### (Standard Lists) #######################################################
-PROG	= ded
-ALL	=\
-	$B/$(PROG)\
-	$B/$(PROG).hlp
-FIRST	=\
-	bin\
+THIS	= vcs
+ALL	= $B/$(THIS)
+
+MFILES	=\
 	src/Makefile\
 	test/Makefile
 
 ####### (Standard Productions) #################################################
-all:		$L/lib.a
+all::		$L/lib.a bin
 
 all\
 clean\
 clobber\
-run_tests\
+destroy\
 sources\
+run_tests\
 lincnt.out\
-lint.out:	$(FIRST)
+lint.out::	$(MFILES)
 	cd src;		$(MAKE) $@
 	cd test;	$(MAKE) $@
 
-rdestroy\
-destroy:	$(FIRST)
-	cd src;		$(MAKE) destroy
-	cd test;	$(MAKE) destroy
+clobber\
+destroy::
 	rm -rf bin
+destroy::
 	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 
 install:	all $(ALL)
@@ -56,7 +40,5 @@ deinstall:		; rm -f $(ALL)
 
 ####### (Details of Productions) ###############################################
 bin:				; mkdir $@
-src/Makefile:			; cd src;	$(GET) Makefile
-test/Makefile:			; cd test;	$(GET) Makefile
-$B/$(PROG):	bin/$(PROG)	; cd bin;	$(PUT)
-$B/$(PROG).hlp:	bin/$(PROG).hlp	; cd bin;	$(PUT)
+$(MFILES):			; checkout -x $@
+$B/$(THIS):	bin/$(THIS)	; $(COPY) $? $@

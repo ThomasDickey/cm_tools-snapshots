@@ -1,123 +1,61 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 9.0 1991/05/31 16:05:06 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 10.0 1991/10/18 08:24:33 ste_cm Rel $";
 #endif
 
 /*
  * Title:	copy.c (enhanced unix copy utility)
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
- * $Log: copy.c,v $
- * Revision 9.0  1991/05/31 16:05:06  ste_cm
- * BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
- *
- *		Revision 8.2  91/05/31  16:05:06  dickey
- *		lint (SunOs): ifdef'd out 'convert()'
- *		
- *		Revision 8.1  91/05/20  12:44:10  dickey
- *		mods to compile on apollo sr10.3
- *		
- *		Revision 8.0  90/06/28  16:02:28  ste_cm
- *		BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
- *		
- *		Revision 7.5  90/06/28  16:02:28  dickey
- *		corrected handling of (non-Apollo) user requests to copy to
- *		a directory-path beginning with "~".
- *		
- *		Revision 7.4  90/05/14  13:46:31  dickey
- *		cleaned up last change by permitting user to coerce the copy
- *		into a destination-directory by supplying a trailing '/'.
- *		
- *		Revision 7.3  90/05/14  12:28:16  dickey
- *		corrected logic which verifies args in 'copyit()'.
- *		also, added kludge so that copy via symbolic link to directory
- *		sort of works (if there are more than 2 args) -- must fix.
- *		
- *		Revision 7.2  90/05/08  11:54:27  dickey
- *		retain tilde-expansion on both src/dst in 'copyit()'
- *		
- *		Revision 7.1  90/05/08  11:46:47  dickey
- *		corrected handling of tilde in src-path.
- *		added "-l" option for copying link-targets.
- *		
- *		Revision 7.0  90/04/30  13:08:18  ste_cm
- *		BASELINE Mon Apr 30 13:08:44 1990 -- (CPROTO)
- *		
- *		Revision 6.7  90/04/30  13:08:18  ste_cm
- *		use of 'convert()' broke sr9.7 compatibility (fixed)
- *		
- *		Revision 6.6  90/04/30  08:16:17  dickey
- *		corrected bug which assumed 'stat()' modified arg even if err
- *		
- *		Revision 6.5  90/04/25  16:21:25  dickey
- *		last change broke test for directory-not-writeable.  fixed.
- *		
- *		Revision 6.4  90/04/25  07:59:20  dickey
- *		refined test-for-identical inodes
- *		
- *		Revision 6.3  90/04/24  12:26:27  dickey
- *		modified use of 'abspath()' so we use it only for converting
- *		the tilde-stuff (got into trouble with things like "RCS/.."
- *		when RCS is itself a symbolic link).  Note that the verbose
- *		trace is not quite right yet.
- *		
- *		Revision 6.2  90/04/24  12:03:02  dickey
- *		use 'abspath()' on args to /bin/cp for sr10.2, since the
- *		cp-program does not do "~" processing itself.
- *		
- *		Revision 6.1  90/04/24  11:52:33  dickey
- *		double-check test for repeated-names by verifying that the
- *		source and destination are really on the same device.
- *		
- *		Revision 6.0  90/01/24  13:15:02  ste_cm
- *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
- *		
- *		Revision 5.2  90/01/24  13:15:02  dickey
- *		added missing 'break' in 'skip_dots()' loop
- *		
- *		Revision 5.1  90/01/03  09:43:28  dickey
- *		corrected handling of relative pathnames in source-args.
- *		this is fixed by not passing the "../" constructs to the
- *		destination-name!  also, modified the test for writeable
- *		destination-directory so it handles directory-names (such
- *		as "." or "~") which have no "/".
- *		
- *		Revision 5.0  89/10/10  16:06:35  ste_cm
- *		BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
- *		
- *		Revision 4.3  89/10/10  16:06:35  dickey
- *		added code for apollo SR10.1 (ifdef'd to permit SR9 version)
- *		which uses the new 'cp' utility to copy files (and their
- *		types, as in SR9.7).
- *		
- *		Revision 4.2  89/09/06  15:53:55  dickey
- *		use access-defs in "ptypes.h"
- *		
- *		Revision 4.1  89/08/29  08:43:41  dickey
- *		corrected error-check after 'mkdir()' (if merging directories)
- *		
- *		Revision 4.0  89/03/30  15:13:05  ste_cm
- *		BASELINE Thu Aug 24 10:16:23 EDT 1989 -- support:navi_011(rel2)
- *		
- *		Revision 3.0  89/03/30  15:13:05  ste_cm
- *		BASELINE Mon Jun 19 14:17:23 EDT 1989
- *		
- *		Revision 2.0  89/03/30  15:13:05  ste_cm
- *		BASELINE Thu Apr  6 13:08:58 EDT 1989
- *		
- *		Revision 1.14  89/03/30  15:13:05  dickey
- *		modified normal unix file-copy code so that if the destination
- *		file could not be opened for output, then we restore its
- *		protection.
- *		
- *		Revision 1.13  89/03/27  08:30:46  dickey
- *		added logic to test for success of Aegis 'cpf' (must rely on
- *		the file-statistics differing).  Also, use 'abspath()' on the
- *		argument passed to 'mkdir()' to make this tolerant of '.' in
- *		the arguments.
- *		
- *		Revision 1.12  89/03/13  10:31:56  dickey
- *		sccs2rcs keywords
- *		
+ * Modified:
+ *		11 Oct 1991, convert to ANSI
+ *		31 May 1991, lint (SunOs): ifdef'd out 'convert()'
+ *		20 May 1991, mods to compile on apollo sr10.3
+ *		28 Jun 1990, corrected handling of (non-Apollo) user requests to
+ *			     copy to a directory-path beginning with "~".
+ *		14 May 1990, corrected logic which verifies args in 'copyit()'.
+ *			     Also, added kludge so that copy via symbolic link
+ *			     to directory.  Sort of works (if there are more
+ *			     than 2 args) -- must fix.  Cleaned up last change
+ *			     by permitting user to coerce the copy into a
+ *			     destination-directory by supplying a trailing '/'.
+ *		08 May 1990, corrected handling of tilde in src-path.  Added
+ *			     "-l" option for copying link-targets.  Retain
+ *			     tilde-expansion on both src/dst in 'copyit()'
+ *		30 Apr 1990, use of 'convert()' broke sr9.7 compatibility
+ *			     (fixed).  Corrected bug which assumed 'stat()'
+ *			     modified arg even if err.
+ *		25 Apr 1990, last change broke test for directory-not-writeable.
+ *			     fixed.  Refined test-for-identical inodes
+ *		24 Apr 1990, double-check test for repeated-names by verifying
+ *			     that the source and destination are really on the
+ *			     same device.  Use 'abspath()' on args to /bin/cp
+ *			     for sr10.2, since the cp-program does not do "~"
+ *			     processing itself.  Modified use of 'abspath()'
+ *			     so we use it only for converting the tilde-stuff
+ *			     (got into trouble with things like "RCS/.." when
+ *			     RCS is itself a symbolic link).  Note that the
+ *			     verbose trace is not quite right yet.
+ *		24 Jan 1990, added missing 'break' in 'skip_dots()' loop
+ *		03 Jan 1990, corrected handling of relative pathnames in source-
+ *			     args.  This is fixed by not passing the "../"
+ *			     constructs to the destination-name!  Also, modified
+ *			     the test for writeable destination-directory so it
+ *			     handles directory-names (such as "." or "~") which
+ *			     have no "/".
+ *		10 Oct 1989, added code for apollo SR10.1 (ifdef'd to permit SR9
+ *			     version) which uses the new 'cp' utility to copy
+ *			     files (and their types, as in SR9.7).
+ *		06 Sep 1989, use access-defs in "ptypes.h"
+ *		29 Aug 1989, corrected error-check after 'mkdir()' (if merging
+ *			     directories).
+ *		30 Mar 1989, modified normal unix file-copy code so that if the
+ *			     destination file could not be opened for output,
+ *			     then we restore its protection.
+ *		27 Mar 1989, added logic to test for success of Aegis 'cpf'
+ *			     (must rely on the file-statistics differing).
+ *			     Also, use 'abspath()' on the argument passed to
+ *			     'mkdir()' to make this tolerant of '.' in the
+ *			     arguments.
  *		13 Mar 1989, added "-s" (set-uid) option.
  *		06 Mar 1989, added code to copy symbolic links
  *		24 Jan 1989, use 'pathleaf()' to correct pathnames of copy into
@@ -153,13 +91,8 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RC
 #define		ACC_PTYPES	/* include access-definitions */
 #define		DIR_PTYPES	/* include directory-definitions */
 #define		STR_PTYPES	/* include string-definitions */
-#include	"ptypes.h"
+#include	<ptypes.h>
 #include	<errno.h>
-extern	int	errno;
-extern	int	optind;		/* index in 'argv[]' of first argument */
-extern	char	*pathcat(),
-		*pathhead(),
-		*pathleaf();
 
 #define	TELL	FPRINTF(stderr,
 #define	VERBOSE	if (v_opt) TELL
@@ -207,8 +140,12 @@ static	int	no_dir_yet;	/* disables access-test on destination-dir */
  */
 static
 char *
-convert(dst, src)
-char	*dst, *src;
+convert(
+_ARX(char *,	dst)
+_AR1(char *,	src)
+	)
+_DCL(char *,	dst)
+_DCL(char *,	src)
 {
 	name_$pname_t	in_name, out_name;
 	short		in_len,
@@ -246,8 +183,12 @@ char	*dst, *src;
  */
 static
 char *
-convert(dst, src)
-char	*dst, *src;
+convert(
+_ARX(char *,	dst)
+_AR1(char *,	src)
+	)
+_DCL(char *,	dst)
+_DCL(char *,	src)
 {
 	abshome(strcpy(dst, src));
 	return (dst);
@@ -262,8 +203,9 @@ char	*dst, *src;
  */
 static
 char	*
-skip_dots(path)
-char	*path;
+skip_dots(
+_AR1(char *,	path))
+_DCL(char *,	path)
 {
 	while (path[0] == '.') {
 		if (path[1] == '.') {
@@ -290,9 +232,16 @@ char	*path;
  * to do the copy.
  */
 static
-copyfile(src, dst, previous, new_sb)
-char	*src, *dst;
-struct	stat	*new_sb;
+copyfile(
+_ARX(char *,	src)
+_ARX(char *,	dst)
+_ARX(int,	previous)
+_AR1(struct stat *,new_sb)
+	)
+_DCL(char *,	src)
+_DCL(char *,	dst)
+_DCL(int,	previous)
+_DCL(struct stat *,new_sb)
 {
 	int	retval	= -1;
 	char	bfr1[BUFSIZ];
@@ -367,8 +316,12 @@ struct	stat	*new_sb;
 
 #ifdef	S_IFLNK
 static
-copylink(src,dst)
-char	*src, *dst;
+copylink(
+_ARX(char *,	src)
+_AR1(char *,	dst)
+	)
+_DCL(char *,	src)
+_DCL(char *,	dst)
 {
 	auto	char	bfr[BUFSIZ];
 	auto	int	len;
@@ -387,8 +340,14 @@ char	*src, *dst;
 #endif	/* S_IFLNK */
 
 static
-copydir(src, dst, previous)
-char	*src, *dst;
+copydir(
+_ARX(char *,	src)
+_ARX(char *,	dst)
+_AR1(int,	previous)
+	)
+_DCL(char *,	src)
+_DCL(char *,	dst)
+_DCL(int,	previous)
 {
 	auto	DIR		*dp;
 	auto	struct	direct	*de;
@@ -439,8 +398,12 @@ char	*src, *dst;
  * Set up and perform a COPY
  */
 static
-copyit(src, dst)
-char	*src, *dst;
+copyit(
+_ARX(char *,	src)
+_AR1(char *,	dst)
+	)
+_DCL(char *,	src)
+_DCL(char *,	dst)
 {
 	struct	stat	dst_sb, src_sb;
 	int	num,
@@ -566,7 +529,7 @@ char	*src, *dst;
 }
 
 static
-usage()
+usage(_AR0)
 {
 	auto	char	bfr[BUFSIZ];
 	static	char	*tbl[] = {
@@ -596,8 +559,12 @@ usage()
  * Process argument list, turning it into source/destination pairs
  */
 static
-arg_pairs(argc, argv)
-char	*argv[];
+arg_pairs(
+_ARX(int,	argc)
+_AR1(char **,	argv)
+	)
+_DCL(int,	argc)
+_DCL(char **,	argv)
 {
 	register int	j;
 	auto	struct	stat	dst_sb,
@@ -676,8 +643,12 @@ char	*argv[];
  * each argument.
  */
 static
-derived(argc, argv)
-char	*argv[];
+derived(
+_ARX(int,	argc)
+_AR1(char **,	argv)
+	)
+_DCL(int,	argc)
+_DCL(char **,	argv)
 {
 	register int	j;
 	char	dst[BUFSIZ], *s;
@@ -699,8 +670,8 @@ char	*argv[];
 /************************************************************************
  *	public entrypoints						*
  ************************************************************************/
-main(argc,argv)
-char	*argv[];
+/*ARGSUSED*/
+_MAIN
 {
 	register int	j;
 

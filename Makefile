@@ -1,4 +1,4 @@
-# $Id: Makefile,v 9.5 1991/09/24 13:10:29 dickey Exp $
+# $Id: Makefile,v 10.0 1991/10/21 08:33:07 ste_cm Rel $
 # Top-level make-file for CM_TOOLS
 # (see also CM_TOOLS/src/common)
 #
@@ -97,7 +97,7 @@ bin/makefile:	bin/Makefile	Makefile
 
 user/makefile:	user/Makefile	Makefile
 	rm -f $@
-	sed -e s+INSTALL_PATH=.*+INSTALL_PATH=`cd $(INSTALL_MAN);pwd`+ user/Makefile >$@
+	sed -e s+INSTALL_MAN=.*+INSTALL_MAN=`cd $(INSTALL_MAN);pwd`+ user/Makefile >$@
 
 # If the rcs tool is not found in our path, assume that it lies in the same
 # directory as that in which we will install; but the install-directory has

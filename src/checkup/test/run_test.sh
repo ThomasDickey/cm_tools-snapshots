@@ -1,7 +1,15 @@
-: '$Header: /users/source/archives/cm_tools.vcs/src/checkup/test/RCS/run_test.sh,v 9.0 1989/03/28 11:25:33 ste_cm Rel $'
+#!/bin/sh
+# $Id: run_test.sh,v 11.0 1991/10/22 10:29:17 ste_cm Rel $
 date
-P=../../bin/checkup
+#
+# run from test-versions:
+PATH=:`pwd`:`cd ../bin;pwd`:`cd ../../../bin;pwd`:/bin:/usr/bin:/usr/ucb
+export PATH
+#
+TTY=/tmp/test$$
 rm -rf junk
+trap "rm -rf junk; rm -f $TTY" 0
+#
 mkdir junk
 cd junk
 rm -f junk.* RCS/junk.*
@@ -15,7 +23,7 @@ cat <<eof/
 **	Case 1.	Shows junk.desc (which is not checked-in).
 eof/
 checkin -q -u -tjunk.desc junk.txt
-$P junk.* >>/dev/tty
+checkup junk.* >>$TTY
 #
 cat <<eof/
 **
@@ -25,7 +33,7 @@ cat <<eof/
 eof/
 checkout -q -l junk.txt
 touch junk.txt
-$P -x.desc junk.* >>/dev/tty
+checkup -x.desc junk.* >>$TTY
 #
 #
 cat <<eof/
@@ -34,7 +42,6 @@ cat <<eof/
 **	Case 3.	Traverses the local tree, suppressing ".out" and ".desc" files.
 **		Again, junk.txt is reported.
 eof/
-$P -x.out -x.desc .. >>/dev/tty
+checkup -x.out -x.desc .. >>$TTY
 rm -f junk.* RCS/junk.*
 cd ..
-rm -rf junk

@@ -1,13 +1,19 @@
-$Id: release.txt,v 9.2 1991/09/23 07:39:30 dickey Exp $
+$Id: release.txt,v 10.0 1991/10/18 12:37:45 ste_cm Rel $
 
 --------------------------------------------------------------------------------
 
 Version 10.0:
 ------------
-Made 'checkin' work properly with root-suid.
+Converted most code to ANSI (i.e., use function prototypes).
+
+Added new utility 'vcs'
+
+Made 'checkin' and 'checkout' work properly with root-suid.
+Simplified 'checkin' somewhat by using "-d" option from RCS version 4.
 
 New features in 'ded':
 
+	* Made '"' command apply to 'c' commands
 	* "2T" command to show how many days-old a file is.
 	* added command-substitution codes u,g,v,y
 	* added @-sort and D-sort
@@ -21,6 +27,7 @@ Miscellaneous fixes to common-library, including:
 	  contents.
 	* make 'rcsedit()' work in read-only mode, so we don't do unnecessary
 	  file-copy.
+	* make 'sccslast()' find tip-version, rather than last.
 
 Version 9.0:
 -----------

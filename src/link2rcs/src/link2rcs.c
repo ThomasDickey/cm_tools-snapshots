@@ -1,77 +1,42 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/link2rcs.c,v 9.0 1991/06/04 09:34:26 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/link2rcs.c,v 11.0 1991/10/18 11:20:46 ste_cm Rel $";
 #endif
 
 /*
  * Title:	link2rcs.c (link/directory tree)
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
- * $Log: link2rcs.c,v $
- * Revision 9.0  1991/06/04 09:34:26  ste_cm
- * BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
- *
- *		Revision 8.4  91/06/04  09:34:26  dickey
- *		check for the special case in which the environment-variable
- *		is the current path.
- *		
- *		Revision 8.3  91/05/20  12:54:39  dickey
- *		mods to compile on apollo sr10.3
- *		
- *		Revision 8.2  90/08/21  14:42:48  dickey
- *		pass the value of the "-s" option down to 'find_src()' so that
- *		in case the user combines this with a wildcard on the actual
- *		source-paths, we can prune off the beginning portion of the
- *		source-path arguments (fixes a problem using 'relpath()').
- *		
- *		Revision 8.1  90/08/21  08:37:02  dickey
- *		corrected code in 'path_to()', which was not properly testing
- *		for leading "./" in its argument.
- *		
- *		Revision 8.0  90/05/04  10:21:26  ste_cm
- *		BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
- *		
- *		Revision 7.3  90/05/04  10:21:26  dickey
- *		sort/purge list of items to remove repeats.  Added "-b" option
- *		(currently only "-b0" value) to purge the tree when no RCS is
- *		in a sub-directory.
- *		
- *		Revision 7.2  90/05/03  15:33:19  dickey
- *		added "-e" option (apollo-only) to create links with a given
- *		environment variable.
- *		
- *		Revision 7.1  90/05/03  14:49:26  dickey
- *		added "-f" option to support linkages to ordinary files.
- *		
- *		Revision 7.0  90/04/27  16:42:49  ste_cm
- *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
- *		
- *		Revision 6.1  90/04/27  16:42:49  dickey
- *		use 'chmod()' to ensure path-mode to cover up apollo sr10/sr9
- *		bug.
- *		
- *		Revision 6.0  90/03/14  16:33:57  ste_cm
- *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
- *		
- *		Revision 5.10  90/03/14  16:33:57  dickey
- *		corrected reference path for 'relpath()' computation.
- *		force mkdir-mode to 755.
- *		
- *		Revision 5.9  89/12/07  14:56:38  dickey
- *		lint (SunOs 3.4)
- *		
- *		Revision 5.8  89/12/06  13:41:51  dickey
- *		corrected 'getdir()' procedure (did 'abspath()' in wrong
- *		place), and fixed a couple of places where a "." leaf could
- *		mess up handling of regression-tests.
- *		
- *		Revision 5.7  89/12/01  08:47:15  dickey
- *		prevent 'walktree()' from scanning directories to which we
- *		will make a link
- *		
- *		Revision 5.6  89/12/01  08:31:25  dickey
- *		don't remake links if they have the same link-text.
- *		make the merge-listing less verbose than the script.
- *		
+ * Modified:
+ *		15 Oct 1991, converted to ANSI
+ *		04 Jun 1991, check for the special case in which the
+ *			     environment-variable is the current path.
+ *		20 May 1991, mods to compile on apollo sr10.3
+ *		21 Aug 1990, corrected code in 'path_to()', which was not
+ *			     properly testing for leading "./" in its argument.
+ *			     Pass the value of the "-s" option down to
+ *			     'find_src()' so that in case the user combines this
+ *			     with a wildcard on the actual source-paths, we can
+ *			     prune off the beginning portion of the source-path
+ *			     arguments (fixes a problem using 'relpath()').
+ *		04 May 1990, sort/purge list of items to remove repeats.  Added
+ *			     "-b" option (currently only "-b0" value) to purge
+ *			     the tree when no RCS is in a sub-directory.
+ *		03 May 1990, added "-f" option to support linkages to ordinary
+ *			     files.  Added "-e" option (apollo-only) to create
+ *			     links with a given environment variable.
+ *		27 Apr 1990, use 'chmod()' to ensure path-mode to cover up
+ *			     apollo sr10/sr9 bug.
+ *		14 Mar 1990, corrected reference path for 'relpath()'
+ *			     computation.  Force mkdir-mode to 755.
+ *		07 Dec 1989, lint (SunOs 3.4)
+ *		06 Dec 1989, corrected 'getdir()' procedure (did 'abspath()' in
+ *			     wrong place), and fixed a couple of places where a
+ *			     "." leaf could mess up handling of regression-
+ *			     tests.
+ *		01 Dec 1989, Don't remake links if they have the same link-text.
+ *			     Make the merge-listing less verbose than the
+ *			     script.  Prevent 'walktree()' from scanning
+ *			     directories to which we will make a link
  *
  * Function:	Scan the given list of source-directories, building a matching
  *		tree under the destination directory, with symbolic links to
@@ -91,15 +56,9 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/sr
  */
 
 #define	STR_PTYPES
-#include	"ptypes.h"
-#include	"rcsdefs.h"
+#include	<ptypes.h>
+#include	<rcsdefs.h>
 #include	<ctype.h>
-extern	char	*pathcat();
-extern	char	*pathleaf();
-extern	char	*rcs_dir();
-extern	char	*relpath();
-extern	char	*txtalloc();
-extern	long	strtol();
 
 extern	int	optind;		/* 'getopt()' index to argv */
 extern	char	*optarg;	/* 'getopt()' argument in argv */
@@ -149,8 +108,12 @@ static	char	*fmt_file = "link-to-file";
  * Print normal-trace using a common format
  */
 static
-tell_it(tag,path)
-char	*tag,*path;
+tell_it(
+_ARX(char *,	tag)
+_AR1(char *,	path)
+	)
+_DCL(char *,	tag)
+_DCL(char *,	path)
 {
 	TELL "** %-16s%s\n", tag, path);
 }
@@ -159,8 +122,9 @@ char	*tag,*path;
  * Check for leaf-names suppressed if "-a" option is not given.
  */
 static
-suppress_dots(src)
-char	*src;
+suppress_dots(
+_AR1(char *,	src))
+_DCL(char *,	src)
 {
 	register char *t;
 	abspath(src);		/* get rid of "." and ".." names */
@@ -174,7 +138,7 @@ char	*src;
  */
 static
 LIST	*
-new_LIST()
+new_LIST(_AR0)
 {
 	register LIST	*p = ALLOC(LIST,1),
 			*q = list;
@@ -194,8 +158,9 @@ new_LIST()
  */
 static
 char	*
-path_to(src)
-char	*src;
+path_to(
+_AR1(char *,	src))
+_DCL(char *,	src)
 {
 	auto	char	dst[BUFSIZ],
 			*d = relpath(dst,Source,src);
@@ -208,8 +173,9 @@ char	*src;
 
 static
 char	*
-path_from(src)
-char	*src;
+path_from(
+_AR1(char *,	src))
+_DCL(char *,	src)
 {
 #ifdef	apollo
 	auto	char	tmp[BUFSIZ];
@@ -228,10 +194,18 @@ char	*src;
  */
 /*ARGSUSED*/
 static
-src_stat(path, name, sp, readable, level)
-char	*path;
-char	*name;
-struct	stat	*sp;
+src_stat(
+_ARX(char *,	path)
+_ARX(char *,	name)
+_ARX(struct stat*,sp)
+_ARX(int,	readable)
+_AR1(int,	level)
+	)
+_DCL(char *,	path)
+_DCL(char *,	name)
+_DCL(struct stat*,sp)
+_DCL(int,	readable)
+_DCL(int,	level)
 {
 	auto	LIST	*p;
 	auto	char	tmp[BUFSIZ],
@@ -262,9 +236,12 @@ struct	stat	*sp;
  * Process a single argument to obtain the list of source-directory names
  */
 static
-find_src(path, name)
-char	*path;
-char	*name;
+find_src(
+_ARX(char *,	path)
+_AR1(char *,	name)
+	)
+_DCL(char *,	path)
+_DCL(char *,	name)
 {
 	auto	char	tmp[BUFSIZ];
 	auto	size_t	len = strlen(path);
@@ -285,8 +262,9 @@ char	*name;
 }
 
 static
-exists(name)
-char	*name;
+exists(
+_AR1(char *,	name))
+_DCL(char *,	name)
 {
 	FPRINTF(stderr, "?? %s: already exists\n", name);
 	(void)fflush(stderr);
@@ -294,16 +272,21 @@ char	*name;
 }
 
 static
-tell_merged(path)
-char	*path;
+tell_merged(
+_AR1(char *,	path))
+_DCL(char *,	path)
 {
 	tell_it("(no change)",path);
 	return (TRUE);
 }
 
 static
-samelink(dst,src)
-char	*dst,*src;
+samelink(
+_ARX(char *,	dst)
+_AR1(char *,	src)
+	)
+_DCL(char *,	dst)
+_DCL(char *,	src)
 {
 	auto	int	len;
 	auto	char	bfr[BUFSIZ];
@@ -320,9 +303,14 @@ char	*dst,*src;
  * a link with a link, but directories should not be modified!
  */
 static
-conflict(path,mode,from)
-char	*path;
-char	*from;
+conflict(
+_ARX(char *,	path)
+_ARX(int,	mode)
+_AR1(char *,	from)
+	)
+_DCL(char *,	path)
+_DCL(int,	mode)
+_DCL(char *,	from)
 {
 	auto	struct	stat	sb;
 
@@ -354,8 +342,9 @@ char	*from;
  * Create a single directory
  */
 static
-make_dir(path)
-char	*path;
+make_dir(
+_AR1(char *,	path))
+_DCL(char *,	path)
 {
 	if (strcmp(path,".")
 	&&  !conflict(path, S_IFDIR, ".")) {
@@ -373,8 +362,14 @@ char	*path;
  * Create a symbolic link
  */
 static
-make_lnk(src, dst, what)
-char	*src, *dst, *what;
+make_lnk(
+_ARX(char *,	src)
+_ARX(char *,	dst)
+_AR1(char *,	what)
+	)
+_DCL(char *,	src)
+_DCL(char *,	dst)
+_DCL(char *,	what)
 {
 	if (!conflict(dst, S_IFLNK, src)) {
 		tell_it(what, dst);
@@ -389,9 +384,12 @@ char	*src, *dst, *what;
 /* filter slashes in pathnames to newlines so directories sort in proper order*/
 static
 char	*
-deslash(dst, p)
-char	*dst;
-LIST	*p;
+deslash(
+_ARX(char *,	dst)
+_AR1(LIST *,	p)
+	)
+_DCL(char *,	dst)
+_DCL(LIST *,	p)
 {
 	auto	 char	*base = dst;
 	register char	*src = p->path;
@@ -403,8 +401,12 @@ LIST	*p;
 }
 
 static
-compar_LIST(a,b)
-LIST	*a, *b;
+compar_LIST(
+_ARX(LIST *,	a)
+_AR1(LIST *,	b)
+	)
+_DCL(LIST *,	a)
+_DCL(LIST *,	b)
 {
 	char	x[BUFSIZ], y[BUFSIZ];
 	return (strcmp(deslash(x,a), deslash(y,b)));
@@ -412,9 +414,12 @@ LIST	*a, *b;
 
 /* compress duplicate items out of the LIST-vector, returns the resulting len */
 static
-unique_LIST(vec, count)
-LIST	*vec;
-unsigned count;
+unique_LIST(
+_ARX(LIST *,	vec)
+_AR1(unsigned,	count)
+	)
+_DCL(LIST *,	vec)
+_DCL(unsigned,	count)
 {
 	register int	j, k;
 	for (j = k = 0; k < count; j++, k++) {
@@ -428,9 +433,14 @@ unsigned count;
 
 /* given a directory-entry, find if a subordinate RCS-directory exists */
 static
-has_children(vec,count,old)
-LIST	*vec;
-unsigned count;
+has_children(
+_ARX(LIST *,	vec)
+_ARX(unsigned,	count)
+_AR1(int,	old)
+	)
+_DCL(LIST *,	vec)
+_DCL(unsigned,	count)
+_DCL(int,	old)
 {
 	register int	new;
 	auto	 size_t	len = strlen(vec[old].path);
@@ -455,9 +465,14 @@ unsigned count;
 
 /* skip past the specified directory-entry and all of its children */
 static
-skip_children(vec,count,old)
-LIST	*vec;
-unsigned count;
+skip_children(
+_ARX(LIST *,	vec)
+_ARX(unsigned,	count)
+_AR1(int,	old)
+	)
+_DCL(LIST *,	vec)
+_DCL(unsigned,	count)
+_DCL(int,	old)
 {
 	register int	new;
 	auto	 size_t	len = strlen(vec[old].path);
@@ -471,9 +486,12 @@ unsigned count;
 
 /* purge entries which do not have an underlying RCS-directory */
 static
-purge_LIST(vec,count)
-LIST	*vec;
-unsigned count;
+purge_LIST(
+_ARX(LIST *,	vec)
+_AR1(unsigned,	count)
+	)
+_DCL(LIST *,	vec)
+_DCL(unsigned,	count)
 {
 	register int	j, k;
 	for (j = k = 0; k < count; j++, k++) {
@@ -490,8 +508,9 @@ unsigned count;
  * and links.
  */
 static
-make_dst(path)
-char	*path;
+make_dst(
+_AR1(char *,	path))
+_DCL(char *,	path)
 {
 	auto	LIST	*p, *q;
 	auto	char	dst[BUFSIZ];
@@ -550,8 +569,9 @@ char	*path;
  */
 static
 char	*
-getdir(buffer)
-char	*buffer;
+getdir(
+_AR1(char *,	buffer))
+_DCL(char *,	buffer)
 {
 	abspath(strcpy(buffer, optarg));
 	if (chdir(optarg) < 0)
@@ -564,7 +584,7 @@ char	*buffer;
  * Display the options recognized by this utility
  */
 static
-usage()
+usage(_AR0)
 {
 	static	char	*msg[] = {
 	 "Usage: link2rcs [options] [directory [...]]"
@@ -599,8 +619,8 @@ usage()
  *	public entrypoints						*
  ************************************************************************/
 
-main(argc, argv)
-char	*argv[];
+/*ARGSUSED*/
+_MAIN
 {
 	auto	char	*src_dir = Source,
 			*dst_dir = Target;

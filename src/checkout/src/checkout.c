@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 9.3 1991/09/06 14:49:45 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 10.0 1991/10/21 13:31:47 ste_cm Rel $";
 #endif
 
 /*
@@ -7,6 +7,13 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		21 Oct 1991, corrected uid-use in 'PreProcess()'.  Handle case
+ *			     in which user has write-access in the RCS directory
+ *			     even if he owns none of the files.
+ *		09 Oct 1991, convert to ANSI. Correct non-root setuid in the
+ *			     case where real user has proper permissions.
+ *			     (i.e., don't do rcstemp-hack).
+ *		08 Oct 1991, stifle message about 'revert()' if root-setuid.
  *		06 Sep 1991, modified interface to 'rcsopen()'
  *		11 Jul 1991, make this work properly with suid-root
  *		20 Jun 1990, use 'shoarg()'
@@ -64,31 +71,27 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  *		does a 'co' without the version, 'co' will still give the
  *		tip-version.  Should provide the revision-option to 'co' myself.
  *		For now, simply assume that locks are on the tip version.
+ *
+ * patch:	should use 'for_admin2()' to bypass hack with 'rcs' command.
  */
 
 #define		ACC_PTYPES
 #define		SIG_PTYPES
 #define		STR_PTYPES
-#include	"ptypes.h"
-#include	"rcsdefs.h"
+#include	<ptypes.h>
+#include	<rcsdefs.h>
 
+#include	<errno.h>
 #include	<ctype.h>
 #include	<signal.h>
 #include	<time.h>
-extern	long	packdate();
-extern	char	*ctime();
-extern	char	*getuser();
-extern	char	*pathhead();
-extern	time_t	cutoff();
-
-extern	char	*optarg;
-extern	int	optind;
 
 /* local definitions */
 #define	WARN	FPRINTF(stderr,
 #define	TELL	if (!silent) PRINTF
 #define	DEBUG(s)	if(debug) PRINTF s;
 
+static	char	*Null;
 static	time_t	opt_c	= 0;
 static	int	silent;
 static	int	debug;			/* set from environment RCS_DEBUG */
@@ -111,7 +114,7 @@ static	char	opt_sta[BUFSIZ];	/* "-s[state] value	*/
  * Cleanup handler
  */
 static
-clean_file()
+clean_file(_AR0)
 {
 	if ((UidHack != 0)
 	&&  (Working != 0)
@@ -123,12 +126,39 @@ clean_file()
 
 static
 SIG_T
-cleanup(sig)
+cleanup(
+_AR1(int,	sig))
+_DCL(int,	sig)
 {
 	(void)signal(sig, SIG_IGN);
 	WARN "checkout: cleaning up\n\n");
 	clean_file();
 	(void)exit(FAIL);
+}
+
+static
+TestAccess(
+_ARX(char *,	name)
+_AR1(int,	flag)
+	)
+_DCL(char *,	name)
+_DCL(int,	flag)
+{
+	int	code = access(name, flag);
+	DEBUG((".. access(%s,%o) = %d\n", name, flag, code))
+	return code;
+}
+
+static
+GiveBack(
+_ARX(int,	tell)
+_AR1(char *,	why)
+	)
+_DCL(int,	tell)
+_DCL(char *,	why)
+{
+	revert((tell || debug) ? why : (char *)0);
+	Effect = geteuid();
 }
 
 /*
@@ -137,7 +167,7 @@ cleanup(sig)
  * file to make it correspond.
  */
 static
-PostProcess()
+PostProcess(_AR0)
 {
 	time_t	ok	= 0;		/* must set this to touch file */
 	char	key[BUFSIZ],
@@ -232,8 +262,9 @@ PostProcess()
  * is taken, return false.
  */
 static
-Execute(mtime)
-time_t	mtime;
+Execute(
+_AR1(time_t,	mtime))
+_DCL(time_t,	mtime)
 {
 	char	cmds[BUFSIZ];
 	struct	stat	sb;
@@ -283,69 +314,81 @@ time_t	mtime;
  */
 static
 time_t
-PreProcess(name,owner)
-char	*name;
-int	owner;			/* TRUE if euid, FALSE if uid */
+PreProcess(
+_ARX(char *,	name)
+_AR1(int,	effective)		/* TRUE if euid, FALSE if uid */
+	)
+_DCL(char *,	name)
+_DCL(int,	effective)
 {
 	struct	stat	sb;
-	int		uid;
+	int	wideopen = FALSE;
 
-	DEBUG(("...PreProcess(%s,%d)\n", name, owner))
+	DEBUG(("...PreProcess(%s,%d)\n", name, effective))
 	if (stat(name, &sb) >= 0) {
-		if ((S_IFMT & sb.st_mode) == S_IFREG) {
-			if (owner) {	/* setup for archive: effective */
-				char	RCSdir[BUFSIZ],
-					*s = strrchr(strcpy(RCSdir, name),'/');
-				if (s != 0)
-					*s = EOS;
-				else
-					(void)strcpy(RCSdir, "./");
-					DEBUG(("++ RCSdir='%s'\n", RCSdir))
-
-				if (Effect != sb.st_uid && Effect != 0) {
-					revert(debug ? "non-CM use":(char *)0);
-					Effect = geteuid();
-				} else if (!rcspermit(RCSdir,(char *)0))
-					revert((locked || debug) ?
-						"not listed in permit-file" :
-						(char *)0);
-				if (locked) {
-					permit(name, &sb, uid = Effect);
-				}
-			} else {	/* setup for working: real */
-				permit(name, &sb, uid = Caller);
-			}
-			DEBUG(("=> date = %s", ctime(&sb.st_mtime)))
-			return (sb.st_mtime);
+		if ((S_IFMT & sb.st_mode) != S_IFREG) {
+			TELL ("** ignored (not a file)\n");
+			return (FALSE);
 		}
-		TELL ("** ignored (not a file)\n");
-		return (FALSE);
+		if (effective) {	/* setup for archive: effective */
+			char	RCSdir[BUFSIZ],
+				*s = strrchr(strcpy(RCSdir, name),'/');
+			if (s != 0)
+				*s = EOS;
+			else
+				(void)strcpy(RCSdir, "./");
+				DEBUG(("++ RCSdir='%s'\n", RCSdir))
+
+			if (Effect != Caller) {
+				if (locked
+				&& (wideopen = (TestAccess(RCSdir, W_OK) >= 0)))
+					GiveBack(FALSE, "RCS-directory is writable");
+				else if (Effect != sb.st_uid && Effect != 0)
+					GiveBack(FALSE, "non-CM use");
+				else if (!rcspermit(RCSdir,Null))
+					GiveBack(Effect && locked,
+						"not listed in permit-file");
+			}
+			if (!wideopen && locked)
+				TestOwner(name, &sb, Effect);
+
+		} else {	/* setup for working: real */
+			TestOwner(name, &sb, Caller);
+		}
+		DEBUG(("=> date = %s", ctime(&sb.st_mtime)))
+		return (sb.st_mtime);
 	}
-	if (!owner) {
+	if (!effective) {
 		name = pathhead(name, &sb);
-		if (access(name, W_OK) < 0)
-			permit(name, &sb, uid);
+		if (TestAccess(name, W_OK) < 0)
+			TestOwner(name, &sb, Caller);
 	}
 	return (TRUE);	/* file was not already checked out */
 }
 
 static
-permit(name, sb_, uid)
-char		*name;
-struct	stat	*sb_;
+TestOwner(
+_ARX(char *,		name)
+_ARX(struct stat *,	sb_)
+_AR1(int,		uid)
+	)
+_DCL(char *,		name)
+_DCL(struct stat *,	sb_)
+_DCL(int,		uid)
 {
 	if (uid != sb_->st_uid && Effect != 0) {
-		DEBUG(("=> uid  = %d, file = %d\n", uid, sb_->st_uid))
+		DEBUG(("=> uid = %d(%s), file = %d(%s)\n",
+			uid,		uid2s(uid),
+			sb_->st_uid,	uid2s(sb_->st_uid)))
 		noPERM(name);
 	}
 }
 
-#include <errno.h>
 static
-noPERM(name)
-char	*name;
+noPERM(
+_AR1(char *,	name))
+_DCL(char *,	name)
 {
-	extern	int	errno;
 	errno	= EPERM;
 	failed(name);
 }
@@ -354,8 +397,9 @@ char	*name;
  * Process a single file.
  */
 static
-do_file(name)
-char	*name;
+do_file(
+_AR1(char *,	name))
+_DCL(char *,	name)
 {
 	char		*s, dirname[BUFSIZ];
 	time_t		mtime;
@@ -367,13 +411,13 @@ char	*name;
 		s[1] = EOS;
 	else
 		(void)strcpy(dirname, ".");
-	if (access(dirname, W_OK) < 0)
+	if (TestAccess(dirname, W_OK) < 0)
 		failed(dirname);
 
 	DEBUG(("...do_file(%s) => %s %s\n", name, Working, Archive))
 
 	if (PreProcess(Archive,TRUE) == TRUE) {
-		revert(debug ? "directory access" : (char *)0);
+		GiveBack(FALSE, "directory access");
 		if (PreProcess(Archive,TRUE) == TRUE) {
 			WARN "?? can't find archive \"%s\"\n", Archive);
 			(void)exit(FAIL);
@@ -381,13 +425,15 @@ char	*name;
 	}
 
 	if (mtime = PreProcess (Working,FALSE)) {
+		if (!locked && TestAccess(Archive, R_OK) >= 0)
+			GiveBack(FALSE, "normal rights suffice");
 		if (Execute(mtime))
 			PostProcess ();
 	}
 }
 
 static
-usage()
+usage(_AR0)
 {
 	static	char	*tbl[] = {
  "Usage: checkout [options] [working_or_archive [...]]"
@@ -425,8 +471,8 @@ usage()
 /************************************************************************
  *	main program							*
  ************************************************************************/
-main (argc, argv)
-char	*argv[];
+/*ARGSUSED*/
+_MAIN
 {
 	register int	j;
 	char		tmp[BUFSIZ];

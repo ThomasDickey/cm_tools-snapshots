@@ -1,36 +1,13 @@
 #!/bin/sh
-# $Id: run_test.sh,v 9.0 1989/12/08 09:18:05 ste_cm Rel $
+# $Id: run_test.sh,v 11.0 1991/10/18 11:27:32 ste_cm Rel $
 # test-script for link2rcs (RCS skeleton tree utility)
 #
-# $Log: run_test.sh,v $
-# Revision 9.0  1989/12/08 09:18:05  ste_cm
-# BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
-#
-# Revision 8.0  89/12/08  09:18:05  ste_cm
-# BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
-# 
-# Revision 7.0  89/12/08  09:18:05  ste_cm
-# BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
-# 
-# Revision 6.0  89/12/08  09:18:05  ste_cm
-# BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
-# 
-# Revision 5.3  89/12/08  09:18:05  dickey
-# "ls -dF" produces inconsistent results (edited to cover up)
-# 
-# Revision 5.2  89/12/06  14:08:41  dickey
-# sort result of 'find', since we cannot rely on directory-order
-# 
-# Revision 5.1  89/12/06  13:39:25  dickey
-# template (test-directory) may contain symbolic links to RCS-directories.
-# edit junk.old to account for this.
-# 
-# Revision 5.0  89/03/28  13:57:09  ste_cm
-# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
-# 
 date
-PROG=./bin/link2rcs
-
+#
+# run from test-versions:
+PATH=:`pwd`:`cd ../bin;pwd`:`cd ../../../bin;pwd`:/bin:/usr/bin:/usr/ucb
+export PATH
+#
 # initialize
 rm -rf subdir other
 mkdir subdir subdir/first subdir/RCS other
@@ -46,7 +23,7 @@ cat <<eof/
 **
 eof/
 mkdir junk
-$PROG -d junk test
+link2rcs -d junk test
 
 cat <<eof/
 **	
@@ -68,7 +45,7 @@ cat <<eof/
 **		rerunning link2rcs.
 eof/
 rm -rf junk/test/subdir
-$PROG -m -d junk test
+link2rcs -m -d junk test
 cat <<eof/
 **	
 **		resulting tree:

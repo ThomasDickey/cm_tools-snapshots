@@ -1,90 +1,38 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 9.1 1991/07/15 12:59:07 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 10.0 1991/10/18 08:07:34 ste_cm Rel $";
 #endif
 
 /*
  * Title:	checkup.c (link/directory tree)
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
- * $Log: checkup.c,v $
- * Revision 9.1  1991/07/15 12:59:07  dickey
- * distinguish between non-archive/obsolete files.  Corrected
- * the code which prints the names of these files (had wrong
- * leafname).
- *
- *		Revision 9.0  91/05/20  12:40:56  ste_cm
- *		BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
- *		
- *		Revision 8.1  91/05/20  12:40:56  dickey
- *		mods to compile on apollo sr10.3
- *		
- *		Revision 8.0  90/03/30  12:50:15  ste_cm
- *		BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
- *		
- *		Revision 7.0  90/03/30  12:50:15  ste_cm
- *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
- *		
- *		Revision 6.1  90/03/30  12:50:15  dickey
- *		corrected code which checks for suppressed extensions (if a
- *		wildcard is given, we don't really know the exact length that
- *		would be matched).
- *		
- *		Revision 6.0  90/03/28  11:21:39  ste_cm
- *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
- *		
- *		Revision 5.5  90/03/28  11:21:39  dickey
- *		display the version-number in "-d" listing where I was only
- *		showing "ok".
- *		
- *		Revision 5.4  90/03/28  10:34:24  dickey
- *		added "-c" (configuration-list) option so user can obtain a
- *		list of the working files in a tree together with their
- *		revision codes.
- *		
- *		Revision 5.3  90/03/28  08:08:05  dickey
- *		added "-i" option.  made both "-i" and "-x" options permit
- *		wildcards.  enhanced usage-message.
- *		
- *		Revision 5.2  90/02/07  12:58:53  dickey
- *		added "-p" option to generate relative pathnames
- *
- *		Revision 5.1  90/02/07  11:14:26  dickey
- *		added "-l" option to reopen stderr so we can easily pipe the
- *		report to a file
- *
- *		Revision 5.0  89/10/26  10:20:32  ste_cm
- *		BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods
- *		+ ADA_PITS 4.0
- *
- *		Revision 4.1  89/10/26  10:20:32  dickey
- *		use new procedure 'istextfile()'
- *
- *		Revision 4.0  89/08/17  13:59:45  ste_cm
- *		BASELINE Thu Aug 24 09:31:25 EDT 1989 -- support:navi_011(rel2)
- *
- *		Revision 3.3  89/08/17  13:59:45  dickey
- *		if "-r" and "-o" are both set, use "-r" to limit the set of
- *		files shown as obsolete, rather than to select working files
- *		for date-comparison.
- *
- *		Revision 3.2  89/08/17  13:18:03  dickey
- *		expanded usage-message to multi-line display.  corrected a
- *		place where "?" constant was overwritten.  added "-d" and
- *		"-o" options.
- *
- *		Revision 3.1  89/08/17  09:02:42  dickey
- *		modified "-r" option to support reverse comparison (if user
- *		suffixes a "+" to option-value).
- *
- *		Revision 3.0  88/09/26  07:56:39  ste_cm
- *		BASELINE Mon Jun 19 13:17:34 EDT 1989
- *
- *		Revision 2.0  88/09/26  07:56:39  ste_cm
- *		BASELINE Thu Apr  6 09:32:39 EDT 1989
- *
- *		Revision 1.7  88/09/26  07:56:39  dickey
- *		sccs2rcs keywords
- *
+ * Modified:
+ *		11 Oct 1991, converted to ANSI
+ *		15 Jul 1991, distinguish between non-archive/obsolete files.
+ *			     Corrected the code which prints the names of these
+ *			     files (had wrong leafname).
+ *		20 May 1991, mods to compile on apollo sr10.3
+ *		30 Mar 1990, corrected code which checks for suppressed
+ *			     extensions (if a wildcard is given, we don't really
+ *			     know the exact length that would be matched).
+ *		28 Mar 1990, Added "-i" option.  Made both "-i" and "-x" options
+ *			     permit wildcards.  Enhanced usage-message.  Added
+ *			     "-c" (configuration-list) option so user can obtain
+ *			     a list of the working files in a tree together with
+ *			     their revision codes.  Display the version-number
+ *			     in "-d" listing where I was only showing "ok".
+ *		07 Feb 1990, Added "-l" option to reopen stderr so we can easily
+ *			     pipe the report to a file.  Added "-p" option to
+ *			     generate relative pathnames
+ *		26 Oct 1989, use new procedure 'istextfile()'
+ *		17 Aug 1989, modified "-r" option to support reverse comparison
+ *			     (if user suffixes a "+" to option-value).  Expanded
+ *			     usage-message to multi-line display.  corrected a
+ *			     place where "?" constant was overwritten.  added
+ *			     "-d" and "-o" options.  If "-r" and "-o" are both
+ *			     set, use "-r" to limit the set of files shown as
+ *			     obsolete, rather than to select working files
+ *			     for date-comparison.
  *		26 Sep 1988, corrected use of 'sameleaf()' -- had wrong args!
  *		19 Sep 1988, added '-a' option.
  *		02 Sep 1988, use 'rcs_dir()', 'sccs_dir()'
@@ -105,18 +53,10 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src
 
 #define	DIR_PTYPES
 #define	STR_PTYPES
-#include	"ptypes.h"
-#include	"rcsdefs.h"
+#include	<ptypes.h>
+#include	<rcsdefs.h>
+#include	<sccsdefs.h>
 #include	<ctype.h>
-extern	char	*pathcat();
-extern	char	*pathleaf();
-extern	char	*rcs_dir();
-extern	char	*relpath();
-extern	char	*sccs_dir();
-extern	char	*txtalloc();
-
-extern	int	optind;		/* 'getopt()' index to argv */
-extern	char	*optarg;	/* 'getopt()' argument in argv */
 
 /************************************************************************
  *	local definitions						*
@@ -153,8 +93,9 @@ static	char	*original;		/* original directory, for "-p" */
  * defining the ".no_ext" member to null.
  */
 static
-ignore(string)
-char	*string;
+ignore(
+_AR1(char *,	string))
+_DCL(char *,	string)
 {
 	EXTS	*savep = exts;
 	exts = ALLOC(EXTS,1);
@@ -168,8 +109,9 @@ char	*string;
  * Define a new extension-to-ignore
  */
 static
-extension(string)
-char	*string;
+extension(
+_AR1(char *,	string))
+_DCL(char *,	string)
 {
 	EXTS	*savep = exts;
 	char	*s = strrchr(string, *string);
@@ -193,8 +135,9 @@ char	*string;
  * wishes to ignore.  If so, return TRUE.
  */
 static
-suppress(name)
-char	*name;
+suppress(
+_AR1(char *,	name))
+_DCL(char *,	name)
 {
 	register EXTS	*p;
 	register int	len,
@@ -227,7 +170,9 @@ char	*name;
  * Indent the report for the given number of directory-levels.
  */
 static
-indent(level)
+indent(
+_AR1(int,	level))
+_DCL(int,	level)
 {
 	++lines;
 	if (verbose >= 0) {
@@ -238,8 +183,14 @@ indent(level)
 }
 
 static
-pipes(path, name, vers)
-char	*path, *name, *vers;
+pipes(
+_ARX(char *,	path)
+_ARX(char *,	name)
+_AR1(char *,	vers)
+	)
+_DCL(char *,	path)
+_DCL(char *,	name)
+_DCL(char *,	vers)
 {
 	auto	char	tmp[BUFSIZ];
 
@@ -259,8 +210,12 @@ char	*path, *name, *vers;
 
 static
 char	*
-compared(what, rev)
-char	*what, *rev;
+compared(
+_ARX(char *,	what)
+_AR1(char *,	rev)
+	)
+_DCL(char *,	what)
+_DCL(char *,	rev)
 {
 	static	char	buffer[80];
 	FORMAT(buffer, "%s than %s", what, rev);
@@ -274,10 +229,7 @@ char	*what, *rev;
  * filename.
  */
 static
-do_stat(path, name, sp, readable, level)
-char	*path;
-char	*name;
-struct	stat	*sp;
+WALK_FUNC(do_stat)
 {
 	char	*change	= 0,
 		*vers,
@@ -369,10 +321,14 @@ struct	stat	*sp;
  * be careful where we look for the working file!
  */
 static
-do_obs(path, name, level)
-char	*path;		/* current working directory, from 'do_stat()' */
-char	*name;		/* name of directory (may be symbolic link) */
-int	level;
+do_obs(
+_ARX(char *,	path)	/* current working directory, from 'do_stat()' */
+_ARX(char *,	name)	/* name of directory (may be symbolic link) */
+_AR1(int,	level)
+	)
+_DCL(char *,	path)
+_DCL(char *,	name)
+_DCL(int,	level)
 {
 	auto	DIR		*dp;
 	auto	struct	direct	*de;
@@ -441,15 +397,16 @@ int	level;
  * Process a single argument: a directory name.
  */
 static
-do_arg(name)
-char	*name;
+do_arg(
+_AR1(char *,	name))
+_DCL(char *,	name)
 {
 	WARN "** path = %s\n", name);
 	lines	= 0;
 	(void)walktree((char *)0, name, do_stat, "r", 0);
 }
 
-usage()
+usage(_AR0)
 {
 	static	char	*msg[] = {
 "Usage: checkup [options] [directory [...]]",
@@ -490,7 +447,6 @@ usage()
 	register int	j;
 	for (j = 0; j < sizeof(msg)/sizeof(msg[0]); j++)
 		WARN "%s\n", msg[j]);
-	(void)fflush(stderr);
 	(void)exit(FAIL);
 }
 
@@ -498,8 +454,8 @@ usage()
  *	public entrypoints						*
  ************************************************************************/
 
-main(argc, argv)
-char	*argv[];
+/*ARGSUSED*/
+_MAIN
 {
 	auto	char	tmp[BUFSIZ];
 	register int j;
@@ -590,7 +546,6 @@ char	*argv[];
 	} else
 		do_arg(".");
 
-	(void)fflush(stderr);
 	(void)exit(SUCCESS);
 	/*NOTREACHED*/
 }
