@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.c,v 8.1 1991/05/20 12:38:24 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.c,v 9.1 1991/06/20 11:37:23 dickey Exp $";
 #endif
 
 /*
@@ -7,9 +7,21 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * $Log: rcsget.c,v $
- * Revision 8.1  1991/05/20 12:38:24  dickey
- * mods to compile on apollo sr10.3
+ * Revision 9.1  1991/06/20 11:37:23  dickey
+ * use 'shoarg()'
  *
+ *		Revision 9.0  91/06/06  07:27:29  ste_cm
+ *		BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+ *		
+ *		Revision 8.3  91/06/06  07:27:29  dickey
+ *		use "-x" option in local name-checking
+ *		
+ *		Revision 8.2  91/06/03  13:25:07  dickey
+ *		pass-thru "-x" to 'checkout'
+ *		
+ *		Revision 8.1  91/05/20  12:39:21  dickey
+ *		mods to compile on apollo sr10.3
+ *		
  *		Revision 8.0  90/08/14  14:08:48  ste_cm
  *		BASELINE Tue Aug 14 14:11:43 1990 -- ADA_TRANS, LINCNT
  *		
@@ -72,6 +84,7 @@ static	int	a_opt;		/* all-directory scan */
 static	int	d_opt;		/* directory-mode */
 static	int	n_opt;		/* no-op mode */
 static	int	quiet;		/* "-q" option */
+static	int	x_opt;		/* "-x" option */
 
 static
 set_wd(path)
@@ -90,7 +103,7 @@ char	*name;
 
 	catarg(strcpy(args, co_opts), name);
 
-	VERBOSE("%% %s %s\n", verb, args);
+	if (!quiet) shoarg(stdout, verb, args);
 	if (!n_opt) {
 		if (execute(verb, args) < 0)
 			failed(name);
@@ -127,7 +140,7 @@ struct	stat	*sp;
 		return (ok_acc);
 
 	set_wd(working);
-	checkout(rcs2name(strcpy(tmp, name),FALSE));
+	checkout(rcs2name(strcpy(tmp, name),x_opt));
 	set_wd(path);
 	return(ok_acc);
 }
@@ -163,7 +176,7 @@ struct	stat	*sp;
 			track_wd(path);
 		if (d_opt && (level > 0)) {
 			;
-		} else if (stat(name2rcs(name,FALSE), &sb) >= 0
+		} else if (stat(name2rcs(name,x_opt), &sb) >= 0
 		    &&	isFILE(sb.st_mode))
 			checkout(name);
 		else
@@ -211,17 +224,20 @@ char	*argv[];
 	track_wd((char *)0);
 	for (j = 1; j < argc; j++) {
 		if (*(s = argv[j]) == '-') {
-			if (strchr("lpqrcswj", (size_t)s[1]) != 0) {
+			if (strchr("lpqrcswjx", s[1]) != 0) {
 				catarg(co_opts, s);
-				if (s[1] == 'q')
-					quiet = TRUE;
-			} else switch (s[1]) {
-			case 'a':	a_opt = TRUE;	break;
-			case 'd':	d_opt = TRUE;	break;
-			case 'n':	n_opt = TRUE;	break;
-			case 'T':	verb  = s+2;	break;
-			default:	usage(s[1]);
-			}
+				switch (s[1]) {
+				case 'q':	quiet = TRUE;	break;
+				case 'x':	x_opt = TRUE;	break;
+				}
+			} else
+				switch (s[1]) {
+				case 'a':	a_opt = TRUE;	break;
+				case 'd':	d_opt = TRUE;	break;
+				case 'n':	n_opt = TRUE;	break;
+				case 'T':	verb  = s+2;	break;
+				default:	usage(s[1]);
+				}
 		} else {
 			do_arg(s);
 			had_args = TRUE;

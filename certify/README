@@ -1,4 +1,4 @@
-$Header: /users/source/archives/cm_tools.vcs/certify/RCS/README,v 8.0 1989/04/03 08:36:56 ste_cm Rel $
+$Header: /users/source/archives/cm_tools.vcs/certify/RCS/README,v 10.0 1991/06/04 09:17:00 ste_cm Rel $
 
 The RCS utilities in this package have been tested on an Apollo Domain system,
-and on Sun and Gould BSD4.x systems.
+and on SunOs systems.
