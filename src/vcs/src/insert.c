@@ -1,7 +1,3 @@
-#ifndef	lint
-static	char	Id[] = "$Id: insert.c,v 11.2 1993/09/22 14:50:24 dickey Exp $";
-#endif
-
 /*
  * Title:	vcs_insert.c (version-control-system utility)
  * Author:	T.E.Dickey
@@ -12,7 +8,9 @@ static	char	Id[] = "$Id: insert.c,v 11.2 1993/09/22 14:50:24 dickey Exp $";
  * Function:	performs insert-directory function for 'vcs'.
  */
 
-#include "vcs.h"
+#include <vcs.h>
+
+MODULE_ID("$Id: insert.c,v 11.3 1993/09/22 14:50:24 tom Exp $")
 
 /******************************************************************************/
 /* we have to change directories to keep fooling rcs about the vcs-file */

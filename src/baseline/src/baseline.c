@@ -1,7 +1,3 @@
-#ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/src/RCS/baseline.c,v 11.2 1994/11/08 23:44:46 tom Exp $";
-#endif
-
 /*
  * Title:	baseline.c (rcs baseline)
  * Author:	T.E.Dickey
@@ -42,6 +38,8 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/sr
 #include	<sccsdefs.h>
 #include	<ctype.h>
 #include	<time.h>
+
+MODULE_ID("$Id: baseline.c,v 11.3 1994/11/08 23:44:46 tom Exp $")
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)

@@ -1,7 +1,3 @@
-#ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/vcs/src/RCS/vcs.c,v 11.1 1993/09/22 14:50:11 dickey Exp $";
-#endif
-
 /*
  * Title:	vcs.c (version-control-system utility)
  * Author:	T.E.Dickey
@@ -15,7 +11,9 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/vcs/src/RCS
  */
 
 #define	MAIN
-#include "vcs.h"
+#include <vcs.h>
+
+MODULE_ID("$Id: vcs.c,v 11.2 1993/09/22 14:50:11 tom Exp $")
 
 /************************************************************************
  *	utility procedures						*

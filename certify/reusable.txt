@@ -1,6 +1,0 @@
-$Id: reusable.txt,v 11.1 1993/09/24 13:40:33 dickey Exp $
-
--------------------------------------------------------------------------------
-
-The 'include' and 'lib' directories of this prototype are used by other
-prototypes as a common library (TD_LIB).

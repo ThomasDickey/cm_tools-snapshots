@@ -1,3 +1,17 @@
+1994-11-12  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/checkout/src/checkout.c: module-id
+
+	* src/checkout/src/checkout.c: pass-thru options -f, -k to 'co'.
+	modified to make this a little smarter when reporting that a checkout didn't
+	happen.
+
+	* src/checkout/src/rcsget.c:
+	corrected call on Checkout within walktree (wasn't converting archive name
+	to working).  Also, pass-thru -f, -k options (i.e., 'co' in version 5.6.7)
+
+	* src/checkout/src/rcsget.c: module-id
+
 1994-11-08  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/checkup/src/checkup.c:
