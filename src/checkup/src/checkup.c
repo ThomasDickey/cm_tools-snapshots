@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 9.0 1991/05/20 12:40:56 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 9.1 1991/07/15 12:59:07 dickey Exp $";
 #endif
 
 /*
@@ -7,9 +7,14 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * $Log: checkup.c,v $
- * Revision 9.0  1991/05/20 12:40:56  ste_cm
- * BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+ * Revision 9.1  1991/07/15 12:59:07  dickey
+ * distinguish between non-archive/obsolete files.  Corrected
+ * the code which prints the names of these files (had wrong
+ * leafname).
  *
+ *		Revision 9.0  91/05/20  12:40:56  ste_cm
+ *		BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+ *		
  *		Revision 8.1  91/05/20  12:40:56  dickey
  *		mods to compile on apollo sr10.3
  *		
@@ -167,7 +172,7 @@ extension(string)
 char	*string;
 {
 	EXTS	*savep = exts;
-	char	*s = strrchr(string, (size_t)*string);
+	char	*s = strrchr(string, *string);
 	char	bfr[BUFSIZ];
 	int	show = (debug || verbose > 0);
 
@@ -374,57 +379,62 @@ int	level;
 	auto	char		tpath[BUFSIZ],
 				tname[BUFSIZ];
 	auto	struct	stat	sb;
-	auto	char	*vers,
+	auto	char	*tag,
+			*vers,
 			*owner;
 	auto	time_t	cdate;
 
-	if (dp = opendir(pathcat(tpath, path, name))) {
-		while (de = readdir(dp)) {
-			if (dotname(de->d_name))	continue;
-			if (stat(pathcat(tname, name, de->d_name), &sb) >= 0) {
-				auto	int	show	= FALSE;
+	if (!(dp = opendir(pathcat(tpath, path, name)))) {
+		perror(tpath);
+		return;
+	}
 
-				if ((sb.st_mode & S_IFMT) != S_IFREG) {
-					indent(level);
-					TELL "%s (non-file)\n", tname);
-					continue;
-				}
-				rcslast(path, tname, &vers, &cdate, &owner);
-				if ((cdate == 0) && (*vers == '?'))
-					sccslast(path, tname, &vers, &cdate, &owner);
+	while (de = readdir(dp)) {
+		if (dotname(de->d_name))	continue;
+		if (stat(pathcat(tname, name, de->d_name), &sb) >= 0) {
+			auto	int	show	= FALSE;
 
-				/*
-				 * If 'cdate' is zero, then we could not (for
-				 * whatever reason) find a working file.  If
-				 * 'vers' is "?", then the file was not an
-				 * archive, so we report this always.  Filter
-				 * the remaining files according to revision
-				 * codes.
-				 */
-				if (cdate == 0) {
-					if (*vers == '?')
+			if ((sb.st_mode & S_IFMT) != S_IFREG) {
+				indent(level);
+				TELL "%s (non-file)\n", tname);
+				continue;
+			}
+			rcslast(path, tname, &vers, &cdate, &owner);
+			if ((cdate == 0) && (*vers == '?'))
+				sccslast(path, tname, &vers, &cdate, &owner);
+
+			/*
+			 * If 'cdate' is zero, then we could not (for whatever
+			 * reason) find a working file.  If 'vers' is "?", then
+			 * the file was not an archive, so we report this
+			 * always.  Filter the remaining files according to
+			 * revision codes.
+			 */
+			if (cdate == 0) {
+				tag = "obsolete";
+				if (*vers == '?') {
+					tag = "non-archive";
+					show = TRUE;
+				} else if (reverse) {
+					if (dotcmp(vers, revision) > 0)
 						show = TRUE;
-					else if (reverse) {
-						if (dotcmp(vers, revision) > 0)
-							show = TRUE;
-					} else {
-						if (dotcmp(vers, revision) < 0)
-							show = TRUE;
-					}
-				}
-
-				if (show) {
-					indent(level);
-					TELL "%s (obsolete:%s)\n", tname, vers);
-					pipes(path, name, vers);
-				} else if (debug) {
-					indent(level);
-					TELL "%s (%s)\n", tname, vers);
+				} else {
+					if (dotcmp(vers, revision) < 0)
+						show = TRUE;
 				}
 			}
+
+			if (show) {
+				indent(level);
+				TELL "%s (%s:%s)\n", tname, tag, vers);
+				pipes(path, tname, vers);
+			} else if (debug) {
+				indent(level);
+				TELL "%s (%s)\n", tname, vers);
+			}
 		}
-		(void)closedir(dp);
 	}
+	(void)closedir(dp);
 }
 
 /*
