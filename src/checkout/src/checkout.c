@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		28 Dec 2000, restore file-ownership if setuid'd to root.
  *		12 Nov 1994, pass-thru '-f', '-k' options to 'ci'.
  *		22 Sep 1993, gcc warnings
  *		24 Jun 1993, fixes for apollo-setuid for RCS version 5.
@@ -89,7 +90,7 @@
 #include	<signal.h>
 #include	<time.h>
 
-MODULE_ID("$Id: checkout.c,v 11.10 1999/06/27 18:38:23 tom Exp $")
+MODULE_ID("$Id: checkout.c,v 11.11 2000/12/28 15:19:40 tom Exp $")
 
 /* local definitions */
 #define	WARN	FPRINTF(stderr,
@@ -414,8 +415,17 @@ int	RcsCheckout(_AR0)
 	CATARG(cmds, Archive);
 
 	if (!silent || debug) shoarg(log_fp, CO_TOOL, dyn_string(cmds));
-	if (!no_op)
+	if (!no_op) {
+		Stat_t sb;
+		if (Effect == 0) {
+			if (stat(Archive, &sb) < 0)
+				sb.st_uid = sb.st_gid = 0;
+		}
 		code = execute(rcspath(CO_TOOL), dyn_string(cmds));
+		if (Effect == 0
+		 && Effect != (int) sb.st_uid)
+			chown(Archive, sb.st_uid, sb.st_gid);
+	}
 	return (code);
 }
 
