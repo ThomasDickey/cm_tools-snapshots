@@ -61,7 +61,7 @@
 #include	<sccsdefs.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: checkup.c,v 11.9 1996/07/05 23:28:29 tom Exp $")
+MODULE_ID("$Id: checkup.c,v 11.10 1999/06/27 18:38:40 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -473,7 +473,7 @@ void	usage(_AR0)
 "The -i \"TEXT\" and -x \".EXT\" and \".THEN\" strings permit the use of the",
 "wildcards \"*\" and \"?\".  The -i and -x options are processed in LIFO order."
 	};
-	register int	j;
+	unsigned j;
 	for (j = 0; j < sizeof(msg)/sizeof(msg[0]); j++)
 		WARN "%s\n", msg[j]);
 	(void)exit(FAIL);

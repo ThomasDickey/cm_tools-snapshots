@@ -3,6 +3,9 @@
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		15 Jan 1999, use pathcat2 when combining data read from the
+ *			     directory entries, since "~" does not mean anything
+ *			     in that context.
  *		24 Sep 1996, add '-U' option
  *		25 Aug 1996, fix conflict between -l, -u options
  *		28 Jan 1995, retain 's' modes on destination directory.
@@ -107,7 +110,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.20 1996/09/24 20:48:52 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.22 1999/06/27 18:39:03 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -399,7 +402,9 @@ int	copyfile(
 	if (execute("/com/cpf", bfr1) < 0)
 #endif	/* apollo sr10/sr9 */
 	{
+		(void)fflush(stdout);
 		FPRINTF(stderr, "?? copy to %s failed\n", dst);
+		(void)fflush(stderr);
 		return (-1);
 	}
 	if (previous) {		/* verify that we copied file */
@@ -413,7 +418,7 @@ int	copyfile(
 	retval = 0;
 #else	/* unix	*/
 	FILE	*ifp, *ofp;
-	int	num;
+	unsigned num;
 	int	did_chmod = TRUE;
 	int	old_mode = new_sb->st_mode & S_MODEBITS,
 		tmp_mode = old_mode | S_IWUSR;	/* must be writeable! */
@@ -594,12 +599,13 @@ int	copydir(
 
 		(void)strcpy(parent, bfr1);
 		while ((de = readdir(dp)) != NULL) {
-			if (!dotname(de->d_name))
+			if (!dotname(de->d_name)) {
 				forced |= copyit(parent, &dst_sb,
-					pathcat(bfr1, src, de->d_name),
-					pathcat(bfr2, dst, de->d_name),
+					pathcat2(bfr1, src, de->d_name),
+					pathcat2(bfr2, dst, de->d_name),
 					no_dir_yet,
 					tested++);
+			}
 		}
 		(void)closedir(dp);
 		if (forced)
@@ -715,8 +721,10 @@ int	copyit(
 					return FALSE;
 				forced = TRUE;
 			} else {
+				(void)fflush(stdout);
 				FPRINTF(stderr, "?? directory is not writeable: \"%s\"\n",
 					parent);
+				(void)fflush(stderr);
 				return FALSE;
 			}
 		}
@@ -727,7 +735,9 @@ int	copyit(
 	/* Verify that the source is a legal file */
 #ifdef	S_IFLNK
 	if ((!l_opt && (lstat(bfr1, &src_sb) < 0)) || src_sb.st_mode == 0) {
+		(void)fflush(stdout);
 		FPRINTF(stderr, "?? file not found: \"%s\"\n", src);
+		(void)fflush(stderr);
 		return forced;
 	}
 #endif
@@ -736,7 +746,9 @@ int	copyit(
 	&&  !isLINK(src_sb.st_mode)
 #endif
 	&&  !isDIR(src_sb.st_mode)) {
+		(void)fflush(stdout);
 		FPRINTF(stderr, "?? not a file: \"%s\"\n", src);
+		(void)fflush(stderr);
 		return forced;
 	}
 	src = bfr1;		/* correct tilde, if any */
@@ -750,7 +762,9 @@ int	copyit(
 #endif
 		) {
 			if (i_opt) {
+				(void)fflush(stdout);
 				FPRINTF(stderr, "%s ? ", dst);
+				(void)fflush(stderr);
 				if (gets(temp)) {
 					if (*temp != 'y' && *temp != 'Y')
 						return forced;
@@ -760,7 +774,9 @@ int	copyit(
 		} else if (isDIR(dst_sb.st_mode) && isDIR(src_sb.st_mode)) {
 			num = FALSE;	/* we will merge directories */
 		} else {
+			(void)fflush(stdout);
 			FPRINTF(stderr, "?? cannot overwrite \"%s\"\n", dst);
+			(void)fflush(stderr);
 			return forced;
 		}
 	} else
@@ -840,7 +856,7 @@ void	usage(_AR0)
 ,"  -F file specify MSDOS/Unix name-conversions"
 #endif
 		};
-	register int	j;
+	unsigned j;
 	setbuf(stderr, bfr);
 	for (j = 0; j < SIZEOF(tbl); j++)
 		FPRINTF(stderr, "%s\n", tbl[j]);
@@ -917,6 +933,7 @@ void	arg_pairs(
 			if (forced)
 				RestoreMode(parent, &dst_sb);
 		} else if (num != 2) {
+			(void)fflush(stdout);
 			FPRINTF(stderr, "?? Destination is not a directory\n");
 			usage();
 		} else if (isFILE(dst_sb.st_mode)
@@ -929,11 +946,13 @@ void	arg_pairs(
 					argv[optind], dst, FALSE, FALSE))
 				RestoreMode(parent, &parent_sb);
 		} else {
+			(void)fflush(stdout);
 			FPRINTF(stderr, "?? Destination is not a file\n");
 			usage();
 		}
 	} else {
 		if (num != 2) {
+			(void)fflush(stdout);
 			FPRINTF(stderr, "?? Wrong number of arguments\n");
 			usage();
 		}
@@ -976,8 +995,11 @@ void	derived(
 			} else
 				*s = EOS;
 		}
-		if (s == 0)
+		if (s == 0) {
+			(void)fflush(stdout);
 			FPRINTF(stderr, "?? No destination directory: \"%s\"\n", argv[j]);
+			(void)fflush(stderr);
+		}
 	}
 	if (forced)
 		RestoreMode(parent, &parent_sb);

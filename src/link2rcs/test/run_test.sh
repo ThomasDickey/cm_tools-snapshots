@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.2 1993/04/27 11:35:04 dickey Exp $
+# $Id: run_test.sh,v 11.3 1999/06/27 18:43:45 tom Exp $
 # test-script for link2rcs (RCS skeleton tree utility)
 #
 if test $# != 0
@@ -10,7 +10,7 @@ then
 	# initialize
 	WD=`pwd`
 	rm -rf subdir other
-	mkdir subdir subdir/first subdir/RCS other
+	mkdir subdir subdir/first subdir/RCS subdir/SCCS other
 	cd ..
 	rm -rf junk junk.*
 

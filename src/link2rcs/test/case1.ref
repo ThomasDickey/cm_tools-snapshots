@@ -7,8 +7,9 @@
 ** make directory: test/other
 ** make directory: test/subdir
 ** link-to-RCS:    test/subdir/RCS
+** link-to-SCCS    test/subdir/SCCS
 ** make directory: test/subdir/first
-Totals: 4 directories, 2 soft links, 0 hard links (0 remade) made
+Totals: 4 directories, 3 soft links, 0 hard links (0 remade) made
 Resulting tree:
 test/
 test/RCS/

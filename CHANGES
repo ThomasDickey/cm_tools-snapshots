@@ -1,3 +1,25 @@
+1999-06-27  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/link2rcs/test/case1.ref: add SCCS test-case
+
+	* src/link2rcs/test/case2.ref: add SCCS-test-case
+
+	* src/link2rcs/src/link2rcs.c:
+	treat SCCS directories like RCS: make links to them
+
+	* src/link2rcs/test/run_test.sh: add SCCS test-case
+
+	* src/copy/src/copy.c, src/checkup/src/checkup.c, src/checkout/src/rcsget.c, src/checkout/src/checkout.c, src/checkin/src/rcsput.c, src/checkin/src/checkin.c, src/baseline/src/baseline.c:
+	signed/unsigned-nits
+
+1999-01-15  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/copy/src/copy.c:
+	fix so I can copy files that begin with a "~" (if I read it from the
+	directory entry I know it doesn't want to be expanded).
+	also, flush stderr/stdout around the warnings (otherwise IRIX got all of
+	the stderr's out before the stdout's)
+
 1998-12-09  Thomas E. Dickey  <dickey@clark.net>
 
 	* install-sh: resync with my-autoconf
