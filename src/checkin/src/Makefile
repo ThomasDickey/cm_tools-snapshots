@@ -1,4 +1,4 @@
-# @(#)Makefile	1.2 88/05/20 07:45:31
+# @(#)Makefile	1.3 88/05/21 09:56:06
 # Make-file for SCCS/RCS checkin utilities
 B	= ../../bin
 I	= ../lib
@@ -8,7 +8,7 @@ LIBS	=\
 	../lib/lib.a
 #
 ALL	=\
-	rcsbase\
+	checkin\
 	sccsbase
 #
 all:	$(ALL)
@@ -19,26 +19,26 @@ clobber: clean
 	rm $(ALL)
 #
 SRC	=\
-	rcsbase.c\
+	checkin.c\
 	sccsbase.c
 #
-rcsbase:	rcsbase.o
-	$(CC) -o $@ rcsbase.o $(LIBS)
+checkin:	checkin.o $(LIBS)
+	$(CC) -o $@ checkin.o $(LIBS)
 #
-sccsbase:	sccsbase.o
+sccsbase:	sccsbase.o $(LIBS)
 	$(CC) -o $@ sccsbase.o $(LIBS)
 #
-rcsbase.o:	$I/ptypes.h	rcsbase.c
+checkin.o:	$I/ptypes.h	checkin.c
 sccsbase.o:	$I/ptypes.h	sccsbase.c
 #
 # Install this stuff in public bin:
 install:\
-	$B/rcsbase\
+	$B/checkin\
 	$B/rcsput\
 	$B/sccsbase\
 	$B/sccsput
 #
-$B/rcsbase:	rcsbase		; rm -f $@; cp $? $@; chmod +x $@
+$B/checkin:	checkin		; rm -f $@; cp $? $@; chmod +x $@
 $B/rcsput:	rcsput.sh	; rm -f $@; cp $? $@; chmod +x $@
 $B/sccsbase:	sccsbase	; rm -f $@; cp $? $@; chmod +x $@
 $B/sccsput:	sccsput.sh	; rm -f $@; cp $? $@; chmod +x $@
