@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 11.4 1993/04/27 11:05:34 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 11.5 1993/06/24 17:24:43 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		24 Jun 1993, fixes for apollo-setuid for RCS version 5.
  *		02 Nov 1992, mods for RCS version 5.
  *		16 Jul 1992, corrected call on 'cutoff()'
  *		06 Feb 1992, revise filename-parsing with 'rcsargpair()',
@@ -113,7 +114,8 @@ static	int	to_stdout;		/* TRUE if 'co' writes to stdout */
 
 static	int	Effect, Caller;		/* effective/real uid's	*/
 static	char	Working[MAXPATHLEN],	/* current names we are using */
-		Archive[MAXPATHLEN];
+		Archive[MAXPATHLEN],
+		rev_buffer[REVSIZ];
 static	char	*UidHack;		/* intermediate file for setuid	*/
 static	char	*opt_rev;		/* revision to find */
 static	char	*opt_who;		/* "-w[login] value	*/
@@ -268,11 +270,9 @@ _DCL(char *,	b)
 static
 int	PreProcess(
 	_ARX(time_t *,	revtime)	/* date with which to touch file */
-	_ARX(char *,	save_rev)	/* revision we ask 'co' to retrieve */
 	_AR1(int *,	co_mode)
 		)
 	_DCL(time_t *,	revtime)
-	_DCL(char *,	save_rev)
 	_DCL(int *,	co_mode)
 {
 	int	ok_vers	= FALSE,
@@ -289,9 +289,9 @@ int	PreProcess(
 		return FALSE;
 	}
 
-	*save_rev = EOS;
+	*rev_buffer = EOS;
 	if (!EMPTY(opt_rev))
-		(void)strcpy(save_rev, opt_rev);
+		(void)strcpy(rev_buffer, opt_rev);
 
 	while (header && (s = rcsread(s, code))) {
 		s = rcsparse_id(key, s);
@@ -304,11 +304,11 @@ int	PreProcess(
 		 */
 		case S_HEAD:
 			s = rcsparse_num(this_rev, s);
-			if (EMPTY(save_rev))
-				(void)strcpy(save_rev, this_rev);
+			if (EMPTY(rev_buffer))
+				(void)strcpy(rev_buffer, this_rev);
 			break;
 		case S_SYMBOLS:
-			s = rcssymbols(s, save_rev, save_rev);
+			s = rcssymbols(s, rev_buffer, rev_buffer);
 			break;
 		case S_LOCKS:
 			/* see if this was locked by the user */
@@ -318,7 +318,7 @@ int	PreProcess(
 			if (*this_rev && EMPTY(opt_rev)) {
 				TELL(log_fp, "** revision %s is locked\n", this_rev);
 				*co_mode |= S_IWRITE;
-				(void)strcpy(save_rev, this_rev);
+				(void)strcpy(rev_buffer, this_rev);
 			}
 			break;
 
@@ -332,7 +332,7 @@ int	PreProcess(
 		case S_VERS:
 			(void)strcpy(this_rev, key);
 			DEBUG((log_fp, "version = %s\n", this_rev))
-			ok_vers = same_branch(save_rev, this_rev);
+			ok_vers = same_branch(rev_buffer, this_rev);
 			ok_date	= FALSE;
 			break;
 		case S_DATE:
@@ -359,18 +359,18 @@ int	PreProcess(
 		case S_NEXT:
 			if (ok_vers && ok_date) {
 				if (EMPTY(opt_rev)) {
-					if (strcmp(save_rev, this_rev)) {
+					if (strcmp(rev_buffer, this_rev)) {
 						*co_mode &= ~S_IWRITE;
 					}
-					(void)strcpy(save_rev,this_rev);
+					(void)strcpy(rev_buffer,this_rev);
 					header = FALSE;
 					break;
 				}
 				DEBUG((log_fp, "compare %s %s => %d (for equality)\n",
-					this_rev, save_rev,
-					vercmp(this_rev, save_rev, TRUE)))
-				if (vercmp(this_rev, save_rev, TRUE) == 0) {
-					(void)strcpy(save_rev,this_rev);
+					this_rev, rev_buffer,
+					vercmp(this_rev, rev_buffer, TRUE)))
+				if (vercmp(this_rev, rev_buffer, TRUE) == 0) {
+					(void)strcpy(rev_buffer,this_rev);
 					header = FALSE;	/* force an exit */
 				}
 			}
@@ -390,63 +390,80 @@ int	PreProcess(
 }
 
 /*
- * Check out the file using the RCS 'co' utility.  If 'co' does something, then
- * it will delete or modify the checked-in file.
+ * Do the actual check-out.  For RCS version 5, we must always do this as admin,
+ * since the 'ci' program gets confused by the apollo set-uid.
  */
 static
-void	Execute(
-	_ARX(char *,	revision)
-	_ARX(time_t,	newtime)
-	_ARX(time_t,	oldtime)
-	_AR1(int,	co_mode)
-		)
-	_DCL(char *,	revision)
-	_DCL(time_t,	newtime)
-	_DCL(time_t,	oldtime)
-	_DCL(int,	co_mode)
+int	RcsCheckout(_AR0)
 {
 	static	DYN	*cmds;
-	auto	STAT	sb;
 	auto	char	*opt	= to_stdout ? "-p" : (locked ? "-l" : "-r");
-
-	UidHack = to_stdout ? "" : rcstemp(Working, FALSE);
 
 	dyn_init(&cmds, BUFSIZ);
 #if	RCS_VERSION >= 5
 	CATARG(cmds, "-M");
 #endif
 	if (silent)	CATARG(cmds, "-q");
-	CATARG2(cmds, opt, revision);
+	CATARG2(cmds, opt, rev_buffer);
 	CATARG(cmds, UidHack);
 	CATARG(cmds, Archive);
 
-	if (!silent) shoarg(log_fp, CO_TOOL, dyn_string(cmds));
+	if (!silent || debug) shoarg(log_fp, CO_TOOL, dyn_string(cmds));
 	if (no_op)
 		;
-	else if (execute(rcspath(CO_TOOL), dyn_string(cmds)) >= 0) {
-		if (to_stdout)
-			return;
+	else if (execute(rcspath(CO_TOOL), dyn_string(cmds)) < 0) {
+		return(-1);
+	}
+	return (0);
+}
+
+/*
+ * Check out the file using the RCS 'co' utility.  If 'co' does something, then
+ * it will delete or modify the checked-in file.
+ */
+static
+void	Execute(
+	_ARX(time_t,	newtime)
+	_ARX(time_t,	oldtime)
+	_AR1(int,	co_mode)
+		)
+	_DCL(time_t,	newtime)
+	_DCL(time_t,	oldtime)
+	_DCL(int,	co_mode)
+{
+	auto	int	code;
+	auto	STAT	sb;
+
+	UidHack = to_stdout ? "" : rcstemp(Working, FALSE);
+
+#if	RCS_VERSION >= 5
+	if (saves_uid())
+		code = RcsCheckout();
+	else
+		code = for_admin(RcsCheckout);
+#else
+	code = RcsCheckout();
+#endif
+
+	if ((code >= 0) && !no_op && !to_stdout) {
 		if (stat(UidHack, &sb) >= 0) {
+			int	copied = strcmp(UidHack,Working);
+
 			DEBUG((log_fp, "=> file \"%s\"\n", UidHack))
 			DEBUG((log_fp, "=> size = %d\n", sb.st_size))
 			DEBUG((log_fp, "=> date = %s", ctime(&sb.st_mtime)))
 			DEBUG((log_fp, "..(comp)  %s", ctime(&oldtime)))
-			if (sb.st_mtime == oldtime) {
+			if (!copied && (sb.st_mtime == oldtime)) {
 				TELL(log_fp, "** checkout was not performed\n");
-				return;
-			}
-			if (strcmp(UidHack,Working)) {
-				if (usercopy(UidHack, Working) < 0)
+			} else {
+				if (copied && (usercopy(UidHack, Working) < 0))
 					failed(Working);
-				clean_file();
+				else if (userprot(Working, co_mode, newtime) < 0)
+					noPERM(Working);
 			}
-			if (userprot(Working, co_mode, newtime) < 0)
-				noPERM(Working);
-			return;
 		}
 	}
 	clean_file();
-	return;
 }
 
 /*
@@ -470,7 +487,6 @@ void	do_file(_AR0)
 {
 	STAT	sb;
 	int	ok;
-	char	rev_buffer[REVSIZ];
 	char	temp[MAXPATHLEN];
 	time_t	revtime;
 	int	co_mode;		/* mode with which 'co' sets file */
@@ -520,8 +536,8 @@ void	do_file(_AR0)
 	if (!locked && TestAccess(Archive, R_OK) >= 0)
 		GiveBack(FALSE, "normal rights suffice");
 
-	if (PreProcess (&revtime, rev_buffer, &co_mode))
-		Execute(rev_buffer, revtime, sb.st_mtime, co_mode);
+	if (PreProcess (&revtime, &co_mode))
+		Execute(revtime, sb.st_mtime, co_mode);
 }
 
 static

@@ -1,3 +1,9 @@
+1993-06-24  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	split-out 'RcsCheckout()' from 'Execute()' so that the setuid-code for RCS 5
+	works properly on Apollo (which has no save-uid capability)
+
 1993-05-06  dickey@software.org
 
 	* bin/Makefile: split out DED
