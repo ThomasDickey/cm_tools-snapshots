@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * Modified:
+ *		24 Jan 2000, revised directory macros.
  *		05 Jul 1995, show names of non-text files for -a option
  *		08 Nov 1994, refined interaction between stdout/stderr.
  *		03 Aug 1994, use 'lastrev()'; related interface changes.
@@ -61,7 +62,7 @@
 #include	<sccsdefs.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: checkup.c,v 11.10 1999/06/27 18:38:40 tom Exp $")
+MODULE_ID("$Id: checkup.c,v 11.11 2000/01/24 12:07:59 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -252,11 +253,11 @@ void	do_obs(
 	_DCL(char *,	name)
 	_DCL(int,	level)
 {
-	auto	DIR		*dp;
-	auto	struct	direct	*de;
-	auto	char		tpath[BUFSIZ],
-				tname[BUFSIZ];
-	auto	struct	stat	sb;
+	auto	DIR	*dp;
+	auto	DirentT	*de;
+	auto	char	tpath[BUFSIZ],
+			tname[BUFSIZ];
+	auto	Stat_t	sb;
 	auto	char	*tag	= "?",
 			*vers,
 			*owner;
