@@ -1,3 +1,16 @@
+2002-05-10  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* aclocal.m4: resync with my-autoconf (fixes CF_HEADER_PATH)
+
+	* src/checkup/src/checkup.c:
+	"always" allow a 1-second difference so I can use this on VFAT volumes mounted
+	from Linux
+
+2002-05-01  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/checkup/src/checkup.c:
+	fix for cygwin dates so I get checkup ignoring those off-by-one-second diffs
+
 2001-12-11  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* src/vcs/src/insert.c, src/vcs/src/vcs.c, src/permit/src/permit.c, src/link2rcs/src/link2rcs.c, src/checkup/src/checkup.c, src/checkout/src/rcsget.c, src/checkin/src/rcsput.c, src/checkin/src/checkin.c, src/baseline/src/baseline.c:

@@ -3,6 +3,9 @@
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * Modified:
+ *		10 May 2002, use the workaround more generally (a 1-second
+ *			     difference still shows up on mounted VFAT volumes.
+ *		01 May 2002, workaround for cygwin timestamps...
  *		21 Jul 2000, support checkup -o with $SCCS_VAULT
  *		24 Jan 2000, revised directory macros.
  *		05 Jul 1995, show names of non-text files for -a option
@@ -63,7 +66,7 @@
 #include	<sccsdefs.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: checkup.c,v 11.13 2001/12/11 14:55:44 tom Exp $")
+MODULE_ID("$Id: checkup.c,v 11.15 2002/05/10 10:17:14 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -317,6 +320,24 @@ void	do_obs(
 	(void)closedir(dp);
 }
 
+static int
+cmp_date(
+	_ARX(time_t,	a)
+	_AR1(time_t,	b))
+	_DCL(time_t,	a)
+	_DCL(time_t,	b)
+{
+	int result = 0;
+#define FIX_DATE(n) if ((n) & 1) ++n
+	FIX_DATE(a);
+	FIX_DATE(b);
+	if (a > b)
+		result = 1;
+	else if (a < b)
+		result = -1;
+	return result;
+}
+
 /*
  * This procedure is invoked from 'walktree()' for each file/directory which
  * is found in the specified tree.  Analyze the files to see if anything should
@@ -383,7 +404,8 @@ int	WALK_FUNC(do_stat)
 			owner = "";
 
 		if (cdate != 0) {
-			if (cdate == sp->st_mtime) {
+			int cmp = cmp_date(cdate, sp->st_mtime);
+			if (cmp == 0) {
 				if (obsolete)
 					;	/* interpret as obsolete-rev */
 				else if (reverse) {
@@ -393,10 +415,10 @@ int	WALK_FUNC(do_stat)
 					if (dotcmp(vers, revision) < 0)
 						change = vers;
 				}
-			} else if (cdate > sp->st_mtime) {
+			} else if (cmp > 0) {
 				change	= compared("older", vers);
-			} else if (cdate < sp->st_mtime) {
-				if (sp->st_mtime - cdate != gmt_offset(cdate))
+			} else if (cmp < 0) {
+				if (cmp_date(sp->st_mtime, cdate + gmt_offset(cdate)) != 0)
 					change	= compared("newer", vers);
 			}
 		} else if ((ok_text = istextfile(name)) != 0) {
