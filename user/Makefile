@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.4 1993/05/06 13:51:01 dickey Exp $
+# $Id: Makefile,v 11.5 1994/11/09 00:16:43 tom Exp $
 
 THIS	= cm_tools
 TOP	= ../..
@@ -38,13 +38,13 @@ ALL	=
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES) $(ALL)
-clean:					; rm -f $(CLEAN)
-clobber:	clean			; rm -f $(ALL) *.cat
+clean:					; -$(RM) $(CLEAN)
+clobber:	clean			; -$(RM) $(ALL) *.cat
 destroy:	clobber			; $(DESTROY)
 run_tests:
 sources:	$(SOURCES)
 install:	$(IT)
-deinstall:				; rm -f $(IT)
+deinstall:				; -$(RM) $(IT)
 
 ####### (Details of Productions) ###############################################
 $(PREFIX)baseline.$(SECTION):	baseline.$(USE)	; $(PUT)

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.7 1993/04/27 11:24:42 dickey Exp $
+# $Id: run_test.sh,v 11.8 1994/11/09 00:36:44 tom Exp $
 #
 #	Runs regression tests for 'checkin' and 'rcsput'
 #
@@ -41,6 +41,7 @@ then
 			rm -f $NAME.out $NAME.log
 			. $NN
 			run_tool rlog $WORK | \
+				fgrep -v 'comment leader:' | \
 				sed	-e s@$ADMIN@ADMIN@g \
 					-e s@$USER@USER@g \
 				>$NAME.log

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.5 1993/04/27 10:38:05 dickey Exp $
+# $Id: Makefile,v 11.7 1994/11/09 00:26:19 tom Exp $
 # make-file for testing RCS skeleton tree utility
 
 ####### (Development) ##########################################################
@@ -15,16 +15,15 @@ ALL	= run_tool
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES) $(ALL)
-clean:				; rm -f $(CLEAN)
-clobber:	clean		; rm -f $(ALL)
+clean:				; -$(RM) $(CLEAN)
+clobber:	clean		; -$(RM) $(ALL)
 destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
-lincnt.out:
 run_test:	$(SOURCES) $(ALL) ; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################
-run_tool:	run_tool.c $(PTYPES_H) $(RCSDEFS_H) $(LIBS)
-	$(CC) -o $@ $(CFLAGS) $(CPP_OPTS) $@.c $(LIBS)
+run_tool:	run_tool.c $(PTYPES_H) $(RCSDEFS_H) $(LIB_DEPS)
+	$(CC) -o $@ $(CFLAGS) $(CPP_OPTS) $@.c $(LIB_ARGS)
 
 $(SOURCES):			; $(GET) $@

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.5 1993/09/22 13:46:21 dickey Exp $
+# $Id: Makefile,v 11.6 1994/11/09 00:11:59 tom Exp $
 # Make-file for RCS/vcs utility
 
 THIS	= vcs
@@ -27,20 +27,20 @@ SOURCES	= $(C_SRC) $(H_SRC)
 
 ####### (Standard Productions) #################################################
 all\
-install:	$(SOURCES) $(ALL)
+install:	$(SOURCES) $B $(ALL)
 
-clean:				; rm -f $(CLEAN)
-clobber:	clean		; rm -f $(ALL)
+clean:				; -$(RM) $(CLEAN)
+clobber:	clean		; -$(RM) $(ALL)
 destroy:			; $(DESTROY)
 run_tests:
 sources:	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
-$B/$(THIS):	$(OBJS) $(LIBS)	; $(LINK) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
+$B:				; mkdir $@
+$B/$(THIS):	$(OBJS) $(LIB_DEPS) ; $(LINK) $(CFLAGS) -o $@ $(OBJS) $(LIB_ARGS)
 
 $(OBJS):	$(H_SRC) $(RCSDEFS_H)
 
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
 lint.out:	$(C_SRC)	; $(DATE); tdlint $(LINTOPTS) $(C_SRC) >>$@
-lincnt.out:	$(C_SRC)	; $(DATE); lincnt $(C_SRC) >>$@

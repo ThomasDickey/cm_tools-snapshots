@@ -1,3 +1,7 @@
+#ifndef	lint
+static	char	Id[] = "$Id: delete.c,v 11.2 1993/09/22 14:46:59 dickey Exp $";
+#endif
+
 /*
  * Title:	vcs_delete.c (version-control-system utility)
  * Author:	T.E.Dickey
@@ -14,9 +18,7 @@
  *		c) the real user is on the access-list of each vcs-file.
  */
 
-#include <vcs.h>
-
-MODULE_ID("$Id: delete.c,v 11.3 1993/09/22 14:46:59 tom Exp $")
+#include "vcs.h"
 
 typedef	struct	_item	{
 	struct	_item	*link;

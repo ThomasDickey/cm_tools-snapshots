@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.12 1994/06/24 00:07:46 tom Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.13 1994/11/09 00:02:55 tom Exp $";
 #endif
 
 /*
@@ -513,7 +513,7 @@ int	copydir(
 	_DCL(int,	previous)
 {
 	auto	DIR	*dp;
-	auto	Dirent_t *de;
+	auto	DirentT *de;
 	auto	Stat_t	dst_sb;
 	auto	char	bfr1[BUFSIZ],
 			bfr2[BUFSIZ];

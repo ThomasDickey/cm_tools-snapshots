@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.4 1993/05/06 14:01:56 dickey Exp $
+# $Id: Makefile,v 11.5 1994/11/09 00:15:59 tom Exp $
 
 ####### (Development) ##########################################################
 TOP	= ../..
@@ -24,13 +24,13 @@ SOURCES	=\
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES)
-clean:				; rm -f $(CLEAN)
-clobber:	clean		; rm -f $(ALL) [a-z]*
+clean:				; -$(RM) $(CLEAN)
+clobber:	clean		; -$(RM) $(ALL) [a-z]*
 destroy:			; $(DESTROY)
 run_test:
 sources:
 install:	$(IT)
-deinstall:			; rm -f $(IT)
+deinstall:			; -$(RM) $(IT)
 
 ####### (Details of Productions) ###############################################
 USER	= ./copy -d $@

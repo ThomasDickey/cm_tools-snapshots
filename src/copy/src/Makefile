@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.6 1994/06/18 19:34:50 tom Exp $
+# $Id: Makefile,v 11.7 1994/11/09 00:04:04 tom Exp $
 # MAKE-file for enhanced unix copy utility
 
 THIS	= copy
@@ -9,24 +9,22 @@ include $(TOP)/td_lib/support/td_lib.mk
 ALL	= $B/$(THIS)
 CSRC	= $(THIS).c
 SOURCES	= Makefile $(CSRC)
-MAIN_O	= $(THIS).o $(LIBS)
 
 ####### (Standard Productions) #################################################
 all\
 install:	$B $(SOURCES) $(ALL)
 
-clean:				; rm -f $(CLEAN)
-clobber: 	clean		; rm -f $(ALL)
+clean:				; -$(RM) $(CLEAN)
+clobber: 	clean		; -$(RM) $(ALL)
 destroy:			; $(DESTROY)
 run_test:
 sources: 	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
 $B:				; mkdir $@
-$B/$(THIS):	$(MAIN_O)	; $(LINK) -o $@ $(MAIN_O)
+$B/$(THIS):	$(THIS).o $(LIB_DEPS)	; $(LINK) -o $@ $(THIS).o $(LIB_ARGS)
 $(THIS).o:	$(PTYPES_H)
 
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
 lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPTS) $? >>$@
-lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 11.4 1993/09/22 14:43:19 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 11.5 1994/11/09 00:09:19 tom Exp $";
 #endif
 
 /*
@@ -261,7 +261,7 @@ void	create_permit(
 	auto	char	bfr[BUFSIZ];
 	auto	char	owner[BUFSIZ];
 	auto	FILE	*fp;
-	auto	STAT	sb;
+	auto	Stat_t	sb;
 	auto	char	acc_file[BUFSIZ],
 			tmp_file[BUFSIZ],
 			*tmp_desc;
@@ -528,7 +528,7 @@ int	do_base(
 {
 	char	nextpath[BUFSIZ];
 	char	acc_file[BUFSIZ];
-	STAT	sb;
+	Stat_t	sb;
 
 	(void)vcs_file((char *)0, acc_file, FALSE);
 	if ((stat(pathcat(nextpath, path, acc_file), &sb) >= 0)

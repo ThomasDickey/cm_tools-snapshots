@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.5 1993/09/22 13:46:21 dickey Exp $
+# $Id: Makefile,v 11.6 1994/11/08 23:46:59 tom Exp $
 # Make-file for RCS baseline utility
 
 THIS	= baseline
@@ -14,18 +14,17 @@ SOURCES	= $(CSRC)
 all\
 install:	$(SOURCES) $(ALL)
 
-clean:				; rm -f $(CLEAN)
-clobber:	clean		; rm -f $(ALL)
+clean:				; -$(RM) $(CLEAN)
+clobber:	clean		; -$(RM) $(ALL)
 destroy:			; $(DESTROY)
 run_test:
 sources:	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
-$B/$(THIS):	$(THIS).o $(LIBS)	; $(LINK) -o $@ $(THIS).o $(LIBS)
+$B/$(THIS):	$(THIS).o $(LIB_DEPS)	; $(LINK) -o $@ $(THIS).o $(LIB_ARGS)
 
 $(THIS).o:	$(RCSDEFS_H)
 
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
 lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPTS) $? >>$@
-lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

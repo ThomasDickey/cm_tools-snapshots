@@ -1,3 +1,44 @@
+1994-11-08  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/checkup/src/checkup.c:
+	added checks to (try to!) recognize when stderr/stdout may be non-tty at
+	the same time due to running in batch-mode
+
+	* certify/config.txt: obsoleted lincnt
+
+	* certify/release.txt: note about CmVision
+
+	* src/checkin/test/case1_b.ref, src/checkin/test/case2_a.ref, src/checkin/test/case2_b.ref, src/checkin/test/case2_c.ref, src/checkin/test/case2_d.ref, src/checkin/test/case3_a.ref, src/checkin/test/case3_b.ref, src/checkin/test/case3_c.ref, src/checkin/test/case3_d.ref, src/checkin/test/case3_e.ref, src/checkin/test/case3_f.ref:
+	*** empty log message ***
+
+	* src/checkin/test/case1_a.ref: comment-leader is obsolete in rcs 5.6.7
+
+	* src/checkin/test/run_test.sh: *** empty log message ***
+
+	* src/baseline/test/Makefile: updated lib-symbols
+
+	* src/checkin/Makefile, src/checkin/test/Makefile, src/vcs/test/Makefile, src/vcs/Makefile, support/Makefile, user/Makefile, src/checkout/test/Makefile, src/checkup/test/Makefile, src/copy/test/Makefile, src/link2rcs/test/Makefile, src/permit/test/Makefile, bin/Makefile, certify/Makefile, src/Makefile, src/baseline/test/Makefile:
+	*** empty log message ***
+
+	* Makefile: updates for autoconf-version of td_lib
+
+	* src/link2rcs/src/Makefile, src/vcs/src/Makefile, src/permit/src/Makefile, src/permit/src/permit.c:
+	*** empty log message ***
+
+	* src/permit/src/permit.c: module-id
+
+	* src/permit/Makefile, src/link2rcs/Makefile, src/copy/src/Makefile, src/copy/src/copy.c, src/copy/Makefile, src/checkup/src/checkup.c, src/checkup/src/Makefile, src/checkup/Makefile, src/checkout/src/rcsget.c, src/checkout/src/checkout.c, src/checkout/Makefile, src/checkout/src/Makefile, src/checkin/src/rcsput.c:
+	*** empty log message ***
+
+	* src/checkin/src/rcsput.c: module-id
+
+	* src/checkin/src/Makefile, src/checkin/src/checkin.c, src/baseline/src/Makefile, src/baseline/Makefile:
+	*** empty log message ***
+
+	* src/baseline/src/baseline.c: changes for autoconf-version of td_lib
+
+	* src/baseline/src/baseline.c: module-id
+
 1994-08-03  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/checkup/src/Makefile: adapted to autoconf'd td_lib

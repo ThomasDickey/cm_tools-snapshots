@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.4 1993/04/27 10:53:50 dickey Exp $
+# $Id: Makefile,v 11.5 1994/11/09 00:16:26 tom Exp $
 # make-file for testing RCS permission utility
 
 ####### (Development) ##########################################################
@@ -27,12 +27,11 @@ SOURCES	= $(SCRIPTS) $(REF_FILES)
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES)
-clean:				; rm -f $(CLEAN)
+clean:				; -$(RM) $(CLEAN)
 clobber:	clean
 destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
-lincnt.out:
 run_test:	$(SOURCES)	; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################

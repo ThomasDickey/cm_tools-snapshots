@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.6 1994/08/03 13:08:44 tom Exp $
+# $Id: Makefile,v 11.7 1994/11/09 00:00:06 tom Exp $
 # MAKE-file for RCS/SCCS tree display
 
 THIS	= checkup
@@ -14,8 +14,8 @@ SOURCES	= Makefile $(CSRC)
 all\
 install:	$B $(SOURCES) $(ALL)
 
-clean:				; $(RM) $(CLEAN)
-clobber:	clean		; $(RM) $(ALL)
+clean:				; -$(RM) $(CLEAN)
+clobber:	clean		; -$(RM) $(ALL)
 destroy:			; $(DESTROY)
 run_test:
 sources:	$(SOURCES)
@@ -23,7 +23,7 @@ sources:	$(SOURCES)
 ####### (Details of Productions) ###############################################
 $B:				; mkdir $@
 $B/$(THIS):	$(THIS).o $(LIB_DEPS)	; $(LINK) -o $@ $(THIS).o $(LIB_ARGS)
-$(THIS).o:	$(RCSDEFS_H)
+$(THIS).o:	$(RCSDEFS_H) $(SCCSDEFS_H) $I/cmv_defs.h
 
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@

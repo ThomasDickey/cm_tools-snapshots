@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/src/RCS/baseline.c,v 11.1 1993/09/22 13:58:29 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/src/RCS/baseline.c,v 11.2 1994/11/08 23:44:46 tom Exp $";
 #endif
 
 /*
@@ -205,7 +205,7 @@ int	WALK_FUNC(scan_tree)
 		abspath(s);		/* get rid of "." and ".." names */
 		if (!a_opt && *pathleaf(s) == '.')
 			readable = -1;
-		else if (sameleaf(s, sccs_dir())
+		else if (sameleaf(s, sccs_dir(path, name))
 		    ||   sameleaf(s, rcs_dir())) {
 			readable = -1;
 		} else {
