@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: run_test.sh,v 10.12 1992/02/11 12:41:23 dickey Exp $
+# $Id: run_test.sh,v 11.0 1992/07/16 09:25:21 ste_cm Rel $
 #
 #	Runs regression tests for 'checkin' and 'rcsput'
 #
@@ -12,7 +12,7 @@ then
 	RCS_COMMENT="";	export RCS_COMMENT
 
 	rm -rf junk null_description
-	trap "rm -rf junk null_description" 0
+	trap "rm -rf junk null_description" 0 1 2 5 15
 	mkdir junk
 	touch null_description
 
@@ -42,7 +42,7 @@ then
 					rm -f $NAME.log
 				else
 					echo '?? diff '$NAME.log
-					mv junk/$RCS_DIR/$WORK,v $NAME.out
+					mv junk/$RCS_DIR/`basename $WORK`,v $NAME.out
 					exit 1
 				fi
 			else
