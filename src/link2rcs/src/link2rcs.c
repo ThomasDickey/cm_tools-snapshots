@@ -1,12 +1,9 @@
-#ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/link2rcs.c,v 11.2 1993/09/22 15:26:26 dickey Exp $";
-#endif
-
 /*
  * Title:	link2rcs.c (link/directory tree)
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * Modified:
+ *		21 Sep 1995, added '-F' option
  *		22 Sep 1993, gcc warnings.  Purify found an alloc-too-small.
  *		03 Sep 1993, qsort-definitions.
  *		15 Oct 1991, converted to ANSI
@@ -64,9 +61,13 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/sr
 #include	<td_qsort.h>
 #include	<ctype.h>
 
+MODULE_ID("$Id: link2rcs.c,v 11.4 1995/09/21 16:22:10 tom Exp $")
+
 /************************************************************************
  *	local definitions						*
  ************************************************************************/
+
+#define MODE(mode) (mode & S_IFMT)
 
 #define	WARN	FPRINTF(stderr,
 #define	TELL	if(verbose >= 0) PRINTF(
@@ -88,6 +89,7 @@ static	LIST	*list;
 static	int	allnames;		/* "-a" option */
 static	int	baseline = -1;		/* "-b" option */
 static	int	files_too;		/* "-f" option */
+static	int	hard_links;		/* "-F" option */
 static	int	merge;			/* "-m" option */
 static	int	no_op;			/* "-n" option */
 static	int	relative;		/* "-r" option */
@@ -97,6 +99,11 @@ static	int	verbose;		/* "-v" option */
 static	char	*env_path;		/* variable-name */
 static	int	env_size;		/* corresponding path-size */
 #endif
+
+static	long	total_mkdirs;
+static	long	total_relinks;
+static	long	total_hard_links;
+static	long	total_soft_links;
 
 static	char	Source[BUFSIZ] = ".";
 static	char	Target[BUFSIZ] = ".";
@@ -214,7 +221,7 @@ _DCL(int,	level)
 
 	if (sp == 0)
 		;
-	else if ((sp->st_mode & S_IFMT) == S_IFDIR) {
+	else if (MODE(sp->st_mode) == S_IFDIR) {
 		if (suppress_dots(s))	return (-1);
 		p = new_LIST();
 		/* patch: test for link-to-link */
@@ -223,7 +230,8 @@ _DCL(int,	level)
 		p->what = fmt_link;
 		if (p->from != 0)
 			readable = -1;
-	} else if (files_too && ((sp->st_mode & S_IFMT) == S_IFREG)) {
+	} else if ((files_too || hard_links)
+	    &&    (MODE(sp->st_mode) == S_IFREG)) {
 		if (suppress_dots(s))	return (-1);
 		p = new_LIST();
 		p->path = path_to(tmp);
@@ -277,7 +285,17 @@ tell_merged(
 _AR1(char *,	path))
 _DCL(char *,	path)
 {
-	tell_it("(no change)",path);
+	if (verbose)
+		tell_it("(no change)", path);
+	return (TRUE);
+}
+
+static int
+tell_existing(
+_AR1(char *,	path))
+_DCL(char *,	path)
+{
+	tell_it("(existing)", path);
 	return (TRUE);
 }
 
@@ -300,29 +318,70 @@ _DCL(char *,	src)
 }
 
 /*
+ * Verify if two stat's were to the same inode
+ */
+static int
+same_ino(
+	_ARX(Stat_t *,	sb1)
+	_AR1(Stat_t *,	sb2)
+		)
+	_DCL(Stat_t *,	sb1)
+	_DCL(Stat_t *,	sb2)
+{
+	return (sb1->st_dev == sb2->st_dev)
+	  &&   (sb1->st_ino == sb2->st_ino);
+}
+
+/*
+ * Verify if two file-paths are on the same device, so we can decide if it's
+ * reasonable to make hard links
+ */
+static int
+same_dev(
+	_ARX(char *,	src)
+	_AR1(char *,	dst)
+		)
+	_DCL(char *,	src)
+	_DCL(char *,	dst)
+{
+	Stat_t	sb_src;
+	Stat_t	sb_dst;
+
+	if (stat_file(src, &sb_src) < 0)
+		failed(src);
+	if (stat_file(dst, &sb_dst) < 0) {	/* this probably doesn't exist */
+		(void)pathhead(dst, &sb_dst);
+	}
+	return (sb_src.st_dev == sb_dst.st_dev);
+}
+
+/*
  * Check for conflicts with existing directory or link-names.  We can replace
- * a link with a link, but directories should not be modified!
+ * a link with a link, but directories should not be modified!  Similarly, we
+ * can replace a hard link to a file with a soft link to the same file.
  */
 static int
 conflict(
-_ARX(char *,	path)
-_ARX(int,	mode)
-_AR1(char *,	from)
-	)
-_DCL(char *,	path)
-_DCL(int,	mode)
-_DCL(char *,	from)
+	_ARX(char *,	path)
+	_ARX(int,	mode)
+	_AR1(char *,	from)
+		)
+	_DCL(char *,	path)
+	_DCL(int,	mode)
+	_DCL(char *,	from)
 {
 	auto	struct	stat	sb;
+	auto	struct	stat	sb2;
 
 	if (lstat(path, &sb) >= 0) {
 		if (!merge)
 			exists(path);
-		if ((sb.st_mode & S_IFMT) == mode) {	/* compatible! */
+		if (MODE(sb.st_mode) == mode) {	/* compatible! */
 			if (mode == S_IFLNK) {
-				if (samelink(path,from))
+				if (!hard_links && samelink(path,from))
 					return (tell_merged(path));
 				VERBOSE "%% rm -f %s\n", path);
+				total_relinks++;
 				if (!no_op) {
 					if (unlink(path) < 0)
 						failed(path);
@@ -331,10 +390,25 @@ _DCL(char *,	from)
 				return (tell_merged(path));
 			}
 			return (FALSE);
+		} else if ((files_too || hard_links)
+		    &&  mode == S_IFLNK
+		    &&  MODE(sb.st_mode) == S_IFREG
+		    &&  stat_file(from, &sb2) == 0
+		    &&  same_ino(&sb, &sb2)) {
+			if (hard_links)
+				return (tell_merged(path));
+			else {
+				VERBOSE "%% rm -f %s\n", path);
+				total_relinks++;
+				if (!no_op) {
+					if (unlink(path) < 0)
+						failed(path);
+				}
+				return FALSE;
+			}
 		} else {
-			exists(path);
+			return tell_existing(path);
 		}
-		return (tell_merged(path));
 	}
 	return (FALSE);
 }
@@ -351,6 +425,7 @@ _DCL(char *,	path)
 	&&  !conflict(path, S_IFDIR, ".")) {
 		tell_it("make directory:", path);
 		VERBOSE "%% mkdir %s\n", path);
+		total_mkdirs++;
 		if (!no_op) {
 			if (mkdir(path, 0755) < 0)
 				failed(path);
@@ -374,10 +449,20 @@ _DCL(char *,	what)
 {
 	if (!conflict(dst, S_IFLNK, src)) {
 		tell_it(what, dst);
-		VERBOSE "%% ln -s %s %s\n", src, dst);
-		if (!no_op) {
-			if (symlink(src, dst) < 0)
-				failed(src);
+		if (hard_links && same_dev(src, dst)) {
+			VERBOSE "%% ln %s %s\n", src, dst);
+			total_hard_links++;
+			if (!no_op) {
+				if (link(src, dst) < 0)
+					failed(dst);
+			}
+		} else {
+			VERBOSE "%% ln -s %s %s\n", src, dst);
+			total_soft_links++;
+			if (!no_op) {
+				if (symlink(src, dst) < 0)
+					failed(dst);
+			}
 		}
 	}
 }
@@ -601,6 +686,7 @@ usage(_AR0)
 #endif
 	,"  -d dir  specify destination-directory (distinct from -s, default .)"
 	,"  -f      link to files also"
+	,"  -F      hardlink to files if possible"
 	,"  -m      merge against destination"
 	,"  -n      no-op"
 	,"  -r      construct relative symbolic links"
@@ -628,7 +714,7 @@ _MAIN
 	register int j;
 
 	(void)getwd(Current);
-	while ((j = getopt(argc, argv, "ab:d:e:fmnrqs:v")) != EOF)
+	while ((j = getopt(argc, argv, "ab:d:e:fFmnrqs:v")) != EOF)
 		switch (j) {
 		case 'a':	allnames++;			break;
 		case 'b':	baseline = strtol(optarg, &p, 0);
@@ -639,6 +725,7 @@ _MAIN
 		case 'e':	env_path = optarg;		break;
 #endif
 		case 'f':	files_too++;			break;
+		case 'F':	hard_links++;			break;
 		case 'm':	merge++;			break;
 		case 'n':	no_op++;			break;
 		case 'r':	relative++;			break;
@@ -704,6 +791,13 @@ _MAIN
 	 */
 	(void)chdir(Target);
 	make_dst(Target);
+
+	TELL "Totals: %ld directories, %ld soft links, %ld hard links (%ld remade)%s made",
+		total_mkdirs,
+		total_soft_links,
+		total_hard_links,
+		total_relinks,
+		no_op ? " would be" : "");
 
 	(void)exit(SUCCESS);
 	/*NOTREACHED*/

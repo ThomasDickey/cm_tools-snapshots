@@ -1,3 +1,10 @@
+1995-09-21  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/link2rcs/src/link2rcs.c:
+	changed to allow -F option (hard-link to files if possible)
+
+	* src/link2rcs/src/link2rcs.c: module-id
+
 1995-05-13  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/copy/src/copy.c: change interface to setmtime()
