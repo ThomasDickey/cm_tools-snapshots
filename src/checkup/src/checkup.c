@@ -1,12 +1,25 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkup.c	1.1 88/08/31 16:02:02";
+static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 3.0 1988/09/26 07:56:39 ste_cm Rel $";
 #endif	lint
 
 /*
  * Title:	checkup.c (link/directory tree)
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
- * Modified:
+ * $Log: checkup.c,v $
+ * Revision 3.0  1988/09/26 07:56:39  ste_cm
+ * BASELINE Mon Jun 19 13:17:34 EDT 1989
+ *
+ *		Revision 2.0  88/09/26  07:56:39  ste_cm
+ *		BASELINE Thu Apr  6 09:32:39 EDT 1989
+ *		
+ *		Revision 1.7  88/09/26  07:56:39  dickey
+ *		sccs2rcs keywords
+ *		
+ *		26 Sep 1988, corrected use of 'sameleaf()' -- had wrong args!
+ *		19 Sep 1988, added '-a' option.
+ *		02 Sep 1988, use 'rcs_dir()', 'sccs_dir()'
+ *		01 Sep 1988, added '-r', '-q, -s' options.
  *
  * Function:	Scan the specified directories, looking for files which may
  *		or may not have been checked into either RCS or SCCS.
@@ -18,7 +31,13 @@ static	char	sccs_id[] = "@(#)checkup.c	1.1 88/08/31 16:02:02";
  *		If standard output is piped (e.g., to a file), the list of
  *		offending filenames will be written there as well.
  *
- * Options:	-t	sets up a default list of extensions to be ignored.
+ * Options:	-a	scans directory-names beginning with '.' (normally
+ *			ignored).
+ *		-r REV	reports all working files whose highest checked-in
+ *			version is below REV.
+ *		-q (-s)	suppress report, used when only a list of names is
+ *			wanted.
+ *		-t	sets up a default list of extensions to be ignored.
  *
  *		-x XXX	specifies an extension to be ignored.  The first
  *			character in the option-value is used as the delimiter.
@@ -40,8 +59,12 @@ static	char	sccs_id[] = "@(#)checkup.c	1.1 88/08/31 16:02:02";
  */
 
 #include	"ptypes.h"
+#include	"rcsdefs.h"
 #include	<ctype.h>
-extern	char	*getenv();
+extern	char	*pathcat();
+extern	char	*pathleaf();
+extern	char	*rcs_dir();
+extern	char	*sccs_dir();
 extern	char	*strcpy();
 extern	char	*strrchr();
 extern	char	*txtalloc();
@@ -54,7 +77,8 @@ extern	char	*optarg;	/* 'getopt()' argument in argv */
  ************************************************************************/
 
 #define	WARN	FPRINTF(stderr,
-#define	VERBOSE	if(verbose) WARN
+#define	TELL	if(verbose >= 0) WARN
+#define	VERBOSE	if(verbose >  0) WARN
 
 typedef	struct	_exts	{
 	struct	_exts	*link;
@@ -67,8 +91,10 @@ typedef	struct	_exts	{
 	def_ALLOC(EXTS)
 
 static	EXTS	*exts;			/* "-x" and "-t" extension list */
+static	int	allnames;		/* "-a" option */
 static	int	verbose;		/* "-v" option */
 static	int	lines;			/* line-number, for report */
+static	char	*revision = "0";	/* required revision level */
 
 /*
  * Define a new extension-to-ignore
@@ -165,9 +191,11 @@ static
 indent(level)
 {
 	++lines;
-	WARN "%4d:\t", lines);
-	while (level-- > 0)
-		WARN "|--%c", (level > 0) ? '-' : ' ');
+	if (verbose >= 0) {
+		WARN "%4d:\t", lines);
+		while (level-- > 0)
+			WARN "|--%c", (level > 0) ? '-' : ' ');
+	}
 }
 
 /*
@@ -189,13 +217,14 @@ struct	stat	*sp;
 	int	mode	= (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
 
 	if (mode == S_IFDIR) {
-		static	char	*sccs_dir;
-		if (sccs_dir == 0) {
-			if (!(sccs_dir = getenv("SCCS_DIR")))
-				sccs_dir = "sccs";
-		}
-		if (!strcmp(name, sccs_dir))	return (-1);
-		if (!strcmp(name, "RCS"))	return (-1);
+		auto	char	tmp[BUFSIZ],
+				*s = pathcat(tmp, path, name),
+				*t;
+		abspath(s);		/* get rid of "." and ".." names */
+		t = pathleaf(s);	/* obtain leaf-name for "-a" option */
+		if (*t == '.' && !allnames)	return (-1);
+		if (sameleaf(s, sccs_dir()))	return (-1);
+		if (sameleaf(s, rcs_dir()))	return (-1);
 	}
 
 	if (readable < 0 || sp == 0) {
@@ -210,13 +239,15 @@ struct	stat	*sp;
 		}
 #endif	S_IFLNK
 		indent(level);
-		WARN "%s%s\n", name, change);
+		TELL "%s%s\n", name, change);
 	} else if (mode == S_IFREG && !suppress(name)) {
 		rcslast(path, name, &vers, &cdate, &owner);
 		if (cdate == 0)
 			sccslast(path, name, &vers, &cdate, &owner);
 		if (cdate != 0) {
 			if (cdate == sp->st_mtime) {
+				if (dotcmp(vers, revision) < 0)
+					change = vers;
 			} else if (cdate > sp->st_mtime) {
 				change	= "older";
 			} else if (cdate < sp->st_mtime) {
@@ -229,12 +260,12 @@ struct	stat	*sp;
 			if (change == 0)	change	= "no change";
 			if (*owner == '?')	*owner	= EOS;
 			indent(level);
-			WARN "%s (%s%s%s)\n",
+			TELL "%s (%s%s%s)\n",
 				name,
 				change,
 				*owner ? ", locked by " : "",
 				owner);
-			if (!isatty(1))
+			if ((verbose < 0) || !isatty(fileno(stdout)))
 				PRINTF("%s/%s\n", path, name);
 		}
 	}
@@ -255,7 +286,7 @@ char	*name;
 
 usage()
 {
-	WARN "usage: checkup [-t -v] [-x extension] [directory [...]]\n");
+	WARN "usage: checkup [-r rev] [-aqstv] [-x extension] [directory [...]]\n");
 	(void)exit(FAIL);
 }
 
@@ -277,8 +308,18 @@ char	*argv[];
 	(void)setlinebuf(stderr);
 #endif
 
-	while ((j = getopt(argc, argv, "tvx:")) != EOF)
+	while ((j = getopt(argc, argv, "aqr:stvx:")) != EOF)
 		switch (j) {
+		case 'a':
+			allnames++;
+			break;
+		case 'r':
+			revision = optarg;
+			break;
+		case 'q':
+		case 's':
+			verbose--;
+			break;
 		case 'v':
 			verbose++;
 			break;

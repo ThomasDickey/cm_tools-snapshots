@@ -1,4 +1,4 @@
-# @(#)Makefile	1.6 88/08/17 09:28:14
+# $Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/Makefile,v 1.8 1988/09/01 06:49:30 dickey Exp $
 # Make-file for RCS checkout utilities
 #
 ####### (Environment) ##########################################################
@@ -33,7 +33,7 @@ install:	$B/checkout\
 #
 ####### (Details of Productions) ###############################################
 checkout:	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
-checkout.o:	$I/ptypes.h
+checkout.o:	$I/ptypes.h	$I/rcsdefs.h
 #
 $B/checkout:	checkout	; copy -d $@
 $B/rcsget:	rcsget.sh	; copy $? $@

@@ -6,8 +6,8 @@
 
 <!Font Definitions,
 	F30 = Classic 12,
-	F21 = Typewriter 10,
 	F27 = Classic 10,
+	F21 = Typewriter 10,
 	F34 = Classic 14 Bold,
 	F31 = Classic 12 Bold,
 	F32 = Classic 12 Italic,
@@ -185,7 +185,7 @@ V4,
 <Page Header, Frame =
 V4,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,May\ 27\,\ 1988)
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,September\ 2\,\ 1988)
  (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ \177co"\ Package)
  (t8,3,4,0,0.438782,0,17,@nnclas12b,checkout)
  (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
@@ -197,8 +197,8 @@ V4,
  (t8,1,4,5.698608,0.478772,2,17,@nnclas10,)
  (t8,2,4,2.849304,0.478772,1,17,@nnclas12b,-\ \240\ -)
  (t8,3,4,0,0.478772,0,17,@nnclas10,)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
 
 <header>
 
@@ -239,6 +239,22 @@ in its treatment to the delta date: after invoking <F31>co<F0>, <F31>checkout
 <F0> sets the file's modification date to match the delta-date for 
 the extracted version.
 
+<subheader>
+
+<F31@R>Set-UID Operation
+
+<paragraph>
+
+<F30@R>Like the <F31@R>checkin<F30@R> utility, <F31@R>checkout<F30@R> properly 
+handles set-uid operation for a non-root effective user.  The archived 
+files are owned by the effective user, and the checked-out files are 
+owned by the real user.
+
+<F30@R>Note that since <F31@R>checkin<F30@R> initializes the access list 
+in the archive files, the real user must appear on the access list 
+to lock a file.  Of course, if no lock is made, then the user need 
+not be on the access list.
+
 <header>
 
 OPTIONS
@@ -262,14 +278,12 @@ date, in SCCS-format
 
 -c 77/2/2 9:22:25
 
-<subfixed>
-
 -c 770202092225
 
 <options>
 
 <Tab>represent the same date.  This option is translated to the <F31>co<F0> 
-"-<F31>d<F0>" option.
+<#7f>-<F31>d<F0>" option.
 
 <header>
 
@@ -279,11 +293,11 @@ OPERATIONS
 
 To extract files using <F31>checkout<F0>, you must provide one or 
 more file names.  For each name, checkout parses the leaf-name and 
-extracts the specified version from the <#7f>RCS" directory.
+extracts the specified version from the <#7f>./RCS" directory.
 
 <header>
 
-ENVIRONMENT
+<|,2>ENVIRONMENT
 
 <paragraph>
 
@@ -293,11 +307,17 @@ path), and performs pre- and postprocessing of the archive and working
 file to determine the delta-date to use for the extracted file. Environment 
 variables used by checkout include:
 
+<options,
+	Left Tab =		0/0.75/1.50 inches>
+
+<F49@R>RCS_DIR<F30@R><Tab>if defined, specifies the directory in which <F32@R>rcs
+<F30@R> archive files are found.  Normally files are found in <#7f>./RCS".
+
 <options>
 
-<|,2><F49>TZ<F0><Tab>is the unix time zone, which is overridden 
-internally so that file modification dates are independent of the 
-local time zone.
+<F49>TZ<F0><Tab>is the unix time zone, which is overridden internally 
+so that file modification dates are independent of the local time 
+zone.
 
 <header>
 
@@ -309,7 +329,7 @@ Checkout uses the following files:
 
 <options>
 
-<F49>co<F0><Tab>the RCS check-out program<Tab>
+<F49>co<F0><Tab>the RCS check-out program
 
 <header>
 
@@ -317,9 +337,9 @@ ANTICIPATED CHANGES
 
 <paragraph>
 
-The <#7f>-<F34>c<F0>" option is not implemented.
+<F30@R>This does not handle <F32@R>rcs<F30@R> branches properly.
 
-Checkout assumes that the archive file resides in the directory <#7f>./RCS".
+<F31@R>Checkout<F30@R> does not handle the <#7f>-j" option of <F31@R>co<F30@R>.
 
 <header>
 
@@ -327,7 +347,7 @@ SEE ALSO
 
 <paragraph>
 
-rcsput, ded, get<SP>(1)
+<F30@R>checkin, rcsput, ded, ci<SP>(1), co<SP>(1)
 
 <header>
 

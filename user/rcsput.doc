@@ -108,8 +108,8 @@
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <!Master Frame,
 	Name =			Bottom,
@@ -120,8 +120,8 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <!Master Frame,
 	Name =			"Following Anchor",
@@ -132,8 +132,8 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <!Master Frame,
 	Name =			"Following Text",
@@ -144,8 +144,8 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <!Master Frame,
 	Name =			Footnote,
@@ -157,8 +157,8 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <!Master Frame,
 	Name =			Top,
@@ -169,13 +169,13 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <Page Header, Frame =
 V4,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,August\ 4\,\ 1988)
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,September\ 2\,\ 1988)
  (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ Check-in\ Script)
  (t8,3,4,0,0.438782,0,17,@nnclas12b,rcsput)
  (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
@@ -187,8 +187,8 @@ V4,
  (t8,1,4,5.698608,0.478772,2,17,@nnclas10,)
  (t8,2,4,2.849304,0.478772,1,17,@nnclas12b,-\ \240\ -)
  (t8,3,4,0,0.478772,0,17,@nnclas10,)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <header>
 
@@ -286,8 +286,8 @@ would otherwise switch to VT100 emulator mode.
 -<F31>d<F0><Tab>instructs <F31>rcsput<F0> to test for differences, 
 but not to check the files into <F32>rcs<F0>.
 
-<F30@R>-<F31@R>h<F30@R><Tab>is passed to <F31@R>diff<F30@R>, and permits it 
-to handle huge differences.
+-<F31>h<F0><Tab>is passed to <F31>diff<F0>, and permits it to handle 
+huge differences.
 
 -<F31>L<F0> <F32>file<F0><Tab>causes <F31>rcsput<F0> to generate 
 a log-file of the files which are processed, and all differences which 
@@ -315,7 +315,7 @@ utility to show the versions of the modules which make up a program:
 <fixed>
 
 #ifndef<Tab>lint<HR>
-static<Tab>char<Tab>ident[] = "$Header: /users/source/archives/cm_tools.vcs/user/RCS/rcsput.doc,v 1.2 1988/08/04 16:38:25 dickey Exp $";<HR>
+static<Tab>char<Tab>ident[] = "$Header: /users/source/archives/cm_tools.vcs/user/RCS/rcsput.doc,v 1.3 1988/09/02 16:15:01 dickey Exp $";<HR>
 #endif<Tab>lint
 
 <bullet>
@@ -333,7 +333,7 @@ versions of files which you wish to keep
 	Diagram =
 V4,
 (g9,1,0
- (T8,1,12,0.066667,0.066667,5.546668,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
+ (T8,1,12,0.066667,0.066667,5.546669,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
   ,512,102,1101,3,
 <footnote>
 
@@ -343,8 +343,8 @@ the program.  That would be an unsound approach to development!
 
 <End Text>)
  (v4,2,0,0.026667,0,1.026666,0,17,1,0)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 <F6>!<F0>.
 
 <F6>S<F0><Tab>When you reach the point of releasing the program, 
@@ -366,7 +366,7 @@ the files
 	Diagram =
 V4,
 (g9,1,0
- (T8,1,12,0.066667,0.066667,5.546668,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
+ (T8,1,12,0.066667,0.066667,5.546669,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
   ,512,102,1101,3,
 <footnote>
 
@@ -376,8 +376,8 @@ to retain file dates.
 
 <End Text>)
  (v4,2,0,-0.12,0,0.88,0,17,1,0)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
 <F6>@<F0>.
 
 <F6>S<F0><Tab>Ensure that all files have been checked-in and released.  
@@ -410,17 +410,12 @@ uses System<SP>5 features including <F32>dirname<SP>(1)<F0> and <F32>getopt<SP>
 
 Environment variables imported by <F31>rcsput<F0> include:
 
-<F31>Rcsput<F0> also uses the following environment variables:
-
 <options>
 
 <F49>PAGER<F0><Tab>identifies the program to use in displaying differences 
 between the file which is being checked in, and the previously archived 
 version.  There may be a lot of differences <#1f> more than can be 
 shown on one screen.
-
-<F49>RUNLIB<F0><Tab>identifies the execution path of this tool, and 
-subordinate components (e.g., <F31>checkin<F0>).
 
 <header>
 
@@ -440,15 +435,16 @@ date matches the file's modification date.
 
 <header>
 
-<|,4>ANTICIPATED CHANGES
+ANTICIPATED CHANGES
 
 <paragraph>
 
 Provide a mechanism for inserting dummy version numbers so that <F31>rcsput
 <F0> can bump the release number (for genuine major releases).  Currently, 
 the revision numbers are interpreted only as the underlying RCS utilities 
-do them.  To handle major release numbers requires a scan of the group 
-of files affected to ensure that there are no conflicts.
+do 
+<|,4>them.  To handle major release numbers requires a scan of the 
+group of files affected to ensure that there are no conflicts.
 
 <header>
 

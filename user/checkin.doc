@@ -11,7 +11,8 @@
 	F34 = Classic 14 Bold,
 	F31 = Classic 12 Bold,
 	F32 = Classic 12 Italic,
-	F49 = Modern 12>
+	F49 = Modern 12,
+	F6 = Symbols 12>
 
 <!Page>
 
@@ -173,11 +174,11 @@ V4,
 <Page Header, Frame =
 V4,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,August\ 4\,\ 1988)
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,September\ 2\,\ 1988)
  (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ \177ci"\ Package)
  (t8,3,4,0,0.438782,0,17,@nnclas12b,checkin)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <Page Footer, Frame =
 V4,
@@ -239,6 +240,70 @@ By using the file's modification date as a reference, you can more
 easily back up to a meaningful version <#1f> by date, rather than 
 version number.
 
+<subheader>
+
+<F31@R>Archive Directory
+
+<paragraph>
+
+<F30@R>If the archive directory (e.g., <#7f>./RCS") does not exist, <F31@R>checkin
+<F30@R> creates it before invoking the <F31@R>ci<F30@R> program.
+
+<subheader>
+
+<F31@R>Set-UID Operation
+
+<paragraph>
+
+<F30@R>The rcs <F31@R>ci<F30@R> and <F31@R>co<F30@R> utilities work to a degree 
+in set-uid mode (i.e., the <#7f>u+s" protection is set on the programs).  
+However, the code assumes that the effective uid is <F30@U@R>root<F30@R>, 
+and does not concern itself with maintaining file ownership.
+
+<F30@R>The <F31@R>checkin<F30@R> package is able to run as a set-uid process 
+for any particular user (e.g., the administrator of a project).  For 
+example, suppose that <F49@R>/proj<F30@R> is the location of project-specific 
+tools, and is owned by <F49@R>admin<F30@R>.  Then
+
+<fixed>
+
+<F21@R>cp checkin /proj<Tab><Tab># admin now owns this copy<HR>
+chmod 4755 /proj/checkin<Tab># sets u+s mode
+
+<paragraph>
+
+<|,2><F30@R>Thereafter, users who invoke <F49@R>/proj/checkin<F30@R> will 
+have the rights of <F49@R>admin<F30@R> <#1f> for this application.  They 
+may check into <F32@R>rcs<F30@R> any files which they own, into archives 
+which <F49@R>admin<F30@R> owns.  <F31@R>Checkin<F30@R> will maintain <F49@R>admin<F30@R>'s 
+ownership of the archive files, and the user's ownership of his working 
+files.
+
+<subheader>
+
+<F31@R>Sharing RCS Archives
+
+<paragraph>
+
+<F31@R>Checkin<F30@R> provides support for shared files by using <F32@R>rcs<F30@R>'s 
+access lists, and providing special handling for set-uid operation:
+
+<bullet>
+
+<F6@R>S<F30@R><Tab>When you first archive a file using <F31@R>checkin<F30@R>, 
+it invokes the <F31@R>rcs<F30@R> administrative utility to initialize 
+the access list of the file.  It puts the <F30@U@R>effective<F30@R> user 
+into the list.
+
+<F6@R>S<F30@R><Tab>If <F31@R>checkin<F30@R> is running in set-uid mode, it 
+puts the <F30@U@R>real<F30@R> user on the access list as well.
+
+<paragraph>
+
+<F30@R>With the access list initialized, only those users who appear 
+on an access list may place locks on files, even when running in set-uid 
+mode.
+
 <header>
 
 OPTIONS
@@ -246,6 +311,13 @@ OPTIONS
 <paragraph>
 
 <F31>Checkin<F0> recognizes all of the <#7f><F31>ci<F0>" options.
+
+<F30@R>If the <#7f>-<F31@R>k<F30@R>" option is used, <F31@R>checkin<F30@R> supplies 
+a default log-message
+
+<fixed>
+
+<F21@R>FROM_KEYS
 
 <header>
 
@@ -271,18 +343,27 @@ path), and performs pre- and postprocessing of the archive and working
 file to determine the version to which the file's modification date 
 applies.
 
-<|,2><F31>Checkin<F0> uses the following environment variables:
+<F31>Checkin<F0> uses the following environment variables:
 
 <options,
 	Left Tab =		0/0.25 inches>
 
-<F49@R>RCS_BASE<F30@R><Tab>is used to specify a default value for initial 
+<F49>RCS_BASE<F0><Tab>is used to specify a default value for initial 
 revision numbers.  If the user does not specify the initial version 
-number of a file, <F31@R>ci<F30@R> assigns the value <#7f>1.1".  This 
+number of a file, <F31>ci<F0> assigns the value <#7f>1.1".  This 
 is used to support the use of module-level version numbers, while 
 preserving the relationship between changes and revisions: a new version 
-is made only if the file is changed.  See <F32@R>baseline<F30@R> for more 
+is made only if the file is changed.  See <F32>baseline<F0> for more 
 details.
+
+<options>
+
+<|,3><F49@R>RCS_DIR<F30@R><Tab>if defined, specifies the directory in 
+which <F32@R>rcs<F30@R> archive files are found.  Normally files are found 
+in <#7f>./RCS".
+
+<options,
+	Left Tab =		0/0.25 inches>
 
 <F49>TZ<F0><Tab>is the unix time zone, which is overridden internally 
 so that file modification dates are independent of the local time 
@@ -300,6 +381,8 @@ FILES
 
 <F49>ci<F0><Tab>the RCS check-in program
 
+<F49@R>rcs<F30@R><Tab>the RCS administrative program
+
 <header>
 
 ANTICIPATED CHANGES
@@ -308,16 +391,13 @@ ANTICIPATED CHANGES
 
 <F31>Checkin<F0> does not currently handle branch deltas.
 
-<F31>Checkin<F0> assumes that the archive file resides in the directory 
-<#7f>./RCS".
-
 <header>
 
 SEE ALSO
 
 <paragraph>
 
-baseline, rcsput, ded, ci<SP>(1), co<SP>(1)
+baseline, rcsput, ded, ci<SP>(1), co<SP>(1), rcs<SP>(1)
 
 <header>
 

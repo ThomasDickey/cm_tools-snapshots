@@ -5,9 +5,9 @@
 	Default Printer =	"cx">
 
 <!Font Definitions,
+	F27 = Classic 10,
 	F30 = Classic 12,
 	F21 = Typewriter 10,
-	F27 = Classic 10,
 	F34 = Classic 14 Bold,
 	F31 = Classic 12 Bold,
 	F32 = Classic 12 Italic,
@@ -118,8 +118,8 @@
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
 
 <!Master Frame,
 	Name =			Bottom,
@@ -130,8 +130,8 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
 
 <!Master Frame,
 	Name =			"Following Anchor",
@@ -142,8 +142,8 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
 
 <!Master Frame,
 	Name =			"Following Text",
@@ -154,8 +154,8 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
 
 <!Master Frame,
 	Name =			Footnote,
@@ -167,8 +167,8 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
 
 <!Master Frame,
 	Name =			Top,
@@ -179,13 +179,13 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
 
 <Page Header, Frame =
 V4,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,May\ 27\,\ 1988)
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,September\ 2\,\ 1988)
  (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ Check-out\ Script)
  (t8,3,4,0,0.438782,0,17,@nnclas12b,rcsget)
  (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
@@ -197,8 +197,8 @@ V4,
  (t8,1,4,5.698608,0.478772,2,17,@nnclas10,)
  (t8,2,4,2.849304,0.478772,1,17,@nnclas12b,-\ \240\ -)
  (t8,3,4,0,0.478772,0,17,@nnclas10,)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
 
 <header>
 
@@ -206,7 +206,7 @@ V4,
 
 <paragraph>
 
-<F31>rcsget<F0> <#1f> Rcs check-out script
+<F31>rcsget<F0> <#1f> rcs check-out script
 
 <header>
 
@@ -264,8 +264,6 @@ date, in SCCS-format
 
 -c 77/2/2 9:22:25
 
-<subfixed>
-
 -c 770202092225
 
 <options>
@@ -289,22 +287,16 @@ files at lower levels.
 
 <header>
 
-<|,2>ENVIRONMENT
+ENVIRONMENT
 
 <paragraph>
 
 <F31>Rcsget<F0> is a Bourne shell script.  On Apollo DOMAIN/IX, it 
-uses System<SP>5 features, including <F32>getopt<SP>(1)<F0>.  Environment 
-variables used by <F31>rcsget<F0> include:
-
-<options>
-
-<F49>RUNLIB<F0><Tab>identifies the execution path of this tool, and 
-of subordinate components (e.g., <F31>checkout<F0>).<Tab>
+uses System<SP>5 features, including <F32>getopt<SP>(1)<F0>.
 
 <header>
 
-FILES
+<|,2>FILES
 
 <paragraph>
 
@@ -312,7 +304,7 @@ FILES
 
 <options>
 
-<F49>rcsget<F0><Tab>the Bourne shell script<Tab>
+<F49>rcsget<F0><Tab>the Bourne shell script
 
 <F49>checkout<F0><Tab>a utility which invokes <F31>co<F0> and then 
 modifies the file's modification date  so that it matches the version-date 
