@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19880831
+MANIFEST for cm_tools, version t19880928
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 src/baseline/src                subdirectory
@@ -23,6 +23,7 @@ user                            subdirectory
 user/baseline.doc               
 user/checkin.doc                
 user/checkout.doc               
+user/checkup.doc                
 user/copy.doc                   
 user/ded.doc                    
 user/link2rcs.doc               

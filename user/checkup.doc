@@ -1,0 +1,375 @@
+<!OPS, Version = 5.2>
+
+<!Document,
+	Final Output Device =	"cx",
+	Default Printer =	"cx">
+
+<!Font Definitions,
+	F27 = Classic 10,
+	F30 = Classic 12,
+	F21 = Typewriter 10,
+	F34 = Classic 14 Bold,
+	F31 = Classic 12 Bold,
+	F32 = Classic 12 Italic,
+	F6 = Symbols 12,
+	F49 = Modern 12>
+
+<!Page>
+
+<!Autonumber Stream, List, 1>
+
+<!Autonumber Stream, Outline, 3,
+	Level 1 Symbol Type =	UPPER ROMAN,
+	Level 2 Symbol Type =	UPPER ALPHA>
+
+<!Class, bullet,
+	Top Margin =		0.083 inches,
+	Bottom Margin =		0 inches,
+	Left Margin =		0.50 inches,
+	First Indent =		-0.25 inches,
+	Font =			F30>
+
+<!Class, caption,
+	Top Margin =		0.07 inches,
+	Bottom Margin =		0.07 inches,
+	Line Spacing =		1.100 lines,
+	Font =			F30>
+
+<!Class, fixed,
+	Top Margin =		0.083 inches,
+	Bottom Margin =		0.083 inches,
+	Left Margin =		0.50 inches,
+	Right Margin =		-1 inches,
+	Line Spacing =		1.308 lines,
+	Alignment =		Left,
+	Font =			F21,
+	Hyphenation =		off,
+	Allow Page Break Within = no,
+	Left Tab =		0/0.64*10 inches>
+
+<!Class, footnote,
+	Top Margin =		0.07 inches,
+	Bottom Margin =		0.07 inches,
+	Left Margin =		0.25 inches,
+	First Indent =		-0.25 inches,
+	Line Spacing =		1.100 lines,
+	Font =			F30>
+
+<!Class, header,
+	Top Margin =		0.193 inches,
+	Bottom Margin =		0 inches,
+	Alignment =		Left,
+	Font =			F34,
+	Allow Page Break Within = no,
+	Allow Page Break After = no>
+
+<!Class, options,
+	Top Margin =		0.042 inches,
+	Bottom Margin =		0 inches,
+	Left Margin =		1.50 inches,
+	First Indent =		-1 inches,
+	Font =			F30,
+	Hyphenation =		off,
+	Allow Page Break Within = no,
+	Left Tab =		0/0.75/1.50 inches>
+
+<!Class, paragraph,
+	Top Margin =		0.083 inches,
+	Bottom Margin =		0 inches,
+	Left Margin =		0.25 inches,
+	Font =			F30>
+
+<!Class, subheader,
+	Top Margin =		0.097 inches,
+	Bottom Margin =		0 inches,
+	Left Margin =		0.25 inches,
+	Alignment =		Left,
+	Font =			F31,
+	Allow Page Break Within = no,
+	Allow Page Break After = no>
+
+<!Class, suboption,
+	Top Margin =		0.042 inches,
+	Bottom Margin =		0 inches,
+	Left Margin =		2.50 inches,
+	First Indent =		-1 inches,
+	Font =			F30,
+	Hyphenation =		off,
+	Allow Page Break Within = no,
+	Left Tab =		0/0.75/1.50 inches>
+
+<!Master Frame,
+	Name =			"At Anchor",
+	Placement =		At Anchor,
+	Width =			0.41 inches,
+	Height =		0.137 inches,
+	Vertical Alignment =	0.03 inches,
+	Diagram =
+V4,
+(g9,32767,0
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
+
+<!Master Frame,
+	Name =			Bottom,
+	Placement =		Bottom of Page,
+	Horizontal Alignment =	Center,
+	Width =			5.70 inches,
+	Height =		2.85 inches,
+	Diagram =
+V4,
+(g9,32767,0
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
+
+<!Master Frame,
+	Name =			"Following Anchor",
+	Placement =		Following Anchor,
+	Horizontal Alignment =	Center,
+	Width =			5.70 inches,
+	Height =		2.85 inches,
+	Diagram =
+V4,
+(g9,32767,0
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
+
+<!Master Frame,
+	Name =			"Following Text",
+	Placement =		Following Text,
+	Horizontal Alignment =	Center,
+	Width =			5.70 inches,
+	Height =		2.85 inches,
+	Diagram =
+V4,
+(g9,32767,0
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
+
+<!Master Frame,
+	Name =			Footnote,
+	Placement =		Bottom of Page,
+	Horizontal Alignment =	Left,
+	Same Page =		yes,
+	Width =			5.70 inches,
+	Height =		0.204 inches,
+	Diagram =
+V4,
+(g9,32767,0
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
+
+<!Master Frame,
+	Name =			Top,
+	Placement =		Top of Page,
+	Horizontal Alignment =	Center,
+	Width =			5.70 inches,
+	Height =		2.85 inches,
+	Diagram =
+V4,
+(g9,32767,0
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
+
+<Page Header, Frame =
+V4,
+(g9,1,0
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,September\ 20\,\ 1988)
+ (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS/SCCS\ check-in\ status)
+ (t8,3,4,0,0.438782,0,17,@nnclas12b,checkup)
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
+
+<Page Footer, Frame =
+V4,
+(g9,1,0
+ (t8,1,4,5.698608,0.478772,2,17,@nnclas10,)
+ (t8,2,4,2.849304,0.478772,1,17,@nnclas12b,-\ \240\ -)
+ (t8,3,4,0,0.478772,0,17,@nnclas10,)
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
+
+<header>
+
+<|,1>NAME
+
+<paragraph>
+
+<F31>checkup<F0> <#1f> RCS/SCCS check-in status
+
+<header>
+
+USAGE
+
+<paragraph>
+
+<F31>checkup<F32> [options] [file-specifications]
+
+<header>
+
+SYNOPSIS
+
+<paragraph>
+
+<F31>Checkup<F0> examines one or more text files, and shows which 
+ones have not been archived with either <F32>rcs<F0> or <F32>sccs<F0>.  
+It also shows those which have been modified since the last check-in.
+
+<header>
+
+DESCRIPTION
+
+<paragraph>
+
+<F31>Checkup<F0> scans each filename given as an argument, looking 
+first for a corresponding <F32>rcs<F0> archive, then for an <F32>sccs<F0> 
+archive.  For each file, <F31>checkup<F0> determines if the file
+
+<bullet>
+
+<F6>S<F0><Tab>has been archived,
+
+<F6>S<F0><Tab>has been locked for modification,
+
+<F6>S<F0><Tab>has been modified since its check-in date, or has 
+a modification date older than the check-in date.
+
+<paragraph>
+
+If a directory name is given, <F31>checkup<F0> scans all files in 
+the directory.  In either case, checkup attempts to display the offending 
+files in the context of a directory tree.
+
+The directory-tree display is written to the standard error stream.  <F31>Check
+up<F0> writes to the standard output a list of the absolute pathnames 
+for each file.  This list may be piped into other utilities, such 
+as the directory editor <F31>ded<F0>.
+
+<header>
+
+OPTIONS
+
+<options>
+
+<F30@R>-<F31@R>a<F30@R><Tab>permits <F31@R>checkup<F30@R> to examine directories 
+(and their subdirectories) whose leafnames begin with <#7f>.".  These 
+are otherwise ignored.
+
+-<F31>q<F0><Tab>makes the listing less verbose (i.e., suppresses 
+display of the directory tree).  If standard output is not piped to 
+a file, the list of absolute filenames will be shown on your terminal 
+instead.
+
+-<F31>r<F0> <F32>REV<F0><Tab>reports all working files whose highest 
+version is below <F32>REV<F0>.  For example, <#7f>-<F31>r<SP><F0>2" 
+will report all files which are checked in, but having version numbers 
+below <#7f>2.0".
+
+<|,2>-<F31>s<F0><Tab>same as <#7f>-<F31>q<F0>".
+
+-<F31>t<F0><Tab>directs <F31>checkup<F0> to suppress files whose 
+extension ends in a default list: <#7f>.bak", <#7f>.i", <#7f>.log", 
+<#7f>.out" and <#7f>.tmp".
+
+-<F31>v<F0><Tab>makes the display more verbose; the names of files 
+which cannot be opened are reported.
+
+-<F31>x<F0> <F32>string<F0><Tab>specifies an extension (filename 
+suffix).  All filenames ending in this extension are ignored.  The 
+first character of the string doubles as a delimiter (e.g., <#7f>.").  
+If it is repeated in the string, <F31>checkup<F0> parses two extensions.  
+The first extension, if any, is used to conditionally ignore the second.  
+That is, if a file with the first extension exists, the file with 
+the second is ignored.
+
+<header>
+
+OPERATIONS
+
+<paragraph>
+
+An example of the use of <F31>checkup<F0> is shown below:
+
+<fixed>
+
+bsd4.2(64) checkup -t -x.e.c ~/traces/lib<HR>
+** path = //dickey/local/dickey/traces/lib<HR>
+   1:<Tab>//dickey/local/dickey/traces/lib/<HR>
+   2:<Tab>|-- access/<HR>
+   3:<Tab>|-- das/<HR>
+   4:<Tab>|-- das+/<HR>
+   5:<Tab>|-- report/<HR>
+   6:<Tab>|-- traces/<HR>
+bsd4.2(65) checkup  ~/traces/lib<HR>
+** path = //dickey/local/dickey/traces/lib<HR>
+   1:<Tab>//dickey/local/dickey/traces/lib/<HR>
+   2:<Tab>|-- access/<HR>
+   3:<Tab>|---|-- lincnt.out (not archived)<HR>
+   4:<Tab>|---|-- lint.out (not archived)<HR>
+   5:<Tab>|-- das/<HR>
+   6:<Tab>|---|-- das.c (not archived)<HR>
+   7:<Tab>|---|-- dbdump.c (not archived)<HR>
+   8:<Tab>|---|-- dbload.c (not archived)<HR>
+   9:<Tab>|---|-- dblook.c (not archived)<HR>
+  10:<Tab>|---|-- lincnt.out (not archived)<HR>
+  11:<Tab>|---|-- lint.out (not archived)<HR>
+  12:<Tab>|-- das+/<HR>
+  13:<Tab>|-- report/<HR>
+  14:<Tab>|---|-- lincnt.out (not archived)<HR>
+  15:<Tab>|---|-- lint.out (not archived)<HR>
+  16:<Tab>|-- traces/
+
+<header>
+
+ENVIRONMENT
+
+<paragraph>
+
+<F31>Checkup<F0> is a C-language program which runs in a portable 
+unix environment.
+
+<|,3>Environment variables include:
+
+<options,
+	Left Tab =		0/0.25 inches>
+
+<F49>RCS_DIR<F0><Tab>specifies the directory in which <F31>checkup<F0> 
+will find the <#7f>,v" files.  If not specified, <F31>checkup<F0> 
+assumes <#7f>RCS".
+
+<F49>SCCS_DIR<F0><Tab>specifies the directory in which <F31>checkup<F0> 
+will find the <#7f>s." files.  If not specified, <F31>checkup<F0> 
+assumes <#7f>sccs".
+
+<header>
+
+FILES
+
+<paragraph>
+
+<F31>Checkup<F0> is a single binary file, <#7f>checkup".
+
+<header>
+
+ANTICIPATED CHANGES
+
+<paragraph>
+
+None.
+
+<header>
+
+SEE ALSO
+
+<paragraph>
+
+rlog<SP>(1), sact<SP>(1).
+
+<header>
+
+AUTHOR:
+
+<paragraph>
+
+Thomas Dickey (Software Productivity Consortium).
+

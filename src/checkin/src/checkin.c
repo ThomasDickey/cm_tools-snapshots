@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkin.c	1.18 88/08/30 15:55:05";
+static	char	sccs_id[] = "@(#)checkin.c	1.23 88/09/28 08:53:30";
 #endif	lint
 
 /*
@@ -7,12 +7,19 @@ static	char	sccs_id[] = "@(#)checkin.c	1.18 88/08/30 15:55:05";
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		28 Sep 1988, use $RCS_DEBUG to control debug-trace.
+ *		27 Sep 1988, forgot to make "rcs" utility perform "-t" option.
+ *		13 Sep 1988, for ADA-files (".a" or ".ada", added rcs's comment
+ *			     header (not in rcs's default table).  Catch signals
+ *			     to do cleanup.  Correctly 'rm_work()' for setuid.
+ *			     Added newtime/oldtime logic to cover up case in
+ *			     which 'ci' aborts but does not return error.
+ *		09 Sep 1988, use 'rcspath()'
  *		30 Aug 1988, make this work as a setuid process.  If file has
  *			     not been checked-in, initialize its access list
  *			     first.
  *		24 Aug 1988, added 'usage()'; create directory if not found.
- *		15 Aug 1988, use CI_PATH to control where we install 'ci'.
- *			     If "-k" option is used, assume time+date from the
+ *		15 Aug 1988, If "-k" option is used, assume time+date from the
  *			     RCS file, not from the working file.  Also, supply
  *			     default log-message for "-k" option.
  *		05 Aug 1988, revised interface with 'rcsname.c' module.
@@ -53,16 +60,13 @@ static	char	sccs_id[] = "@(#)checkin.c	1.18 88/08/30 15:55:05";
 
 #include	<ctype.h>
 #include	<pwd.h>
+#include	<signal.h>
 #include	<time.h>
 extern	struct	tm *localtime();
 extern	FILE	*tmpfile();
 extern	long	packdate();
-extern	char	*getenv();
+extern	char	*ftype();
 extern	char	*getuser();
-extern	char	*rcslocks();
-extern	char	*rcs2name(), *name2rcs();
-extern	char	*rcsread(), *rcsparse_id(), *rcsparse_num(), *rcsparse_str();
-extern	char	*rcstemp();
 extern	char	*strcat();
 extern	char	*strchr(), *strrchr();
 extern	char	*strcpy();
@@ -70,6 +74,7 @@ extern	char	*strncpy();
 
 /* local declarations: */
 #define	REV_OPT	"rfluqk"
+#define	is_t_opt(s)	(s[1] == 't')
 
 #define	WARN	FPRINTF(stderr,
 #define	TELL	if (!silent) PRINTF
@@ -78,11 +83,16 @@ static	FILE	*fpT;
 static	int	silent	= FALSE,
 		locked	= FALSE,	/* set if file is re-locked */
 		from_keys = FALSE,	/* set if we get date from RCS file */
+		new_file,		/* per-file, true if no archive */
+		TMP_mode,		/* saved protection of RCS-directory */
 		RCS_uid,		/* archive's owner */
 		RCSprot;		/* protection of RCS-directory */
-static	time_t	modtime;
+static	time_t	modtime,		/* timestamp of working file */
+		oldtime;		/* timestamp of archive file */
 static	char	*Working,
 		*Archive,
+		*TMP_file,		/* temp-file used to fix uid/access */
+		*t_option,		/* "-t" option used for "ci" or "rcs" */
 		RCSdir[BUFSIZ],
 		opt_all[BUFSIZ],	/* options for 'ci' */
 		opt_rev[BUFSIZ],
@@ -92,6 +102,36 @@ static	char	*Working,
 /************************************************************************
  *	local procedures						*
  ************************************************************************/
+
+/*
+ * Remove working-file for set-uid process if the matching temp-file was.
+ */
+static
+rm_work() { return (unlink(Working)); }
+
+static
+clean_file()
+{
+	if ((Working  != 0)
+	&&  (TMP_file != 0)
+	&&  strcmp(Working,TMP_file)) {
+		(void)unlink(TMP_file);
+	}
+	TMP_file = 0;
+}
+
+/*
+ * If interrupted, clean up and exit
+ */
+static
+cleanup(sig)
+{
+	(void)signal(sig, SIG_IGN);
+	if (TMP_file)	clean_file();
+	if (TMP_mode)	HackMode(FALSE);
+	WARN "checkin: cleaned up\n\n");
+	(void)exit(FAIL);
+}
 
 /*
  * If the given file is still checked-out, touch its time.
@@ -149,12 +189,13 @@ char	*s, *d,
 	&&  ((sb.st_mode & S_IFMT) == S_IFREG)) {
 		mode = sb.st_mode & 0777;
 		if (changed) {
-			char	*UidHack = rcstemp(Working, FALSE);
-			(void)copyback(fpT, UidHack, mode, lines);
-			if (strcmp(UidHack,Working)) {
-				if (usercopy(UidHack, Working) < 0)
+			TMP_file = rcstemp(Working, FALSE);
+			(void)copyback(fpT, TMP_file, mode, lines);
+			if (strcmp(TMP_file,Working)) {
+				if (usercopy(TMP_file, Working) < 0)
 					GiveUp("recopy \"%s\"");
 			}
+			clean_file();
 		}
 		if (!locked)		/* cover up bugs on Apollo acls */
 			mode &= ~0222;
@@ -177,7 +218,7 @@ char	*s	= 0,
 	revision[BUFSIZ],
 	token[BUFSIZ];
 
-	if (!rcsopen(Archive, !silent))
+	if (!rcsopen(Archive, RCS_DEBUG))
 		return;
 	(void)strcpy(revision, opt_rev);
 
@@ -241,23 +282,25 @@ char	*s	= 0,
  * directory's protection.
  */
 static
-HackMode(newmode)
+HackMode(save)
 {
 	int	need;
 
-	if (newmode == 0) {
+	if (save) {
 		if ((RCSdir[0] != EOS)
 		&&  (getuid()  != geteuid())) {
 			need = (getegid() == getgid()) ? 0775 : 0777;
 			if (need != RCSprot) {
-				newmode = RCSprot;
+				TMP_mode = RCSprot | 01000;
 				if (chmod(RCSdir, need) < 0)
 					failed(RCSdir);
 			}
 		}
-	} else
-		(void)chmod(RCSdir, newmode);
-	return (newmode);
+	} else if (TMP_mode) {
+		TMP_mode &= 0777;
+		(void)chmod(RCSdir, TMP_mode);
+		TMP_mode = 0;
+	}
 }
 
 /*
@@ -268,36 +311,38 @@ HackMode(newmode)
 static
 Execute()
 {
-	char	*UidHack;
 	char	cmds[BUFSIZ];
 	struct	stat	sb;
-	int	code,
-		mode	= HackMode(0);
+	int	code;
 
-	UidHack = rcstemp(Working, TRUE);
+	HackMode(TRUE);
+	TMP_file = rcstemp(Working, TRUE);
 
-	FORMAT(cmds, "%s%s %s", opt_all, Archive, UidHack);
+	FORMAT(cmds, "%s%s %s", opt_all, Archive, TMP_file);
 	TELL("** ci %s\n", cmds);
-	code = execute(CI_PATH, cmds);
-	(void)HackMode(mode);			/* ...restore protection */
+	code = execute(rcspath("ci"), cmds);
+	HackMode(FALSE);		/* ...restore protection */
 
 	if (code >= 0) {			/* ... check-in file ok */
-		if (stat(UidHack, &sb) >= 0) {	/* working file not deleted */
-			if (strcmp(UidHack,Working)) {
-				if (sb.st_mtime != modtime)
-					if (filecopy(UidHack,Working,TRUE) < 0)
+		if (stat(TMP_file, &sb) >= 0) {	/* working file not deleted */
+			if (strcmp(TMP_file,Working)) {
+				if (sb.st_mtime != modtime) {
+					if (usercopy(TMP_file,Working) < 0)
 						failed(Working);
-				(void)unlink(UidHack);
+				}
 			}
+			clean_file();
 			if (sb.st_mtime == modtime) {
 				TELL("** checkin was not performed\n");
 				return (FALSE);
 			}
-		} else if (strcmp(UidHack, Working)
-		&&	   unlink(Working) < 0)
+		} else if (strcmp(TMP_file, Working)
+		&&	   for_user(rm_work) < 0)
 			failed(Working);
+		clean_file();
 		return (TRUE);
 	}
+	clean_file();
 	return (FALSE);
 }
 
@@ -317,7 +362,7 @@ GetLock()
 
 	if (*opt_rev == EOS) {
 
-		if (!rcsopen(Archive, -(!silent)))
+		if (!rcsopen(Archive, -RCS_DEBUG))
 			return (FALSE);	/* could not open file anyway */
 
 		while (header && (s = rcsread(s))) {
@@ -386,15 +431,17 @@ struct	stat	sb;
 static
 SetAccess()
 {
-	auto	char	cmds[BUFSIZ];
-	static	char	list[BUFSIZ];
-	auto	int	mode;
+	static	char	list[BUFSIZ];	/* static so we do list once */
+	auto	char	cmds[BUFSIZ],
+			*s;
 
-	if (PreProcess(Archive) != 0)
+	if ((oldtime = PreProcess(Archive)) != 0)
 		return (FALSE);
 
-	mode = HackMode(0);		/* ...save protection */
-	cmds[0] = EOS;
+	HackMode(TRUE);			/* ...save protection */
+	*cmds = EOS;
+	if (t_option != 0)
+		catarg(cmds, t_option);
 	catarg(cmds, "-i");
 	if (!*list) {
 		FORMAT(list, "-a%s", getuser());
@@ -407,12 +454,17 @@ SetAccess()
 		}
 	}
 	catarg(cmds, list);
+
+	s = ftype(Working);
+	if (!strcmp(s, ".a") || !strcmp(s, ".ada"))
+		catarg(cmds, "-c--  ");
+
 	if (silent) catarg(cmds, "-q");
 	catarg(cmds, Archive);
 	TELL("** rcs %s\n", cmds);
-	if (execute("rcs", cmds) < 0)
+	if (execute(rcspath("rcs"), cmds) < 0)
 		GiveUp("rcs initialization for %s");
-	(void)HackMode(mode);		/* ...restore protection */
+	HackMode(FALSE);		/* ...restore protection */
 	return (TRUE);
 }
 
@@ -476,6 +528,8 @@ char	*argv[];
 	for (j = 1; j < argc; j++) {
 		s = argv[j];
 		if (*s == '-') {
+			if (is_t_opt(s) && !new_file)
+				continue;
 			catarg(opt_all, s);
 			if (*++s == 'q')
 				silent++;
@@ -502,6 +556,8 @@ char	*argv[];
 			*opt_all = EOS;
 			for (j = 1; j < argc; j++) {
 				s = argv[j];
+				if (is_t_opt(s) && !new_file)
+					continue;
 				if (*s == '-') {
 					if (j == last) {
 						FORMAT(bfr, "%s%s", s, dft);
@@ -528,7 +584,7 @@ char	*fmt;
 	char	msg[BUFSIZ];
 	FORMAT(msg, fmt, Working);
 	TELL("?? %s\n", msg);
-	exit(FAIL);
+	(void)exit(FAIL);
 }
 
 static
@@ -548,7 +604,7 @@ Options (from \"ci\"):\n\
 \t-Nname\tlike \"-n\", but overrides previous assignment\n\
 \t-sstate\tsets the revision-state (default: \"Exp\")\n\
 \t-t[txtfile] writes descriptive text into the RCS file\n");
-	exit(FAIL);
+	(void)exit(FAIL);
 }
 
 /************************************************************************
@@ -563,6 +619,7 @@ char	*argv[];
 	register char	*s;
 
 	fpT = tmpfile();
+	catchall(cleanup);
 
 	/*
 	 * Process the argument list
@@ -574,6 +631,8 @@ char	*argv[];
 				silent++;
 			else if (*s == 'k')
 				from_keys++;
+			if (is_t_opt(argv[j]))
+				t_option = argv[j];
 			if (strchr("rfkluqmnNst", *s) == 0) {
 				WARN "unknown option: %s\n", s-1);
 				usage();
@@ -587,13 +646,18 @@ char	*argv[];
 			if (!(modtime = PreProcess (Working)))
 				GiveUp("file not found: %s");
 
+			oldtime = 0;	/* assume we don't find archive */
 			if (MakeDirectory()
-			&&  (SetAccess()
+			&&  (new_file = SetAccess()
 			||   (code = GetLock()))) {
 				SetOpts(j,argv,code);
 				if (Execute()) {
-					PostProcess();
-					ReProcess();
+					time_t	newtime = PreProcess(Archive);
+					if (newtime != 0
+					&&  newtime != oldtime) {
+						PostProcess();
+						ReProcess();
+					}
 				}
 			}
 		}

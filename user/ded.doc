@@ -108,8 +108,8 @@
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <!Master Frame,
 	Name =			Bottom,
@@ -120,8 +120,8 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <!Master Frame,
 	Name =			"Following Anchor",
@@ -132,8 +132,8 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <!Master Frame,
 	Name =			"Following Text",
@@ -144,8 +144,8 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <!Master Frame,
 	Name =			Footnote,
@@ -157,8 +157,8 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <!Master Frame,
 	Name =			Top,
@@ -169,13 +169,13 @@ V4,
 	Diagram =
 V4,
 (g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <Page Header, Frame =
 V4,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,August\ 4\,\ 1988)
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,September\ 20\,\ 1988)
  (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,Directory\ Editor)
  (t8,3,4,0,0.438782,0,17,@nnclas12b,ded)
  (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
@@ -315,9 +315,10 @@ display.  If no arguments are given, <F31>ded<F0> assumes the current
 working directory, <#7f>.".
 
 If more than one file specification argument is given, <F31>ded<F0> 
-does not change its working directory.  Note that if you give <F31>ded<F0> 
-a wildcard argument such as <#7f>d*", then the <F30@U>shell<F0> performs 
-wildcard expansion, not <F31>ded<F0>.
+changes its working directory to the most common pathname among the 
+arguments.  Note that if you give <F31>ded<F0> a wildcard argument 
+such as <#7f>d*", then the <F30@U>shell<F0> performs wildcard expansion, 
+not <F31>ded<F0>.
 
 Items from the argument list which are not found are not displayed 
 (though they are retained in the argument list for subsequent rescans 
@@ -333,39 +334,42 @@ Exiting From DED
 
 To exit from <F31>ded<F0>, you must be in the file list display.  
 If you are in the directory tree, typing <#7f><F31>q<F0>" (for <F31>qui<F0>t) 
-will release the current file list and move to the next file list 
-(if any).  Typing <#7f><F31>Q<F0>" moves backward. When only 
-<|,3>one file list is left, <F31>ded<F0> will toggle back to the 
-file list display.  If there are a lot of file lists, it is faster 
-to toggle back directly with <#7f><F31>D<F0>".  (A repeat <F32>count<F0> 
-may be applied to the directory tree quit-command).
+will release the current file list and 
+<|,3>move to the next file list (if any).  Typing <#7f><F31>Q<F0>" 
+moves backward. When only one file list is left, <F31>ded<F0> will 
+toggle back to the file list display.  If there are a lot of file 
+lists, it is faster to toggle back directly with <#7f><F31>D<F0>".  
+(A repeat <F32>count<F0> may be applied to the directory tree quit-command).
 
 To exit from <F31>ded'<F0>s file list display, type <#7f><F31>q<F0>" 
 (for <F31>quit<F0>).
 
 <subheader>
 
-<F31@R>Interrupting DED
+Interrupting DED
 
 <paragraph>
 
-<F30@R>You may also forcibly exit from <F31@R>ded<F30@R> by typing your 
-terminal's quit character.  This causes <F31@R>ded<F30@R> to exit without 
-updating the <#7f>.ftree" file (the directory-tree database).
+You may also forcibly exit from <F31>ded<F0> by typing your terminal's 
+quit character.  This causes <F31>ded<F0> to exit without updating 
+the <#7f>.ftree" file (the directory-tree database).
 
-<F30@R>Some of <F31@R>ded<F30@R>'s commands may take a long while to execute.  
+Some of <F31>ded<F0>'s commands may take a long while to execute.  
 You may interrupt these commands by typing your terminal's interrupt 
 character:
 
 <bullet>
 
-<F6@R>S<F30@R><Tab>The directory-tree <#7f><F31@R>R<F30@R>" command may be 
+<F6>S<F0><Tab>The directory-tree <#7f><F31>R<F0>" command may be 
 interrupted between individual files in the directory-scan.
 
-<F6@R>S<F30@R><Tab>inline changes which propagate to a tagged group of 
-files (i.e., the <#7f><F31@R>p<F30@R>", <#7f><F31@R>u<F30@R>", <#7f><F31@R>g<F30@R>" 
-or <#7f><F31@R>=<F30@R>" commands) may be interrupted between individual 
+<F6>S<F0><Tab>inline changes which propagate to a tagged group of 
+files (i.e., the <#7f><F31>p<F0>", <#7f><F31>u<F0>", <#7f><F31>g<F0>" 
+or <#7f><F31>=<F0>" commands) may be interrupted between individual 
 files in the group.
+
+<F6>S<F0><Tab>the <#7f><F31>t<F0>" and <#7f><F31>T<F0>" type-file 
+command.
 
 <subheader>
 
@@ -408,9 +412,9 @@ Single-character cursor movement commands are:
 <F31>j<F0><Tab>move cursor down <F32>count<F0> entries. (also: <F32>return
 <F0>, <F32>down-arrow<F0>).
 
-<F31>l<F0><Tab>(directory): same as <F32>right-arrow<F0>.
+<|,4><F31>l<F0><Tab>(directory): same as <F32>right-arrow<F0>.
 
-<|,4><F31>f<F0><Tab>scroll forward <F32>count<F0> screen(s).
+<F31>f<F0><Tab>scroll forward <F32>count<F0> screen(s).
 
 <F31>b<F0><Tab>scroll backward <F32>count<F0> screen(s).
 
@@ -479,13 +483,13 @@ backwards (with wrap-around) for it.
 
 <F31>Ded<F0> maintains a separate search context for the file list 
 and the directory tree display.  That is, the targets are maintained 
-separately.  Searches in the directory tree do not include the <#7f>/" 
-marks which separate path names; you may search only for the leaf 
-names.
+separately.  Searches in 
+<|,5>the directory tree do not include the <#7f>/" marks which separate 
+path names; you may search only for the leaf names.
 
 <subheader>
 
-<|,5>Display-Adjustment
+Display-Adjustment
 
 <paragraph>
 
@@ -496,8 +500,8 @@ the display, to refresh it, or to re-stat specific lines:
 
 <F31>C<F0><Tab>toggle date-field to display.  Unix maintains three 
 file dates (<F31>c<F0>hanged, <F31>m<F0>odified and <F31>a<F0>ccessed).  
-<F30@R>The current state of this toggle is shown in the screen heading 
-(e.g, <#7f><F22@R>[mtime]<F30@R>").
+The current state of this toggle is shown in the screen heading (e.g, 
+<#7f><F22>[mtime]<F0>").
 
 <F31>G<F0><Tab>toggle user/group display field.
 
@@ -510,20 +514,20 @@ is ambiguous.
 <F31>S<F0><Tab>toggle the display of file size.  When active, an 
 additional column is shown, giving the file size in blocks.
 
-<F31@R>@<F30@R><Tab>toggle the display of symbolic links.  When active, <F31@R>ded
-<F30@R> displays the mode, owner and group of the target of the link, 
-rather than the link itself.  To make this simple to see, <F31@R>ded<F30@R> 
+<F31>@<F0><Tab>toggle the display of symbolic links.  When active, <F31>ded
+<F0> displays the mode, owner and group of the target of the link, 
+rather than the link itself.  To make this simple to see, <F31>ded<F0> 
 displays the mode in uppercase.  If you apply an inline command (i.e., 
-<#7f><F31@R>p<F30@R>", <#7f><F31@R>u<F30@R>" or <#7f><F31@R>g<F30@R>") to a tagged 
-group containing a symbolic link, <F31@R>ded<F30@R> will automatically 
+<#7f><F31>p<F0>", <#7f><F31>u<F0>" or <#7f><F31>g<F0>") to a tagged 
+group containing a symbolic link, <F31>ded<F0> will automatically 
 toggle the display to display the targets rather than the links.
 
-<F31@R>X<F30@R><Tab>toggles the screen between one and two viewports.  
-You may adjust the size of these viewports with the <#7f><F31@R>A<F30@R>" 
-and <#7f><F31@R>a<F30@R>" commands.  The two viewports share the same 
+<F31>X<F0><Tab>toggles the screen between one and two viewports.  
+You may adjust the size of these viewports with the <#7f><F31>A<F0>" 
+and <#7f><F31>a<F0>" commands.  The two viewports share the same 
 scrolling sense, but have an independent notion of the current file.
 
-<F32@R>tab<F30@R><Tab>moves the cursor to the other viewport.
+<F32>tab<F0><Tab>moves the cursor to the other viewport.
 
 <F31>A<F0><Tab>move workspace marker up <F32>count<F0> line(s).
 
@@ -535,19 +539,28 @@ list, re-sorts and repaints the screen.  The cursor is moved to the
 first file in the list.  (If nothing is found, <F31>ded<F0> will 
 exit).
 
-<F31>W<F0><Tab>re-stat entries in the current screen.
+<|,6><F30@R><Tab>Directory names which are encountered in the scan 
+are added to the directory-tree.  If the <#7f><F31@R>@<F30@R>" toggle 
+is set (see above), symbolic links which resolve to actual directories 
+are also added.
+
+<F31>W<F0><Tab>re-stat entries in the current screen.  If a repeat 
+count is given, this command is repeated at 3-second intervals (or 
+until interrupted).
 
 <F31>w<F0><Tab>refresh (i.e., repaint) the window.  (Note: on Apollo, 
 this command also checks to see if the terminal emulator window has 
 changed size, and adjusts <F32>curses<F0> state to match).
 
-<|,6><F31>l<F0><Tab>re-stat the current entry
+<F31>l<F0><Tab>re-stat the current entry, as well as files which 
+are grouped.  If a repeat count is given, this command is repeated 
+at 3-second intervals (or until interrupted).
 
 <F32>space<F0><Tab>clear workspace window.  This command is particularly 
 useful after executing a shell command, since <F32>curses<F0> has 
 no notion of what is shown in the workspace.
 
-<F32@R>CTL/K<F30@R><Tab>causes a copy of your current screen (obtained 
+<F32>CTL/K<F0><Tab>causes a copy of your current screen (obtained 
 from the curses window-state) to be appended to the file <#7f>ded.log" 
 in your process's home directory.
 
@@ -577,6 +590,9 @@ are always a single character:
 
 <F31>c<F0><Tab>last-change date
 
+<F31>d<F0><Tab>directory-order (i.e., order in which items were read 
+from the directory)
+
 <F31>g<F0><Tab>group-identifier (lexically)
 
 <F31>G<F0><Tab>group-identifier (numerically)
@@ -585,7 +601,7 @@ are always a single character:
 
 <F31>l<F0><Tab>number of links
 
-<F31>p<F0><Tab>file-protection mask/mode.
+<|,7><F31>p<F0><Tab>file-protection mask/mode.
 
 <F31>m<F0><Tab>last-modification date
 
@@ -605,7 +621,7 @@ are always a single character:
 
 <F31>v<F0><Tab>rcs/sccs versions
 
-<F31@R>y<F30@R><Tab>rcs/sccs lock-owner
+<F31>y<F0><Tab>rcs/sccs lock-owner
 
 <F31>z<F0><Tab>rcs/sccs check-in dates
 
@@ -615,11 +631,11 @@ are always a single character:
 
 <paragraph>
 
-<|,7><F30@R>You may sort tagged files separately from the remainder 
-of the files by following the <#7f><F31@R>r<F30@R>" or <#7f><F31@R>s<F30@R>" 
-character with a <#7f><F31@R>+<F30@R>".  For example, <#7f>s+w" sorts 
-the file list into two parts, with the tagged files at the beginning, 
-and untagged files following (both lists sorted by modification date).
+You may sort tagged files separately from the remainder of the files 
+by following the <#7f><F31>r<F0>" or <#7f><F31>s<F0>" character 
+with a <#7f><F31>+<F0>".  For example, <#7f>s+w" sorts the file list 
+into two parts, with the tagged files at the beginning, and untagged 
+files following (both lists sorted by modification date).
 
 <subheader>
 
@@ -660,7 +676,7 @@ typing <F32>CTL/I<F0> (<F32>tab<F0>).
 
 <options>
 
-<F31>q<F0><Tab>(cursor) aborts the command.
+<|,8><F31>q<F0><Tab>(cursor) aborts the command.
 
 <F32>command<F0><Tab>(cursor) completes the command.  A <F32>newline<F0> 
 or <F32>return<F0> in either mode will also complete it.
@@ -688,7 +704,7 @@ is highlighted and prefixed with a <#7f>^" character.
 
 <F32>CTL/B<F0><Tab>move cursor to beginning of field
 
-<|,8><F32>CTL/F<F0><Tab>move cursor to end of field
+<F32>CTL/F<F0><Tab>move cursor to end of field
 
 <subheader>
 
@@ -731,8 +747,8 @@ to the last chmod field.
 
 <options>
 
-<F31>u<F0><Tab>Edit user-identifier field.  The current entry's uid 
-is edited inline and the result used for all selected entries.
+<|,9><F31>u<F0><Tab>Edit user-identifier field.  The current entry's 
+uid is edited inline and the result used for all selected entries.
 
 <F31>g<F0><Tab>Edit group-identifier field.  The current entry's 
 gid is edited inline, and the result used for all selected entries
@@ -743,11 +759,44 @@ For example, you might rename files ending in <#7f>.o" to end in <#7f>.bin"
 by typing <#7f><F31>=<F0><SP><F32>CTL/F<F0><SP><F32>CTL/I<F0> <F32>erase
 <F0> <F31>.bin<F0>".
 
+<F31>><F0><Tab>Edit link-text of the current symbolic link.  Symbolic 
+links which are grouped are renamed using the <F30@U>template<F0> formed 
+by your command.  For example, you might edit links beginning with 
+<#7f>/local/bin" to begin with <#7f>/usr/local/bin" by typing  <#7f><F31>=
+<F0><SP><F32>CTL/I<F0> <F31>/usr<F0>".
+
 <F31>"<F0><Tab>Repeats the last <#7f><F31>p<F0>", <#7f><F31>u<F0>", 
 <#7f><F31>g<F0>" or <#7f><F31>=<F0>" command.  This uses the actual 
 set of characters typed for the command, so an editing template may 
 be made.  (<F31>Ded<F0> buffers the last set of editing keystrokes 
 for inline editors).
+
+<subheader>
+
+<F31@R>Creating New Entries
+
+<paragraph>
+
+<F30@R>You may add new entries to the display list by rescanning with 
+the <#7f><F31@R>R<F30@R>" command (to pick up new names which are added 
+by programs other than ded.  You may also use <F31@R>ded<F30@R> to create 
+new entries using the <#7f><F31@R>c<F30@R>" command:
+
+<options>
+
+<F31@R>cf<F30@R><Tab>create file
+
+<F31@R>cd<F30@R><Tab>create directory
+
+<F31@R>cl<F30@R><Tab>create symbolic link (initially with <#7f>." for 
+text).
+
+<paragraph>
+
+<F30@R>Each <#7f><F31@R>c<F30@R>" command opens the list at the current 
+position.  You must provide a name, using the same inline name-editing 
+as the <#7f><F31@R>=<F30@R>" command.  When the name is complete (nonnull, 
+and nonconflicting), <F31@R>ded<F30@R> creates it.
 
 <subheader>
 
@@ -760,19 +809,19 @@ because grouping operations would not be meaningful:
 
 <options>
 
-<|,9><F31>E<F0><Tab>If the current entry is a directory, open a 
-new file list on it.  The new list inherits the display options and 
-sorting sense, as well as the last shell command from the current 
-display.  If the entry is a file, invoke the editor (e.g., <F31>vi<F0>) 
-on it.
+<F31>E<F0><Tab>If the current entry is a directory, open a new file 
+list on it.  The new list inherits the display options and sorting 
+sense, as well as the last shell command from the current display.  
+If the entry is a file, invoke the editor (e.g., <F31>vi<F0>) on 
+it.
 
 <F31>e<F0><Tab>If the current entry is a directory, spawn a new <F31>ded<F0> 
 process with that as argument. If it is a file, invoke the editor 
 (e.g., <F31>vi<F0>) on it.
 
-<F31>v<F0><Tab>If the current entry is a directory, spawn a new <F31>ded<F0> 
-process with that as argument. If it is a file, invoke the browser 
-(e.g, <F31>view<F0>).
+<|,10><F31>v<F0><Tab>If the current entry is a directory, spawn a 
+new <F31>ded<F0> process with that as argument. If it is a file, 
+invoke the browser (e.g, <F31>view<F0>).
 
 <F31>m<F0><Tab>run the pager (e.g., <F31>more<F0>) on the current 
 file.  <F31>Ded<F0> will not let you page directories or other entries 
@@ -815,7 +864,7 @@ the workspace.
 
 <F31>w<F0><Tab>repaint the screen.
 
-<F32@R>CTL/K<F30@R><Tab>causes a copy of your current screen (obtained 
+<F32>CTL/K<F0><Tab>causes a copy of your current screen (obtained 
 from the curses window-state) to be appended to the file <#7f>ded.log" 
 in your process's home directory.
 
@@ -825,8 +874,8 @@ redisplay.
 <F31>a<F0><Tab>move the workspace marker down <F32>count<F0> lines, 
 redisplay.
 
-<|,10><F31>f<F0><Tab>scroll forward <F32>count<F0> subscreens (also, 
-the <F32>space<F0> and <F32>newline<F0> keys).
+<F31>f<F0><Tab>scroll forward <F32>count<F0> subscreens (also, the <F32>space
+<F0> and <F32>newline<F0> keys).
 
 <F31>b<F0><Tab>scroll backward <F32>count<F0> subscreens (also, 
 the <F32>backspace<F0> key).
@@ -841,7 +890,7 @@ The following commands use the workspace pager:
 
 <options>
 
-<F31>h<F0><Tab>type <F31>ded<F0>'s help-file in the workspace.
+<|,11><F31>h<F0><Tab>type <F31>ded<F0>'s help-file in the workspace.
 
 <F31>t<F0><Tab>type the current file, in the workspace
 
@@ -899,7 +948,7 @@ which <F31>ded<F0> was invoked.
 
 <F31>d<F0><Tab>substitutes the name of the current directory.
 
-<|,11><F31>n<F0> or <F31>N<F0><Tab>substitutes the name of the current 
+<F31>n<F0> or <F31>N<F0><Tab>substitutes the name of the current 
 file
 <Frame,
 	Name =			Footnote,
@@ -912,7 +961,7 @@ file
 	Diagram =
 V4,
 (g9,1,0
- (T8,1,12,0.066667,0.066667,5.546667,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
+ (T8,1,12,0.066667,0.066667,5.546669,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
   ,512,102,1101,3,
 <footnote>
 
@@ -922,7 +971,7 @@ with the current directory, to make an absolute pathname.
 
 <End Text>)
  (v4,2,0,-0.066667,0,0.933333,0,17,1,0)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
   667,6))>
 <F6>[<F0>.
 
@@ -940,10 +989,10 @@ pathname components (i.e., <#7f>tail").
 
 <paragraph>
 
-Dollar signs and other special characters in filenames which could 
-cause problems in command substitution are escaped (prefixed with 
-<#7f>\") by <F31>ded<F0> as it substitutes filenames into the shell 
-command.
+<|,12>Dollar signs and other special characters in filenames which 
+could cause problems in command substitution are escaped (prefixed 
+with <#7f>\") by <F31>ded<F0> as it substitutes filenames into the 
+shell command.
 
 <subheader>
 
@@ -995,7 +1044,7 @@ with <#7f><F22>=><F0>".
 
 <F31>E<F0><Tab>Enter a new file-list at the indicated directory-name.
 
-<|,12><F31>e<F0><Tab>Enter a new <F31>ded<F0> process with the indicated 
+<F31>e<F0><Tab>Enter a new <F31>ded<F0> process with the indicated 
 directory name.
 
 <F31>F<F0><Tab>Move forward (with wraparound) in the ring of file 
@@ -1020,7 +1069,7 @@ which directs <F31>ded<F0> to suppress subdirectories from the display.
 
 <F31>w<F0><Tab>Repaint the display.
 
-<F31>Z<F0><Tab>Directs <F31>ded<F0> to suppress from the display 
+<|,13><F31>Z<F0><Tab>Directs <F31>ded<F0> to suppress from the display 
 all RCS and sccs directories.
 
 <paragraph>
@@ -1030,8 +1079,11 @@ Commands which operate upon the directory database are:
 <options>
 
 <F31>R<F0><Tab>Read directory names at the current position (also 
-done automatically whenever a file list is constructed).  <F30@R>If 
-you supply a repeat-count, <F31@R>ded<F30@R> recurs that many levels.
+done automatically whenever a file list is constructed).  If you supply 
+a repeat-count, <F31>ded<F0> recurs that many levels.
+
+<Tab><F30@R>Unlike the <#7f>R" command in the file-list display, this 
+command always attempts to resolve symbolic links to directories.
 
 <F31>+<F0><Tab>Mark directory name for removal from database.
 
@@ -1074,12 +1126,12 @@ two characters (e.g., <#7f>p." and <#7f>s.").
 <F31>Ded<F0> assumes that the <F32>rcs<F0> files are checked in 
 using the script <F31>rcsput<F0>, and that the <F32>sccs<F0> files 
 are checked in using the script <F31>sccsput<F0>.  These scripts 
-<|,13>extend the basic <F32>rcs<F0> and <F32>sccs<F0> scheme by 
-making the file's date and the archival check-in date the same.  When 
-directed to do so, <F31>ded<F0> will scan the archived files to obtain 
-and display the most recent check-in date and version.  A special 
-display column shows the result of the comparison between the file's 
-modification and check-in dates:
+extend the basic <F32>rcs<F0> and <F32>sccs<F0> scheme by making 
+the file's date and the archival check-in date the same.  When directed 
+to do so, <F31>ded<F0> will scan the archived files to obtain and 
+display the most recent check-in date and version.  A special display 
+column shows the result of the comparison between the file's modification 
+and check-in dates:
 
 <options>
 
@@ -1095,10 +1147,10 @@ date.
 
 <paragraph>
 
-Using <F31>ded<F0>, you can quickly verify which files have been 
-checked into <F32>rcs<F0> or <F32>sccs<F0>.  <F31>Ded<F0>'s sorting 
-options (i.e., the <#7f><F31>v<F0>", <F30@R><#7f><F31@R>y<F30@R>",<F0> 
-<#7f><F31>z<F0>", and <#7f><F31>Z<F0>" keys) facilitate this also.
+<|,14>Using <F31>ded<F0>, you can quickly verify which files have 
+been checked into <F32>rcs<F0> or <F32>sccs<F0>.  <F31>Ded<F0>'s 
+sorting options (i.e., the <#7f><F31>v<F0>", <#7f><F31>y<F0>", <#7f><F31>z
+<F0>", and <#7f><F31>Z<F0>" keys) facilitate this also.
 
 The following file list commands are used for archive display:
 
@@ -1106,8 +1158,8 @@ The following file list commands are used for archive display:
 
 <F31>V<F0><Tab>toggle version display.
 
-<F31@R>Y<F30@R><Tab>toggle display showing the owner of the current lock 
-on the file.  <F31@R>Ded<F30@R> examines the <F32@R>rcs<F30@R> archive file 
+<F31>Y<F0><Tab>toggle display showing the owner of the current lock 
+on the file.  <F31>Ded<F0> examines the <F32>rcs<F0> archive file 
 to see if there are any locks on it.  If so, it displays the name 
 of the first lock-owner
 <Frame,
@@ -1117,11 +1169,11 @@ of the first lock-owner
 	Same Page =		yes,
 	Width =			5.70 inches,
 	Height =		0.417 inches,
-	Page # =		13,
+	Page # =		14,
 	Diagram =
 V4,
 (g9,1,0
- (T8,1,12,0.066667,0.066667,5.546667,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
+ (T8,1,12,0.066667,0.066667,5.546669,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
   ,512,102,1101,3,
 <footnote,
 	Font =			F30@R>
@@ -1132,9 +1184,9 @@ for this case.
 
 <End Text>)
  (v4,2,0,-0.033333,0,0.966667,0,17,1,0)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
   667,6))>
-<F6>[<F30@R>.
+<F6>[<F0>.
 
 <F31>Z<F0><Tab>toggle check-in date display.  The date display has 
 three states: off, invisible (except for the comparison column), and 
@@ -1160,7 +1212,7 @@ checked-out file.
 
 <subheader>
 
-<|,14>Apollo DOMAIN/IX Enhancements
+Apollo DOMAIN/IX Enhancements
 
 <paragraph>
 
@@ -1179,11 +1231,11 @@ names.  When you use <F31>ded<F0>'s built-in commands (e.g., <#7f><F31>p<F0>"
 the original file modification date since the Apollo <F32>chmod<F0> 
 and <F32>chown<F0> system calls merge the change- and modification-dates.
 
-Case-sensitivity in file names is a more interesting problem.  DOMAIN/IX 
-runs in conjunction with Apollo's AEGIS operating system.  AEGIS file 
-names are not case sensitive.  Some AEGIS SR9 utilities do not work 
-properly if given unix-style mixed-case names.  <F31>Ded<F0> can 
-show file names in either AEGIS or unix form.  When it shows names 
+<|,15>Case-sensitivity in file names is a more interesting problem.  
+DOMAIN/IX runs in conjunction with Apollo's AEGIS operating system.  
+AEGIS file names are not case sensitive.  Some AEGIS SR9 utilities 
+do not work properly if given unix-style mixed-case names.  <F31>Ded<F0> 
+can show file names in either AEGIS or unix form.  When it shows names 
 in AEGIS form, it will also convert names in shell commands (e.g., 
 those substituted with <#7f><F31>#<F0>") to AEGIS-style as well.
 
@@ -1203,11 +1255,11 @@ waits until you have closed the pad before continuing
 	Same Page =		yes,
 	Width =			5.70 inches,
 	Height =		0.667 inches,
-	Page # =		14,
+	Page # =		15,
 	Diagram =
 V4,
 (g9,1,0
- (T8,1,12,0.066667,0.12,5.546668,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048,512
+ (T8,1,12,0.066667,0.12,5.546669,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048,512
   ,102,1101,3,
 <footnote>
 
@@ -1218,8 +1270,8 @@ only in one direction.
 
 <End Text>)
  (v4,2,0,-0.1,0,0.9,0,17,1,0)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,0,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,0,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 <F6>[<F0>.
 
 <F32>CTL/V<F0><Tab>view the current file with the pad-editor.  <F31>Ded<F0> 
@@ -1228,26 +1280,26 @@ new commands.
 
 <subheader>
 
-<F31@R>X Windows Enhancments
+X Windows Enhancments
 
 <paragraph>
 
-<F30@R>If you are not running under the Apollo Display Manager, <F31@R>ded<F30@R> 
-tentatively assumes that you are running under X<SP>Windows<F6@R>T<F30@R>.  
-In this case, if the program <F31@R>xterm<F30@R> is found in your execution 
-path, <F31@R>ded<F30@R> will permit the following commands:
+If you are not running under the Apollo Display Manager, <F31>ded<F0> 
+tentatively assumes that you are running under X<SP>Windows<F6>T<F0>.  
+In this case, if the program <F31>xterm<F0> is found in your execution 
+path, <F31>ded<F0> will permit the following commands:
 
 <options>
 
-<F32@R>CTL/E<F30@R><Tab>edit the current file (using the default editor 
-invoked by the <#7f><F31@R>e<F30@R>" command) in an <F31@R>xterm<F30@R> process.  
-<F31@R>Ded<F30@R> waits until you have exited from the process before 
+<F32>CTL/E<F0><Tab>edit the current file (using the default editor 
+invoked by the <#7f><F31>e<F0>" command) in an <F31>xterm<F0> process.  
+<F31>Ded<F0> waits until you have exited from the process before 
 continuing.
 
-<|,15><F32@R>CTL/V<F30@R><Tab>view the current file (using the default 
-browser invoked by the <#7f><F31@R>v<F30@R>" command) in an <F31@R>xterm<F30@R> 
-process.  <F31@R>Ded<F30@R> does not wait for you to exit from this process; 
-it will proceed to accept new commands.
+<F32>CTL/V<F0><Tab>view the current file (using the default browser 
+invoked by the <#7f><F31>v<F0>" command) in an <F31>xterm<F0> process.  
+<F31>Ded<F0> does not wait for you to exit from this process; it 
+will proceed to accept new commands.
 
 <header>
 
@@ -1268,15 +1320,20 @@ command (<F31>vi<F0>)
 <F49>BROWSE<F0><Tab>overrides default browser invoked by <#7f><F31>v<F0>" 
 command (view).
 
-<F49>PAGER<F0><Tab>overrides default pager invoked by <#7f><F31>m<F0>" 
+<|,16><F49>PAGER<F0><Tab>overrides default pager invoked by <#7f><F31>m<F0>" 
 command (more).
 
 <F49>TERM<F0><Tab>used to determine control sequences for cursor 
 keys.
 
-<F49@R>SCCS_DIR<F30@R><Tab>gives the name of the <F32@R>sccs<F30@R> directories <F31@R>de
-d<F30@R> searches for the file list <#7f><F31@R>V<F30@R>", <#7f><F31@R>Y<F30@R>" 
-and <#7f><F31@R>Z<F30@R>" commands.  If not specified, <F31@R>ded<F30@R> assumes 
+<F49>RCS_DIR<F0><Tab>gives the name of the <F32>rcs<F0> directories <F31>ded
+<F0> searches for the file list <#7f><F31>V<F0>", <#7f><F31>Y<F0>" 
+and <#7f><F31>Z<F0>" commands.  If not specified, <F31>ded<F0> assumes 
+<#7f>RCS".
+
+<F49>SCCS_DIR<F0><Tab>gives the name of the <F32>sccs<F0> directories <F31>de
+d<F0> searches for the file list <#7f><F31>V<F0>", <#7f><F31>Y<F0>" 
+and <#7f><F31>Z<F0>" commands.  If not specified, <F31>ded<F0> assumes 
 <#7f>sccs".
 
 <header>
@@ -1290,11 +1347,11 @@ argument passed to it by the shell, as well as the contents of the <F49>PATH
 <F0> variable) where it was executed from.  Its help file <F32>ded.hlp<F0> 
 is assumed to reside in the same directory.
 
-The directory tree manager maintains its database in your home directory <F30@R>(
-i.e., the path is derived from your process's uid)<F0>.  The name 
-of the file is <#7f><F32>.ftree<F0>".  If changes have been made 
-to the memory copy of the database, this file is updated whenever <F31>ded
-<F0> spawns a copy of itself, or when exiting from <F31>ded<F0>.
+The directory tree manager maintains its database in your home directory 
+(i.e., the path is derived from your process's uid).  The name of 
+the file is <#7f><F32>.ftree<F0>".  If changes have been made to 
+the memory copy of the database, this file is updated whenever <F31>ded<F0> 
+spawns a copy of itself, or when exiting from <F31>ded<F0>.
 
 <header>
 
@@ -1314,10 +1371,9 @@ alter the directory structure.
 
 Enhance the treatment of multiple viewports.  This would permit the 
 user to group files in one file list and then move the cursor to another 
-file list to 
-<|,16>operate upon the group files (e.g., a bulk move without typing 
-a path name).  <F30@R>Additionally, the user would be able to sort the 
-viewports independently, as well as operate upon different directories 
+file list to operate upon the group files (e.g., a bulk move without 
+typing a path name).  Additionally, the user would be able to sort 
+the viewports independently, as well as operate upon different directories 
 (from the directory-ring).
 
 Use the <F49>SHELL<F0> environment variable, and parse arguments 
@@ -1333,7 +1389,7 @@ rcsput, rcsget, sccsput, sccsget
 
 <header>
 
-AUTHOR:
+<|,17>AUTHOR:
 
 <paragraph>
 

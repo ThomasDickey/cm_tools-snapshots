@@ -1,3 +1,102 @@
+1988-09-28  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	use $RCS_DEBUG to control trace in 'rcsedit.c' module.
+
+	* src/checkin/src/checkin.c:
+	additionally corrected so that if user sets "-t" when the archive exists
+	then we put the option on "ci".  Use $RCS_DEBUG variable to control trace in rcsedit module.
+
+1988-09-27  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	moved "-t" option from "ci" call to "rcs" call so we don't get prompted!
+
+1988-09-26  dickey@software.org
+
+	* src/checkup/src/checkup.c:
+	corrections to last change... (had wrong argument for 'sameleaf()',
+	and did not allow for "." name in the "-a" test).
+
+	* src/checkup/src/checkup.c: sccs2rcs keywords
+
+1988-09-26  ste_cm@software.org
+
+	* src/checkup/src/checkup.c: BASELINE Mon Jun 19 13:17:34 EDT 1989
+
+	* src/checkup/src/checkup.c: BASELINE Thu Apr  6 09:32:39 EDT 1989
+
+1988-09-26  dickey@software.org
+
+	* user/checkup.doc: corrected typo.
+
+1988-09-19  dickey@software.org
+
+	* user/checkup.doc: added '-a' option.
+
+	* user/ded.doc:
+	documented 'c'-command, mods to '@'-toggle/'R' interaction.
+
+	* src/checkup/src/checkup.c:
+	added "-a" option (so we can deal with VERDIX-ADA).
+	also, use 'sameleaf()' to do relative paths more intelligently.
+
+1988-09-13  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	'ci' doesn't return error if it aborts after finding no difference...
+
+	* src/checkout/src/checkout.c:
+	added cleanup handler; refined permission checking.
+
+	* src/checkin/src/checkin.c:
+	Added 'rcs -c' (comment-string) for ADA files (".a" and ".ada").
+	Added cleanup handling for set-uid operation.
+
+1988-09-09  dickey@software.org
+
+	* src/checkin/src/checkin.c: use 'rcspath()' to protect setuid programs
+
+	* src/checkout/src/checkout.c:
+	use 'rcspath()' to protect set-uid programs.
+
+1988-09-08  dickey@software.org
+
+	* src/checkup/src/Makefile: oops: no SCRIPTS here!
+
+	* src/checkup/src/Makefile: sccs2rcs keywords
+
+1988-09-02  dickey@software.org
+
+	* user/ded.doc: changes since 4-aug-88
+
+	* user/checkup.doc: added SCCS_DIR environment variable.
+
+	* user/rcsget.doc, user/rcsput.doc:
+	deleted RUNLIB environment variable.
+
+	* user/checkin.doc, user/checkout.doc: changes for set-uid operation.
+
+	* src/checkout/src/checkout.c:
+	make 'rcsopen()' show "rcs-scan" rather than "rcs-edit"
+
+	* src/checkup/src/checkup.c:
+	use 'rcs_dir()' and 'sccs_dir()' to encapsulate RCS/SCCS-directory names.
+
+1988-09-01  dickey@software.org
+
+	* src/checkup/src/checkup.c: use 'fileno()' rather than a constant.
+
+	* user/checkup.doc: New file.
+
+	* src/checkout/src/Makefile: added "rcsdefs.h" dependency.
+
+	* src/checkout/src/Makefile: sccs2rcs keywords
+
+	* src/checkup/src/Makefile: added "rcsdefs.h" dependency.
+
+	* src/checkup/src/checkup.c: added '-r', and '-q' (or '-s') options.
+
 1988-08-31  dickey@software.org
 
 	* src/checkup/src/checkup.c, src/checkup/src/Makefile: New file.

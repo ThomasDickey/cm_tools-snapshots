@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkout.c	1.19 88/08/30 15:38:03";
+static	char	sccs_id[] = "@(#)checkout.c	1.23 88/09/28 09:35:18";
 #endif	lint
 
 /*
@@ -7,12 +7,13 @@ static	char	sccs_id[] = "@(#)checkout.c	1.19 88/08/30 15:38:03";
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		13 Sep 1988, added cleanup handler.  Refined permission-checks.
+ *		09 Sep 1988, use 'rcspath()'
  *		30 Aug 1988, broke out 'userprot()'.
  *		25 Aug 1988, check for and accommodate 'setuid()' usage.
  *		24 Aug 1988, added 'usage()' message.  Implemented '-c' cutoff,
  *			     and '-w', '-s' options.  If user has locked RCS
  *			     file, make the checked-out file writeable.
- *		15 Aug 1988, use CO_PATH to control where we install 'co'.
  *		13 Jun 1988, use 'newzone()'.
  *		08 Jun 1988, more adjustments to 'chmod()'.
  *		07 Jun 1988, make this set the checked-out file's mode to
@@ -35,19 +36,17 @@ static	char	sccs_id[] = "@(#)checkout.c	1.19 88/08/30 15:38:03";
  *		For now, simply assume that locks are on the tip version.
  */
 
+#define		ACC_PTYPES
 #include	"ptypes.h"
 #include	"rcsdefs.h"
 
 #include	<ctype.h>
+#include	<signal.h>
 #include	<time.h>
 extern	long	packdate();
 extern	char	*ctime();
 extern	char	*getuser();
 extern	char	*pathhead();
-extern	char	*rcslocks();
-extern	char	*rcsread(), *rcsparse_id(), *rcsparse_num(), *rcsparse_str();
-extern	char	*rcs2name(), *name2rcs();
-extern	char	*rcstemp();
 extern	char	*strcat();
 extern	char	*strcpy();
 extern	char	*strchr();
@@ -77,6 +76,27 @@ static	char	opt_sta[BUFSIZ];	/* "-s[state] value	*/
  ************************************************************************/
 
 /*
+ * Cleanup handler
+ */
+static
+clean_file()
+{
+	if ((UidHack != 0)
+	&&  (Working != 0)
+	&&  strcmp(UidHack,Working)) {
+		(void)unlink(UidHack);
+		UidHack = 0;
+	}
+}
+
+cleanup(sig)
+{
+	(void)signal(sig, SIG_IGN);
+	WARN "checkout: cleaning up\n\n");
+	clean_file();
+}
+
+/*
  * Postprocess the checkout by scanning the RCS file to find the delta-date
  * to which the checked-out file corresponds, then touching the checked-out
  * file to make it correspond.
@@ -94,7 +114,7 @@ PostProcess()
 	time_t	tt	= 0;
 	int	yd, md, dd, ht, mt, st;
 
-	if (!rcsopen(Archive, !silent))
+	if (!rcsopen(Archive, -RCS_DEBUG))
 		return;
 
 	while (header && (s = rcsread(s))) {
@@ -181,12 +201,12 @@ time_t	mtime;
 	UidHack = rcstemp(Working, FALSE);
 	FORMAT(cmds, "%s%s %s", options, UidHack, Archive);
 	TELL("** co %s\n", cmds);
-	if (execute(CO_PATH, cmds) >= 0) {
+	if (execute(rcspath("co"), cmds) >= 0) {
 		if (stat(UidHack, &sb) >= 0) {
 			if (strcmp(UidHack,Working)) {
 				if (usercopy(UidHack, Working) < 0)
 					return (FALSE);
-				(void)unlink(UidHack);
+				clean_file();
 			}
 			if (sb.st_mtime == mtime) {
 				TELL("** checkout was not performed\n");
@@ -200,6 +220,7 @@ time_t	mtime;
 			return (TRUE);
 		}
 	}
+	clean_file();
 	return (FALSE);
 }
 
@@ -224,16 +245,16 @@ char	*name;
 int	owner;			/* TRUE if euid, FALSE if uid */
 {
 	struct	stat	sb;
+	int		uid;
 
 	if (stat(name, &sb) >= 0) {
 		if ((S_IFMT & sb.st_mode) == S_IFREG) {
 			if (owner) {	/* setup for archive: effective */
-				if (Effect != sb.st_uid)
-					noPERM(name);
+				uid = Effect;
 			} else {	/* setup for working: real */
-				if (Caller != sb.st_uid)
-					noPERM(name);
+				uid = Caller;
 			}
+			permit(name, &sb, uid);
 			return (sb.st_mtime);
 		}
 		TELL ("** ignored (not a file)\n");
@@ -241,10 +262,19 @@ int	owner;			/* TRUE if euid, FALSE if uid */
 	}
 	if (!owner) {
 		name = pathhead(name, &sb);
-		if (Caller != sb.st_uid)
-			noPERM(name);
+		if (access(name, W_OK) < 0)
+			permit(name, &sb, uid);
 	}
 	return (TRUE);	/* file was not already checked out */
+}
+
+static
+permit(name, sb_, uid)
+char		*name;
+struct	stat	*sb_;
+{
+	if (uid != sb_->st_uid)
+		noPERM(name);
 }
 
 #include <errno.h>
@@ -317,6 +347,8 @@ char	*argv[];
 	*options = EOS;
 	Caller = getuid();
 	Effect = geteuid();
+	if (Caller != Effect)
+		catchall(cleanup);
 
 	for (j = 1; j < argc; j++) {
 		s = argv[j];
