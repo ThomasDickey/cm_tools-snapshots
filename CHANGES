@@ -1,3 +1,13 @@
+2000-01-24  Thomas E. Dickey  <dickey@clark.net>
+
+	* aclocal.m4: resync with my-autoconf
+
+	* src/checkup/src/checkup.c: use DirentT and Stat_t
+
+1999-11-30  Thomas E. Dickey  <dickey@clark.net>
+
+	* mkdirs.sh: update for OS/2
+
 1999-06-27  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/link2rcs/test/case1.ref: add SCCS test-case

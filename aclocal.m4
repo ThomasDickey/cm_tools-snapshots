@@ -1,4 +1,4 @@
-dnl $Id: aclocal.m4,v 11.1 1997/09/13 16:07:27 tom Exp $
+dnl $Id: aclocal.m4,v 11.2 2000/01/24 12:10:32 tom Exp $
 dnl Macros for CM_TOOLS configure script.
 dnl ---------------------------------------------------------------------------
 dnl ---------------------------------------------------------------------------
@@ -17,14 +17,14 @@ done
 dnl ---------------------------------------------------------------------------
 dnl Allow user to disable a normally-on option.
 AC_DEFUN([CF_ARG_DISABLE],
-[CF_ARG_OPTION($1,[$2 (default: on)],[$3],[$4],yes)])dnl
+[CF_ARG_OPTION($1,[$2],[$3],[$4],yes)])dnl
 dnl ---------------------------------------------------------------------------
 dnl Restricted form of AC_ARG_ENABLE that ensures user doesn't give bogus
 dnl values.
 dnl
 dnl Parameters:
 dnl $1 = option name
-dnl $2 = help-string 
+dnl $2 = help-string
 dnl $3 = action to perform if option is not default
 dnl $4 = action if perform if option is default
 dnl $5 = default option value (either 'yes' or 'no')
@@ -44,7 +44,7 @@ dnl Check if we're accidentally using a cache from a different machine.
 dnl Derive the system name, as a check for reusing the autoconf cache.
 dnl
 dnl If we've packaged config.guess and config.sub, run that (since it does a
-dnl better job than uname). 
+dnl better job than uname).
 AC_DEFUN([CF_CHECK_CACHE],
 [
 if test -f $srcdir/config.guess ; then
@@ -63,7 +63,7 @@ test -z "$system_name" && system_name="$cf_cv_system_name"
 test -n "$cf_cv_system_name" && AC_MSG_RESULT("Configuring for $cf_cv_system_name")
 
 if test ".$system_name" != ".$cf_cv_system_name" ; then
-	AC_MSG_RESULT("Cached system name does not agree with actual")
+	AC_MSG_RESULT(Cached system name ($system_name) does not agree with actual ($cf_cv_system_name))
 	AC_ERROR("Please remove config.cache and try again.")
 fi
 ])dnl
@@ -80,7 +80,7 @@ dnl
 AC_DEFUN([CF_DISABLE_ECHO],[
 AC_MSG_CHECKING(if you want to see long compiling messages)
 CF_ARG_DISABLE(echo,
-	[  --disable-echo          test: display \"compiling\" commands],
+	[  --disable-echo          display "compiling" commands],
 	[
     ECHO_LD='@echo linking [$]@;'
     RULE_CC='	@echo compiling [$]<'
@@ -139,6 +139,11 @@ AC_DEFUN([CF_FIND_LIBRARY],
 if test $cf_cv_have_lib_$1 = no ; then
 	AC_ERROR(Cannot link $1 library)
 fi
+case $host_os in #(vi
+linux*) # Suse Linux does not follow /usr/lib convention
+	LIBS="$LIBS -L/lib"
+	;;
+esac
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl Locate TD_LIB, which is either installed, with headers, library and
@@ -217,6 +222,7 @@ test "$prefix" != NONE           && $1="[$]$1 $prefix/include $prefix/include/$2
 fi
 test "$prefix" != /usr/local     && $1="[$]$1 /usr/local/include /usr/local/include/$2"
 test "$prefix" != /usr           && $1="[$]$1 /usr/include /usr/include/$2"
+test "$prefix" != /opt           && $1="[$]$1 /opt/include /opt/include/$2"
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl Construct a search-list for a nonstandard library-file
@@ -234,6 +240,7 @@ test "$prefix" != "$exec_prefix" && $1="[$]$1 $prefix/lib $prefix/lib/$2"
 fi
 test "$prefix" != /usr/local     && $1="[$]$1 /usr/local/lib /usr/local/lib/$2"
 test "$prefix" != /usr           && $1="[$]$1 /usr/lib /usr/lib/$2"
+test "$prefix" != /opt           && $1="[$]$1 /opt/lib /opt/lib/$2"
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl Check for the use of 'include' in 'make' (BSDI is a special case)
@@ -262,7 +269,7 @@ all :
 	@echo 'cf_make_include=\$(RESULT)'
 CF_EOF
 	cf_make_include=""
-	eval `cd $cf_dir && ${MAKE-make} 2>&AC_FD_CC | grep cf_make_include=OK`
+	eval `(cd $cf_dir && ${MAKE-make}) 2>&AC_FD_CC | grep cf_make_include=OK`
 	if test -n "$cf_make_include"; then
 		make_include_left="$cf_include"
 		make_include_quote="$cf_quote"
