@@ -1,3 +1,14 @@
+1988-05-20  dickey@software.org
+
+	* src/checkout/src/rcsget.sh: New file.
+
+	* src/checkin/src/Makefile: made standard productions.
+
+	* src/checkin/src/rcsput.sh: Moved TZ-set to 'rcsbase'.
+
+	* src/checkin/src/checkin.c:
+	Moved timezone-environment change here, so we can invoke module w/o script.
+
 1988-05-19  dickey@software.org
 
 	* src/checkin/src/rcsput.sh, src/checkin/src/checkin.c, src/checkin/src/Makefile:
