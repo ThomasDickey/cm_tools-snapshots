@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		24 Sep 1996, add '-U' option
  *		25 Aug 1996, fix conflict between -l, -u options
  *		28 Jan 1995, retain 's' modes on destination directory.
  *		18 Jun 1994, removed 'S' setuid option.  Corrected test for
@@ -106,7 +107,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.19 1996/08/25 17:48:43 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.20 1996/09/24 20:48:52 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -142,6 +143,7 @@ static	int	d_opt,		/* obtain source from destination arg */
 		n_opt,		/* true if we don't actually do copies */
 		s_opt,		/* enable set-uid/gid in target files */
 		u_opt,		/* update-only */
+		U_opt,		/* update-only (newer files only) */
 		v_opt;		/* verbose */
 
 /************************************************************************
@@ -650,7 +652,7 @@ int	copyit(
 				src, dst);
 			return FALSE;
 		}
-		if (u_opt) {
+		if (u_opt || U_opt) {
 #ifdef	S_IFLNK
 			if (!l_opt) {
 				lstat(bfr1, &src_sb);
@@ -671,6 +673,10 @@ int	copyit(
 					src_sb.st_mtime &= ~1L;
 				}
 #endif
+				if (U_opt
+				 && (src_sb.st_mtime < dst_sb.st_mtime))
+					return FALSE;
+
 				if ((src_sb.st_size  == dst_sb.st_size)
 				 && (src_sb.st_mtime == dst_sb.st_mtime))
 					return FALSE;
@@ -684,7 +690,7 @@ int	copyit(
 		}
 	}
 #ifdef	S_IFLNK
-	else if (u_opt) {
+	else if (u_opt || U_opt) {
 		if (!l_opt) {
 			lstat(bfr1, &src_sb);
 			lstat(bfr2, &dst_sb);
@@ -826,6 +832,7 @@ void	usage(_AR0)
 ,"  -n      no-op (show what would be copied)"
 ,"  -s      enable set-uid/gid in target"
 ,"  -u      update-only (copies only new files or those differing in size or date)"
+,"  -U      update-only (copies only newer files)"
 ,"  -v      verbose"
 #if	DOS_VISIBLE
 ,"  -S      source is MSDOS"
@@ -984,7 +991,7 @@ _MAIN
 {
 	register int	j;
 
-	while ((j = getopt(argc, argv, "dfilmnsuvSDF:")) != EOF) switch (j) {
+	while ((j = getopt(argc, argv, "dfilmnsuUvSDF:")) != EOF) switch (j) {
 	case 'd':	d_opt = TRUE;	break;
 	case 'f':	f_opt = TRUE;	break;
 	case 'i':	i_opt = TRUE;	break;
@@ -995,6 +1002,7 @@ _MAIN
 	case 'n':	n_opt = TRUE;	break;
 	case 's':	s_opt = TRUE;	break;
 	case 'u':	u_opt = TRUE;	break;
+	case 'U':	U_opt = TRUE;	break;
 	case 'v':	v_opt++;	break;
 #if	DOS_VISIBLE
 	case 'S':	src_type = MsDos;		break;
