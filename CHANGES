@@ -1,3 +1,212 @@
+1989-06-16  dickey@software.org
+
+	* src/baseline/test/run_test.sh:
+	revise PATH to run from test-versions before installed versions.
+
+1989-06-16  ste_cm@software.org
+
+	* src/baseline/test/run_test.sh:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/baseline/test/run_test.sh:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/baseline/test/run_test.sh: BASELINE Mon Jun 19 13:04:14 EDT 1989
+
+	* src/baseline/test/run_test.sh:
+	BASELINE Thu Aug 24 09:21:12 EDT 1989 -- support:navi_011(rel2)
+
+	* src/baseline/test/run_test.sh:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-06-16  dickey@software.org
+
+	* src/permit/src/permit.c:
+	corrected copy to 'm_buffer[]'; removed redundant 'failed()'.
+
+1989-06-16  ste_cm@software.org
+
+	* src/permit/src/permit.c: BASELINE Mon Jun 19 14:49:13 EDT 1989
+
+1989-06-15  dickey@software.org
+
+	* user/ded.doc: documented CTL/R command
+
+1989-06-15  ste_cm@software.org
+
+	* user/ded.doc: BASELINE Mon Jun 19 15:30:29 EDT 1989
+
+	* user/ded.doc:
+	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
+
+1989-06-15  dickey@software.org
+
+	* user/permit.doc: documented -m option
+
+1989-06-15  ste_cm@software.org
+
+	* user/permit.doc:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* user/permit.doc: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* user/permit.doc:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* user/permit.doc: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* user/permit.doc: BASELINE Mon Jun 19 15:30:29 EDT 1989
+
+	* user/permit.doc:
+	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
+
+	* user/permit.doc:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-06-15  dickey@software.org
+
+	* user/baseline.doc: documented new options for baseline: -m, -n, -r
+
+1989-06-15  ste_cm@software.org
+
+	* user/baseline.doc: BASELINE Mon Jun 19 15:30:29 EDT 1989
+
+	* user/baseline.doc:
+	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
+
+1989-06-15  dickey@software.org
+
+	* user/rcsput.doc: resaved in TPS 4.0; refiltered with DDIF
+
+1989-06-15  ste_cm@software.org
+
+	* user/rcsput.doc: BASELINE Mon Jun 19 15:30:29 EDT 1989
+
+	* user/rcsput.doc:
+	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
+
+1989-06-15  dickey@software.org
+
+	* user/rcsget.doc: resaved in TPS 4.0; refiltered with DDIF
+
+1989-06-15  ste_cm@software.org
+
+	* user/rcsget.doc: BASELINE Mon Jun 19 15:30:29 EDT 1989
+
+	* user/rcsget.doc:
+	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
+
+1989-06-15  dickey@software.org
+
+	* user/permit.doc, user/link2rcs.doc:
+	resaved in TPS 4.0; refiltered with DDIF
+
+1989-06-15  ste_cm@software.org
+
+	* user/link2rcs.doc:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* user/link2rcs.doc: BASELINE Mon Jun 19 15:30:29 EDT 1989
+
+	* user/link2rcs.doc:
+	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
+
+1989-06-15  dickey@software.org
+
+	* user/ded.doc, user/copy.doc: resaved in TPS 4.0; refiltered with DDIF
+
+1989-06-15  ste_cm@software.org
+
+	* user/copy.doc:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* user/copy.doc: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* user/copy.doc: BASELINE Mon Jun 19 15:30:29 EDT 1989
+
+	* user/copy.doc:
+	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
+
+	* user/copy.doc:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-06-15  dickey@software.org
+
+	* user/checkup.doc: resaved in TPS 4.0; refiltered with DDIF
+
+1989-06-15  ste_cm@software.org
+
+	* user/checkup.doc: BASELINE Mon Jun 19 15:30:29 EDT 1989
+
+1989-06-15  dickey@software.org
+
+	* user/checkout.doc: resaved in TPS 4.0; refiltered with DDIF
+
+1989-06-15  ste_cm@software.org
+
+	* user/checkout.doc:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* user/checkout.doc: BASELINE Mon Jun 19 15:30:29 EDT 1989
+
+	* user/checkout.doc:
+	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
+
+	* user/checkout.doc:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-06-15  dickey@software.org
+
+	* user/checkin.doc: resaved in TPS 4.0; refiltered with DDIF
+
+1989-06-15  ste_cm@software.org
+
+	* user/checkin.doc:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* user/checkin.doc: BASELINE Mon Jun 19 15:30:29 EDT 1989
+
+	* user/checkin.doc:
+	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
+
+	* user/checkin.doc:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-06-15  dickey@software.org
+
+	* user/baseline.doc: resaved in TPS 4.0; refiltered with DDIF
+
+	* src/baseline/src/baseline.sh:
+	make -m argument identical for permit and checkin (requires new
+	version of permit).
+
+1989-06-15  ste_cm@software.org
+
+	* src/baseline/src/baseline.sh: BASELINE Mon Jun 19 13:02:34 EDT 1989
+
+	* src/baseline/src/baseline.sh:
+	BASELINE Thu Aug 24 09:20:00 EDT 1989 -- support:navi_011(rel2)
+
+1989-06-14  dickey@software.org
+
+	* user/baseline.doc, user/rcsput.doc, user/rcsget.doc, user/permit.doc, user/link2rcs.doc, user/copy.doc, user/checkup.doc, user/checkout.doc, user/checkin.doc, user/ded.doc:
+	filtered with DDIF (removed revision bars, sorted cmds)
+
+	* user/Makefile: corrected destroy/clobber/clean rules
+
+1989-06-14  ste_cm@software.org
+
+	* user/Makefile: BASELINE Mon Jun 19 15:30:29 EDT 1989
+
+1989-06-13  dickey@software.org
+
+	* src/permit/src/permit.c:
+	added -m option to allow override of BASELINE rlog-message
+	restructured usage-code to make it faster
+
+	* src/baseline/src/baseline.sh:
+	added -m, -n, -r options as well as expanded usage-message
+
 1989-05-11  dickey@software.org
 
 	* certify/config.txt: notes about PORTUNIX and VMS-usage

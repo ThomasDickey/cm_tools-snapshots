@@ -1,20 +1,21 @@
-<!OPS, Version = 5.2>
+<!OPS, Version = 6.4>
 
 <!Document,
-	Final Output Device =	"cx",
-	Default Printer =	"cx">
+	Default Printer	="cx",
+	Final Output Device	="cx">
 
 <!Font Definitions,
-	F27 = Classic 10,
-	F30 = Classic 12,
-	F21 = Typewriter 10,
-	F34 = Classic 14 Bold,
-	F31 = Classic 12 Bold,
-	F32 = Classic 12 Italic,
-	F6 = Symbols 12,
-	F22 = Typewriter 12,
-	F50 = Modern 12 Bold,
-	F49 = Modern 12>
+	F21	=Typewriter 10,
+	F22	=Typewriter 12,
+	F27	=Classic 10,
+	F30	=Classic 12,
+	F31	=Classic 12 Bold,
+	F32	=Classic 12 Italic,
+	F34	=Classic 14 Bold,
+	F49	=Modern 12,
+	F50	=Modern 12 Bold,
+	F6	=Symbols 12,
+	F84	=Thames 10>
 
 <!Page,
 	Starting Page # = 	Inherit>
@@ -24,180 +25,180 @@
 <!Autonumber Stream, Outline, 3>
 
 <!Autonumber Stream, section, 2,
-	Level 1 Suffix =	,
-	Level 2 Prefix =	.,
-	Level 2 Suffix =	>
+	Level 1 Suffix	=,
+	Level 2 Prefix	=.,
+	Level 2 Suffix	=>
 
 <!Class, bullet,
-	Top Margin =		0.083 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		0.50 inches,
-	First Indent =		-0.25 inches,
-	Font =			F30>
+	Bottom Margin	=0 Inches,
+	First Indent	=-0.25 Inches,
+	Font	=F30,
+	Left Margin	=0.50 Inches,
+	Top Margin	=0.083 Inches>
 
 <!Class, caption,
-	Top Margin =		0.07 inches,
-	Bottom Margin =		0.07 inches,
-	Line Spacing =		1.100 lines,
-	Font =			F30>
+	Bottom Margin	=0.07 Inches,
+	Font	=F30,
+	Line Spacing	=1.100 Lines,
+	Top Margin	=0.07 Inches>
 
 <!Class, fixed,
-	Top Margin =		0.083 inches,
-	Bottom Margin =		0.083 inches,
-	Left Margin =		0.50 inches,
-	Right Margin =		-1 inches,
-	Line Spacing =		1.308 lines,
-	Alignment =		Left,
-	Font =			F21,
-	Hyphenation =		off,
-	Allow Page Break Within = no,
-	Left Tab =		0/0.64*10 inches>
+	Alignment	=Left,
+	Allow Page Break Within	=No,
+	Bottom Margin	=0.083 Inches,
+	Font	=F21,
+	Hyphenation	=Off,
+	Left Margin	=0.50 Inches,
+	Left Tab	=0/0.64*10 Inches,
+	Line Spacing	=1.308 Lines,
+	Right Margin	=-1 Inches,
+	Top Margin	=0.083 Inches>
 
 <!Class, footnote,
-	Top Margin =		0.07 inches,
-	Bottom Margin =		0.07 inches,
-	Left Margin =		0.25 inches,
-	First Indent =		-0.25 inches,
-	Line Spacing =		1.100 lines,
-	Font =			F30>
+	Bottom Margin	=0.07 Inches,
+	First Indent	=-0.25 Inches,
+	Font	=F30,
+	Left Margin	=0.25 Inches,
+	Line Spacing	=1.100 Lines,
+	Top Margin	=0.07 Inches>
 
 <!Class, header,
-	Top Margin =		0.193 inches,
-	Bottom Margin =		0 inches,
-	Alignment =		Left,
-	Font =			F34,
-	Allow Page Break Within = no,
-	Allow Page Break After = no>
+	Alignment	=Left,
+	Allow Page Break After	=No,
+	Allow Page Break Within	=No,
+	Bottom Margin	=0 Inches,
+	Font	=F34,
+	Top Margin	=0.193 Inches>
 
 <!Class, options,
-	Top Margin =		0.042 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		1.50 inches,
-	First Indent =		-1 inches,
-	Font =			F30,
-	Hyphenation =		off,
-	Allow Page Break Within = no,
-	Left Tab =		0/0.75/1.50 inches>
+	Allow Page Break Within	=No,
+	Bottom Margin	=0 Inches,
+	First Indent	=-1 Inches,
+	Font	=F30,
+	Hyphenation	=Off,
+	Left Margin	=1.50 Inches,
+	Left Tab	=0/0.75/1.50 Inches,
+	Top Margin	=0.042 Inches>
 
 <!Class, paragraph,
-	Top Margin =		0.083 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		0.25 inches,
-	Font =			F30>
+	Bottom Margin	=0 Inches,
+	Font	=F30,
+	Left Margin	=0.25 Inches,
+	Top Margin	=0.083 Inches>
 
 <!Class, subheader,
-	Top Margin =		0.097 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		0.25 inches,
-	Alignment =		Left,
-	Font =			F31,
-	Allow Page Break Within = no,
-	Allow Page Break After = no>
+	Alignment	=Left,
+	Allow Page Break After	=No,
+	Allow Page Break Within	=No,
+	Bottom Margin	=0 Inches,
+	Font	=F31,
+	Left Margin	=0.25 Inches,
+	Top Margin	=0.097 Inches>
 
 <!Class, suboption,
-	Top Margin =		0.042 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		2.50 inches,
-	First Indent =		-1 inches,
-	Font =			F30,
-	Hyphenation =		off,
-	Allow Page Break Within = no,
-	Left Tab =		0/0.75/1.50 inches>
+	Allow Page Break Within	=No,
+	Bottom Margin	=0 Inches,
+	First Indent	=-1 Inches,
+	Font	=F30,
+	Hyphenation	=Off,
+	Left Margin	=2.50 Inches,
+	Left Tab	=0/0.75/1.50 Inches,
+	Top Margin	=0.042 Inches>
 
 <!Master Frame,
 	Name =			"At Anchor",
 	Placement =		At Anchor,
-	Width =			0.41 inches,
-	Height =		0.137 inches,
-	Vertical Alignment =	0.03 inches,
+	Vertical Alignment =	Bottom + 0.03 Inches,
+	Width =			0.41 Inches,
+	Height =		0.137 Inches,
 	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
-
-<!Master Frame,
-	Name =			Bottom,
-	Placement =		Bottom of Page,
-	Horizontal Alignment =	Center,
-	Width =			5.70 inches,
-	Height =		2.85 inches,
-	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+V6,
+(g9,0,0
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 
 <!Master Frame,
 	Name =			"Following Anchor",
 	Placement =		Following Anchor,
 	Horizontal Alignment =	Center,
-	Width =			5.70 inches,
-	Height =		2.85 inches,
+	Width =			5.70 Inches,
+	Height =		2.85 Inches,
 	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+V6,
+(g9,0,0
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 
 <!Master Frame,
 	Name =			"Following Text",
 	Placement =		Following Text,
 	Horizontal Alignment =	Center,
-	Width =			5.70 inches,
-	Height =		2.85 inches,
+	Width =			5.70 Inches,
+	Height =		2.85 Inches,
 	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+V6,
+(g9,0,0
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
+
+<!Master Frame,
+	Name =			Bottom,
+	Placement =		Bottom Of Page,
+	Horizontal Alignment =	Center,
+	Width =			5.70 Inches,
+	Height =		2.85 Inches,
+	Diagram =
+V6,
+(g9,0,0
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 
 <!Master Frame,
 	Name =			Footnote,
-	Placement =		Bottom of Page,
+	Placement =		Bottom Of Page,
 	Horizontal Alignment =	Left,
-	Same Page =		yes,
-	Width =			5.70 inches,
-	Height =		0.204 inches,
+	Same Page =		Yes,
+	Width =			5.70 Inches,
+	Height =		0.204 Inches,
 	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+V6,
+(g9,0,0
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 
 <!Master Frame,
 	Name =			Top,
-	Placement =		Top of Page,
+	Placement =		Top Of Page,
 	Horizontal Alignment =	Center,
-	Width =			5.70 inches,
-	Height =		2.85 inches,
+	Width =			5.70 Inches,
+	Height =		2.85 Inches,
 	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+V6,
+(g9,0,0
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 
 <Page Header, Frame =
-V4,
+V6,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,April\ 3\,\ 1989)
- (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,Directory\ Editor)
- (t8,3,4,0,0.438782,0,17,@nnclas12b,ded)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,June\ 15\,\ 1989)
+ (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,Directory\ Editor)
+ (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,ded)
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,1,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 
 <Page Footer, Frame =
-V4,
+V6,
 (g9,1,0
- (t8,1,4,5.698608,0.478772,2,17,@nnclas10,)
- (t8,2,4,2.849304,0.478772,1,17,@nnclas12b,-\ \240\ -)
- (t8,3,4,0,0.478772,0,17,@nnclas10,)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (t14,1,4,5.698608,0.478772,2,7,0,0,,wst:clas10,)
+ (t14,2,4,2.849304,0.478772,1,7,0,0,,wst:clas12b,-\ \X80a0\ -)
+ (t14,3,4,0,0.478772,0,7,0,0,,wst:clas10,)
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 
 <header>
 
-<|,25>NAME
+NAME
 
 <paragraph>
 
@@ -271,7 +272,7 @@ include:
 
 <options>
 
-<|,26>-<F31>G<F0><Tab>toggle user/group display field (initially 
+-<F31>G<F0><Tab>toggle user/group display field (initially 
 displays user-identifiers).
 
 -<F31>I<F0><Tab>toggle inode/links display field (initially displays 
@@ -283,9 +284,9 @@ file protection in <F31>ls<F0>-style).
 -<F31>S<F0><Tab>toggle file size (in blocks) display field (normally 
 displays only the size in bytes).
 
-<F30@R>-<F31@R>c<F30@R> <F32@R>filename<F30@R><Tab>read user commands from the 
+-<F31>c<F0> <F32>filename<F0><Tab>read user commands from the 
 specified file.  The commands are assumed to be in the same format 
-as the logfile generated with the <#7f>-<F31@R>l<F30@R>" option.  Subprocesses 
+as the logfile generated with the <#7f>-<F31>l<F0>" option.  Subprocesses 
 do not (currently) inherit this option.
 
 -<F31>l<F0> <F32>filename<F0><Tab>log user commands (and <F31>ded<F0> 
@@ -335,7 +336,7 @@ working directory, <#7f>.".
 If more than one file specification argument is given, <F31>ded<F0> 
 changes its working directory to the most common pathname among the 
 arguments.  
-<|,27>Note that if you give <F31>ded<F0> a wildcard argument such 
+Note that if you give <F31>ded<F0> a wildcard argument such 
 as <#7f>d*", then the <F30@U>shell<F0> performs wildcard expansion, 
 not <F31>ded<F0>.
 
@@ -411,7 +412,7 @@ and <F32>right-arrow<F0> keys scroll the screen left and right, respectively.
 <F6>S<F0><Tab>Movement in the directory tree is two-dimensional.  
 You may move the cursor left or right (up or down levels of the directory 
 tree) or up or 
-<|,28>down (to different directory names).  The screen display of 
+down (to different directory names).  The screen display of 
 the directory tree has markers (vertical bars or dashes) showing where 
 you are allowed to put the cursor.  Vertical movement is normally 
 within items at the same directory level.  You may move from one line 
@@ -488,7 +489,7 @@ following search commands are provided a la <F31>vi<F0>:
 
 <options>
 
-<|,29><F31>/<F0><Tab><F31>Ded<F0> will prompt you for a regular 
+<F31>/<F0><Tab><F31>Ded<F0> will prompt you for a regular 
 expression.  If you give it one, it will search forward (with wrap-around) 
 for it.  A return without text will cancel the search.
 
@@ -549,9 +550,14 @@ scrolling sense, but have an independent notion of the current file.
 
 <F32>tab<F0><Tab>moves the cursor to the other viewport.
 
-<|,30><F31>A<F0><Tab>move workspace marker up <F32>count<F0> line(s).
+<F31>A<F0><Tab>move workspace marker up <F32>count<F0> line(s).
 
 <F31>a<F0><Tab>move workspace marker down <F32>count<F0> line(s).
+
+<F32>CTL/R<F0><Tab>causes <F31>ded<F0> to prompt you for a regular 
+expression (see <F32>ex(1)<F0>) which will control the set of files 
+subsequently shown in the current file-list.  <F31>Ded<F0> then rescans 
+the current directory, adjusting the file-list.
 
 <F31>R<F0><Tab>re-scan argument list (refresh).  This clears file 
 grouping, re-reads all of the directories specified in the argument 
@@ -609,7 +615,7 @@ are always a single character:
 
 <F31>c<F0><Tab>last-change date
 
-<|,31><F31>d<F0><Tab>directory-order (i.e., order in which items 
+<F31>d<F0><Tab>directory-order (i.e., order in which items 
 were read from the directory)
 
 <F31>g<F0><Tab>group-identifier (lexically)
@@ -679,7 +685,7 @@ Grouped items are highlighted in the display.
 
 <F31>_<F0><Tab>Remove all entries from the <F32>group<F0>.
 
-<|,32><F31>#<F0><Tab>Tags all files which are currently sorted adjacent 
+<F31>#<F0><Tab>Tags all files which are currently sorted adjacent 
 in the file list, which have the same sort-key.  For instance, if 
 the list is sorted by modification date, the <#7f><F31>#<F0>" command 
 tags all files which have the same modification date as any neighbor.
@@ -750,7 +756,7 @@ for all selected entries.  Editing is done with single characters:
 
 <suboption>
 
-<|,33><F31>p<F0><Tab>complete command
+<F31>p<F0><Tab>complete command
 
 <F31>q<F0><Tab>abort command
 
@@ -804,7 +810,7 @@ for inline editors).
 
 <subheader>
 
-<|,34>Creating New Entries
+Creating New Entries
 
 <paragraph>
 
@@ -876,7 +882,7 @@ text with highlighting.  (<F31>Ded<F0> interprets <F32>backspaces<F0>
 and <F32>returns<F0> in text files).  You may scroll left or right 
 in the pager to see very long lines.
 
-<|,35><F6>S<F0><Tab>When displaying binary files, <F31>ded<F0> 
+<F6>S<F0><Tab>When displaying binary files, <F31>ded<F0> 
 shows control characters as <#7f>.".  Non-ASCII characters (i.e., 
 having the high-order bit set) are converted to ASCII (by stripping 
 this bit) and shown highlighted.
@@ -954,7 +960,7 @@ command.
 
 <subheader>
 
-<|,36>Command Substitution
+Command Substitution
 
 <paragraph>
 
@@ -979,21 +985,23 @@ which <F31>ded<F0> was invoked.
 
 <F31>d<F0><Tab>substitutes the name of the current directory.
 
-<F31>n<F0> or <F31>N<F0><Tab>substitutes the name of the current 
-file
+<F31>n<F0> or <F31>N<F0><Tab>substitutes the name of the current file
 <Frame,
 	Name =			Footnote,
-	Placement =		Bottom of Page,
+	Placement =		Bottom Of Page,
 	Horizontal Alignment =	Left,
-	Same Page =		yes,
-	Width =			5.70 inches,
-	Height =		0.65 inches,
-	Page # =		36,
+	Same Page =		Yes,
+	Width =			5.70 Inches,
+	Height =		0.65 Inches,
+	Page # =		12,
 	Diagram =
-V4,
+V6,
 (g9,1,0
- (T8,1,12,0.066667,0.066667,5.546669,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
-  ,512,102,1101,3,
+ (T12,1,12,0.066667,0.066667,5,127,5,7,127,8,0,3,
+<!Page,
+	Height	=0.35 Inches,
+	Revision Bar Placement	=Left,
+	Width	=5.547 Inches>
 <footnote>
 
 <F6>[<F0><Tab>The <F31>N<F0>, <F31>H<F0>, <F31>R<F0> and <F31>E<F0> 
@@ -1001,9 +1009,9 @@ substitutions are performed after concatenating the current filename
 with the current directory, to make an absolute pathname.
 
 <End Text>)
- (v4,2,0,-0.066667,0,0.933333,0,17,1,0)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (v6,2,0,-0.066667,0,0.933333,0,7,0,8,0)
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 <F6>[<F0>.
 
 <F31>h<F0> or <F31>H<F0><Tab>substitutes the name of the current 
@@ -1047,7 +1055,7 @@ in cursor mode.
 wraparound) as long as space remains in the workspace to enter new 
 command text.
 
-<|,37><F6>S<F0><Tab>A <F32>kill<F0> character in <F31>insert<F0> 
+<F6>S<F0><Tab>A <F32>kill<F0> character in <F31>insert<F0> 
 mode aborts the command.  In <F31>cursor<F0> mode, it deletes the <F32>count
 <F0> characters at the cursor position.
 
@@ -1121,7 +1129,7 @@ always attempts to resolve symbolic links to directories.
 
 <F31>+<F0><Tab>Mark directory name for removal from database.
 
-<|,38><F31>-<F0><Tab>Unmark directory name.
+<F31>-<F0><Tab>Unmark directory name.
 
 <F31>_<F0><Tab>Clear list of marked names.
 
@@ -1196,34 +1204,36 @@ The following file list commands are used for archive display:
 
 <F31>V<F0><Tab>toggle version display.
 
-<|,39><F31>Y<F0><Tab>toggle display showing the owner of the current 
-lock on the file.  <F31>Ded<F0> examines the <F32>rcs<F0> archive 
-file to see if there are any locks on it.  If so, it displays the 
-name of the first lock-owner
+<F31>Y<F0><Tab>toggle display showing the owner of the current lock 
+on the file.  <F31>Ded<F0> examines the <F32>rcs<F0> archive file 
+to see if there are any locks on it.  If so, it displays the name 
+of the first lock-owner
 <Frame,
 	Name =			Footnote,
-	Placement =		Bottom of Page,
+	Placement =		Bottom Of Page,
 	Horizontal Alignment =	Left,
-	Same Page =		yes,
-	Width =			5.70 inches,
-	Height =		0.417 inches,
-	Page # =		39,
+	Same Page =		Yes,
+	Width =			5.70 Inches,
+	Height =		0.417 Inches,
+	Page # =		14,
 	Diagram =
-V4,
+V6,
 (g9,1,0
- (T8,1,12,0.066667,0.066667,5.546669,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
-  ,512,102,1101,3,
-<footnote,
-	Font =			F30@R>
+ (T12,1,12,0.066667,0.066667,5,127,5,7,127,8,0,3,
+<!Page,
+	Height	=0.35 Inches,
+	Revision Bar Placement	=Left,
+	Width	=5.547 Inches>
+<footnote>
 
-<F6>[<F30><Tab><F31>Ded<F30> does not currently examine the <F32>sccs<F30> 
+<F6>[<F0><Tab><F31>Ded<F0> does not currently examine the <F32>sccs<F0> 
 <#7f>p." file to find a corresponding lock.  It displays a <#7f>?" 
 for this case.
 
 <End Text>)
- (v4,2,0,-0.033333,0,0.966667,0,17,1,0)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (v6,2,0,-0.033333,0,0.966667,0,7,0,8,0)
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 <F6>[<F0>.
 
 <F31>Z<F0><Tab>toggle check-in date display.  The date display has 
@@ -1271,7 +1281,7 @@ current working directory, etc., e.g.,
 
 <fixed>
 
-<|,40><Tab># process 1417 begun at Thu Mar 16 09:51:11 1989<HR>
+<Tab># process 1417 begun at Thu Mar 16 09:51:11 1989<HR>
 <Tab># argv[0] = 'ded'<HR>
 <Tab># argv[1] = '-lz'<HR>
 1D<Tab># path: //dickey/local/dickey<HR>
@@ -1336,7 +1346,7 @@ Under Apollo SR9, there are two serious unix incompatibilities which <F31>ded
 <F0> addresses: file modification dates and case-sensitivity in file 
 names.  When you use <F31>ded<F0>'s built-in commands (e.g., <#7f><F31>p<F0>"
 , <#7f><F31>u<F0>" and <#7f><F31>g<F0>"), <F31>ded<F0> replaces 
-<|,41>the original file modification date since the Apollo <F32>chmod<F0> 
+the original file modification date since the Apollo <F32>chmod<F0> 
 and <F32>chown<F0> system calls merge the change- and modification-dates.
 
 Case-sensitivity in file names is a more interesting problem.  DOMAIN/IX 
@@ -1358,28 +1368,31 @@ mode, uppercase characters are shown with a <#7f>:" prefix.
 waits until you have closed the pad before continuing
 <Frame,
 	Name =			Footnote,
-	Placement =		Bottom of Page,
+	Placement =		Bottom Of Page,
 	Horizontal Alignment =	Left,
-	Same Page =		yes,
-	Width =			5.70 inches,
-	Height =		0.667 inches,
-	Page # =		41,
+	Same Page =		Yes,
+	Width =			5.70 Inches,
+	Height =		0.667 Inches,
+	Page # =		16,
 	Diagram =
-V4,
+V6,
 (g9,1,0
- (T8,1,12,0.066667,0.12,5.546669,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048,512
-  ,102,1101,3,
+ (T12,1,12,0.066667,0.12,5,127,5,7,127,8,0,3,
+<!Page,
+	Height	=0.533 Inches,
+	Revision Bar Placement	=Left,
+	Width	=5.547 Inches>
 <footnote>
 
-<F6>[<F0><Tab>Due to a bug in the Apollo <F32>pad_$edit_wait<F0> 
-call, you cannot use the display manager RO command to toggle the 
-edit pad from read/write to read-only and back again <#1f> it works 
-only in one direction.
+<F6>[<F0><Tab>Due to a bug in the Apollo <F32>pad_$edit_wait<F0> call, 
+you cannot use the display manager RO command to toggle the edit pad 
+from read/write to read-only and back again <#1f> it works only in 
+one direction.
 
 <End Text>)
- (v4,2,0,-0.1,0,0.9,0,17,1,0)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,0,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (v6,2,0,-0.1,0,0.9,0,7,0,8,0)
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,0,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 <F6>[<F0>.
 
 <F32>CTL/V<F0><Tab>view the current file with the pad-editor.  <F31>Ded<F0> 
@@ -1425,7 +1438,7 @@ so that the help file can be found.
 <F49>EDITOR<F0><Tab>overrides default editor invoked by <#7f><F31>e<F0>" 
 command (<F31>vi<F0>)
 
-<|,42><F49>BROWSE<F0><Tab>overrides default browser invoked by <#7f><F31>v
+<F49>BROWSE<F0><Tab>overrides default browser invoked by <#7f><F31>v
 <F0>" command (view).
 
 <F49>PAGER<F0><Tab>overrides default pager invoked by <#7f><F31>m<F0>" 
@@ -1489,7 +1502,7 @@ so that shell commands need not use the Bourne shell.
 
 <header>
 
-<|,43>SEE ALSO
+SEE ALSO
 
 <paragraph>
 

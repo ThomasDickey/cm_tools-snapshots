@@ -1,14 +1,14 @@
-# $Header: /users/source/archives/cm_tools.vcs/user/RCS/Makefile,v 2.0 1989/03/29 08:25:03 ste_cm Exp $
+# $Header: /users/source/archives/cm_tools.vcs/user/RCS/Makefile,v 3.0 1989/06/14 07:39:45 ste_cm Rel $
 #
 # $Log: Makefile,v $
-# Revision 2.0  1989/03/29 08:25:03  ste_cm
-# BASELINE Thu Apr  6 14:48:29 EDT 1989
+# Revision 3.0  1989/06/14 07:39:45  ste_cm
+# BASELINE Mon Jun 19 15:30:29 EDT 1989
 #
-#	Revision 1.2  89/03/29  08:25:03  dickey
-#	don't remove ".doc" files, in 'clobber', but do remove non-archived stuff
+#	Revision 2.1  89/06/14  07:39:45  dickey
+#	corrected destroy/clobber/clean rules
 #	
-#	Revision 1.1  89/03/28  16:31:30  dickey
-#	RCS_BASE
+#	Revision 2.0  89/03/29  08:25:03  ste_cm
+#	BASELINE Thu Apr  6 14:48:29 EDT 1989
 #	
 
 ####### (Development) ##########################################################
@@ -43,9 +43,10 @@ SOURCES	=\
 
 ####### (Standard Productions) #################################################
 all:		; @echo '** use "make install"'
-clean:
-clobber:	clean	; rm -f *.doc_*
-destroy:	clobber	; rm -f *
+clean:			; rm -f *.doc_*
+clobber:	clean	; rm -f \$$*.doc_*
+destroy:
+	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done'
 run_tests:
 sources:	$(SOURCES)
 install:	$(ALL)

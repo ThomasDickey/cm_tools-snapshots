@@ -1,17 +1,18 @@
-<!OPS, Version = 5.2>
+<!OPS, Version = 6.4>
 
 <!Document,
-	Final Output Device =	"cx",
-	Default Printer =	"cx">
+	Default Printer	="cx",
+	Final Output Device	="cx">
 
 <!Font Definitions,
-	F27 = Classic 10,
-	F30 = Classic 12,
-	F21 = Typewriter 10,
-	F34 = Classic 14 Bold,
-	F31 = Classic 12 Bold,
-	F32 = Classic 12 Italic,
-	F49 = Modern 12>
+	F21	=Typewriter 10,
+	F27	=Classic 10,
+	F30	=Classic 12,
+	F31	=Classic 12 Bold,
+	F32	=Classic 12 Italic,
+	F34	=Classic 14 Bold,
+	F49	=Modern 12,
+	F84	=Thames 10>
 
 <!Page,
 	Starting Page # = 	Inherit>
@@ -19,191 +20,191 @@
 <!Autonumber Stream, List, 1>
 
 <!Autonumber Stream, Outline, 3,
-	Level 1 Symbol Type =	UPPER ROMAN,
-	Level 2 Symbol Type =	UPPER ALPHA>
+	Level 1 Symbol Type	=Upper Roman,
+	Level 2 Symbol Type	=Upper Alpha>
 
 <!Class, bullet,
-	Top Margin =		0.083 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		0.50 inches,
-	First Indent =		-0.25 inches,
-	Font =			F30>
+	Bottom Margin	=0 Inches,
+	First Indent	=-0.25 Inches,
+	Font	=F30,
+	Left Margin	=0.50 Inches,
+	Top Margin	=0.083 Inches>
 
 <!Class, caption,
-	Top Margin =		0.07 inches,
-	Bottom Margin =		0.07 inches,
-	Line Spacing =		1.100 lines,
-	Font =			F30>
+	Bottom Margin	=0.07 Inches,
+	Font	=F30,
+	Line Spacing	=1.100 Lines,
+	Top Margin	=0.07 Inches>
 
 <!Class, fixed,
-	Top Margin =		0.083 inches,
-	Bottom Margin =		0.083 inches,
-	Left Margin =		0.25 inches,
-	Right Margin =		-1 inches,
-	Line Spacing =		1.308 lines,
-	Alignment =		Left,
-	Font =			F21,
-	Hyphenation =		off,
-	Allow Page Break Within = no,
-	Left Tab =		0/0.64*10 inches>
+	Alignment	=Left,
+	Allow Page Break Within	=No,
+	Bottom Margin	=0.083 Inches,
+	Font	=F21,
+	Hyphenation	=Off,
+	Left Margin	=0.25 Inches,
+	Left Tab	=0/0.64*10 Inches,
+	Line Spacing	=1.308 Lines,
+	Right Margin	=-1 Inches,
+	Top Margin	=0.083 Inches>
 
 <!Class, footnote,
-	Top Margin =		0.07 inches,
-	Bottom Margin =		0.07 inches,
-	Left Margin =		0.25 inches,
-	First Indent =		-0.25 inches,
-	Line Spacing =		1.100 lines,
-	Font =			F30>
+	Bottom Margin	=0.07 Inches,
+	First Indent	=-0.25 Inches,
+	Font	=F30,
+	Left Margin	=0.25 Inches,
+	Line Spacing	=1.100 Lines,
+	Top Margin	=0.07 Inches>
 
 <!Class, header,
-	Top Margin =		0.193 inches,
-	Bottom Margin =		0 inches,
-	Alignment =		Left,
-	Font =			F34,
-	Allow Page Break Within = no,
-	Allow Page Break After = no>
+	Alignment	=Left,
+	Allow Page Break After	=No,
+	Allow Page Break Within	=No,
+	Bottom Margin	=0 Inches,
+	Font	=F34,
+	Top Margin	=0.193 Inches>
 
 <!Class, options,
-	Top Margin =		0.042 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		1.50 inches,
-	First Indent =		-1 inches,
-	Font =			F30,
-	Hyphenation =		off,
-	Allow Page Break Within = no,
-	Left Tab =		0/0.25 inches>
+	Allow Page Break Within	=No,
+	Bottom Margin	=0 Inches,
+	First Indent	=-1 Inches,
+	Font	=F30,
+	Hyphenation	=Off,
+	Left Margin	=1.50 Inches,
+	Left Tab	=0/0.25 Inches,
+	Top Margin	=0.042 Inches>
 
 <!Class, paragraph,
-	Top Margin =		0.083 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		0.25 inches,
-	Font =			F30>
+	Bottom Margin	=0 Inches,
+	Font	=F30,
+	Left Margin	=0.25 Inches,
+	Top Margin	=0.083 Inches>
 
 <!Class, subfixed,
-	Top Margin =		0.083 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		1.75 inches,
-	Right Margin =		-1 inches,
-	Line Spacing =		1.308 lines,
-	Alignment =		Left,
-	Font =			F21,
-	Hyphenation =		off,
-	Allow Page Break Within = no,
-	Left Tab =		0/0.64*10 inches>
+	Alignment	=Left,
+	Allow Page Break Within	=No,
+	Bottom Margin	=0 Inches,
+	Font	=F21,
+	Hyphenation	=Off,
+	Left Margin	=1.75 Inches,
+	Left Tab	=0/0.64*10 Inches,
+	Line Spacing	=1.308 Lines,
+	Right Margin	=-1 Inches,
+	Top Margin	=0.083 Inches>
 
 <!Class, subheader,
-	Top Margin =		0.097 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		0.25 inches,
-	Alignment =		Left,
-	Font =			F31,
-	Allow Page Break Within = no,
-	Allow Page Break After = no>
+	Alignment	=Left,
+	Allow Page Break After	=No,
+	Allow Page Break Within	=No,
+	Bottom Margin	=0 Inches,
+	Font	=F31,
+	Left Margin	=0.25 Inches,
+	Top Margin	=0.097 Inches>
 
 <!Class, suboption,
-	Top Margin =		0.042 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		2.50 inches,
-	First Indent =		-1 inches,
-	Font =			F30,
-	Hyphenation =		off,
-	Allow Page Break Within = no,
-	Left Tab =		0/0.75/1.50 inches>
+	Allow Page Break Within	=No,
+	Bottom Margin	=0 Inches,
+	First Indent	=-1 Inches,
+	Font	=F30,
+	Hyphenation	=Off,
+	Left Margin	=2.50 Inches,
+	Left Tab	=0/0.75/1.50 Inches,
+	Top Margin	=0.042 Inches>
 
 <!Master Frame,
 	Name =			"At Anchor",
 	Placement =		At Anchor,
-	Width =			0.41 inches,
-	Height =		0.137 inches,
-	Vertical Alignment =	0.03 inches,
+	Vertical Alignment =	Bottom + 0.03 Inches,
+	Width =			0.41 Inches,
+	Height =		0.137 Inches,
 	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
-
-<!Master Frame,
-	Name =			Bottom,
-	Placement =		Bottom of Page,
-	Horizontal Alignment =	Center,
-	Width =			5.70 inches,
-	Height =		2.85 inches,
-	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+V6,
+(g9,0,0
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
+  0.066667,6,6,0,0.066667,6))>
 
 <!Master Frame,
 	Name =			"Following Anchor",
 	Placement =		Following Anchor,
 	Horizontal Alignment =	Center,
-	Width =			5.70 inches,
-	Height =		2.85 inches,
+	Width =			5.70 Inches,
+	Height =		2.85 Inches,
 	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+V6,
+(g9,0,0
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
+  0.066667,6,6,0,0.066667,6))>
 
 <!Master Frame,
 	Name =			"Following Text",
 	Placement =		Following Text,
 	Horizontal Alignment =	Center,
-	Width =			5.70 inches,
-	Height =		2.85 inches,
+	Width =			5.70 Inches,
+	Height =		2.85 Inches,
 	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+V6,
+(g9,0,0
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
+  0.066667,6,6,0,0.066667,6))>
+
+<!Master Frame,
+	Name =			Bottom,
+	Placement =		Bottom Of Page,
+	Horizontal Alignment =	Center,
+	Width =			5.70 Inches,
+	Height =		2.85 Inches,
+	Diagram =
+V6,
+(g9,0,0
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
+  0.066667,6,6,0,0.066667,6))>
 
 <!Master Frame,
 	Name =			Footnote,
-	Placement =		Bottom of Page,
+	Placement =		Bottom Of Page,
 	Horizontal Alignment =	Left,
-	Same Page =		yes,
-	Width =			5.70 inches,
-	Height =		0.204 inches,
+	Same Page =		Yes,
+	Width =			5.70 Inches,
+	Height =		0.204 Inches,
 	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+V6,
+(g9,0,0
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
+  0.066667,6,6,0,0.066667,6))>
 
 <!Master Frame,
 	Name =			Top,
-	Placement =		Top of Page,
+	Placement =		Top Of Page,
 	Horizontal Alignment =	Center,
-	Width =			5.70 inches,
-	Height =		2.85 inches,
+	Width =			5.70 Inches,
+	Height =		2.85 Inches,
 	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+V6,
+(g9,0,0
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
+  0.066667,6,6,0,0.066667,6))>
 
 <Page Header, Frame =
-V4,
+V6,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,September\ 2\,\ 1988)
- (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ \177co"\ Package)
- (t8,3,4,0,0.438782,0,17,@nnclas12b,checkout)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,September\ 2\,\ 1988)
+ (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS\ \x7fco"\ Package)
+ (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,checkout)
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
+  0.066667,6,6,0,0.066667,6))>
 
 <Page Footer, Frame =
-V4,
+V6,
 (g9,1,0
- (t8,1,4,5.698608,0.478772,2,17,@nnclas10,)
- (t8,2,4,2.849304,0.478772,1,17,@nnclas12b,-\ \240\ -)
- (t8,3,4,0,0.478772,0,17,@nnclas10,)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (t14,1,4,5.698608,0.478772,2,7,0,0,,wst:clas10,)
+ (t14,2,4,2.849304,0.478772,1,7,0,0,,wst:clas12b,-\ \X80a0\ -)
+ (t14,3,4,0,0.478772,0,7,0,0,,wst:clas10,)
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 
 <header>
 
-<|,1>NAME
+NAME
 
 <paragraph>
 
@@ -242,16 +243,16 @@ the extracted version.
 
 <subheader>
 
-<F31@R>Set-UID Operation
+Set-UID Operation
 
 <paragraph>
 
-<F30@R>Like the <F31@R>checkin<F30@R> utility, <F31@R>checkout<F30@R> properly 
+Like the <F31>checkin<F0> utility, <F31>checkout<F0> properly 
 handles set-uid operation for a non-root effective user.  The archived 
 files are owned by the effective user, and the checked-out files are 
 owned by the real user.
 
-<F30@R>Note that since <F31@R>checkin<F30@R> initializes the access list 
+Note that since <F31>checkin<F0> initializes the access list 
 in the archive files, the real user must appear on the access list 
 to lock a file.  Of course, if no lock is made, then the user need 
 not be on the access list.
@@ -298,7 +299,7 @@ extracts the specified version from the <#7f>./RCS" directory.
 
 <header>
 
-<|,2>ENVIRONMENT
+ENVIRONMENT
 
 <paragraph>
 
@@ -309,10 +310,10 @@ file to determine the delta-date to use for the extracted file. Environment
 variables used by checkout include:
 
 <options,
-	Left Tab =		0/0.75/1.50 inches>
+	Left Tab =		0/0.75/1.50 Inches>
 
-<F49@R>RCS_DIR<F30@R><Tab>if defined, specifies the directory in which <F32@R>rcs
-<F30@R> archive files are found.  Normally files are found in <#7f>./RCS".
+<F49>RCS_DIR<F0><Tab>if defined, specifies the directory in which <F32>rcs
+<F0> archive files are found.  Normally files are found in <#7f>./RCS".
 
 <options>
 
@@ -338,9 +339,9 @@ ANTICIPATED CHANGES
 
 <paragraph>
 
-<F30@R>This does not handle <F32@R>rcs<F30@R> branches properly.
+This does not handle <F32>rcs<F0> branches properly.
 
-<F31@R>Checkout<F30@R> does not handle the <#7f>-j" option of <F31@R>co<F30@R>.
+<F31>Checkout<F0> does not handle the <#7f>-j" option of <F31>co<F0>.
 
 <header>
 
@@ -348,7 +349,7 @@ SEE ALSO
 
 <paragraph>
 
-<F30@R>checkin, rcsput, ded, ci<SP>(1), co<SP>(1)
+checkin, rcsput, ded, ci<SP>(1), co<SP>(1)
 
 <header>
 
