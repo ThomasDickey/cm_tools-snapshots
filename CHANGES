@@ -1,3 +1,31 @@
+1988-07-29  dickey@software.org
+
+	* src/checkout/src/Makefile: forgot 'rcsput.sh' in GET-list.
+
+	* src/checkout/src/Makefile: moved sccs stuff to 'getdelta' directory.
+
+	* src/checkin/src/Makefile: moved 'sccsput' to 'putdelta' directory.
+
+1988-07-08  dickey@software.org
+
+	* src/checkout/src/rcsget.sh: oops: forgot to allow option values!
+
+	* src/checkin/src/checkin.c:
+	corrected logic for "-q" option -- must feedthru to rcsedit properly.
+
+	* src/baseline/src/baseline.sh: New file.
+
+	* src/baseline/src/baseline.sh: sccs2rcs keywords
+
+1988-07-01  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	added code to use environment variable RCS_BASE to specify initial
+	value of revision code -- no effect on fully-specified codes.
+
+	* src/checkin/src/checkin.c:
+	do a 'chmod()' for the working file (sometimes 'ci' misses it).
+
 1988-06-13  dickey@software.org
 
 	* src/checkin/src/checkin.c:

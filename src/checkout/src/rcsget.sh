@@ -1,4 +1,4 @@
-: '@(#)rcsget.sh	1.3 88/06/10 14:28:47'
+: '@(#)rcsget.sh	1.4 88/07/08 10:29:09'
 # Check files out of RCS (T.E.Dickey)
 #
 # Use 'checkout' to checkout one or more files from the RCS-directory which is
@@ -22,8 +22,8 @@ OPTS=
 OPTS=
 for i in $*
 do	case $i in
-	-[lpqrcswj])	OPTS="$OPTS $i";;
-	-*)	echo 'usage: <ci_opts> -cCUTOFF files'
+	-[lpqrcswj]*)	OPTS="$OPTS $i";;
+	-*)	echo 'usage: <co_opts> -cCUTOFF files'
 		exit 1;;
 	*)	break;;
 	esac
