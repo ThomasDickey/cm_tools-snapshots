@@ -1,3 +1,25 @@
+1989-07-25  dickey@software.org
+
+	* src/permit/src/permit.c:
+	L_cuserid is not defined in apollo SR10 (bsd4.3)
+
+1989-07-25  ste_cm@software.org
+
+	* src/permit/src/permit.c:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/permit/src/permit.c:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/permit/src/permit.c:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/permit/src/permit.c:
+	BASELINE Thu Aug 24 10:40:29 EDT 1989 -- support:navi_011(rel2)
+
+	* src/permit/src/permit.c:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
 1989-06-16  dickey@software.org
 
 	* src/baseline/test/run_test.sh:
