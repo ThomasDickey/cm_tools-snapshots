@@ -1,0 +1,6 @@
+permit should be able to set permissions for the directory
+and a set of files, rather than simply for the entire directory.
+
+permit may not be computing the tip-version correctly if the
+permit-file does not already exist.  I saw a 1.1 when the
+directory had been baselined at 2.0

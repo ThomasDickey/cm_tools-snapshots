@@ -6,11 +6,11 @@
 
 <!Font Definitions,
 	F27 = Classic 10,
-	F30 = Classic 12,
+	F32 = Classic 12 Italic,
 	F21 = Typewriter 10,
+	F30 = Classic 12,
 	F34 = Classic 14 Bold,
 	F31 = Classic 12 Bold,
-	F32 = Classic 12 Italic,
 	F6 = Symbols 12,
 	F49 = Modern 12>
 
@@ -19,9 +19,18 @@
 
 <!Autonumber Stream, List, 2>
 
-<!Autonumber Stream, Outline, 3,
-	Level 1 Symbol Type =	UPPER ROMAN,
-	Level 2 Symbol Type =	UPPER ALPHA>
+<!Autonumber Stream, Outline, 3>
+
+<!Autonumber Stream, section, 2,
+	Level 1 Suffix =	,
+	Level 2 Prefix =	.,
+	Level 2 Suffix =	>
+
+<!Class, caption,
+	Top Margin =		0.07 inches,
+	Bottom Margin =		0.07 inches,
+	Line Spacing =		1.100 lines,
+	Font =			F32>
 
 <!Class, fixed,
 	Top Margin =		0.083 inches,
@@ -84,11 +93,11 @@ V4,
 <Page Header, Frame =
 V4,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,August\ 24\,\ 1988)
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,April\ 3\,\ 1989)
  (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ baseline\ version\ script)
  (t8,3,4,0,0.438782,0,17,@nnclas12b,baseline)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
 
 <Page Footer, Frame =
 V4,
@@ -101,7 +110,7 @@ V4,
 
 <header>
 
-<|,1>NAME
+<|,19>NAME
 
 <paragraph>
 
@@ -140,7 +149,7 @@ file's last check-in date (before <F31>baseline<F0> is invoked)
 	Same Page =		yes,
 	Width =			5.70 inches,
 	Height =		0.50 inches,
-	Page # =		1,
+	Page # =		19,
 	Diagram =
 V4,
 (g9,1,0
@@ -166,7 +175,7 @@ uses for this purpose 2.0, 3.0, etc
 	Same Page =		yes,
 	Width =			5.70 inches,
 	Height =		0.433 inches,
-	Page # =		1,
+	Page # =		19,
 	Diagram =
 V4,
 (g9,1,0
@@ -213,6 +222,11 @@ specified as a whole number after a hyphen, e.g.,
 
 baseline -2 file1 file2 file3
 
+<paragraph>
+
+<F30@R>(You may also specify the <#7f>-v" option to may the baseline 
+process more verbose).
+
 <header>
 
 OPERATIONS
@@ -223,20 +237,22 @@ Before invoking <F31>baseline<F0>, ensure that all of the files to
 be baselined have been checked into <F32>rcs<F0> (e.g., with <#7f><F31>checkin
 <F0> -u").  This is easily done using the directory editor <F31>ded<F0>.
 
-<F31>Baseline<F0> operates only upon files which have been checked 
-into <F32>rcs<F0> (i.e., a corresponding archive file exists in the 
-subdirectory <#7f>RCS").
+<|,20><F31>Baseline<F0> operates only upon files which have been 
+checked into <F32>rcs<F0> (i.e., a corresponding archive file exists 
+in the subdirectory <#7f>RCS").
 
 <header>
 
-<|,2>ENVIRONMENT
+ENVIRONMENT
 
 <paragraph>
 
-<F31>Baseline<F0> is a Bourne-shell script.  It invokes <F31>checkin<F0> 
-and <F31>checkout<F0> (which must be in your path) to first place 
-a lock on the specified files, and then to check-in the file with 
-the new, baseline version.
+<F31>Baseline<F0> is a Bourne-shell script. <F30@R> It first invokes <F31@R>permit
+<F30@R> (to ensure that you have permission to place locks in the directory, 
+then to purge the archive access lists, and finally to set the baseline-version 
+for the directory).<F0>  It then invokes <F31>checkin<F0> and <F31>checkout
+<F0> (which must be in your path) to first place a lock on the specified 
+files, and then to check-in the file with the new, baseline version.
 
 <header>
 
@@ -277,7 +293,7 @@ SEE ALSO
 
 <paragraph>
 
-checkin, checkout, ded
+checkin, checkout, ded<F30@R>, permit
 
 <header>
 

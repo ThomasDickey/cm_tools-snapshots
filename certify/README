@@ -1,4 +1,4 @@
-$Header: /users/source/archives/cm_tools.vcs/certify/RCS/README,v 1.1 1989/03/27 16:20:55 dickey Exp $
+$Header: /users/source/archives/cm_tools.vcs/certify/RCS/README,v 8.0 1989/04/03 08:36:56 ste_cm Rel $
 
-The RCS utilities in this package (other than the directory editor, ded)
-have been tested only on an Apollo Domain system.
+The RCS utilities in this package have been tested on an Apollo Domain system,
+and on Sun and Gould BSD4.x systems.

@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19890331
+MANIFEST for cm_tools, version t19890428
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -80,10 +80,12 @@ user/Makefile                   make-file (for installation and source-control) 
 user/baseline.doc               
 user/checkin.doc                
 user/checkout.doc               
+user/checkup.bug                known problems to resolve
 user/checkup.doc                
 user/copy.doc                   
 user/ded.doc                    
 user/link2rcs.doc               
+user/permit.bug                 known problems to resolve
 user/permit.doc                 
 user/rcsget.doc                 
 user/rcsput.bug                 known problems to resolve

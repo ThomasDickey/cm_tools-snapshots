@@ -1,4 +1,4 @@
-$Header: /users/source/archives/cm_tools.vcs/certify/RCS/config.txt,v 1.2 1989/03/29 11:38:43 dickey Exp $
+$Header: /users/source/archives/cm_tools.vcs/certify/RCS/config.txt,v 2.0 1989/04/03 08:40:09 ste_cm Exp $
 
 --------------------------------------------------------------------------------
 
@@ -6,12 +6,11 @@ The CM_TOOLS set of programs is designed to be run in a BSD-unix environment.
 The tools are written in C.  The make-procedure assumes that 'make', 'tar' and
 'sed' are available.
 
-Most of the tools are built assuming that RCS is available; these have been
-tested only on Apollo SR9.7 (bsd4.2).
+To run (or test) the tools, you must have RCS (available from public domain
+sources).
 
-The non-RCS tools (e.g., 'copy' and 'ded') have been tested on the Gould
-and Sun systems at the SPC.  All of the programs have been built on all
-three platforms.
+These tools have been tested on the Apollo, Gould and Sun systems at the SPC
+using RCS release 3 (1983).
 
 --------------------------------------------------------------------------------
 

@@ -1,10 +1,19 @@
-# $Header: /users/source/archives/cm_tools.vcs/src/checkout/test/RCS/Makefile,v 1.2 1989/03/28 12:02:33 dickey Exp $
+# $Header: /users/source/archives/cm_tools.vcs/src/checkout/test/RCS/Makefile,v 3.0 1989/04/03 08:21:50 ste_cm Rel $
 # make-file for testing RCS checkout utility
 #
 # $Log: Makefile,v $
-# Revision 1.2  1989/03/28 12:02:33  dickey
-# pipe test result to run_tests.out
+# Revision 3.0  1989/04/03 08:21:50  ste_cm
+# BASELINE Mon Jun 19 13:14:48 EDT 1989
 #
+#	Revision 2.0  89/04/03  08:21:50  ste_cm
+#	BASELINE Thu Apr  6 09:27:46 EDT 1989
+#	
+#	Revision 1.3  89/04/03  08:21:50  dickey
+#	added rules for lint & lincnt
+#	
+#	Revision 1.2  89/03/28  12:02:33  dickey
+#	pipe test result to run_tests.out
+#	
 #	Revision 1.1  89/03/24  15:49:59  dickey
 #	Initial revision
 #	
@@ -24,6 +33,8 @@ clean:				; rm -f *.out
 clobber:	clean
 destroy:			; rm -f *
 sources:	$(SOURCES)
+lint.out:
+lincnt.out:
 run_tests:	$(SOURCES)	; sh -c '$@.sh 2>&1 | tee -a $@.out'
 
 ####### (Details of Productions) ###############################################
