@@ -1,0 +1,197 @@
+.\" $Id: rcsput.man,v 9.2 1991/09/25 08:59:18 dickey Exp $
+.de DS
+.RS
+.nf
+.sp
+..
+.de DE
+.fi
+.RE
+.sp .5
+..
+.TH RCSPUT 1
+.SH NAME
+.PP
+\fBrcsput\fR \- RCS check-in utility
+.SH USAGE
+.PP
+\fBrcsput\fI [options] [file-specifications]
+.SH SYNOPSIS
+.PP
+\fBRcsput\fR is a simple, easy to use interface to \fIrcs\fR
+(\fBr\fRevision \fBc\fRontrol \fBs\fRystem).
+For each
+file specified as input, it checks differences against the previously
+archived version and prompts you for change history comments.
+.SH DESCRIPTION
+.PP
+\fBRcsput\fR uses the \fIrcs\fR utility \fBci\fR to maintain
+versions of a given source file in a dependent directory named "RCS":
+.TP
+.B \-
+It checks to ensure that each file is indeed a text
+file (so that you do not accidentally archive ".o" files, for
+example).
+.TP
+.B \-
+If you give \fBrcsput\fR a directory name, it
+will recur, checking-in files in the directory.
+.TP
+.B \-
+For each file which has a corresponding ",v" file, \fBrcs
+put\fR compares the two (using \fBdiff\fR) and pipes the result
+through the pager.
+.TP
+.B \-
+An option is provided so that you may direct \fBrcsput\fR
+to perform the differencing without checking the file into rcs.
+.TP
+.B \-
+The ",v" file is post-processed by \fBrcsput\fR
+so that the check-in date matches the file's modification date.
+.PP
+The last point is the fundamental advantage offered by \fBrcsput\fR.
+The ordinary \fIrcs\fR methodology uses the current date as the
+check-in date.
+This works well only for large projects in which a
+central project administrator is responsible for controlling the versions
+of source files.
+It does not work well for small projects, for which \fIrcs\fR's primary advantage is its compact storage of multiple versions
+of a file.
+.PP
+By using the file's modification date as a reference, you can more
+easily back up to a meaningful version \- by date, rather than
+version number.
+.PP
+\fBRcsput\fR integrates all of the functions used in the \fIrcs\fR
+check-in process into one utility program.
+.SH OPTIONS
+.PP
+Some of the options which you may specify to \fBrcsput\fR are
+passed through to the underlying \fBci\fR utility.
+Others represent extensions:
+.TP
+.B \-b
+is passed to \fBdiff\fR, and directs it
+to ignore trailing blanks on a line, and to treat repeated blanks
+as a single blank.
+.TP
+.B \-c
+directs \fBrcsput\fR to use \fBcat\fR rather
+than the \fBPAGER\fR (usually \fBmore\fR) to display differences.
+This is most useful in an Apollo pad, since the \fBmore\fR program
+would otherwise switch to VT100 emulator mode.
+.TP
+.B \-d
+instructs \fBrcsput\fR to test for differences,
+but not to check the files into \fIrcs\fR.
+.TP
+.B \-h
+is passed to \fBdiff\fR, and permits it to handle
+huge differences.
+.TP
+.BI \-L file
+causes \fBrcsput\fR to generate a
+log-file of the files which are processed, and all differences which
+are encountered.
+The log-file is inherited in recursion to lower
+directory levels (i.e., it is written to the same place).
+If no argument
+is specified, rcsput assumes "logfile".
+.TP
+.BI \-T path
+specifies an alternate tool to invoke,
+overrides the default "\fBcheckin\fR".
+.SH OPERATIONS
+.PP
+The \fBrcsput\fR utility is designed for use in small development
+projects.
+The methodology for this tool follows:
+.TP
+.B \-
+Develop source files "normally".
+Each file should
+contain rcs keywords (see \fIci\ (1)\fR) so that you will be
+able to distinguish checked-out files.
+The rcs keywords should appear at the top of your source file, for consistency.
+In C language programs,
+the convention is to make a string which will permit the \fBident\fR
+utility to show the versions of the modules which make up a program:
+.DS
+#ifndef	lint
+static	char	ident[] = "$Id: rcsput.man,v 9.2 1991/09/25 08:59:18 dickey Exp $";
+#endif
+.DE
+.TP
+.B \-
+Periodically archive (with \fBrcsput\fR) those versions
+of files which you wish to keep
+(you should never have programs which have new features
+which you wish to keep, while there are defects in other parts of
+the program.
+That would be an unsound approach to development!).
+.TP
+.B \-
+When you reach the point of releasing the program, ensure
+that all source files have been checked-in.
+The directory editor
+(\fBded\fR) is useful for reviewing the check-in dates.
+.TP
+.B \-
+Copy the directory containing your program to the release
+directory.
+Purge all files, except those which are stored in the \fIrcs\fR subdirectories.
+Use \fBrcsget\fR to extract the files.
+The unadorned \fBco\fR utility will work, of course,
+but it retains the file modification dates.
+You may also use \fBcheckout\fR to retain file dates.
+.TP
+.B \-
+Ensure that all files have been checked-in and released.
+You may use \fBdiff\fR to compare the directories \- the only
+differences should be the substituted \fIrcs\fR keywords.
+.TP
+.B \-
+Build the released version of your program.
+All files should be present.
+No embedded path names should refer to your development copy.
+To ensure good isolation, you may change the permissions on
+your development directory temporarily.
+.PP
+When checking files into \fIrcs\fR, it is a good idea to make
+a test run (using the "\-\fBd\fR" option) so that you can inspect
+the differences.
+For example, you may have forgotten to remove (or bypass) debugging stubs.
+Or, you may have been editing a checked-out
+file (with the \fIrcs\fR keywords substituted).
+\fBRcsput\fR would archive this anyway.
+.SH ENVIRONMENT
+.PP
+\fBRcsput\fR is written in C, and runs on UNIX\*R systems.
+.PP
+Environment variables imported by \fBrcsput\fR include:
+.TP
+.B PAGER
+identifies the program to use in displaying differences
+between the file which is being checked in, and the previously archived
+version.
+There may be a lot of differences \- more than can be
+shown on one screen.
+.SH FILES
+.PP
+\fBRcsput\fR uses the following files
+.TP
+.B checkin
+A utility which invokes \fBci\fR, and modifies
+the \fIrcs\fR ",v" file after check-in so that the check-in
+date matches the file's modification date.
+.SH ANTICIPATED CHANGES
+.PP
+None.
+.SH SEE ALSO
+.PP
+checkin, rcsget, checkout, ded, ci\ (1), co\ (1), diff\ (1),
+ident\ (1)
+.SH AUTHOR:
+.PP
+Thomas Dickey (Software Productivity Consortium).

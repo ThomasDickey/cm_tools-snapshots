@@ -1,0 +1,122 @@
+.\" $Id: checkout.man,v 11.0 1991/09/25 08:58:26 ste_cm Rel $
+.de DS
+.RS
+.nf
+.sp
+..
+.de DE
+.fi
+.RE
+.sp .5
+..
+.TH CHECKOUT 1
+.SH NAME
+.PP
+\fBcheckout\fR \- RCS check-out utility
+.SH USAGE
+.PP
+\fBcheckout\fI [options] [file-specifications]
+.SH SYNOPSIS
+.PP
+\fBCheckout\fR is an extension of the RCS utility \fBco\fR.
+It uses a file's check-in date to set the file's modification date
+after check-out.
+.SH DESCRIPTION
+.PP
+\fBCheckout\fR uses the rcs utility \fBco\fR.
+It is normally invoked from the \fBrcsget\fR script,
+but may be invoked in a standalone manner.
+\fBCheckout\fR differs from \fBco\fR primarily
+in its treatment to the delta date: after invoking \fBco\fR,
+\fBcheckout\fR
+sets the file's modification date to match the delta-date for
+the extracted version.
+.SS
+Set-UID Operation
+.PP
+Like the \fBcheckin\fR utility, \fBcheckout\fR properly
+handles set-uid operation for a non-root effective user.
+The archived
+files are owned by the effective user, and the checked-out files are
+owned by the real user.
+.PP
+Note that since \fBcheckin\fR initializes the access list
+in the archive files, the real user must appear on the access list
+to lock a file.
+Of course, if no lock is made, then the user need
+not be on the access list.
+.SH OPTIONS
+.PP
+\fBCheckout\fR recognizes all of the "\fBco\fR" options
+except for the "\-\fBd\fR" cutoff date.
+Instead, the "\-\fBc\fR"
+option is used:
+.TP
+-\fBc\fR \fIcutoff\fR
+specifies the \fIrcs\fR cutoff
+date, in SCCS-format
+.RS
+.DS
+YY[MM[DD[HH[MM[SS]]]]]
+.DE
+.PP
+Punctuation in the date is permitted.
+For example,
+.DS
+-c 77/2/2 9:22:25
+-c 770202092225
+.DE
+.PP
+represent the same date.
+This option is translated to the \fBco\fR
+"\-\fBd\fR" option.
+.RE
+.PP
+Use the "\-\fBx\fR" option of \fBcheckout\fR to direct it
+to retain the pathname when translating between working and archive
+files, e.g, "\fBpath/name\fR" becomes "\fBpath/RCS/name,v\fR".
+If the "\-\fBx\fR" option is not set, "\fBpath/name\fR"
+becomes "\fB./RCS/name,v\fR", and "\fBpath/RCS/name,v\fR"
+becomes "\fB./name\fR".
+.SH OPERATIONS
+.PP
+To extract files using \fBcheckout\fR, you must provide one or
+more file names.
+For each name, checkout parses the leaf-name and
+extracts the specified version from the "./RCS" directory.
+.SH ENVIRONMENT
+.PP
+\fBCheckout\fR is a C-language program.
+It invokes \fBco\fR
+via an \fIexeclp\fR call (so that \fBco\fR must be in your
+path), and performs pre- and postprocessing of the archive and working
+file to determine the delta-date to use for the extracted file.
+Environment variables used by checkout include:
+.TP
+\fBRCS_DIR\fR
+if defined, specifies the directory in which \fIrcs
+\fR archive files are found.
+Normally files are found in "./RCS".
+.TP
+\fBTZ\fR
+is the UNIX\*R time zone, which is overridden internally
+so that file modification dates are independent of the local time
+zone.
+.SH FILES
+.PP
+Checkout uses the following files:
+.TP
+\fBco\fR
+the RCS check-out program
+.SH ANTICIPATED CHANGES
+.PP
+This does not handle \fIrcs\fR branches properly.
+.PP
+\fBCheckout\fR does not handle the "\-\fBj\fR" and "\-\fBp\fR"
+options of \fBco\fR.
+.SH SEE ALSO
+.PP
+checkin, rcsput, ded, ci\ (1), co\ (1)
+.SH AUTHOR:
+.PP
+Thomas Dickey (Software Productivity Consortium).

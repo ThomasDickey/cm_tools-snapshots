@@ -1,0 +1,128 @@
+.\" $Id: link2rcs.man,v 11.0 1991/09/25 08:58:58 ste_cm Rel $
+.de DS
+.RS
+.nf
+.sp
+..
+.de DE
+.fi
+.RE
+.sp .5
+..
+.TH LINK2RCS 1
+.SH NAME
+.PP
+\fBlink2rcs\fR \- rcs directory template
+.SH USAGE
+.PP
+\fBlink2rcs\fI [options] [file-specifications]
+.SH SYNOPSIS
+.PP
+\fBLink2rcs\fR makes (an empty) template of an existing directory
+tree.  All directory names are copied; "RCS" directories are transformed
+into symbolic links pointing to the original tree.
+.SH DESCRIPTION
+.PP
+\fBLink2rcs\fR is used to make a working copy of a source-controlled
+module which is configured in a tree of directories (e.g., bin, lib,
+include, src, with dependent subdirectories).  By making a template
+directory (i.e., with the same relative pathnames), you may check-out
+files and continue to develop the module.  By making symbolic links
+to the original set of \fIrcs\fR directories, \fBlink2rcs\fR
+facilitates the use of \fIrcs\fR: \fBci\fR and \fBco\fR
+assume that the \fIrcs\fR files are in a subdirectory named "RCS".
+.SH OPTIONS
+.PP
+\fBLink2rcs\fR recognizes the following options:
+.TP
+.B \-a
+process all directory names.  Like the \fBls\fR
+option "-\fBa\fR", this enables the processing of names beginning
+with ".".
+.TP
+.BI \-b num
+directs \fBlink2rcs\fR to avoid generating
+directories which do not correspond to a source-directory with the
+given \fIrcs\fR baseline.  Use "-\fBb\fR0" to suppress directories
+which do not correspond to any \fIrcs\fR baseline.
+.TP
+.BI \-d path
+specifies the destination directory.
+You must always specify this if you don't specify the "-\fBs\fR"
+option.
+.TP
+.BI \-e env
+(Apollo only) specifies the name of an
+environment variable which can be used to substitute for the beginning
+of the link-text.
+.TP
+.B \-f
+makes links to files as well as directories.
+.TP
+.B \-m
+merge against destination, i.e., don't quit if a target
+directory or link is found.
+.TP
+.B \-n
+(no-op) causes \fBlink2rcs\fR to compute the modifications
+and to display them (according to the setting of "-\fBq\fR"
+and "-\fBv\fR"), but not to modify the target directory tree.
+.TP
+.B \-r
+directs link2rcs to compute relative pathnames for
+the symbolic links which it creates.  Normally the links are made
+with an absolute pathname (e.g., "\fB/u1/foo/RCS\fR").
+.TP
+.B \-q
+(quiet) undoes "-\fBv\fR", eliminates most
+messages.
+.TP
+.BI \-s path
+specifies the source directory.  Normally
+you need not specify this; it defaults to ".".
+.TP
+.B \-v
+(verbose) shows shell-command equivalents to the modifications
+which are made.
+.SH OPERATIONS
+.PP
+Normally, you use \fBlink2rcs\fR when constructing a development
+directory based on an existing source tree.  To copy an entire tree,
+change your shell's working directory to the source directory (i.e.,
+using the "cd" command) and type
+.DS
+link2rcs -d \fIdst_dir\fR .
+.DE
+.PP
+where \fIdst_dir\fR is the name of the (existing) directory under
+which you wish to create the template directory, and the "." specifies
+the current working directory.  If you wish to copy only some of the
+directories, type their names instead of ".".
+.PP
+\fBLink2rcs\fR makes a list of all directories under the
+source directory and attempts to create a corresponding template under
+the destination directory.  Each time it finds a directory named "RCS"
+it makes a symbolic link; otherwise it makes directories to match
+those in the source tree.
+.PP
+If any of the names which \fBlink2rcs\fR plans to create already
+exists, it halts with an error message (unless "-\fBm\fR" is
+specified).
+.PP
+When you have created the template tree, you may use \fBrcsget\fR
+to check-out files into the destination tree.
+.SH ENVIRONMENT
+.PP
+\fBLink2rcs\fR is written in C and runs in a UNIX\*R environment.
+.SH FILES
+.PP
+\fBLink2rcs\fR consists of a single binary file, \fBlink2rcs\fR.
+.SH ANTICIPATED CHANGES
+.PP
+None.
+.SH SEE ALSO
+.PP
+baseline, rcsget, checkout, permit, rcs\ (1)
+.SH AUTHOR:
+.PP
+Thomas Dickey (Software Productivity Consortium).

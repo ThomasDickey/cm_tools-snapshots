@@ -1,0 +1,206 @@
+.\" $Id: checkin.man,v 9.3 1991/09/25 08:58:18 dickey Exp $
+.de DS
+.RS
+.nf
+.sp
+..
+.de DE
+.fi
+.RE
+.sp .5
+..
+.TH CHECKIN 1
+.SH NAME
+.PP
+\fBcheckin\fR \- rcs check-in utility
+.SH USAGE
+.PP
+\fBcheckin\fI [options] [file-specifications]
+.SH SYNOPSIS
+.PP
+\fBCheckin\fR is an extension of the RCS utility \fBci\fR.
+It uses the file's modification date rather than the current date
+as the RCS delta-date.
+.SH DESCRIPTION
+.PP
+\fBCheckin\fR uses the \fIrcs\fR utility \fBci\fR.
+It is normally invoked from the \fBrcsput\fR script, but may be invoked
+in a standalone manner.
+\fBCheckin\fR differs from \fBci\fR
+primarily in its treatment of the delta date: after invoking \fBci\fR,
+\fBcheckin\fR modifies the delta-date in the archive to reflect
+the file's modification date.
+.PP
+This is the fundamental advantage offered by \fBcheckin\fR.
+The ordinary \fIrcs\fR methodology uses the current date as the check-in date.
+This works well only for large projects in which a central
+project administrator is responsible for controlling the versions
+of source files.
+It does not work well for small projects, for which \fIrcs
+\fR's primary advantage is its compact storage of multiple versions
+of a file.
+.PP
+By using the file's modification date as a reference, you can more
+easily back up to a meaningful version \- by date, rather than
+version number.
+.SS Archive Directory
+.PP
+If the archive directory (e.g., "./RCS") does not exist, \fBcheckin\fR
+creates it before invoking the \fBci\fR program.
+.SS Set-UID Operation
+.PP
+The rcs \fBci\fR and \fBco\fR utilities work to a degree in
+set-uid mode (i.e., the "u+s" protection is set on the programs).
+However, the code assumes that the effective uid is \fB>root\fR,
+and does not concern itself with maintaining file ownership.
+.PP
+The \fBcheckin\fR package is able to run as a set-uid process
+for any particular user (e.g., the administrator of a project).
+For example, suppose that \fB/proj\fR is the location of project-specific
+tools, and is owned by \fBadmin\fR.
+Then
+.DS
+cp checkin /proj		# admin now owns this copy
+chmod 4755 /proj/checkin	# sets u+s mode
+.DE
+.PP
+Thereafter, users who invoke \fB/proj/checkin\fR will have
+the rights of \fBadmin\fR \- for this application.
+They may
+check into \fIrcs\fR any files which they own, into archives which \fBadm
+in\fR owns.
+\fBCheckin\fR will maintain \fBadmin\fR's ownership
+of the archive files, and the user's ownership of his working files.
+.PP
+If \fBcheckin\fR does not need the set-uid rights (e.g.,
+if the user already owns the archive), \fBcheckin\fR resets its
+effective uid to the user's.
+This permits a single copy of \fBcheckin\fR
+to be used for both configuration management as well as individual
+developers.
+.SS Sharing RCS Archives
+.PP
+\fBCheckin\fR provides support for shared files by using \fIrcs\fR's
+access lists, and providing special handling for set-uid operation:
+.TP
+.B \-
+When you first archive a file using \fBcheckin\fR,
+it invokes the \fBrcs\fR administrative utility to initialize
+the access list of the file.
+It puts the \fBeffective\fR user
+into the list.
+.TP
+.B \-
+If \fBcheckin\fR is running in set-uid mode, it
+puts the \fBreal\fR user on the access list as well.
+.PP
+With the access list is initialized, only those users who appear on
+an access list may place locks on files, even when running in set-uid
+mode.
+.SS Directory-Level Permissions
+.PP
+Before attempting to create or lock an archive file, \fBcheckin\fR
+looks first for the directory-level permissions which may be set with
+the \fBpermit\fR utility.
+If they exist, \fBcheckin\fR limits
+further access rights to those permitted.
+.SH OPTIONS
+.PP
+\fBCheckin\fR recognizes all of the "\fBci\fR" options.
+.PP
+If the "\-\fBk\fR" option is used, \fBcheckin\fR supplies
+a default log-message
+.DS
+FROM_KEYS
+.DE
+.PP
+The "\-\fBd\fR" option of \fBcheckin\fR causes it to display
+the actions it would perform, but not to do them (e.g., invocation
+of \fBrcs\fR and \fBci\fR).
+.PP
+Use the "\-\fBx\fR" option of \fBcheckin\fR to direct it
+to retain the pathname when translating between working and archive
+files, e.g, "\fBpath/name\fR" becomes "\fBpath/RCS/name,v\fR".
+If the "\-\fBx\fR" option is not set, "\fBpath/name\fR"
+becomes "\fB./RCS/name,v\fR", and "\fBpath/RCS/name,v\fR"
+becomes "\fB./name\fR".
+.SH OPERATIONS
+.PP
+\fBCheckin\fR is used exactly as one would use \fBci\fR.
+Place a lock on the file using the "\-\fBl\fR" option with \fBci\fR
+(or with \fBco\fR) when you wish to edit a file.
+Check the file
+in using the "\-\fBu\fR" option to retain a working copy after
+modification.
+.SH ENVIRONMENT
+.PP
+\fBCheckin\fR is a C-language program.
+It invokes \fBci\fR (with
+an explicit path, to protect against mishaps in set-uid mode),
+and performs pre- and
+postprocessing of the archive and working file to determine
+the version to which the file's modification date applies.
+.PP
+\fBCheckin\fR uses the following environment variables:
+.TP
+.B RCS_BASE
+is used to specify a default value for initial
+revision numbers.
+If the user does not specify the initial version
+number of a file, \fBci\fR assigns the value "1.1".
+This
+is used to support the use of module-level version numbers, while
+preserving the relationship between changes and revisions: a new version
+is made only if the file is changed.
+.PP
+The directory-level revision set by the \fBpermit\fR
+utility may override this environment variable. See \fIbaseline\fR
+and \fIpermit\fR for more details.
+.TP
+.B RCS_COMMENT
+is set to a string controlling the initial setting
+of the rcs "\-\fBc\fR" option.
+For example, the strings
+.DS
+setenv RCS_COMMENT '/.c/ *> /'
+.DE
+.RS
+.PP
+and
+.DS
+setenv RCS_COMMENT '/.d/# /,/.bas/REM /'
+.DE
+.PP
+define comment-prefixes for ".c", ".d" and ".bas"
+suffixes.
+(The suffix is delimited with the first "." in the
+leaf-name).
+.RE
+.TP
+.B RCS_DIR
+if defined, specifies the directory in which \fIrcs
+\fR archive files are found.
+Normally files are found in "./RCS".
+.TP
+.B TZ
+is the UNIX\*R time zone, which is overridden internally
+so that file modification dates are independent of the local time
+zone.
+.SH FILES
+.PP
+\fBCheckin\fR uses the following files
+.TP
+.B ci
+the RCS check-in program
+.TP
+.B rcs
+the RCS administrative program
+.SH ANTICIPATED CHANGES
+.PP
+\fBCheckin\fR does not currently handle branch deltas.
+.SH SEE ALSO
+.PP
+baseline, rcsput, permit, ded, ci\ (1), co\ (1), rcs\ (1)
+.SH AUTHOR:
+.PP
+Thomas Dickey (Software Productivity Consortium).

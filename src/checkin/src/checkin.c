@@ -1,97 +1,44 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 9.1 1991/06/20 10:55:45 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 9.3 1991/09/19 11:00:26 dickey Exp $";
 #endif
 
 /*
  * Title:	checkin.c (RCS checkin front-end)
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
- * $Log: checkin.c,v $
- * Revision 9.1  1991/06/20 10:55:45  dickey
- * use 'shoarg()'
- *
- *		Revision 9.0  91/06/11  08:29:32  ste_cm
- *		BASELINE Tue Jun 11 08:31:06 1991 -- apollo sr10.3
- *		
- *		Revision 8.2  91/06/11  08:29:32  dickey
- *		lint (apollo sr10.2)
- *		
- *		Revision 8.1  91/05/20  12:35:33  dickey
- *		mods to compile on apollo sr10.3
- *		
- *		Revision 7.1  90/08/14  14:17:01  dickey
- *		lint
- *		
- *		Revision 7.0  90/04/19  12:06:04  ste_cm
- *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
- *		
- *		Revision 6.3  90/04/19  12:06:04  dickey
- *		corrected missing braces which broke 'chmod()' in last change
- *		
- *		Revision 6.2  90/04/19  10:31:55  dickey
- *		added "-d" option (for want of a better code for no-op).
- *		Used this option to suppress invocation of ci/rcs/mkdir/chmod
- *		and unlink (also changed "TELL" for these calls) so user can
- *		preview the actions which would be attempted.  Note that the
- *		no-op mode cannot (as yet) do anything interesting for the
- *		set-uid mode.
- *		Used the no-op mode to find that GetLock was not returning
- *		the proper code (since 'strict' was set after 'locks'!).
- *		Fixed this.
- *		Finally, recoded the "rcs -c" stuff so that user can add to
- *		the default list of comment-prefixes by setting the environment
- *		variable RCS_COMMENT appropriately.
- *		
- *		Revision 6.1  90/04/18  15:01:50  dickey
- *		added "-x" option (to assist in makefiles, etc).
- *		
- *		Revision 6.0  90/03/05  13:48:49  ste_cm
- *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
- *		
- *		Revision 5.4  90/03/05  13:48:49  dickey
- *		corrected length of 'tmp_name[]'
- *		
- *		Revision 5.3  90/03/05  13:47:24  dickey
- *		port to sun3 (os3.4) which has bug in tmpfile & mktemp.
- *		cleanup error-exits.
- *		
- *		Revision 5.2  89/12/12  10:31:40  dickey
- *		lint (SunOs 4.0.3)
- *		
- *		Revision 5.1  89/12/06  07:42:59  dickey
- *		if option "-?" given, don't print warning before usage, so
- *		we can invoke checkin from rcsput for combined-usage.
- *		
- *		Revision 5.0  89/09/21  09:29:41  ste_cm
- *		BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
- *		
- *		Revision 4.1  89/09/21  09:29:41  dickey
- *		added "rcs -c" decoding for IMakefile, AMakefile, changed
- *		the decoding for ".com"
- *		
- *		Revision 4.0  89/04/04  10:44:41  ste_cm
- *		BASELINE Thu Aug 24 09:23:45 EDT 1989 -- support:navi_011(rel2)
- *		
- *		Revision 3.0  89/04/04  10:44:41  ste_cm
- *		BASELINE Mon Jun 19 13:07:30 EDT 1989
- *		
- *		Revision 2.0  89/04/04  10:44:41  ste_cm
- *		BASELINE Fri Apr  7 16:39:42 EDT 1989
- *		
- *		Revision 1.33  89/04/04  10:44:41  dickey
- *		ensure that we call 'rcspermit()' not only to check permissions,
- *		but also to obtain value for RCSbase variable.
- *		
- *		Revision 1.32  89/03/31  14:55:22  dickey
- *		only close temp-file if we have opened it!
- *		
- *		Revision 1.31  89/03/29  14:43:06  dickey
- *		if working file cannot be found, this may be because checkin is
- *		running in set-uid mode.  revert to normal rights and try again.
- *		
- *		Revision 1.30  89/03/21  13:51:08  dickey
- *		sccs2rcs keywords
- *		
+ * Modified:
+ *		19 Sep 1991, correct spurious introduction of "-x" option into
+ *			     command to create first delta.
+ *		06 Sep 1991, modified interface to 'rcsopen()'
+ *		20 Jun 1991, use 'shoarg()'
+ *		19 Apr 1990, Added "-d" option (for want of a better code for
+ *			     no-op).  Used this option to suppress invocation
+ *			     of ci/rcs/mkdir/chmod and unlink (also changed
+ *			     "TELL" for these calls) so user can preview the
+ *			     actions which would be attempted.  Note that the
+ *			     no-op mode cannot (as yet) do anything interesting
+ *			     for the set-uid mode.  Used the no-op mode to find
+ *			     that GetLock was not returning proper code (since
+ *			     'strict' was set after 'locks'!).  Fixed this.
+ *			     Finally, recoded the "rcs -c" stuff so that user
+ *			     can add to the default list of comment-prefixes
+ *			     by setting the environment variable RCS_COMMENT
+ *			     appropriately.
+ *		18 Apr 1990, added "-x" option (to assist in makefiles, etc).
+ *		05 Mar 1990, port to sun3 (os3.4) which has bug in tmpfile &
+ *			     mktemp.  Cleanup error-exits.
+ *		06 Dec 1989, if option "-?" given, don't print warning before
+ *			     usage, so we can invoke checkin from rcsput for
+ *			     combined-usage.
+ *		21 Sep 1989, added "rcs -c" decoding for IMakefile, AMakefile,
+ *			     changed the decoding for ".com"
+ *		04 Apr 1989, ensure that we call 'rcspermit()' not only to
+ *			     check permissions, but also to obtain value for
+ *			     RCSbase variable.
+ *		31 Mar 1989, only close temp-file if we have opened it!
+ *		29 Mar 1989, if working file cannot be found, this may be
+ *			     because checkin is running in set-uid mode. 
+ *			     Revert to normal rights and try again.
  *		21 Mar 1989, after invoking 'revert()', could no longer write to
  *			     temp-file (fpT); moved 'tmpfile()' call to fix.
  *		15 Mar 1989, if no tip-version found, assume we can create
@@ -160,8 +107,13 @@ extern	char	*mktemp();
 extern	char	*pathleaf();
 
 /* local declarations: */
+#define	CI	"ci"
+#define	RCS	"rcs"
+
 #define	REV_OPT	"rfluqk"
+#define	is_option(s)	(*(s) == '-')
 #define	is_t_opt(s)	(s[1] == 't')
+#define	is_my_opt(s)	(s[1] == 'x' || s[1] == 'd')
 
 #define	WARN	FPRINTF(stderr,
 #define	TELL	if (!silent) PRINTF
@@ -324,7 +276,7 @@ char	*s	= 0,
 	revision[BUFSIZ],
 	token[BUFSIZ];
 
-	if (!rcsopen(Archive, debug))
+	if (!rcsopen(Archive, debug, FALSE))
 		return;
 	(void)strcpy(revision, opt_rev);
 
@@ -432,11 +384,11 @@ Execute()
 	TMP_file = rcstemp(Working, TRUE);
 
 	FORMAT(cmds, "%s%s %s", opt_all, Archive, TMP_file);
-	if (!silent) shoarg(stdout, "ci", cmds);
+	if (!silent) shoarg(stdout, CI, cmds);
 	if (no_op)
 		code = -1;
 	else
-		code = execute(rcspath("ci"), cmds);
+		code = execute(rcspath(CI), cmds);
 	HackMode(FALSE);		/* ...restore protection */
 
 	if (code >= 0) {			/* ... check-in file ok */
@@ -483,7 +435,7 @@ GetLock()
 
 	if (*opt_rev == EOS) {
 
-		if (!rcsopen(Archive, -debug))
+		if (!rcsopen(Archive, -debug, TRUE))
 			return (FALSE);	/* could not open file anyway */
 
 		while (header && (s = rcsread(s))) {
@@ -682,9 +634,9 @@ SetAccess()
 
 	if (silent) catarg(cmds, "-q");
 	catarg(cmds, Archive);
-	if (!silent) shoarg(stdout, "rcs", cmds);
+	if (!silent) shoarg(stdout, RCS, cmds);
 	if (!no_op) {
-		if (execute(rcspath("rcs"), cmds) < 0)
+		if (execute(rcspath(RCS), cmds) < 0)
 			GiveUp("rcs initialization for", Working);
 	}
 	HackMode(FALSE);		/* ...restore protection */
@@ -761,9 +713,8 @@ char	*argv[];
 	*opt_rev = EOS;
 	*opt_all = EOS;
 	for (j = 1; j < argc; j++) {
-		s = argv[j];
-		if (*s == '-') {
-			if (s[1] == 'x' || s[1] == 'd')
+		if (is_option(s = argv[j])) {
+			if (is_my_opt(s))
 				continue;
 			if (is_t_opt(s) && !new_file)
 				continue;
@@ -796,10 +747,11 @@ char	*argv[];
 		if (last) {
 			*opt_all = EOS;
 			for (j = 1; j < argc; j++) {
-				s = argv[j];
-				if (is_t_opt(s) && !new_file)
-					continue;
-				if (*s == '-') {
+				if (is_option(s = argv[j])) {
+					if (is_my_opt(s))
+						continue;
+					if (is_t_opt(s) && !new_file)
+						continue;
 					if (j == last) {
 						FORMAT(bfr, "%s%s", s, dft);
 						s = bfr;
@@ -879,8 +831,7 @@ char	*argv[];
 	 * Process the argument list
 	 */
 	for (j = 1; j < argc; j++) {
-		s = argv[j];
-		if (*s == '-') {
+		if (is_option(s = argv[j])) {
 			if (*(++s) == 'q')
 				silent++;
 			else if (*s == 'k')

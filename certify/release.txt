@@ -1,6 +1,26 @@
-$Id: release.txt,v 9.0 1991/06/04 09:16:00 ste_cm Rel $
+$Id: release.txt,v 9.2 1991/09/23 07:39:30 dickey Exp $
 
 --------------------------------------------------------------------------------
+
+Version 10.0:
+------------
+Made 'checkin' work properly with root-suid.
+
+New features in 'ded':
+
+	* "2T" command to show how many days-old a file is.
+	* added command-substitution codes u,g,v,y
+	* added @-sort and D-sort
+	* added CTL/G command
+	* made file-list 'S' and 'P' commands 3-way (i.e., "2S" and "2P").
+	* Added P-sort (sorts extended-acl-flag).
+
+Miscellaneous fixes to common-library, including:
+
+	* corrections to 'rcsload()' line-counts, completed code to load file
+	  contents.
+	* make 'rcsedit()' work in read-only mode, so we don't do unnecessary
+	  file-copy.
 
 Version 9.0:
 -----------

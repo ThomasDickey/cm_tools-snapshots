@@ -1,0 +1,88 @@
+.\" $Id: rcsget.man,v 11.0 1991/09/25 13:22:55 ste_cm Rel $
+.TH RCSGET 1
+.SH NAME
+.PP
+\fBrcsget\fR \- rcs check-out utility
+.SH USAGE
+.PP
+\fBrcsget\fI [options] [file-specifications]
+.SH SYNOPSIS
+.PP
+\fBRcsget\fR is a simple interface to \fIrcs\fR (\fBr\fRevision
+\fBc\fRontrol \fBs\fRystem), which is used to extract files
+from \fIrcs\fR archives.
+.SH DESCRIPTION
+.PP
+\fBRcsget\fR checks out (extracts) files from an \fIrcs\fR
+archive which have been checked in using \fBrcsput \fRor\fBcheckin\fR.
+\fBRcsput\fR checks in files, retaining their modification
+date as the check-in date. \fB Rcsget\fR extracts a given version
+of one or more files, and sets their modification date to match the
+check-in date.
+.SH OPTIONS
+.PP
+\fBRcsget\fR is a directory-recursive interface to the \fBco\fR
+utility which does special things with the file modification date.
+Most of its options are passed to \fBco\fR, and then interpreted
+to determine the correct modification date.
+Options special to \fBrcsget\fR are:
+.TP
+.B \-a
+permits \fBrcsget\fR to process directory names
+beginning with ".".
+.TP
+.B \-d
+directs \fBrcsget\fR to scan the \fIrcs\fR directories
+to find the list of files which are checked-out.
+Otherwise, \fBrcsget\fR
+will select only those files which are already checked-out.
+.TP
+.B \-L
+directs \fBrcsget\fR to follow symbolic links to subdirectories.
+These are ignored otherwise.
+.TP
+.B \-n
+no-op mode directs \fBrcsget\fR to show what files
+would be checked out without actually checking them out.
+.TP
+.B \-R
+(same as \-\fBd\fR)
+causes \fBrcsget\fR to recur through the specified directories.
+.TP
+.BI \-T path
+specify an alternate pathname for the \fBcheckout\fR utility.
+This overrides the default "\fBcheckout\fR"
+path.
+.PP
+\fBRcsget\fR also recognizes (and acts on) the "\-\fBq\fR" (quiet)
+and "\-\fBx\fR" options of \fBcheckout\fR.
+.SH OPERATIONS
+.PP
+To extract files using \fBrcsget\fR, you must provide one or more
+names.
+They may be either file or directory names.
+.PP
+\fBRcsget\fR resolves names until it finds one of the form "RCS/\fIfile\fR,v" before invoking \fBco\fR.
+If it finds a directory (other
+than "RCS"), \fBrcsget\fR will recur to extract files at lower
+levels.
+.SH ENVIRONMENT
+.PP
+\fBRcsget\fR is written in C, and runs on UNIX\*R systems.
+.SH FILES
+.PP
+\fBRcsget\fR uses the following files:
+.TP
+\fBcheckout\fR
+a utility which invokes \fBco\fR and then
+modifies the file's modification date so that it matches the version-date
+selected which was extracted via \fBco\fR.
+.SH ANTICIPATED CHANGES
+.PP
+None.
+.SH SEE ALSO
+.PP
+checkin, checkout, rcsput, ded, co\ (1)
+.SH AUTHOR:
+.PP
+Thomas Dickey (Software Productivity Consortium).

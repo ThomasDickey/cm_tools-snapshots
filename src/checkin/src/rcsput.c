@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 9.1 1991/06/20 11:04:46 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 9.2 1991/09/13 07:50:21 dickey Exp $";
 #endif
 
 /*
@@ -7,46 +7,28 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * $Log: rcsput.c,v $
- * Revision 9.1  1991/06/20 11:04:46  dickey
- * use 'shoarg()'
+ * Revision 9.2  1991/09/13 07:50:21  dickey
+ * moved 'filesize()' to common-lib
  *
+ *		Revision 9.1  91/06/20  11:26:12  dickey
+ *		use 'shoarg()'
+ *		
  *		Revision 9.0  91/06/06  07:25:27  ste_cm
  *		BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
- *		
- *		Revision 8.3  91/06/06  07:25:27  dickey
- *		use "-x" option in local name-checking
- *		
- *		Revision 8.2  91/06/03  13:25:48  dickey
- *		pass-thru "-x" to 'checkin'
- *		
- *		Revision 8.1  91/05/20  12:36:03  dickey
- *		mods to compile on apollo sr10.3
- *		
- *		Revision 7.1  90/08/14  14:17:25  dickey
- *		lint
- *		
- *		Revision 7.0  90/04/19  08:32:49  ste_cm
- *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
- *		
- *		Revision 6.2  90/04/19  08:32:49  dickey
- *		added "-T" option (to permit non-checkin tool use)
- *		
- *		Revision 6.1  90/04/18  14:58:54  dickey
- *		modified call on rcs2name/name2rcs to support "-x" option
- *		in checkin/checkout
- *		
- *		Revision 6.0  89/12/06  08:56:08  ste_cm
- *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
- *		
- *		Revision 5.2  89/12/06  08:56:08  dickey
- *		added interpretation of "-f" (force) option to override
- *		test-for-diffs, test-for-textfile, and test-for-existence
- *		of arguments.  also, interpret "-?" argument to show not
- *		only usage message from this utility, but from checkin too.
- *		
- *		Revision 5.1  89/11/01  15:18:40  dickey
- *		walktree passes null pointer to stat-block if no-access.
- *		
+ *
+ *		06 Jun 1991, use "-x" option in local name-checking
+ *		03 Jun 1991, pass-thru "-x" to 'checkin'
+ *		20 May 1991, mods to compile on apollo sr10.3
+ *		19 Apr 1990, added "-T" option (to permit non-checkin tool use)
+ *		18 Apr 1990, modified call on rcs2name/name2rcs to support "-x"
+ *			     option in checkin/checkout
+ *		06 Dec 1989, added interpretation of "-f" (force) option to
+ *			     override test-for-diffs, test-for-textfile, and
+ *			     test-for-existence of arguments.  Also, interpret
+ *			     "-?" argument to show not only usage message from
+ *			     this utility, but from checkin too.
+ *		01 Nov 1989, walktree passes null pointer to stat-block if
+ *			     no-access.
  *
  * Function:	Use 'checkin' to checkin one or more files from the
  *		RCS-directory which is located in the current working
@@ -61,6 +43,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
 #include	"ptypes.h"
 #include	"rcsdefs.h"
 extern	FILE	*popen();
+extern	off_t	filesize();
 extern	char	*dftenv();
 extern	char	*pathcat();
 extern	char	*pathleaf();
@@ -81,15 +64,6 @@ static	char	*pager;		/* nonzero if we don't cat diffs */
 static	int	force;
 static	int	quiet;
 static	int	x_opt;
-
-static
-filesize(name)
-char	*name;
-{
-	auto	struct	stat	sb;
-	return (stat(name, &sb) >= 0 && (sb.st_mode & S_IFMT) == S_IFREG
-		? sb.st_size : -1);
-}
 
 static
 cat2fp(fp, name)

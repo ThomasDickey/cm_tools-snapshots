@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 9.1 1991/06/11 17:40:38 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 9.2 1991/09/06 14:51:08 dickey Exp $";
 #endif
 
 /*
@@ -7,9 +7,12 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/
  * Author:	T.E.Dickey
  * Created:	09 Mar 1989
  * $Log: permit.c,v $
- * Revision 9.1  1991/06/11 17:40:38  dickey
- * lint
+ * Revision 9.2  1991/09/06 14:51:08  dickey
+ * changed interface to 'rcsopen()'
  *
+ *		Revision 9.1  91/09/06  14:50:34  dickey
+ *		lint
+ *		
  *		Revision 9.0  91/05/31  16:09:56  ste_cm
  *		BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
  *		
@@ -413,7 +416,7 @@ struct	stat	*sp;
 	*found = EOS;
 	*tip = EOS;
 
-	if (!rcsopen(name, verbose > 1))
+	if (!rcsopen(name, verbose > 1, TRUE))
 		return (FALSE);	/* could not open file anyway */
 
 	while (header && (s = rcsread(s))) {

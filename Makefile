@@ -1,19 +1,13 @@
-# $Header: /users/source/archives/cm_tools.vcs/RCS/Makefile,v 9.1 1991/06/18 14:03:37 dickey Exp $
+# $Id: Makefile,v 9.5 1991/09/24 13:10:29 dickey Exp $
 # Top-level make-file for CM_TOOLS
 # (see also CM_TOOLS/src/common)
 #
-# $Log: Makefile,v $
-# Revision 9.1  1991/06/18 14:03:37  dickey
-# correction to install-doc
-#
-#	Revision 9.0  91/06/05  14:21:52  ste_cm
-#	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
-#	
+
 ####### (Development) ##########################################################
-INSTALL_BIN = ~ste_cm/bin/`arch`
-INSTALL_DOC = /ste_site/ste/doc
+INSTALL_BIN = ../install_bin
+INSTALL_MAN = ../install_man
 COPY	= cp -p
-MAKE	= make $(MFLAGS) -k$(MAKEFLAGS) CFLAGS="$(CFLAGS)"
+MAKE	= make $(MFLAGS) -k$(MAKEFLAGS) CFLAGS="$(CFLAGS)" COPY="$(COPY)"
 THIS	= cm_tools
 
 RCS_PATH= `which rcs | sed -e s+/rcs$$+/+`
@@ -78,11 +72,11 @@ install:	$(FIRST)
 	cd certificate;	$(MAKE) $@
 	cd support;	$(MAKE) $@
 	cd src;		$(MAKE) $@
-	cd user;	$(MAKE) $@ INSTALL_PATH=$(INSTALL_DOC)
-	cd bin;		$(MAKE) $@ INSTALL_PATH=$(INSTALL_BIN)
+	cd user;	$(MAKE) $@
+	cd bin;		$(MAKE) $@ INSTALL_PATH=`cd ..;cd $(INSTALL_BIN);pwd`
 
 deinstall:	bin/makefile
-	cd bin;		$(MAKE) $@ INSTALL_PATH=$(INSTALL_BIN)
+	cd bin;		$(MAKE) $@ INSTALL_PATH=`cd ..;cd $(INSTALL_BIN);pwd`
 
 destroy::
 	rm -rf $(DIRS)
@@ -99,11 +93,11 @@ $(DIRS):			; mkdir $@
 # Note that we exploit the use of lower-case makefile for this purpose.
 bin/makefile:	bin/Makefile	Makefile
 	rm -f $@
-	sed -e s+INSTALL_PATH=.*+INSTALL_PATH=$(INSTALL_BIN)+ bin/Makefile >$@
+	sed -e s+INSTALL_PATH=.*+INSTALL_PATH=`cd $(INSTALL_BIN);pwd`+ bin/Makefile >$@
 
 user/makefile:	user/Makefile	Makefile
 	rm -f $@
-	sed -e s+INSTALL_PATH=.*+INSTALL_PATH=$(INSTALL_DOC)+ user/Makefile >$@
+	sed -e s+INSTALL_PATH=.*+INSTALL_PATH=`cd $(INSTALL_MAN);pwd`+ user/Makefile >$@
 
 # If the rcs tool is not found in our path, assume that it lies in the same
 # directory as that in which we will install; but the install-directory has
@@ -112,7 +106,7 @@ interface/rcspath.h:		Makefile
 	rm -f $@
 	echo "#define	RCS_PATH	\"$(RCS_PATH)\"" >$@
 	sh -c 'if ( grep "\"no\ rcs\ in" $@ )\
-		then echo "#define RCS_PATH \"$(INSTALL_BIN)/\"" >$@;\
+		then echo "#define RCS_PATH \"`cd $(INSTALL_BIN);pwd`/\"" >$@;\
 		else echo found rcs-path; fi'
 
 # We use the 'copy' utility rather than the unix 'cp' utility, since it
