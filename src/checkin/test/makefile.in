@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.1 1997/09/13 16:34:07 tom Exp $
+# $Id: makefile.in,v 11.2 1997/09/28 20:14:16 tom Exp $
 # make-file for testing RCS checkin utility
 
 THIS	= checkin
@@ -47,6 +47,5 @@ ALL	=
 all:		$(SOURCES) $(ALL)
 clean:				; -$(RM) -r $(CLEAN) junk
 distclean:	clean		; -$(RM) $(ALL)
-sources:	$(SOURCES)
 lint.out:
 run_test:	$(SOURCES) $(ALL) ; $(RUN_TESTS)

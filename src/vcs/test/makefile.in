@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.1 1997/09/13 16:37:28 tom Exp $
+# $Id: makefile.in,v 11.2 1997/09/28 20:14:16 tom Exp $
 # make-file for testing RCS permission utility
 
 THIS	= vcs
@@ -20,6 +20,5 @@ SOURCES	= $(SCRIPTS) $(REF_FILES)
 all:		$(SOURCES)
 clean:				; -$(RM) -r $(CLEAN) foo* FOO
 distclean::	clean
-sources:	$(SOURCES)
 lint.out:
 run_test:	$(SOURCES)	; $(RUN_TESTS)

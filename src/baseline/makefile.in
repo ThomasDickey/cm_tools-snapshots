@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.3 1997/09/14 19:18:43 tom Exp $
+# $Id: makefile.in,v 11.4 1997/09/28 20:15:39 tom Exp $
 # Top-level makefile for RCS baseline utility
 
 THIS	= baseline
@@ -25,7 +25,6 @@ run_test::	$(LIB_DEPS) bin
 all\
 clean\
 distclean\
-sources\
 run_test\
 lint.out::	$(MFILES)
 	cd src &&	$(MAKE) $(MAKE_OPTS) $@
@@ -37,7 +36,7 @@ distclean::			; -$(RM) -r bin
 distclean::			; -$(RM) */makefile
 
 install:	all $(ALL)
-deinstall:			; -$(RM) $(ALL)
+uninstall:			; -$(RM) $(ALL)
 
 ####### (Details of Productions) ###############################################
 bin:				; mkdir $@
