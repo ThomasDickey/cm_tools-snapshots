@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: checkin.c,v 5.0 1989/09/21 09:29:41 ste_cm Rel $";
+static	char	Id[] = "$Id: checkin.c,v 5.2 1989/12/12 10:30:18 dickey Exp $";
 #endif	lint
 
 /*
@@ -7,9 +7,16 @@ static	char	Id[] = "$Id: checkin.c,v 5.0 1989/09/21 09:29:41 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * $Log: checkin.c,v $
- * Revision 5.0  1989/09/21 09:29:41  ste_cm
- * BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+ * Revision 5.2  1989/12/12 10:30:18  dickey
+ * lint (SunOs 4.0.3)
  *
+ *		Revision 5.1  89/12/06  07:42:59  dickey
+ *		if option "-?" given, don't print warning before usage, so
+ *		we can invoke checkin from rcsput for combined-usage.
+ *		
+ *		Revision 5.0  89/09/21  09:29:41  ste_cm
+ *		BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+ *		
  *		Revision 4.1  89/09/21  09:29:41  dickey
  *		added "rcs -c" decoding for IMakefile, AMakefile, changed
  *		the decoding for ".com"
@@ -158,6 +165,7 @@ clean_file()
  * If interrupted, clean up and exit
  */
 static
+SIGS_T
 cleanup(sig)
 {
 	(void)signal(sig, SIG_IGN);
@@ -717,7 +725,8 @@ char	*argv[];
 			if (is_t_opt(argv[j]))
 				t_option = argv[j];
 			if (strchr("rfkluqmnNst", *s) == 0) {
-				WARN "unknown option: %s\n", s-1);
+				if (*s != '?')
+					WARN "unknown option: %s\n", s-1);
 				usage();
 			}
 		} else {

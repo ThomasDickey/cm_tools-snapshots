@@ -5,6 +5,7 @@
 	Final Output Device	="cx">
 
 <!Font Definitions,
+	F136	=Swiss 12,
 	F21	=Typewriter 10,
 	F27	=Classic 10,
 	F30	=Classic 12,
@@ -176,7 +177,7 @@ V6,
 <Page Header, Frame =
 V6,
 (g9,1,0
- (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,August\ 24\,\ 1988)
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,December\ 7\,\ 1989)
  (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS\ directory\ template)
  (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,link2rcs)
  (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
@@ -242,11 +243,33 @@ OPTIONS
 
 <options>
 
+-<F31>a<F0><Tab>process all directory names.  Like the <F31>ls<F0> 
+option <#7f>-<F31>a<F0>", this enables the processing of names beginning 
+with <#7f>.".
+
+-<F31>d<F0> <F32>path<F0><Tab>specifies the destination directory.  
+You must always specify this if you don't specify the <#7f>-<F31>s<F0>" 
+option.
+
+-<F31>m<F0><Tab>merge against destination, i.e., don't quit if a target 
+directory or link is found.
+
+-<F31>n<F0><Tab>(no-op) causes <F31>link2rcs<F0> to compute the modifications 
+and to display them (according to the setting of <#7f>-<F31>q<F0>" 
+and <#7f>-<F31>v<F0>"), but not to modify the target directory tree.
+
+-<F31>r<F0><Tab>directs link2rcs to compute relative pathnames for 
+the symbolic links which it creates.  Normally the links are made 
+with an absolute pathname (e.g., <#7f><F136>/u1/foo/RCS<F0>").
+
+-<F31>q<F0><Tab>(quiet) undoes <#7f>-<F31>v<F0>", eliminates most 
+messages.
+
 -<F31>s<F0> <F32>path<F0><Tab>specifies the source directory.  Normally 
 you need not specify this; it defaults to <#7f>.".
 
--<F31>d<F0> <F32>path<F0><Tab>specifies the destination directory.  
-You must always specify this.
+-<F31>v<F0><Tab>(verbose) shows shell-command equivalents to the modifications 
+which are made.
 
 <header>
 
@@ -277,7 +300,8 @@ it makes a symbolic link; otherwise it makes directories to match
 those in the source tree.
 
 If any of the names which <F31>link2rcs<F0> plans to create already 
-exists, it halts with an error message.
+exists, it halts with an error message (unless <#7f>-<F31>m<F0>" is 
+specified).
 
 When you have created the template tree, you may use <F31>rcsget<F0> 
 to check-out files into the destination tree.
@@ -288,9 +312,7 @@ ENVIRONMENT
 
 <paragraph>
 
-<F31>Link2rcs<F0> is a Bourne-shell script which uses the System<SP>5 
-utility <F31>getopt<F0>, as well as the unix<F6>T<F0> <F31>find<F0> 
-utility.
+<F31>Link2rcs<F0> is written in C and runs in a UNIX<F6>T<F0> environment.
 
 <header>
 
@@ -298,7 +320,7 @@ FILES
 
 <paragraph>
 
-<F31>Link2rcs<F0> consists of a single shell script file.
+<F31>Link2rcs<F0> consists of a single binary file, <F136>link2rcs<F0>.
 
 <header>
 
@@ -306,9 +328,13 @@ ANTICIPATED CHANGES
 
 <paragraph>
 
-<F31>Link2rcs<F0> does not know how to update a destination tree 
-by adding new directory names.  A merge/update facility would be valuable 
-<#1f> but should be done in 
+For better integration and support of rcs, <F31>link2rcs<F0> should 
+be able to prune directories from the list of those to be created 
+if their RCS directories would have no applicable source files.
+
+Certain systems, such as Apollo, support the use of environment variables 
+in symbolic links.  These are more readable than normal symbolic links.  
+It would be nice to be able to generate these by <F31>link2rcs<F0>.
 
 <header>
 
@@ -316,7 +342,7 @@ SEE ALSO
 
 <paragraph>
 
-rcsget, checkout, rcs<SP>(1)
+rcsget, checkout, permit, rcs<SP>(1)
 
 <header>
 

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	what[] = "$Id: checkout.c,v 5.0 1989/10/10 16:18:15 ste_cm Rel $";
+static	char	what[] = "$Id: checkout.c,v 6.0 1989/12/12 10:31:39 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,15 @@ static	char	what[] = "$Id: checkout.c,v 5.0 1989/10/10 16:18:15 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * $Log: checkout.c,v $
- * Revision 5.0  1989/10/10 16:18:15  ste_cm
- * BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+ * Revision 6.0  1989/12/12 10:31:39  ste_cm
+ * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
  *
+ *		Revision 5.1  89/12/12  10:31:39  dickey
+ *		lint (SunOs 4.0.3)
+ *		
+ *		Revision 5.0  89/10/10  16:18:15  ste_cm
+ *		BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+ *		
  *		Revision 4.3  89/10/10  16:18:15  dickey
  *		corrected last change (if no directory name is explicit,
  *		use ".")
@@ -137,6 +143,8 @@ clean_file()
 	}
 }
 
+static
+SIGS_T
 cleanup(sig)
 {
 	(void)signal(sig, SIG_IGN);

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: rcsput.c,v 5.1 1989/11/01 15:18:40 dickey Exp $";
+static	char	Id[] = "$Id: rcsput.c,v 6.0 1989/12/06 08:56:08 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,18 @@ static	char	Id[] = "$Id: rcsput.c,v 5.1 1989/11/01 15:18:40 dickey Exp $";
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * $Log: rcsput.c,v $
- * Revision 5.1  1989/11/01 15:18:40  dickey
- * walktree passes null pointer to stat-block if no-access.
+ * Revision 6.0  1989/12/06 08:56:08  ste_cm
+ * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
  *
+ *		Revision 5.2  89/12/06  08:56:08  dickey
+ *		added interpretation of "-f" (force) option to override
+ *		test-for-diffs, test-for-textfile, and test-for-existence
+ *		of arguments.  also, interpret "-?" argument to show not
+ *		only usage message from this utility, but from checkin too.
+ *		
+ *		Revision 5.1  89/11/01  15:18:40  dickey
+ *		walktree passes null pointer to stat-block if no-access.
+ *		
  *
  * Function:	Use 'checkin' to checkin one or more files from the
  *		RCS-directory which is located in the current working
@@ -46,6 +55,7 @@ static	FILE	*log_fp;
 static	int	a_opt;		/* all-directory scan */
 static	int	no_op;		/* no-op mode */
 static	char	*pager;		/* nonzero if we don't cat diffs */
+static	int	force;
 static	int	quiet;
 
 static
@@ -132,7 +142,7 @@ char	*name;
 	auto	int	first;
 
 	if (first = (filesize(archive) < 0)) {
-		if (!istextfile(working)) {
+		if (!force && !istextfile(working)) {
 			PRINTF("*** \"%s\" does not seem to be a text file\n",
 				working);
 			return;
@@ -146,7 +156,7 @@ char	*name;
 		if (*vers == '?')
 			first = TRUE;	/* no revisions present */
 		else {
-			if (!different(working))
+			if (!force && !different(working))
 				return;
 			first = FALSE;
 		}
@@ -181,9 +191,12 @@ struct	stat	*sp;
 	auto	char	tmp[BUFSIZ],
 			*s = pathcat(tmp, path, name);
 
-	if (sp == 0)
+	if (sp == 0 || ok_acc < 0) {
 		ok_acc = -1;
-	else if (isDIR(sp->st_mode)) {
+		perror(name);
+		if (!force)
+			exit(FAIL);
+	} else if (isDIR(sp->st_mode)) {
 		abspath(s);		/* get rid of "." and ".." names */
 		if (!a_opt && *pathleaf(s) == '.')
 			ok_acc = -1;
@@ -208,10 +221,10 @@ char	*name;
 	(void)walktree((char *)0, name, scan_tree, "r", 0);
 }
 
-usage()
+usage(option)
 {
 	static	char	*tbl[] = {
- "usage: rcsput [options] files"
+ "Usage: rcsput [options] files_or_directories"
 ,""
 ,"Options include all CHECKIN-options, plus:"
 ,"  -a       process all directories, including those beginning with \".\""
@@ -220,10 +233,13 @@ usage()
 ,"  -c       send differences to terminal without $PAGER filtering"
 ,"  -d       compute differences only, don't try to CHECKIN"
 ,"  -L file  write all differences to logfile"
+,""
 	};
 	register int	j;
 	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
 		FPRINTF(stderr, "%s\n", tbl[j]);
+	if (option == '?')
+		(void)system("checkin -?");
 	exit(FAIL);
 }
 
@@ -244,6 +260,9 @@ char	*argv[];
 					quiet = TRUE;
 					catarg(diff_opts, s);
 				}
+				if (s[1] == 'f') {
+					force = TRUE;
+				}
 			} else {
 				switch (s[1]) {
 				case 'a':	a_opt = TRUE;		break;
@@ -254,9 +273,9 @@ char	*argv[];
 				case 'L':	if (s[2] == EOS)
 							s = "logfile";
 						if (!(log_fp = fopen(s, "a+")))
-							usage();
+							usage(0);
 						break;
-				default:	usage();
+				default:	usage(s[1]);
 				}
 			}
 		} else {

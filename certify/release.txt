@@ -1,6 +1,12 @@
-$Id: release.txt,v 5.0 1989/10/24 16:55:36 ste_cm Rel $
+$Id: release.txt,v 5.1 1989/12/01 07:58:52 dickey Exp $
 
 --------------------------------------------------------------------------------
+
+Version 6.0:
+-----------
+Rewrote 'link2rcs' into C-language to facilitate recreation of symbolic links
+if they are damaged, as well as to permit creation of relative links (rather
+than absolute).
 
 Version 5.0:
 -----------
