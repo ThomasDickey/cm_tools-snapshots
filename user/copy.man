@@ -1,0 +1,138 @@
+.\" $Id: copy.man,v 11.0 1991/09/25 08:58:39 ste_cm Rel $
+.de DS
+.RS
+.nf
+.sp
+..
+.de DE
+.fi
+.RE
+.sp .5
+..
+.TH COPY 1
+.SH NAME
+.PP
+\fBcopy\fR \- unix copy utility
+.SH USAGE
+.PP
+\fBcopy\fI [options] file1 file2
+.PP
+\fBcopy\fI [options] file ... directory
+.SH SYNOPSIS
+.PP
+\fBCopy\fR is an extension of the basic UNIX\*R \fBcp\fR utility.
+It copies files, preserving their modification date.
+.SH DESCRIPTION
+.PP
+\fBCopy\fR copies \fIfile1\fR onto \fIfile2\fR.
+It preserves
+the existing mode of \fIfile2\fR.
+If \fIfile2\fR did not
+exist, \fBcopy\fR uses the mode of the source file.
+.PP
+\fBCopy\fR can also be used to copy one or more files into \fIdirectory
+\fR, without changing their original filenames.
+It refuses to copy
+a file onto itself.
+.PP
+Except for symbolic links, \fIfile2\fR will be set to
+the same modification date as \fIfile1\fR.
+The owner of the file
+will be the same as the owner of the process which invokes \fBcopy\fR.
+Unless the "\-\fBi\fR" option is used, \fBcopy\fR ignores
+permissions of the (previous) destination file.
+.SH OPTIONS
+.PP
+\fBCopy\fR recognizes options similar to those of \fBcp\fR,
+but with extensions:
+.TP
+.B \-d
+all names given are treated as the destination; the
+source names are obtained by taking the leaves and looking for them
+in the current working directory.
+This is provided to simplify installation
+of files in a directory.
+.TP
+.B \-i
+prompt with the name of the file whenever the copy
+will cause an old file to be overwritten.
+A "y" answer causes
+copy to continue.
+Any other answer prevents it from overwriting the
+file.
+.TP
+.B \-l
+copy the files which symbolic links point to, rather
+than copying the links themselves.
+.TP
+.B \-m
+permits you to merge directories.
+If the source
+and destination are directories, \fBcopy\fR will normally create
+a new directory under the destination with the same leaf name as the
+source.
+For example,
+.RS
+.DS
+copy /local/bin /usr/local/bin
+.DE
+.PP
+will create and copy into the directory "/usr/local/bin/bin"
+if "/usr/local/bin" exists.
+Use the "\-\fBm\fR" option
+to copy onto an existing directory.
+.RE
+.TP
+.B \-n
+disables the actual creation or modification
+of files, and (depending on the level of verboseness) shows the effect
+which the \fBcopy\fR command would have.
+.TP
+.B \-s
+enables the set-uid and set-gid file modes in
+the target.
+.TP
+.B \-u
+resets the effective uid before executing.
+If \fBcopy\fR
+is invoked from a set-uid program, this undoes the effect of the set-uid
+by restoring the original permissions of the user.
+.TP
+.B \-v
+verbose mode directs \fBcopy\fR to print the
+names (to standard error) of the files which it copies.
+On Apollo,
+repeating this option causes \fBcopy\fR to show the underlying
+"\fBcpf\fR" command as well.
+.SH OPERATIONS
+.PP
+\fBCopy\fR is used exactly as one would use \fBcp\fR (for
+file-copying).
+Directory copying is performed without the "\-\fBr\fR"
+option of \fBcp\fR.
+.PP
+\fBCopy\fR recognizes the C-shell "~" (tilde) to denote the
+home directory of UNIX users.
+.PP
+If more than two arguments are given, or if the destination ends with
+"/", \fBcopy\fR assumes that the user wants to write into an
+existing directory rather than create a new one.
+.SH ENVIRONMENT
+.PP
+\fBCopy\fR is a C-language program which runs in a UNIX environment.
+.SH FILES
+.PP
+\fBCopy\fR is a single binary file, "copy".
+On the Apollo DOMAIN/IX\*R system it invokes the
+native "cpf" or "cp" command to copy files
+while preserving their object types (see OBTY).
+.SH ANTICIPATED CHANGES
+.PP
+\fBCopy\fR does not currently know how to handle special files
+(e.g., \fB/dev/tty\fR).
+.SH SEE ALSO
+.PP
+cp\ (1)
+.SH AUTHOR:
+.PP
+Thomas Dickey (Software Productivity Consortium).

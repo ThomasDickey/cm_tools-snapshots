@@ -1,82 +1,81 @@
-# $Id: Makefile,v 9.0 1989/08/22 08:38:29 ste_cm Rel $
+# $Id: Makefile,v 9.1 1991/09/24 13:11:57 dickey Exp $
 #
-# $Log: Makefile,v $
-# Revision 9.0  1989/08/22 08:38:29  ste_cm
-# BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
-#
-#	Revision 8.0  89/08/22  08:38:29  ste_cm
-#	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
-#	
-#	Revision 7.0  89/08/22  08:38:29  ste_cm
-#	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
-#	
-#	Revision 6.0  89/08/22  08:38:29  ste_cm
-#	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
-#	
-#	Revision 5.0  89/08/22  08:38:29  ste_cm
-#	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
-#	
-#	Revision 4.0  89/08/22  08:38:29  ste_cm
-#	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
-#	
-#	Revision 3.1  89/08/22  08:38:29  dickey
-#	added 'sources' dependency to 'all'
-#	
-#	Revision 3.0  89/06/14  07:39:45  ste_cm
-#	BASELINE Mon Jun 19 15:30:29 EDT 1989
-#	
 
 ####### (Development) ##########################################################
-INSTALL_PATH=/ste_site/ste/doc
-B	= $(INSTALL_PATH)
+INSTALL_MAN=../../install_man
+COPY	= cp -p
 GET	= checkout
-PUT	= copy -v -d $@
+PUT	= rm -f $@; $(COPY) $? $@
+THIS	= cm_tools
+
+SECTION	= 1
+PREFIX	= $(INSTALL_MAN)/man$(SECTION)/
+
+.SUFFIXES:
+.SUFFIXES: .man .cat
+#
+.man.cat:
+	rm -f $@
+	nroff -man $? >$@
 
 ####### (Standard Lists) #######################################################
+IT	=\
+	$(PREFIX)baseline.$(SECTION)\
+	$(PREFIX)checkin.$(SECTION)\
+	$(PREFIX)checkout.$(SECTION)\
+	$(PREFIX)checkup.$(SECTION)\
+	$(PREFIX)copy.$(SECTION)\
+	$(PREFIX)ded.$(SECTION)\
+	$(PREFIX)link2rcs.$(SECTION)\
+	$(PREFIX)permit.$(SECTION)\
+	$(PREFIX)rcsget.$(SECTION)\
+	$(PREFIX)rcsput.$(SECTION)
+
 ALL	=\
-	$B/baseline.doc\
-	$B/checkin.doc\
-	$B/checkout.doc\
-	$B/checkup.doc\
-	$B/copy.doc\
-	$B/ded.doc\
-	$B/link2rcs.doc\
-	$B/permit.doc\
-	$B/rcsget.doc\
-	$B/rcsput.doc
+	baseline.cat\
+	checkin.cat\
+	checkout.cat\
+	checkup.cat\
+	copy.cat\
+	ded.cat\
+	link2rcs.cat\
+	permit.cat\
+	rcsget.cat\
+	rcsput.cat
+
 SOURCES	=\
-	baseline.doc\
-	checkin.doc\
-	checkout.doc\
-	checkup.doc\
-	copy.doc\
-	ded.doc\
-	link2rcs.doc\
-	permit.doc\
-	rcsget.doc\
-	rcsput.doc
+	baseline.man\
+	checkin.man\
+	checkout.man\
+	checkup.man\
+	copy.man\
+	ded.man\
+	link2rcs.man\
+	permit.man\
+	rcsget.man\
+	rcsput.man
 
 ####### (Standard Productions) #################################################
-all:		sources	; @echo '** use "make install"'
-clean:			; rm -f *.doc_*
-clobber:	clean	; rm -f \$$*.doc_*
-destroy:
-	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done'
+all:		$(ALL)			; @echo '** use "make install"'
+clean:
+clobber:	clean			; rm -f *.out *.cat core
+destroy:	clobber
+	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 run_tests:
 sources:	$(SOURCES)
-install:	$(ALL)
-deinstall:	; rm -f $(ALL)
+install:	$(IT)
+deinstall:		; rm -f $(IT)
 
 ####### (Details of Productions) ###############################################
-$B/baseline.doc:	baseline.doc	; $(PUT)
-$B/checkin.doc:		checkin.doc	; $(PUT)
-$B/checkout.doc:	checkout.doc	; $(PUT)
-$B/checkup.doc:		checkup.doc	; $(PUT)
-$B/copy.doc:		copy.doc	; $(PUT)
-$B/ded.doc:		ded.doc		; $(PUT)
-$B/link2rcs.doc:	link2rcs.doc	; $(PUT)
-$B/permit.doc:		permit.doc	; $(PUT)
-$B/rcsget.doc:		rcsget.doc	; $(PUT)
-$B/rcsput.doc:		rcsput.doc	; $(PUT)
+$(PREFIX)baseline.$(SECTION):	baseline.man	; $(PUT)
+$(PREFIX)checkin.$(SECTION):	checkin.man	; $(PUT)
+$(PREFIX)checkout.$(SECTION):	checkout.man	; $(PUT)
+$(PREFIX)checkup.$(SECTION):	checkup.man	; $(PUT)
+$(PREFIX)copy.$(SECTION):	copy.man	; $(PUT)
+$(PREFIX)ded.$(SECTION):	ded.man		; $(PUT)
+$(PREFIX)link2rcs.$(SECTION):	link2rcs.man	; $(PUT)
+$(PREFIX)permit.$(SECTION):	permit.man	; $(PUT)
+$(PREFIX)rcsget.$(SECTION):	rcsget.man	; $(PUT)
+$(PREFIX)rcsput.$(SECTION):	rcsput.man	; $(PUT)
 
 $(SOURCES):				; $(GET) $@

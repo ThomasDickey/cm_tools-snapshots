@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 9.2 1991/07/11 14:47:28 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 9.3 1991/09/06 14:49:45 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		06 Sep 1991, modified interface to 'rcsopen()'
  *		11 Jul 1991, make this work properly with suid-root
  *		20 Jun 1990, use 'shoarg()'
  *		20 May 1991, mods to compile on apollo sr10.3
@@ -148,7 +149,7 @@ PostProcess()
 	time_t	tt	= 0;
 	int	yd, md, dd, ht, mt, st;
 
-	if (!rcsopen(Archive, -debug))
+	if (!rcsopen(Archive, -debug, TRUE))
 		return;
 
 	while (header && (s = rcsread(s))) {

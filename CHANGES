@@ -1,3 +1,222 @@
+1991-09-25  dickey@software.org
+
+	* src/checkout/src/rcsget.c:
+	make this show reasonable traces for options -n, -q
+
+	* src/checkout/src/rcsget.c:
+	make this ignore top-level arguments that are links unless
+	we have set "-L"
+
+	* user/rcsget.man: documented options -L and -R
+
+1991-09-25  ste_cm@software.org
+
+	* user/rcsget.man:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* user/rcsget.man: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-09-25  dickey@software.org
+
+	* src/checkout/src/rcsget.c:
+	added options "-L" and "-R"; make this follow symbolic-links
+	only if "-L" is set.
+
+	* user/ded.man: brought this up to date for baselines 9, 10
+
+	* user/rcsput.man, user/permit.man: standalone-macros
+
+1991-09-25  ste_cm@software.org
+
+	* user/permit.man:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* user/permit.man: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-09-25  dickey@software.org
+
+	* user/link2rcs.man: standalone-macros
+
+1991-09-25  ste_cm@software.org
+
+	* user/link2rcs.man:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* user/link2rcs.man: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-09-25  dickey@software.org
+
+	* user/ded.man, user/copy.man: standalone-macros
+
+1991-09-25  ste_cm@software.org
+
+	* user/copy.man:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* user/copy.man: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-09-25  dickey@software.org
+
+	* user/checkup.man: standalone-macros
+
+1991-09-25  ste_cm@software.org
+
+	* user/checkup.man:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-09-25  dickey@software.org
+
+	* user/checkout.man: standalone-macros
+
+1991-09-25  ste_cm@software.org
+
+	* user/checkout.man:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* user/checkout.man: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-09-25  dickey@software.org
+
+	* user/checkin.man, user/baseline.man: standalone-macros
+
+1991-09-25  ste_cm@software.org
+
+	* user/baseline.man:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-09-25  dickey@software.org
+
+	* user/copy.man: typo
+
+1991-09-24  dickey@software.org
+
+	* user/ded.man: fixed the stuff that shows backslashes
+
+	* user/Makefile: revised to use nroff rather than interleaf
+
+	* Makefile: revised to use nroff for man-pages rather than interleaf
+
+	* user/ded.man: RCS_BASE
+
+	* user/checkup.man, user/checkout.man, user/checkin.man, user/baseline.man:
+	whitespace
+
+	* user/rcsput.man, user/rcsget.man: RCS_BASE
+
+	* user/copy.man: typo
+
+	* user/permit.man, user/link2rcs.man, user/copy.man, user/checkup.man, user/checkout.man, user/checkin.man, user/baseline.man:
+	RCS_BASE
+
+1991-09-23  dickey@software.org
+
+	* certify/release.txt: more notes for #10
+
+	* Makefile:
+	corrected the manner in which I construct subdir's makefile copy of
+	INSTALL_BIN/INSTALL_DOC
+
+1991-09-20  ste_cm@software.org
+
+	* Makefile: try quoting install links (have a problem!)
+
+1991-09-20  dickey@software.org
+
+	* Makefile:
+	changed scheme for install-path to use a link-or-directory above this
+	level.
+
+1991-09-19  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	oops: forgot to filter out my options in the case of initial
+	insertion, where I must supply a revision.
+
+1991-09-13  dickey@software.org
+
+	* src/checkin/src/rcsput.c: moved 'filesize()' to common-lib
+
+	* certify/release.txt: begin notes for baseline 10
+
+1991-09-09  dickey@software.org
+
+	* src/baseline/test/Makefile: fix clean-rule
+
+1991-09-09  ste_cm@software.org
+
+	* src/baseline/test/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/baseline/test/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-09-09  dickey@software.org
+
+	* src/permit/test/Makefile: fix clean-rule
+
+1991-09-09  ste_cm@software.org
+
+	* src/permit/test/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/permit/test/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-09-09  dickey@software.org
+
+	* src/permit/src/Makefile, src/link2rcs/test/Makefile: fix clean-rule
+
+1991-09-09  ste_cm@software.org
+
+	* src/link2rcs/test/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/link2rcs/test/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-09-09  dickey@software.org
+
+	* src/link2rcs/src/Makefile, src/copy/test/Makefile, src/copy/src/Makefile, src/checkup/test/Makefile:
+	fix clean-rule
+
+1991-09-09  ste_cm@software.org
+
+	* src/checkup/test/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/checkup/test/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-09-09  dickey@software.org
+
+	* src/checkup/src/Makefile, src/checkout/test/Makefile: fix clean-rule
+
+1991-09-09  ste_cm@software.org
+
+	* src/checkout/test/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/checkout/test/Makefile:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-09-09  dickey@software.org
+
+	* src/checkout/src/Makefile, src/checkin/test/Makefile: fix clean-rule
+
+1991-09-09  ste_cm@software.org
+
+	* src/checkin/test/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+1991-09-09  dickey@software.org
+
+	* src/checkin/src/Makefile, src/baseline/src/Makefile: fix clean-rule
+
+1991-09-06  dickey@software.org
+
+	* src/checkin/src/checkin.c, src/permit/src/permit.c, src/checkout/src/checkout.c:
+	changed interface to 'rcsopen()'
+
 1991-07-15  dickey@software.org
 
 	* src/checkup/src/checkup.c:

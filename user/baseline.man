@@ -1,0 +1,157 @@
+.\" $Id: baseline.man,v 10.0 1991/09/25 08:58:03 ste_cm Rel $
+.de DS
+.RS
+.nf
+.sp
+..
+.de DE
+.fi
+.RE
+.sp .5
+..
+.TH BASELINE 1
+.SH NAME
+.PP
+\fBbaseline\fR \- rcs utility
+.SH USAGE
+.PP
+\fBbaseline\fI [options] [file-specifications]
+.SH SYNOPSIS
+.PP
+\fBBaseline\fR permits you to set a baseline version in one or
+more RCS files.
+.SH DESCRIPTION
+.PP
+\fBBaseline\fR adds a baseline (placeholder) version to one or
+more RCS archives.
+The effective check-in time for the file is the
+file's last check-in date (before \fBbaseline\fR is invoked)
+.PP
+Assuming that the file was originally checked in using \fBcheckin\fR,
+then the check-in, modification and baseline dates all are
+the same.
+.PP
+A baseline version consists of a group of files which
+can be referenced by a common version number.
+The baseline program uses for this purpose 2.0, 3.0, etc.
+Version 1.0 is never used,
+since the first development version is, by convention, 1.1.
+.PP
+After baselining, you may use \fBcheckout\fR to obtain
+a particular set of files.
+For example,
+.DS
+checkout \-r2.0 file
+.DE
+.PP
+obtains the baseline "2.0" version, while
+.DS
+checkout \-r2 file1 file2 file3
+.DE
+.PP
+obtains the last development version beginning with "2.0", but
+before "3.0".
+.SH OPTIONS
+.PP
+\fBBaseline\fR recognizes several options:
+.TP
+.BI \- integer
+\fRthe new baseline version, specified as a whole
+number after a hyphen, e.g.,
+.RS
+.DS
+baseline \-2 file1 file2 file3
+.DE
+.PP
+If no baseline version is specified, the most recent baseline
+version (as recorded in the \fBRCS,v\fR \fBpermit\fR-file) is
+assumed.
+This is done to permit additional files to be added to an
+existing baseline.
+.RE
+.TP
+.B \-a
+permits \fBbaseline\fR to process files in directories
+beginning with ".".
+.TP
+.B \-f
+the "fast" option preserves existing access
+lists in the archives.
+Normally \fBpermit\fR is invoked to purge
+the access lists to prevent locks while the baselining process is
+proceeding.
+.TP
+.B \-l
+leaves files locked after baselining.
+Also, if files
+are locked but not modified, no error is reported.
+.TP
+.BI \-m msg
+adds the string "\-\-\ \fImsg\fR" to
+the default baseline revision message "\fBBASELINE\fR \fIdate\fR".
+.TP
+.B \-n
+runs \fBbaseline\fR in no-op mode,
+showing where permissions would be purged,
+and listing files which would be baselined.
+.TP
+.B \-r
+permits \fBbaseline\fR to run recursively when
+it encounters a non-RCS directory.
+.TP
+.B \-v
+makes the baseline process more verbose by causing
+permit, checkin and checkout to show their actions.
+.SH OPERATIONS
+.PP
+Before invoking \fBbaseline\fR, ensure that all of the files to
+be baselined have been checked into \fIrcs\fR
+(e.g., with "\fBcheckin\fR \-u").
+This is easily done using the directory editor \fBded\fR.
+.PP
+\fBBaseline\fR operates only upon files which have been
+checked into \fIrcs\fR (i.e., a corresponding archive file exists
+in the subdirectory "RCS").
+.PP
+\fBBaseline\fR requires that all of the working files have been
+checked in (i.e., with the "\-u" option so that they are retained
+as working files).
+.PP
+\fBBaseline\fR first invokes \fBpermit\fR (to ensure that you
+have permission to place locks in the directory, then to purge the
+archive access lists, and finally to set the baseline-version for
+the directory).
+It then invokes \fBcheckin\fR and \fBcheckout\fR
+(which must be in your path) to first place a lock on the specified
+files, and then to check-in the file with the new, baseline version.
+.PP
+If any files are found which are locked, \fBbaseline\fR prints
+an error message and halts.
+Similarly, an attempt made to baseline
+a file with a lower version than has been archived will result in
+an error.
+.SH ENVIRONMENT
+.PP
+\fBBaseline\fR is written in C, and runs under UNIX\*R systems.
+.SH FILES
+.PP
+\fBBaseline\fR uses the following files
+.TP
+\fBpermit\fR
+the RCS directory-permissions utility
+.TP
+\fBcheckin\fR
+the RCS check-in package
+.TP
+\fBcheckout\fR
+the RCS check-out package
+.TP
+.SH ANTICIPATED CHANGES
+.PP
+\fBBaseline\fR does not currently handle branch deltas.
+.SH SEE ALSO
+.PP
+checkin, checkout, ded, permit
+.SH AUTHOR:
+.PP
+Thomas Dickey (Software Productivity Consortium).

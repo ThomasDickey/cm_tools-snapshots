@@ -1,0 +1,154 @@
+.\" $Id: permit.man,v 11.0 1991/09/25 08:59:08 ste_cm Rel $
+.de DS
+.RS
+.nf
+.sp
+..
+.de DE
+.fi
+.RE
+.sp .5
+..
+.TH PERMIT 1
+.SH NAME
+.PP
+\fBpermit\fR \- RCS directory-level permissions
+.SH USAGE
+.PP
+\fBpermit\fI [options] [directory-specifications]
+.SH SYNOPSIS
+.PP
+\fBPermit\fR maintains a special-purpose RCS archive in each RCS
+directory in a tree of files.
+The special archive records the access
+list for users who are allowed to use the \fBcheckin\fR and \fBcheckout\fR
+utilities to place locks on archives in the corresponding directories,
+as well as the initial revision number for new files.
+.SH DESCRIPTION
+.PP
+\fBPermit\fR scans each directory-tree given as an argument.
+If no argument is given, \fBpermit\fR processes the tree beginning
+with ".".
+.PP
+Each time an RCS directory is found, \fBpermit\fR determines if
+the directory-access file exists.
+.PP
+If no directory-access file is found, \fBpermit\fR scans through
+all other archives in the directory to infer the baseline version,
+and from that the initial revision number for new files which may
+be created in that directory.
+Then, \fBpermit\fR creates a directory
+access file.
+By default, the RCS directory owner is on each access
+list \- otherwise manipulating it is complicated.
+.PP
+Normally, \fBpermit\fR issues \fBrcs\fR commands to add the
+directory owner to the access list of each archive.
+The "\-\fBp\fR"
+(purge) option is used to delete all usernames from the access lists.
+.SH OPTIONS
+.TP
+.BI \-a userlist
+adds the list of specified users
+to each RCS archive access list.
+.TP
+.BI \-b number
+specifies the baseline version
+for the directory.
+This must be an integer greater than one.
+\fBPermit\fR verifies that no version in the directory is higher than this
+value.
+Thereafter, this sets the initial version for new files which
+are archived using \fBcheckin\fR in the directory.
+.TP
+.BI \-e userlist
+expunges the list of specified
+users to each RCS archive access list.
+.TP
+.BI \-m msg
+overrides \fBpermit\fR's default revision-log
+message "\fBBASELINE\fR\ \fIdate\fR" which is entered
+in the \fBRCS,v\fR file.
+.TP
+.BI \-n
+no-op mode causes \fBpermit\fR to run, showing
+what it would try to do.
+.TP
+.BI \-p
+purges all usernames from each RCS archive
+access list.
+.TP
+.BI \-q
+makes the listing less verbose (i.e., suppresses
+display of the \fBrcs\fR and \fBci\fR commands, and of the
+directory tree).
+.TP
+.BI \-s
+same as "\-\fBq\fR".
+.TP
+.BI \-u userlist
+generates a report showing which
+archives have the specified users in their access lists.
+.TP
+.BI \-v
+makes the display more verbose; the names of files
+which cannot be opened are reported.
+.SH OPERATIONS
+.PP
+An example of the use of \fBpermit\fR is shown below.
+The user
+has asked for a report showing what actions permit would make on the
+current directory tree.
+The directory-access archives are not found,
+so \fBpermit\fR scans through each RCS archive to obtain the
+\fBbaseline\fR revision number:
+.DS
+bsd4.2(64) permit -n
+** path = .
+   1:	./
+   2:	|-- RCS/
+   3:	|---|-- 2.1 > COPYRIGHT,v (dickey,impact)
+   4:	|---|-- 2.2 > Makefile,v (dickey,impact)
+   5:	|---|-- 2.2 > README,v (dickey,impact)
+   6:	|---|-- 2.1 > descrip.mms,v (dickey,impact)
+ci -mPERMIT FILE -r2.1 ./RCS ./RCS,v
+rcs -aimpact ./RCS,v
+   7:	|-- certificate/
+   8:	|---|-- RCS/
+   9:	|---|---|-- 2.1 > Makefile,v (dickey,impact)
+  10:	|---|---|-- 2.1 > config_sheet.txt,v (dickey,impact)
+  11:	|---|---|-- 2.1 > descrip.mms,v (dickey,impact)
+  12:	|---|---|-- 2.1 > release_notes.txt,v (dickey,impact)
+\&...
+.DE
+.SH ENVIRONMENT
+.PP
+\fBPermit\fR is a C-language program which runs in a portable
+UNIX\*R environment.
+.PP
+Environment variables include:
+.TP
+.B RCS_DIR
+specifies the directory in which \fBpermit\fR
+will find the ",v" files.
+If not specified, \fBpermit\fR
+assumes "RCS".
+.SH FILES
+.PP
+\fBPermit\fR is a single binary file, "permit".
+Within each
+RCS directory, \fBpermit\fR maintains an archive "\fBRCS,v\fR",
+which records the directory-access list, as
+well as the beginning revision number for new files.
+The directory-acces
+s archive file is named so that the set-uid applications \fBcheckin\fR
+and \fBcheckout\fR are unable to modify it.
+.SH ANTICIPATED CHANGES
+.PP
+None.
+.SH SEE ALSO
+.PP
+baseline, rcs\ (1), ci\ (1).
+.SH AUTHOR:
+.PP
+Thomas Dickey (Software Productivity Consortium).

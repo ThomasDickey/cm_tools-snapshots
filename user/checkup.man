@@ -1,0 +1,194 @@
+.\" $Id: checkup.man,v 10.0 1991/09/25 08:58:33 ste_cm Rel $
+.de DS
+.RS
+.nf
+.sp
+..
+.de DE
+.fi
+.RE
+.sp .5
+..
+.TH CHECKUP 1
+.SH NAME
+.PP
+\fBcheckup\fR \- RCS/SCCS check-in status
+.SH USAGE
+.PP
+\fBcheckup\fI [options] [file-specifications]
+.SH SYNOPSIS
+.PP
+\fBCheckup\fR examines one or more text files, and shows which
+ones have not been archived with either \fIrcs\fR or \fIsccs\fR.
+It also shows those which have been modified since the last check-in.
+.SH DESCRIPTION
+.PP
+\fBCheckup\fR scans each filename given as an argument, looking
+first for a corresponding \fIrcs\fR archive, then for an \fIsccs\fR archive.
+For each file, \fBcheckup\fR determines if the file
+.TP
+.B \-
+has been archived,
+.TP
+.B \-
+has been locked for modification,
+.TP
+.B \-
+has been modified since its check-in date, or has
+a modification date older than the check-in date.
+.PP
+If a directory name is given, \fBcheckup\fR scans all files in the directory.
+In either case, \fBcheckup\fR attempts to display
+the offending files in the context of a directory tree.
+The directory-tree display is written to the standard error stream.
+\fBCheckup\fR writes to the standard output a list of the absolute pathnames
+for each file.
+This list may be piped into other utilities, such
+as the directory editor \fBded\fR.
+.SH OPTIONS
+.TP
+.B \-a
+permits \fBcheckup\fR to examine directories
+(and their subdirectories) whose leafnames begin with ".".
+These are otherwise ignored.
+.TP
+.B \-c
+overrides the convention that filenames written to
+standard output are those for which \fBcheckup\fR finds something to report.
+Instead, the filenames are the complete set of archived
+files selected by the other options.
+Each line contains the revison code for the file, followed by its name.
+This option is used to generate configuration lists from a set of working files.
+.TP
+.B \-d
+debug option forces \fBcheckup\fR to show all filenames
+found.
+The forced-names are marked "\fB(ok)\fR" in the tree
+listing.
+.TP
+.BI \-i string
+directs \fBcheckup\fR to ignore all files matching the pattern in \fIstring\fR.
+The wildcard characters "*" and "?" are interpreted as in the UNIX shell.
+.TP
+.BI \-l file
+reroutes the directory-tree display
+(normally written to standard error) to the specified file.
+.TP
+.B \-o
+directs \fBcheckup\fR to report obsolete files
+(i.e., those archives for which no corresponding working-file was
+found).
+If both "\-\fBr\fR" and "\-\fBo\fR" are specified,
+the "\-\fBr\fR" option is interpreted as selecting obsolete-files.
+.RS
+.PP
+If the "\-\fBo\fR" option is selected, \fBcheckup\fR
+will report also on directories which are found in archive directories.
+Otherwise, it does not scan the contents of archive directories.
+.RE
+.TP
+.B \-p
+directs \fBcheckup\fR to express the filenames
+written to standard output as relative pathnames.
+Otherwise they are written as absolute pathnames (i.e., beginning with "/").
+.TP
+.B \-q
+makes the listing less verbose (i.e., suppresses display of the directory tree).
+If standard output is not piped to
+a file, the list of absolute filenames will be shown on your terminal
+instead.
+.TP
+.BI \-r REV
+reports all working files whose highest version is below \fIREV\fR.
+For example, "\-\fBr\fR2"
+will report all files which are checked in, but having version numbers
+below "2.0".
+.RS
+.PP
+A "+" sign may be appended to the "\-\fBr\fR" option
+to cause it to reverse the normal order of comparison.
+For example, "\-\fBr\fR2+" causes checkup to report files having version
+numbers above "2.0".
+.RE
+.TP
+.B \-s
+same as "\-\fBq\fR".
+.TP
+.B \-t
+directs \fBcheckup\fR to suppress files whose
+extension ends in a default list: ".bak", ".i", ".log",
+".out" and ".tmp".
+.TP
+.B \-v
+makes the display more verbose; the names of files
+which cannot be opened are reported.
+.TP
+.BI \-x string
+specifies an extension (filename suffix).
+All filenames ending in this extension are ignored.
+The first character of the string doubles as a delimiter (e.g., ".").
+If it is repeated in the string, \fBcheckup\fR parses two extensions.
+The first extension, if any, is used to conditionally ignore the second.
+That is, if a file with the first extension exists, the file with
+the second is ignored.
+In either case, wildcards are permitted in
+the target extension as in the "\-\fBi\fR" option.
+.PP
+Multiple instances of the "\-\fBi\fR" and "\-\fBx\fR" options may be used.
+\fBCheckup\fR tests files against the exclusion options from right-to-left.
+.SH OPERATIONS
+.PP
+An example of the use of \fBcheckup\fR is shown below:
+.DS
+bsd4.2(64) checkup -t -x.e.c ~/traces/lib
+** path = //dickey/local/dickey/traces/lib
+   1:	//dickey/local/dickey/traces/lib/
+   2:	|-- access/
+   3:	|-- das/
+   4:	|-- das+/
+   5:	|-- report/
+   6:	|-- traces/
+bsd4.2(65) checkup  ~/traces/lib
+** path = //dickey/local/dickey/traces/lib
+   1:	//dickey/local/dickey/traces/lib/
+   2:	|-- access/
+   3:	|---|-- lincnt.out (not archived)
+   4:	|---|-- lint.out (not archived)
+   5:	|-- das/
+   6:	|---|-- das.c (not archived)
+   7:	|---|-- dbdump.c (not archived)
+   8:	|---|-- dbload.c (not archived)
+   9:	|---|-- dblook.c (not archived)
+  10:	|---|-- lincnt.out (not archived)
+  11:	|---|-- lint.out (not archived)
+  12:	|-- das+/
+  13:	|-- report/
+  14:	|---|-- lincnt.out (not archived)
+  15:	|---|-- lint.out (not archived)
+  16:	|-- traces/
+.DE
+.SH ENVIRONMENT
+.PP
+\fBCheckup\fR is a C-language program which runs in a portable
+UNIX\*R environment.
+Environment variables include:
+.TP
+.B RCS_DIR
+specifies the directory in which \fBcheckup\fR will find the ",v" files.
+If not specified, \fBcheckup\fR assumes "RCS".
+.TP
+.B SCCS_DIR
+specifies the directory in which \fBcheckup\fR will find the "s." files.
+If not specified, \fBcheckup\fR assumes "SCCS".
+.SH FILES
+.PP
+\fBCheckup\fR is a single binary file, "checkup".
+.SH ANTICIPATED CHANGES
+.PP
+None.
+.SH SEE ALSO
+.PP
+rlog\ (1), sact\ (1).
+.SH AUTHOR:
+.PP
+Thomas Dickey (Software Productivity Consortium).
