@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.6 1993/09/22 13:46:22 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.7 1994/05/12 11:17:01 tom Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RC
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		12 May 1994, made "nothing copied" message less verbose
  *		22 Sep 1993, gcc warnings
  *		02 Dec 1992, use 'rmdir()' rather than 'unlink()'.  Added logic
  *			     to ensure that we don't try to recreate a directory
@@ -897,7 +898,7 @@ _MAIN
 			SUMMARY(total_files),
 			total_bytes);
 	if (!(total_dirs || total_links || total_files))
-		VERBOSE "** nothing %scopied\n", MAY);
+		DEBUG "** nothing %scopied\n", MAY);
 
 	(void)exit(SUCCESS);
 	/*NOTREACHED*/

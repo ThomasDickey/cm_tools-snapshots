@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.20 1993/09/23 20:54:36 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.21 1994/05/09 19:49:25 tom Exp $";
 #endif
 
 /*
@@ -502,6 +502,7 @@ int	DoIt (
 	int	code;
 	int	fix_id;
 
+#ifndef linux
 	if ((fix_id = (!geteuid() && getuid())) != 0) {
 		if (!no_op) {
 			(void)setruid(geteuid());
@@ -509,14 +510,17 @@ int	DoIt (
 		}
 		WhoAmI();
 	}
+#endif
 
 	if (!silent || debug) shoarg(stdout, verb, args);
 	code = no_op ? 0 : execute(rcspath(verb), args);
 
+#ifndef linux
 	if (!no_op && fix_id) {
 		(void)setruid(HIS_uid);
 		(void)setrgid(HIS_gid);
 	}
+#endif
 	return code;
 }
 
