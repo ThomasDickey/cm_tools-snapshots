@@ -1,3 +1,35 @@
+1988-06-13  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	use 'newzone()' to control interpretation of timezone.
+
+	* src/checkout/src/checkout.c:
+	use 'newzone()' to control timezone interpretation.
+
+1988-06-10  dickey@software.org
+
+	* src/checkout/src/rcsget.sh: fixed quoting of wildcards
+
+	* src/link2rcs/src/link2rcs.sh: New file.
+
+1988-06-08  dickey@software.org
+
+	* src/checkout/src/checkout.c: more tinkering with 'chmod()'.
+
+1988-06-07  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	enforce 0444 mode for checked-out file (except if locked).
+
+1988-06-02  dickey@software.org
+
+	* src/checkin/src/rcsput.sh:
+	oops: was not parsing arguments of ci properly (still not sure about embedded spaces tho).
+
+	* src/checkout/src/Makefile: corrected use of 'rm' in clean/clobber
+
+	* src/checkin/src/Makefile: corrected use of 'rm' in clean/clobber.
+
 1988-05-31  dickey@software.org
 
 	* user/ded.doc:

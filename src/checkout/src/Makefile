@@ -1,4 +1,4 @@
-# @(#)Makefile	1.1 88/05/21 10:09:17
+# @(#)Makefile	1.2 88/06/02 13:03:31
 # Make-file for SCCS/RCS checkin utilities
 B	= ../../bin
 I	= ../lib
@@ -14,9 +14,9 @@ ALL	=\
 all:	$(ALL)
 #
 clean:
-	rm *.out *.o
+	rm -f *.out *.o
 clobber: clean
-	rm $(ALL)
+	rm -f $(ALL)
 #
 SRC	=\
 	checkout.c\

@@ -1,4 +1,4 @@
-: '@(#)rcsget.sh	1.2 88/05/21 12:27:29'
+: '@(#)rcsget.sh	1.3 88/06/10 14:28:47'
 # Check files out of RCS (T.E.Dickey)
 #
 # Use 'checkout' to checkout one or more files from the RCS-directory which is
@@ -13,8 +13,6 @@
 # Environment:
 #	RUNLIB	- location of this & supporting code
 #
-# hacks to make this run on apollo:
-SYS5=/sys5/bin
 TRACE=
 #
 WD=`pwd`
@@ -33,15 +31,18 @@ do	case $i in
 done
 #
 if [ -z "$1" ]
-then	$0 $OPTS RCS
-elif [ "$1" = RCS ]
-then	$0 $OPTS RCS/*,v
-else
+then
+	$0 $OPTS RCS/*,v
+elif [ "$1" != '*' ]
+then
 	for i in $*
 	do
 		if [ -d $i ]
 		then
-			if [ "$i" != RCS -a "$i" != sccs ]
+			if [ $i = RCS ]
+			then
+				$0 $OPTS RCS/*,v
+			elif [ "$i" != sccs ]
 			then
 				echo '** checkout directory "'$i'"'
 				cd $i

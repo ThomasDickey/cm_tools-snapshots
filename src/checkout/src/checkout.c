@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkout.c	1.7 88/05/27 12:19:18";
+static	char	sccs_id[] = "@(#)checkout.c	1.10 88/06/13 06:48:32";
 #endif	lint
 
 /*
@@ -7,6 +7,11 @@ static	char	sccs_id[] = "@(#)checkout.c	1.7 88/05/27 12:19:18";
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		13 Jun 1988, use 'newzone()'.
+ *		08 Jun 1988, more adjustments to 'chmod()'.
+ *		07 Jun 1988, make this set the checked-out file's mode to
+ *			     readonly unless it is locked.  (The 'co' utility
+ *			     neglects to do this & is needed on apollo).
  *		27 May 1988, recoded using 'rcsedit' module.
  *
  * Function:	Display the date of a specified SCCS-sid of a given file,
@@ -21,6 +26,9 @@ static	char	sccs_id[] = "@(#)checkout.c	1.7 88/05/27 12:19:18";
  *		the most-recent version.  Must make it work ok for cutoff.
  *
  *		Must translate '-c' option to RCS's '-d' option.
+ *
+ *		My 'chmod()' works ok, except that if the extracted version is
+ *		locked, should override to make "+w".
  */
 
 #include	"ptypes.h"
@@ -36,7 +44,6 @@ extern	char	*rcsread(), *rcsparse_id(), *rcsparse_num(), *rcsparse_str();
 extern	char	*strcat();
 extern	char	*strcpy();
 extern	char	*strchr();
-extern	time_t	adj2est();
 extern	time_t	cutoff();
 
 extern	char	*optarg;
@@ -53,6 +60,8 @@ extern	int	optind;
 
 static	time_t	opt_c	= 0;
 static	int	silent;
+static	int	locked;			/* TRUE if user is locking file */
+static	int	mode;			/* mode with which 'co' sets file */
 static	char	options[BUFSIZ];	/* options to pass to 'co' */
 static	char	opt_rev[BUFSIZ];	/* revision to find */
 
@@ -100,8 +109,10 @@ int	yd, md, dd, ht, mt, st;
 			s = rcsparse_num(tmp, s);
 			if (sscanf(tmp, FMT_DATE,
 				&yd, &md, &dd, &ht, &mt, &st) == 6) {
+				newzone(5,0,FALSE);
 				tt = packdate(1900+yd, md,dd, ht,mt,st);
 				ok = tt;	/* patch: cutoff? */
+				oldzone();
 			} else
 				header = FALSE;
 			break;
@@ -112,9 +123,11 @@ int	yd, md, dd, ht, mt, st;
 	}
 	rcsclose();
 
-	if (ok)
-		if (setmtime(name, ok + adj2est(TRUE)) < 0)
+	if (ok) {
+		(void)chmod(name, mode);
+		if (setmtime(name, ok) < 0)
 			PRINTF("?? touch \"%s\" failed\n", name);
+	}
 }
 
 /*
@@ -136,6 +149,11 @@ struct	stat	sb;
 				TELL("** checkout was not performed\n");
 				return (FALSE);
 			}
+			mode = (sb.st_mode & 0777);
+			if (!locked)
+				mode &= 0555;	/* strip writeable mode */
+			if (!mode)
+				mode = 0400;	/* leave at least readonly! */
 			return (TRUE);
 		}
 	}
@@ -187,6 +205,8 @@ time_t	mtime;
 				if (*s == 'q')
 					silent++;
 				if (strchr("lqr", *s)) {
+					if (*s == 'l')
+						locked++;
 					if (*++s)
 						(void)strcpy(opt_rev, s);
 				} else if (strchr("swj", *s)) {
