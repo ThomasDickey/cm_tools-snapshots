@@ -1,3 +1,12 @@
+1990-02-07  dickey@software.org
+
+	* src/checkup/src/checkup.c:
+	added "-p" option to generate relative pathnames
+
+	* src/checkup/src/checkup.c:
+	added "-l" option to reopen stderr so we can easily pipe the
+	report to a file
+
 1990-01-24  dickey@software.org
 
 	* src/copy/src/copy.c: added missing 'break' in 'skip_dots()' loop

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: checkup.c,v 5.0 1989/10/26 10:20:32 ste_cm Rel $";
+static	char	Id[] = "$Id: checkup.c,v 5.2 1990/02/07 12:58:53 dickey Exp $";
 #endif	lint
 
 /*
@@ -7,9 +7,16 @@ static	char	Id[] = "$Id: checkup.c,v 5.0 1989/10/26 10:20:32 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * $Log: checkup.c,v $
- * Revision 5.0  1989/10/26 10:20:32  ste_cm
- * BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+ * Revision 5.2  1990/02/07 12:58:53  dickey
+ * added "-p" option to generate relative pathnames
  *
+ *		Revision 5.1  90/02/07  11:14:26  dickey
+ *		added "-l" option to reopen stderr so we can easily pipe the
+ *		report to a file
+ *		
+ *		Revision 5.0  89/10/26  10:20:32  ste_cm
+ *		BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+ *		
  *		Revision 4.1  89/10/26  10:20:32  dickey
  *		use new procedure 'istextfile()'
  *		
@@ -59,6 +66,9 @@ static	char	Id[] = "$Id: checkup.c,v 5.0 1989/10/26 10:20:32 ste_cm Rel $";
  *		-d	debug, shows all names and dates
  *		-o	reports "obsolete" files, i.e., those archives for
  *			which there is no corresponding working-file.
+ *		-p	sends pathnames in relative-format.  This is useful
+ *			when a set of full pathnames would be too long for the
+ *			prevailing shell.
  *		-r REV	reports all working files whose highest checked-in
  *			version is below REV.  (A "+" suffixed causes the
  *			report to reverse, showing files above REV).
@@ -93,6 +103,7 @@ static	char	Id[] = "$Id: checkup.c,v 5.0 1989/10/26 10:20:32 ste_cm Rel $";
 extern	char	*pathcat();
 extern	char	*pathleaf();
 extern	char	*rcs_dir();
+extern	char	*relpath();
 extern	char	*sccs_dir();
 extern	char	*txtalloc();
 
@@ -125,6 +136,8 @@ static	int	verbose;		/* "-v" option */
 static	int	lines;			/* line-number, for report */
 static	char	*revision = "0";	/* required revision level */
 static	int	reverse;		/* true if we reverse revision-test */
+
+static	char	*original;		/* original directory, for "-p" */
 
 /*
  * Define a new extension-to-ignore
@@ -200,8 +213,14 @@ static
 pipes(path, name)
 char	*path, *name;
 {
-	if ((verbose < 0) || !isatty(fileno(stdout)))
-		PRINTF("%s/%s\n", path, name);
+	auto	char	tmp[BUFSIZ];
+
+	if ((verbose < 0) || !isatty(fileno(stdout))) {
+		path = pathcat(tmp, path, name);
+		if (original != 0)
+			path = relpath(path, original, path);
+		PRINTF("%s\n", path);
+	}
 }
 
 /*
@@ -382,7 +401,9 @@ usage()
 	"options:",
 	"  -a      report files and directories beginning with \".\"",
 	"  -d      debug (show all names)",
+	"  -l FILE write logfile of tree-of-files",
 	"  -o      reports obsolete files (no working file exists)",
+	"  -p      generate pathnames relative to current directory",
 	"  -q      quiet",
 	"  -r REV  specifies revision-level to check against, REV+ to reverse",
 	"  -s      (same as -q)",
@@ -404,6 +425,7 @@ usage()
 main(argc, argv)
 char	*argv[];
 {
+	auto	char	tmp[BUFSIZ];
 	register int j;
 
 	/* make stderr line-buffered, since we send our report that way */
@@ -415,7 +437,7 @@ char	*argv[];
 	(void)setlinebuf(stderr);
 #endif
 
-	while ((j = getopt(argc, argv, "adoqr:stvx:")) != EOF)
+	while ((j = getopt(argc, argv, "adl:opqr:stvx:")) != EOF)
 		switch (j) {
 		case 'a':
 			allnames++;
@@ -423,8 +445,16 @@ char	*argv[];
 		case 'd':
 			debug++;
 			break;
+		case 'l':
+			if (!fopen(optarg, "a+"))
+				failed(optarg);
+			(void)freopen(optarg, "a+", stderr);
+			break;
 		case 'o':
 			obsolete++;
+			break;
+		case 'p':
+			original = txtalloc(getwd(tmp));
 			break;
 		case 'r':
 			revision = optarg;
@@ -456,7 +486,6 @@ char	*argv[];
 	 * revision-level so that 'dotcmp()' can give us a useful return value.
 	 */
 	if (revision[j = strlen(revision)-1] == '+') {
-		auto	char	tmp[BUFSIZ];
 		register char	*s;
 
 		revision = strcpy(tmp, revision);
