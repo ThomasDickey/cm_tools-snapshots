@@ -1,3 +1,9 @@
+1992-01-02  dickey@software.org
+
+	* certify/README: added a table of common options (to rework)
+
+	* certify/release.txt: notes for baseline-11
+
 1991-11-12  dickey@software.org
 
 	* user/Makefile: make cat-files as 'run_tests' rule, rather than 'all'

@@ -1,6 +1,16 @@
-$Id: release.txt,v 10.0 1991/10/18 12:37:45 ste_cm Rel $
+$Id: release.txt,v 10.1 1992/01/02 09:51:08 dickey Exp $
 
 --------------------------------------------------------------------------------
+
+Version 11.0:
+------------
+Modified all tools to use same letter for recursion (R), and links (L) options,
+where applicable.
+
+New features in 'ded':
+
+	* if initial argument is a single filename rather than directory, force
+	  scan-pattern to match.
 
 Version 10.0:
 ------------
