@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 2.0 1989/03/31 09:09:53 ste_cm Exp $";
+static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 3.0 1989/06/16 09:38:50 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,25 +7,18 @@ static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit
  * Author:	T.E.Dickey
  * Created:	09 Mar 1989
  * $Log: permit.c,v $
- * Revision 2.0  1989/03/31 09:09:53  ste_cm
- * BASELINE Thu Apr  6 13:54:53 EDT 1989
+ * Revision 3.0  1989/06/16 09:38:50  ste_cm
+ * BASELINE Mon Jun 19 14:49:13 EDT 1989
  *
- *		Revision 1.11  89/03/31  09:09:53  dickey
- *		eliminated a couple of unnecessary "rcs -a" commands.
+ *		Revision 2.2  89/06/16  09:38:50  dickey
+ *		corrected copy to 'm_buffer[]'; removed redundant 'failed()'.
  *		
- *		Revision 1.10  89/03/31  08:31:21  dickey
- *		RCS-directory may be a symbolic link; avoid use of ".." arg
- *		to chdir to exit from it.
+ *		Revision 2.1  89/06/13  08:58:12  dickey
+ *		added -m option to allow override of BASELINE rlog-message
+ *		restructured usage-code to make it faster
  *		
- *		Revision 1.9  89/03/29  11:15:33  dickey
- *		added "-b" option to use in 'baseline'.  Completed 'set_baseline()'
- *		and modified 'create_permit()' to support this.
- *		
- *		Revision 1.8  89/03/23  14:18:51  dickey
- *		minor fixes to smooth out regression-tests
- *		
- *		Revision 1.7  89/03/23  10:29:51  dickey
- *		sccs2rcs keywords
+ *		Revision 2.0  89/03/31  09:09:53  ste_cm
+ *		BASELINE Thu Apr  6 13:54:53 EDT 1989
  *		
  *		13 Mar 1989, cleanup of code which handles multiple usernames.
  *
@@ -51,6 +44,7 @@ static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit
 #include	"rcsdefs.h"
 #include	<ctype.h>
 #include	<time.h>
+extern	time_t	time();
 extern	long	strtol();
 extern	char	*mktemp();
 extern	char	*pathcat();
@@ -83,6 +77,7 @@ static	int	verbose;		/* "-v" option */
 static	int	lines;			/* line-number, for report */
 static	char	high_ver[20];
 static	char	base_ver[20];
+static	char	m_buffer[BUFSIZ];	/* baseline-message */
 
 /* patch: should break comma-list routines out into library code */
 /*
@@ -212,10 +207,7 @@ char	*dst;
 static
 set_baseline()
 {
-	extern	time_t	time();
-	auto	time_t	now	= time((time_t *)0);
 	auto	char	tmp[BUFSIZ],
-			bfr[80],
 			acc_file[BUFSIZ];
 	static	char	msg[]	= "setting baseline version in permit-file";
 
@@ -230,8 +222,7 @@ set_baseline()
 
 	set_command(tmp);
 	set_revision(tmp, "-f");
-	(void)strclean(strcat(strcpy(bfr, "-mBASELINE at "), ctime(&now)));
-	catarg(tmp, bfr);
+	catarg(tmp, m_buffer);
 	catarg(tmp, acc_file);
 	TELL "ci %s\n", tmp);
 	if (!null_opt && (execute(rcspath("ci"), tmp) < 0))
@@ -605,20 +596,28 @@ char	*name;
 
 usage()
 {
-	WARN "usage: permit [-{a|e|u}USER] [-bBASE] [-p] [-nqsv] [directory [...]]\n");
-	WARN "\n");
-	WARN "This maintains a RCS-directory permissions file, as well as\n");
-	WARN "the access lists for archive files.\n");
-	WARN "\n");
-	WARN "options:\n");
-	WARN "  -aUSER  add specified user(s) to access list\n");
-	WARN "  -bBASE  set baseline value for directory\n");
-	WARN "  -eUSER  expunge specified user(s) from access list\n");
-	WARN "  -n      no-op mode (shows actions that would be done)\n");
-	WARN "  -p      purge all users from access list\n");
-	WARN "  -q      quiet (less verbose)\n");
-	WARN "  -uUSER  report specified user(s) in access list\n");
-	WARN "  -v      verbose\n");
+	auto	char	buffer[BUFSIZ];
+	static	char	*tbl[] = {
+	"usage: permit [-{a|e|u}USER] [-bBASE] [-p] [-nqsv] [directory [...]]",
+	"",
+	"This maintains a RCS-directory permissions file, as well as",
+	"the access lists for archive files.",
+	"",
+	"options:",
+	"  -aUSER  add specified user(s) to access list",
+	"  -bBASE  set baseline value for directory",
+	"  -eUSER  expunge specified user(s) from access list",
+	"  -mTEXT  specifies baseline-message (default: BASELINE {date}",
+	"  -n      no-op mode (shows actions that would be done)",
+	"  -p      purge all users from access list",
+	"  -q      quiet (less verbose)",
+	"  -uUSER  report specified user(s) in access list",
+	"  -v      verbose",
+	};
+	register int	j;
+	setbuf(stderr,buffer);
+	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
+		WARN "%s\n", tbl[j]);
 	(void)exit(FAIL);
 }
 
@@ -640,8 +639,11 @@ char	*argv[];
 	register int	j;
 	auto	 char	*user_opt = 0;
 	auto	 char	*d;
+	auto	time_t	now	= time((time_t *)0);
 
-	while ((j = getopt(argc, argv, "a:b:e:npqsu:v")) != EOF)
+	(void)strclean(strcat(strcpy(m_buffer, "-mBASELINE at "), ctime(&now)));
+
+	while ((j = getopt(argc, argv, "a:b:e:m:npqsu:v")) != EOF)
 		switch (j) {
 		case 'a':
 			disjoint();
@@ -657,6 +659,9 @@ char	*argv[];
 			disjoint();
 			expunge_opt = TRUE;	/* expunge */
 			user_opt = optarg;
+			break;
+		case 'm':
+			(void)strcpy(m_buffer+2, optarg);
 			break;
 		case 'n':
 			null_opt = TRUE;
@@ -709,11 +714,4 @@ char	*argv[];
 
 	(void)exit(SUCCESS);
 	/*NOTREACHED*/
-}
-
-failed(s)
-char	*s;
-{
-	perror(s);
-	(void)exit(FAIL);
 }

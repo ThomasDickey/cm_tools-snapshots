@@ -1,18 +1,19 @@
-<!OPS, Version = 5.2>
+<!OPS, Version = 6.4>
 
 <!Document,
-	Final Output Device =	"cx",
-	Default Printer =	"cx">
+	Default Printer	="cx",
+	Final Output Device	="cx">
 
 <!Font Definitions,
-	F27 = Classic 10,
-	F30 = Classic 12,
-	F21 = Typewriter 10,
-	F34 = Classic 14 Bold,
-	F31 = Classic 12 Bold,
-	F32 = Classic 12 Italic,
-	F49 = Modern 12,
-	F6 = Symbols 12>
+	F21	=Typewriter 10,
+	F27	=Classic 10,
+	F30	=Classic 12,
+	F31	=Classic 12 Bold,
+	F32	=Classic 12 Italic,
+	F34	=Classic 14 Bold,
+	F49	=Modern 12,
+	F6	=Symbols 12,
+	F84	=Thames 10>
 
 <!Page,
 	Starting Page # = 	Inherit>
@@ -20,94 +21,94 @@
 <!Autonumber Stream, List, 1>
 
 <!Autonumber Stream, Outline, 3,
-	Level 1 Symbol Type =	UPPER ROMAN,
-	Level 2 Symbol Type =	UPPER ALPHA>
+	Level 1 Symbol Type	=Upper Roman,
+	Level 2 Symbol Type	=Upper Alpha>
 
 <!Class, bullet,
-	Top Margin =		0.083 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		0.50 inches,
-	First Indent =		-0.25 inches,
-	Font =			F30>
+	Bottom Margin	=0 Inches,
+	First Indent	=-0.25 Inches,
+	Font	=F30,
+	Left Margin	=0.50 Inches,
+	Top Margin	=0.083 Inches>
 
 <!Class, fixed,
-	Top Margin =		0.083 inches,
-	Bottom Margin =		0.083 inches,
-	Left Margin =		0.50 inches,
-	Right Margin =		-1 inches,
-	Line Spacing =		1.308 lines,
-	Alignment =		Left,
-	Font =			F21,
-	Hyphenation =		off,
-	Allow Page Break Within = no,
-	Left Tab =		0/0.64*10 inches>
+	Alignment	=Left,
+	Allow Page Break Within	=No,
+	Bottom Margin	=0.083 Inches,
+	Font	=F21,
+	Hyphenation	=Off,
+	Left Margin	=0.50 Inches,
+	Left Tab	=0/0.64*10 Inches,
+	Line Spacing	=1.308 Lines,
+	Right Margin	=-1 Inches,
+	Top Margin	=0.083 Inches>
 
 <!Class, header,
-	Top Margin =		0.193 inches,
-	Bottom Margin =		0 inches,
-	Alignment =		Left,
-	Font =			F34,
-	Allow Page Break Within = no,
-	Allow Page Break After = no>
+	Alignment	=Left,
+	Allow Page Break After	=No,
+	Allow Page Break Within	=No,
+	Bottom Margin	=0 Inches,
+	Font	=F34,
+	Top Margin	=0.193 Inches>
 
 <!Class, options,
-	Top Margin =		0.042 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		1.50 inches,
-	First Indent =		-1 inches,
-	Font =			F30,
-	Hyphenation =		off,
-	Allow Page Break Within = no,
-	Left Tab =		0/0.75/1.50 inches>
+	Allow Page Break Within	=No,
+	Bottom Margin	=0 Inches,
+	First Indent	=-1 Inches,
+	Font	=F30,
+	Hyphenation	=Off,
+	Left Margin	=1.50 Inches,
+	Left Tab	=0/0.75/1.50 Inches,
+	Top Margin	=0.042 Inches>
 
 <!Class, paragraph,
-	Top Margin =		0.083 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		0.25 inches,
-	Font =			F30>
+	Bottom Margin	=0 Inches,
+	Font	=F30,
+	Left Margin	=0.25 Inches,
+	Top Margin	=0.083 Inches>
 
 <!Class, subheader,
-	Top Margin =		0.097 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		0.25 inches,
-	Alignment =		Left,
-	Font =			F31,
-	Allow Page Break Within = no,
-	Allow Page Break After = no>
+	Alignment	=Left,
+	Allow Page Break After	=No,
+	Allow Page Break Within	=No,
+	Bottom Margin	=0 Inches,
+	Font	=F31,
+	Left Margin	=0.25 Inches,
+	Top Margin	=0.097 Inches>
 
 <!Master Frame,
 	Name =			"At Anchor",
 	Placement =		At Anchor,
-	Width =			0.41 inches,
-	Height =		0.137 inches,
-	Vertical Alignment =	0.03 inches,
+	Vertical Alignment =	Bottom + 0.03 Inches,
+	Width =			0.41 Inches,
+	Height =		0.137 Inches,
 	Diagram =
-V4,
+V6,
 (g9,0,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,0,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,1,5,127,7,0,0,7,0,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 
 <Page Header, Frame =
-V4,
+V6,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,March\ 13\,\ 1989)
- (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ \177ci"\ Package)
- (t8,3,4,0,0.438782,0,17,@nnclas12b,checkin)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,March\ 13\,\ 1989)
+ (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS\ \x7fci"\ Package)
+ (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,checkin)
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 
 <Page Footer, Frame =
-V4,
+V6,
 (g9,1,0
- (t8,1,4,5.698608,0.478772,2,17,@nnclas10,)
- (t8,2,4,2.849304,0.478772,1,17,@nnclas12b,-\ \240\ -)
- (t8,3,4,0,0.478772,0,17,@nnclas10,)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (t14,1,4,5.698608,0.478772,2,7,0,0,,wst:clas10,)
+ (t14,2,4,2.849304,0.478772,1,7,0,0,,wst:clas12b,-\ \X80a0\ -)
+ (t14,3,4,0,0.478772,0,7,0,0,,wst:clas10,)
+ (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0,5,127,7,0,0,7,1,1,1,0.066667,0.06666
+  7,6,6,0,0.066667,6))>
 
 <header>
 
-<|,1>NAME
+NAME
 
 <paragraph>
 
@@ -188,15 +189,15 @@ chmod 4755 /proj/checkin<Tab># sets u+s mode
 
 <paragraph>
 
-<|,2>Thereafter, users who invoke <F49>/proj/checkin<F0> will have 
+Thereafter, users who invoke <F49>/proj/checkin<F0> will have 
 the rights of <F49>admin<F0> <#1f> for this application.  They may 
 check into <F32>rcs<F0> any files which they own, into archives which <F49>adm
 in<F0> owns.  <F31>Checkin<F0> will maintain <F49>admin<F0>'s ownership 
 of the archive files, and the user's ownership of his working files.
 
-<F30@R>If <F31@R>checkin<F30@R> does not need the set-uid rights (e.g., 
-if the user already owns the archive), <F31@R>checkin<F30@R> resets its 
-effective uid to the user's.  This permits a single copy of <F31@R>checkin<F30@R> 
+If <F31>checkin<F0> does not need the set-uid rights (e.g., 
+if the user already owns the archive), <F31>checkin<F0> resets its 
+effective uid to the user's.  This permits a single copy of <F31>checkin<F0> 
 to be used for both configuration management as well as individual 
 developers.
 
@@ -227,13 +228,13 @@ mode.
 
 <subheader>
 
-<F31@R>Directory-Level Permissions
+Directory-Level Permissions
 
 <paragraph>
 
-<F30@R>Before attempting to create or lock an archive file, <F31@R>checkin<F30@R> 
+Before attempting to create or lock an archive file, <F31>checkin<F0> 
 looks first for the directory-level permissions which may be set with 
-the <F31@R>permit<F30@R> utility.  If they exist, <F31@R>checkin<F30@R> limits 
+the <F31>permit<F0> utility.  If they exist, <F31>checkin<F0> limits 
 further access rights to those permitted.
 
 <header>
@@ -269,16 +270,16 @@ ENVIRONMENT
 
 <paragraph>
 
-<F31>Checkin<F0> is a C-language program.  It invokes <F31>ci<F0> <F30@R>(with 
-an explicit path, to protect against mishaps in set-uid mode)<F0>, 
+<F31>Checkin<F0> is a C-language program.  It invokes <F31>ci<F0> (with 
+an explicit path, to protect against mishaps in set-uid mode), 
 and performs pre- and 
-<|,3>postprocessing of the archive and working file to determine 
+postprocessing of the archive and working file to determine 
 the version to which the file's modification date applies.
 
 <F31>Checkin<F0> uses the following environment variables:
 
 <options,
-	Left Tab =		0/0.25 inches>
+	Left Tab =		0/0.25 Inches>
 
 <F49>RCS_BASE<F0><Tab>is used to specify a default value for initial 
 revision numbers.  If the user does not specify the initial version 
@@ -287,9 +288,9 @@ is used to support the use of module-level version numbers, while
 preserving the relationship between changes and revisions: a new version 
 is made only if the file is changed.
 
-<F30@R><Tab>The directory-level revision set by the <F31@R>permit<F30@R> 
-utility may override this environment variable.<F0> See <F32>baseline<F0> 
-and <F32@R>permit<F0> for more details.
+<Tab>The directory-level revision set by the <F31>permit<F0> 
+utility may override this environment variable. See <F32>baseline<F0> 
+and <F32>permit<F0> for more details.
 
 <options>
 
@@ -297,7 +298,7 @@ and <F32@R>permit<F0> for more details.
 <F0> archive files are found.  Normally files are found in <#7f>./RCS".
 
 <options,
-	Left Tab =		0/0.25 inches>
+	Left Tab =		0/0.25 Inches>
 
 <F49>TZ<F0><Tab>is the unix time zone, which is overridden internally 
 so that file modification dates are independent of the local time 
@@ -331,7 +332,7 @@ SEE ALSO
 
 <paragraph>
 
-baseline, rcsput, <F30@R>permit, <F0>ded, ci<SP>(1), co<SP>(1), rcs<SP>(1)
+baseline, rcsput, permit, ded, ci<SP>(1), co<SP>(1), rcs<SP>(1)
 
 <header>
 

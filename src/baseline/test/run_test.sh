@@ -1,21 +1,34 @@
-: '$Header: /users/source/archives/cm_tools.vcs/src/baseline/test/RCS/run_test.sh,v 2.0 1989/03/30 12:40:52 ste_cm Exp $'
+: '$Header: /users/source/archives/cm_tools.vcs/src/baseline/test/RCS/run_test.sh,v 7.0 1989/06/16 09:50:29 ste_cm Rel $'
 # test-script for RCS baseline utility
 #
 # $Log: run_test.sh,v $
-# Revision 2.0  1989/03/30 12:40:52  ste_cm
-# BASELINE Tue Apr  4 16:08:39 EDT 1989
+# Revision 7.0  1989/06/16 09:50:29  ste_cm
+# BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
 #
-# Revision 1.3  89/03/30  12:40:52  dickey
-# modified so this works if there is no RCS directory to copy from.
+# Revision 6.0  89/06/16  09:50:29  ste_cm
+# BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
 # 
-# Revision 1.2  89/03/28  11:54:19  dickey
-# made this work properly if RCS is a link (without permissions on target)
+# Revision 5.0  89/06/16  09:50:29  ste_cm
+# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
 # 
-# Revision 1.1  89/03/27  09:49:19  dickey
-# Initial revision
+# Revision 4.0  89/06/16  09:50:29  ste_cm
+# BASELINE Thu Aug 24 09:21:12 EDT 1989 -- support:navi_011(rel2)
+# 
+# Revision 3.0  89/06/16  09:50:29  ste_cm
+# BASELINE Mon Jun 19 13:04:14 EDT 1989
+# 
+# Revision 2.1  89/06/16  09:50:29  dickey
+# revise PATH to run from test-versions before installed versions.
+# 
+# Revision 2.0  89/03/30  12:40:52  ste_cm
+# BASELINE Tue Apr  4 16:08:39 EDT 1989
 # 
 F="Makefile run_tests.sh"
 date
+#
+# run from test-versions:
+PATH=`echo $PATH | sed -e s/\^[\^:]\*:/:/`
+PATH=:`pwd`:`cd ../bin;pwd`:`cd ../../../bin;pwd`$PATH
 #
 rm -rf junk
 mkdir junk junk/RCS
@@ -32,7 +45,6 @@ else
 fi
 ls -l
 #
-PROG=../../bin/baseline
 chmod -w $F
 rcs -e -q RCS/*,v
 #
@@ -51,14 +63,14 @@ cat <<eof/
 **	Case 1:	First, baseline copies of the following files (which are
 **		known to be archived).  The baseline version is $B.0
 eof/
-$PROG -$B $F
+baseline -$B $F
 cat <<eof/
 **
 **	Case 2:	Now, baseline a file which was not archived (an error message
 **		is generated).
 eof/
 touch not_baselined
-$PROG -$B not_baselined
+baseline -$B not_baselined
 #
 cd ..
 rm -rf junk
