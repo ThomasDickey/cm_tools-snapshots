@@ -187,7 +187,7 @@ V6,
 <Page Header, Frame =
 V6,
 (g9,1,0
- (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,September\ 2\,\ 1988)
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,April\ 27\,\ 1990)
  (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS\ \x7fco"\ Package)
  (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,checkout)
  (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
@@ -287,6 +287,15 @@ date, in SCCS-format
 <Tab>represent the same date.  This option is translated to the <F31>co<F0> 
 <#7f>-<F31>d<F0>" option.
 
+<paragraph>
+
+Use the <#7f>-<F31>x<F0>" option of <F31>checkout<F0> to direct it 
+to retain the pathname when translating between working and archive 
+files, e.g, <#7f><F49>path/name<F0>" becomes <#7f><F49>path/RCS/name,v<F0>".  
+If the <#7f>-<F31>x<F0>" option is not set, <#7f><F49>path/name<F0>" 
+becomes <#7f><F49>./RCS/name,v<F0>", and <#7f><F49>path/RCS/name,v<F0>" 
+becomes <#7f><F49>./name<F0>".
+
 <header>
 
 OPERATIONS
@@ -341,7 +350,8 @@ ANTICIPATED CHANGES
 
 This does not handle <F32>rcs<F0> branches properly.
 
-<F31>Checkout<F0> does not handle the <#7f>-j" option of <F31>co<F0>.
+<F31>Checkout<F0> does not handle the <#7f>-<F31>j<F0>" and <#7f>-<F31>p<F0>" 
+options of <F31>co<F0>.
 
 <header>
 

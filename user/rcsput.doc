@@ -177,7 +177,7 @@ V6,
 <Page Header, Frame =
 V6,
 (g9,1,0
- (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,October\ 26\,\ 1989)
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,April\ 27\,\ 1990)
  (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS\ Check-In\ Utility)
  (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,rcsput)
  (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
@@ -296,6 +296,9 @@ log-file of the files which are processed, and all differences which
 are encountered.  The log-file is inherited in recursion to lower 
 directory levels (i.e., it is written to the same place).  If no argument 
 is specified, rcsput assumes <#7f>logfile".
+
+-<F31>T<F0> <F32>path<F0><Tab>specifies an alternate tool to invoke, 
+overrides the default <#7f><F49>checkin<F0>".
 
 <header>
 

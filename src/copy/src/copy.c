@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: copy.c,v 6.0 1990/01/24 13:15:02 ste_cm Rel $";
+static	char	Id[] = "$Id: copy.c,v 7.0 1990/04/30 13:08:18 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,38 @@ static	char	Id[] = "$Id: copy.c,v 6.0 1990/01/24 13:15:02 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * $Log: copy.c,v $
- * Revision 6.0  1990/01/24 13:15:02  ste_cm
- * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ * Revision 7.0  1990/04/30 13:08:18  ste_cm
+ * BASELINE Mon Apr 30 13:08:44 1990 -- (CPROTO)
  *
+ *		Revision 6.7  90/04/30  13:08:18  ste_cm
+ *		use of 'convert()' broke sr9.7 compatibility (fixed)
+ *		
+ *		Revision 6.6  90/04/30  08:16:17  dickey
+ *		corrected bug which assumed 'stat()' modified arg even if err
+ *		
+ *		Revision 6.5  90/04/25  16:21:25  dickey
+ *		last change broke test for directory-not-writeable.  fixed.
+ *		
+ *		Revision 6.4  90/04/25  07:59:20  dickey
+ *		refined test-for-identical inodes
+ *		
+ *		Revision 6.3  90/04/24  12:26:27  dickey
+ *		modified use of 'abspath()' so we use it only for converting
+ *		the tilde-stuff (got into trouble with things like "RCS/.."
+ *		when RCS is itself a symbolic link).  Note that the verbose
+ *		trace is not quite right yet.
+ *		
+ *		Revision 6.2  90/04/24  12:03:02  dickey
+ *		use 'abspath()' on args to /bin/cp for sr10.2, since the
+ *		cp-program does not do "~" processing itself.
+ *		
+ *		Revision 6.1  90/04/24  11:52:33  dickey
+ *		double-check test for repeated-names by verifying that the
+ *		source and destination are really on the same device.
+ *		
+ *		Revision 6.0  90/01/24  13:15:02  ste_cm
+ *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ *		
  *		Revision 5.2  90/01/24  13:15:02  dickey
  *		added missing 'break' in 'skip_dots()' loop
  *		
@@ -99,6 +128,7 @@ static	char	Id[] = "$Id: copy.c,v 6.0 1990/01/24 13:15:02 ste_cm Rel $";
 extern	int	errno;
 extern	int	optind;		/* index in 'argv[]' of first argument */
 extern	char	*pathcat(),
+		*pathhead(),
 		*pathleaf();
 
 #define	TELL	FPRINTF(stderr,
@@ -130,8 +160,7 @@ static	int	no_dir_yet;	/* disables access-test on destination-dir */
  *	local procedures						*
  ************************************************************************/
 
-#ifdef	apollo
-#ifndef	__STDC__
+#if	defined(apollo) && !defined(apollo_sr10)
 #include	</sys/ins/base.ins.c>
 #include	</sys/ins/name.ins.c>
 
@@ -149,7 +178,6 @@ char *
 convert(dst, src)
 char	*dst, *src;
 {
-	extern	char	*strncpy();
 	name_$pname_t	in_name, out_name;
 	short		in_len,
 			out_len;
@@ -162,7 +190,7 @@ char	*dst, *src;
 	in_len = strlen(strcpy(in_name, src));
 	name_$get_path(in_name, in_len, out_name, out_len, st);
 	if (st.all == status_$ok)
-		strncpy(dst, out_name, out_len)[out_len] = EOS;
+		strncpy(dst, out_name, (size_t)out_len)[out_len] = EOS;
 	else {
 		if (	(st.all == name_$not_found)
 		&&	(s = strrchr(in_name, '/'))
@@ -179,8 +207,20 @@ char	*dst, *src;
 	DEBUG "++ \"%s\" => \"%s\"\n", src, dst);
 	return (dst);
 }
-#endif		/* __STDC__	*/
-#endif		/* apollo	*/
+#else		/* apollo sr10.x or unix */
+/*
+ * Use 'abshome()' to expand the tilde-only portion of the name to avoid
+ * conflict between ".." trimming and symbolic links.
+ */
+static
+char *
+convert(dst, src)
+char	*dst, *src;
+{
+	abshome(strcpy(dst, src));
+	return (dst);
+}
+#endif		/* apollo sr9.7	*/
 
 /*
  * This procedure is used in the special case in which a user supplies source
@@ -224,9 +264,7 @@ struct	stat	*new_sb;
 	int	retval	= -1;
 	char	bfr1[BUFSIZ];
 #ifdef	apollo
-#ifndef	__STDC__
 	char	bfr2[BUFSIZ];
-#endif	/* __STDC__ */
 
 	if (access(src,R_OK) < 0) {
 		perror(src);
@@ -238,8 +276,8 @@ struct	stat	*new_sb;
 	catarg(bfr1, "-o");	/* ...to copy "real" apollo objects */
 	if (previous)
 		catarg(bfr1, "-f");
-	catarg(bfr1, src);
-	catarg(bfr1, dst);
+	catarg(bfr1, convert(bfr2, src));
+	catarg(bfr1, convert(bfr2, dst));
 	DEBUG "++ cp %s\n", bfr1);
 	if (execute("/bin/cp", bfr1) < 0)
 #else	/* apollo sr9 */
@@ -326,7 +364,7 @@ char	*src, *dst;
 	auto	int		save_dir = no_dir_yet;
 
 	DEBUG "copydir(%s, %s, %d)\n", src, dst, previous);
-	abspath(strcpy(bfr1, dst));
+	abshome(strcpy(bfr1, dst));
 	if (previous > 0) {
 		if (!n_opt) {
 			if (unlink(bfr1) < 0) {
@@ -377,27 +415,26 @@ char	*src, *dst;
 		bfr2[BUFSIZ],
 		*s;
 
+	abshome(strcpy(bfr1, src));
+	abshome(strcpy(bfr2, dst));
 	/* Verify that the source and destinations are distinct */
-	abspath(strcpy(bfr1, src));
-	abspath(strcpy(bfr2, dst));
-	if (!strcmp(bfr1, bfr2)) {
-		TELL "?? repeated name: %s\n", bfr2);
-		exit(FAIL);
+	if (stat(bfr1, &src_sb) >= 0
+	&&  stat(bfr2, &dst_sb) >= 0) {
+		if (src_sb.st_ino == dst_sb.st_ino
+		&&  src_sb.st_dev == dst_sb.st_dev) {
+			TELL "?? %s and %s are identical (not copied)\n",
+				src, dst);
+			exit(FAIL);
+		}
+	} else {
+		src_sb.st_mode =
+		dst_sb.st_mode = 0;
 	}
-
 	DEBUG "** src: \"%s\"\n** dst: \"%s\"\n", bfr1, bfr2);
 
 	if (!no_dir_yet) {
-		if (stat(bfr2, &dst_sb) < 0
-		|| !isDIR(dst_sb)) {
-			if (s = strrchr(bfr2, '/')) {
-#ifdef	apollo
-				if ((s == (bfr2 + 1)) && (s[-1] == '/'))
-					s++;
-#endif	apollo
-				*s = EOS;
-			}
-		}
+		if (!isDIR(dst_sb)) 
+			(void)strcpy(bfr2, pathhead(bfr2, &dst_sb));
 		if (access(bfr2, W_OK) < 0) {
 			TELL "?? directory is not writeable: \"%s\"\n", bfr2);
 			return;

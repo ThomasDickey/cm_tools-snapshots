@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: baseline.c,v 6.0 1990/01/03 12:53:06 ste_cm Rel $";
+static	char	Id[] = "$Id: baseline.c,v 8.0 1990/04/16 09:55:21 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,20 @@ static	char	Id[] = "$Id: baseline.c,v 6.0 1990/01/03 12:53:06 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	24 Oct 1989
  * $Log: baseline.c,v $
- * Revision 6.0  1990/01/03 12:53:06  ste_cm
- * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ * Revision 8.0  1990/04/16 09:55:21  ste_cm
+ * BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
  *
+ *		Revision 7.0  90/04/16  09:55:21  ste_cm
+ *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+ *		
+ *		Revision 6.1  90/04/16  09:55:21  dickey
+ *		"-f" option must allow 'permit' to run, otherwise the RCS,v
+ *		file won't be updated.  Made "-f" only suppress 'permit' "-p"
+ *		option.
+ *		
+ *		Revision 6.0  90/01/03  12:53:06  ste_cm
+ *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ *		
  *		Revision 5.7  90/01/03  12:53:06  dickey
  *		corrected code which infers baseline revision (if no rcs
  *		directory existed, this did not notice!)
@@ -109,8 +120,7 @@ char	*path;
 	static	LIST	*purged;
 	register LIST	*p;
 
-	if (fast_opt)
-		return;
+	FORMAT(args, "-b%d ", revision);
 	for (p = purged; p; p = p->link) {
 		if (!strcmp(p->text, path))
 			return;
@@ -120,9 +130,9 @@ char	*path;
 	p->text = txtalloc(path);
 	purged  = p;
 
-	FORMAT(args, "-b%d -p ", revision);
 	quiet_opt(args);
 	if (no_op)	catarg(args, "-n");
+	if (!fast_opt)	catarg(args, "-p");
 	catarg(args, m_option);
 	catarg(args, rcs_dir());
 	doit("permit", args, no_op < 2);

@@ -1,6 +1,26 @@
-$Id: release.txt,v 6.0 1990/03/28 10:41:19 ste_cm Rel $
+$Id: release.txt,v 7.0 1990/04/24 12:29:45 ste_cm Rel $
 
 --------------------------------------------------------------------------------
+
+Version 7.0:
+-----------
+Added "-x" option to checkin and checkout so we can effect the 3rd pathname
+conversion used in 'ci' and 'co' (e.g., preserve pathnames of inputs, rather
+than assuming the current directory).
+
+Added "-T" option to rcsput and rcsget.  This specifies a different tool to
+use in place of 'checkin' and 'checkout', respectively.  Note that the tool
+need not be a renamed checkin or checkout -- it may be something like rlog
+which can take advantage of the logic in rcsget/rcsput.
+
+Added "-d" option to 'checkin'.
+
+Added "-q" option to rcsget.
+
+Corrected oversight in 'baseline' which caused permit-file to not be updated
+when the "-f" option was used.
+
+Fixes to 'ded' and 'copy' to handle tilde in their arguments more intelligently.
 
 Version 6.0:
 -----------

@@ -1,3 +1,226 @@
+1990-04-30  ste_cm@software.org
+
+	* src/copy/src/copy.c: BASELINE Mon Apr 30 13:08:44 1990 -- (CPROTO)
+
+	* src/copy/src/copy.c:
+	use of 'convert()' broke sr9.7 compatibility (fixed)
+
+1990-04-30  dickey@software.org
+
+	* src/link2rcs/src/Makefile: corrected typo in 'sources' rule
+
+1990-04-30  ste_cm@software.org
+
+	* src/link2rcs/src/Makefile:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/link2rcs/src/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/link2rcs/src/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1990-04-30  dickey@software.org
+
+	* certify/config.txt: updated OS-versions
+
+1990-04-30  ste_cm@software.org
+
+	* certify/config.txt: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+1990-04-30  dickey@software.org
+
+	* src/copy/src/copy.c:
+	corrected bug which assumed 'stat()' modified arg even if err
+
+1990-04-27  dickey@software.org
+
+	* src/link2rcs/src/link2rcs.c:
+	use 'chmod()' to ensure path-mode to cover up apollo sr10/sr9
+	bug.
+
+1990-04-27  ste_cm@software.org
+
+	* src/link2rcs/src/link2rcs.c:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+1990-04-27  dickey@software.org
+
+	* user/checkout.doc: added "-x" option
+
+1990-04-27  ste_cm@software.org
+
+	* user/checkout.doc: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* user/checkout.doc:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* user/checkout.doc: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1990-04-27  dickey@software.org
+
+	* user/checkin.doc: added "-d" and "-x" options.
+	interpret environment variable RCS_COMMENT to set rcs -c option
+
+1990-04-27  ste_cm@software.org
+
+	* user/checkin.doc: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* user/checkin.doc:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* user/checkin.doc: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1990-04-27  dickey@software.org
+
+	* user/rcsput.doc: added "-T" option
+
+1990-04-27  ste_cm@software.org
+
+	* user/rcsput.doc: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* user/rcsput.doc:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* user/rcsput.doc: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1990-04-27  dickey@software.org
+
+	* user/rcsget.doc: added "-T" and "-q" options
+
+1990-04-27  ste_cm@software.org
+
+	* user/rcsget.doc: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* user/rcsget.doc:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* user/rcsget.doc: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1990-04-25  dickey@software.org
+
+	* src/copy/src/copy.c:
+	last change broke test for directory-not-writeable.  fixed.
+
+	* src/copy/src/copy.c: refined test-for-identical inodes
+
+1990-04-24  dickey@software.org
+
+	* certify/release.txt: added notes about tilde-fixes to copy, ded.
+
+1990-04-24  ste_cm@software.org
+
+	* certify/release.txt: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+1990-04-24  dickey@software.org
+
+	* src/copy/src/copy.c:
+	modified use of 'abspath()' so we use it only for converting
+	the tilde-stuff (got into trouble with things like "RCS/.."
+	when RCS is itself a symbolic link).  Note that the verbose
+	trace is not quite right yet.
+
+	* src/copy/src/copy.c:
+	use 'abspath()' on args to /bin/cp for sr10.2, since the
+	cp-program does not do "~" processing itself.
+
+	* src/copy/src/copy.c:
+	double-check test for repeated-names by verifying that the
+	source and destination are really on the same device.
+
+1990-04-19  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	corrected missing braces which broke 'chmod()' in last change
+
+1990-04-19  ste_cm@software.org
+
+	* src/checkin/src/checkin.c:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+1990-04-19  dickey@software.org
+
+	* certify/release.txt: added more notes about checkin -d
+
+	* src/checkin/src/checkin.c:
+	added "-d" option (for want of a better code for no-op).
+	Used this option to suppress invocation of ci/rcs/mkdir/chmod
+	and unlink (also changed "TELL" for these calls) so user can
+	preview the actions which would be attempted.  Note that the
+	no-op mode cannot (as yet) do anything interesting for the
+	set-uid mode.
+	Used the no-op mode to find that GetLock was not returning
+	the proper code (since 'strict' was set after 'locks'!).
+	Fixed this.
+	Finally, recoded the "rcs -c" stuff so that user can add to
+	the default list of comment-prefixes by setting the environment
+	variable RCS_COMMENT appropriately.
+
+	* src/checkin/src/rcsput.c:
+	added "-T" option (to permit non-checkin tool use)
+
+1990-04-19  ste_cm@software.org
+
+	* src/checkin/src/rcsput.c:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+1990-04-19  dickey@software.org
+
+	* src/checkout/src/rcsget.c:
+	added "-T" option so that 'checkout' isn't hard-coded.
+
+1990-04-19  ste_cm@software.org
+
+	* src/checkout/src/rcsget.c:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+1990-04-19  dickey@software.org
+
+	* src/checkout/src/checkout.c: corrected so we don't pass "-x" to 'co'
+
+1990-04-19  ste_cm@software.org
+
+	* src/checkout/src/checkout.c:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+1990-04-19  dickey@software.org
+
+	* certify/release.txt: added first notes for r7
+
+1990-04-18  dickey@software.org
+
+	* src/checkout/src/rcsget.c:
+	changed call on rcs2name/name2rcs to support "-x" option in
+	checkin/checkout
+
+	* src/checkout/src/checkout.c:
+	added "-x" option (to help with makefiles, etc)
+
+	* src/checkin/src/checkin.c:
+	added "-x" option (to assist in makefiles, etc).
+
+	* src/checkin/src/rcsput.c:
+	modified call on rcs2name/name2rcs to support "-x" option
+	in checkin/checkout
+
+1990-04-16  dickey@software.org
+
+	* src/checkout/src/rcsget.c:
+	interpret "-q" (quiet) option in this program
+
+	* src/baseline/src/baseline.c:
+	"-f" option must allow 'permit' to run, otherwise the RCS,v
+	file won't be updated.  Made "-f" only suppress 'permit' "-p"
+	option.
+
+1990-04-16  ste_cm@software.org
+
+	* src/baseline/src/baseline.c:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/baseline/src/baseline.c:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
 1990-03-30  dickey@software.org
 
 	* src/checkup/src/checkup.c:
