@@ -1,0 +1,26 @@
+# $Id: makefile.in,v 11.1 1997/09/13 16:33:53 tom Exp $
+# make-file for testing RCS skeleton tree utility
+
+THIS	= baseline
+
+@make_include_left@@TD_LIB_rules@/td_lib.mk@make_include_right@
+
+####### (Standard Lists) #######################################################
+SCRIPTS	=\
+	run_test.sed\
+	run_test.sh
+
+SOURCES	= makefile.in $(SCRIPTS) run_tool.c
+ALL	= run_tool
+
+####### (Standard Productions) #################################################
+all:		$(SOURCES) $(ALL)
+clean:				; -$(RM) $(CLEAN)
+distclean:	clean		; -$(RM) $(ALL)
+sources:	$(SOURCES)
+lint.out:
+run_test:	$(SOURCES) $(ALL) ; $(RUN_TESTS)
+
+####### (Details of Productions) ###############################################
+run_tool:	run_tool.c $(PTYPES_H) $(RCSDEFS_H) $(LIB_DEPS)
+	$(CC) -o $@ $(CFLAGS) $(CPP_OPTS) $@.c $(LIB_ARGS)

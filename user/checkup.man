@@ -1,4 +1,4 @@
-.\" $Id: checkup.man,v 11.0 1992/05/01 12:05:02 ste_cm Rel $
+.\" $Id: checkup.man,v 11.2 1997/09/14 22:04:09 tom Exp $
 .de DS
 .RS
 .nf
@@ -52,6 +52,7 @@ as the directory editor \fBded\fR.
 .B \-a
 permits \fBcheckup\fR to examine directories
 (and their subdirectories) whose leafnames begin with ".".
+Also, show binary files.
 These are otherwise ignored.
 .TP
 .B \-c
@@ -197,4 +198,4 @@ None.
 rlog\ (1), sact\ (1).
 .SH AUTHOR:
 .PP
-Thomas Dickey (Software Productivity Consortium).
+Thomas Dickey <dickey@clark.net>

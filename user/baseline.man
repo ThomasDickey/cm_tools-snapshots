@@ -1,4 +1,4 @@
-.\" $Id: baseline.man,v 11.0 1992/01/17 12:40:14 ste_cm Rel $
+.\" $Id: baseline.man,v 11.1 1997/09/14 21:56:33 tom Exp $
 .de EX
 .RS
 .nf
@@ -154,4 +154,4 @@ the RCS check-out package
 checkin, checkout, ded, permit
 .SH AUTHOR:
 .PP
-Thomas Dickey (Software Productivity Consortium).
+Thomas Dickey <dickey@clark.net>

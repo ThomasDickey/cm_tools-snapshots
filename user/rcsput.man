@@ -1,4 +1,4 @@
-.\" $Id: rcsput.man,v 11.0 1992/02/06 10:03:43 ste_cm Rel $
+.\" $Id: rcsput.man,v 11.1 1997/09/14 21:56:33 tom Exp $
 .de DS
 .RS
 .nf
@@ -194,4 +194,4 @@ checkin, rcsget, checkout, ded, ci\ (1), co\ (1), diff\ (1),
 ident\ (1)
 .SH AUTHOR:
 .PP
-Thomas Dickey (Software Productivity Consortium).
+Thomas Dickey <dickey@clark.net>

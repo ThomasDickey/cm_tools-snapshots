@@ -1,36 +1,37 @@
-MANIFEST for cm_tools, version t19970510
+MANIFEST for cm_tools, version t19970914
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
-Makefile                        top-level makefile for CM_TOOLS.
 README                          top-level README for CM_TOOLS
+aclocal.m4                      macros for CM_TOOLS configure script
+configure.in                    template for CM_TOOLS configure script
+install-sh                      install-script
+makefile.in                     cm_tools makefile template
+mkdirs.sh                       mkdirs-script
 bin                             subdirectory
-bin/Makefile                    make-file for CM_TOOLS bin-directory
+bin/makefile.in                 cm_tools/bin makefile template
 certify                         subdirectory
-certify/Makefile                certificate-makefile for CM_TOOLS
 certify/README                  certificate-README for CM_TOOLS
 certify/config.txt              configuration-sheet for CM_TOOLS
+certify/makefile.in             cm_tools/certify makefile
 certify/release.txt             release-notes for CM_TOOLS
-src                             subdirectory
-src/Makefile                    make-file for CM_TOOLS src-directory
 src/baseline                    subdirectory
-src/baseline/Makefile           top-level makefile for RCS baseline utility
+src/baseline/makefile.in        cm_tools/src/baseline makefile template
 src/baseline/src                subdirectory
-src/baseline/src/Makefile       make-file for RCS baseline utility
 src/baseline/src/baseline.c     utility to mark major-release version
+src/baseline/src/makefile.in    cm_tools/src/baseline/src makefile template
 src/baseline/test               subdirectory
-src/baseline/test/Makefile      make-file for baseline utility regression test
+src/baseline/test/makefile.in   cm_tools/src/baseline/test makefile template
 src/baseline/test/run_test.sed  sed-script to extract the tip-version of an RCS-file (infers baseline).
 src/baseline/test/run_test.sh   test-script for baseline utility
 src/baseline/test/run_tool.c    uses 'rcspath()' to exec
 src/checkin                     subdirectory
-src/checkin/Makefile            top-level makefile for RCS checkin utility
+src/checkin/makefile.in         cm_tools/checkin makefile template
 src/checkin/src                 subdirectory
-src/checkin/src/Makefile        
 src/checkin/src/checkin.c       wrapper for 'ci'
+src/checkin/src/makefile.in     cm_tools/src/checkin/src makefile template
 src/checkin/src/rcsput.c        wrapper for 'checkin'
 src/checkin/test                subdirectory
-src/checkin/test/Makefile       make-file for RCS checkin-utility tests
 src/checkin/test/README         description of src/checkin/test
 src/checkin/test/admin.sh       simple script for testing setuid
 src/checkin/test/case1.sh       script for case 1
@@ -61,52 +62,54 @@ src/checkin/test/case3_e.sh     script for case 3e
 src/checkin/test/case3_f.ref    reference for case 3f
 src/checkin/test/case3_f.sh     script for case 3f
 src/checkin/test/clean.sh       cleanup-script for 'junk' directory
+src/checkin/test/makefile.in    cm_tools/src/checkin/test makefile template
 src/checkin/test/run_test.sh    test-script for RCS checkin-utility
 src/checkout                    subdirectory
-src/checkout/Makefile           top-level makefile for 'checkout' utility
+src/checkout/makefile.in        cm_tools/src/checkout makefile template
 src/checkout/src                subdirectory
-src/checkout/src/Makefile       
 src/checkout/src/checkout.c     wrapper for 'co'
+src/checkout/src/makefile.in    cm_tools/src/checkout/src makefile template
 src/checkout/src/rcsget.c       wrapper for 'checkout'
 src/checkout/test               subdirectory
-src/checkout/test/Makefile      make-file for 'checkout' regression tests
+src/checkout/test/makefile.in   cm_tools/src/checkout/test makefile template
 src/checkout/test/run_test.sh   test-script for RCS checkout package
 src/checkup                     subdirectory
-src/checkup/Makefile            top-level makefile for RCS/sccs checkup utility
+src/checkup/makefile.in         cm_tools/src/checkup makefile template
 src/checkup/src                 subdirectory
-src/checkup/src/Makefile        
 src/checkup/src/checkup.c       utility to find files not checked-in
+src/checkup/src/makefile.in     cm_tools/src/checkup/src makefile template
 src/checkup/test                subdirectory
-src/checkup/test/Makefile       make-file for 'checkup' test
+src/checkup/test/makefile.in    cm_tools/src/checkup/test makefile template
 src/checkup/test/run_test.sh    test-script for 'checkup'
 src/copy                        subdirectory
-src/copy/Makefile               top-level makefile for unix copy-utility
+src/copy/makefile.in            cm_tools/src/copy makefile template
 src/copy/src                    subdirectory
-src/copy/src/Makefile           
 src/copy/src/copy.c             a better version of 'cp'.
+src/copy/src/makefile.in        cm_tools/src/copy/src makefile template
 src/copy/test                   subdirectory
-src/copy/test/Makefile          make-file for testing unix copy utility
+src/copy/test/makefile.in       cm_tools/src/copy/test makefile template
 src/copy/test/run_test.sh       test-script for unix-copy utility
 src/link2rcs                    subdirectory
-src/link2rcs/Makefile           top-level makefile for link2rcs utility
+src/link2rcs/makefile.in        cm_tools/src/link2rcs makefile template
 src/link2rcs/src                subdirectory
-src/link2rcs/src/Makefile       make-file for RCS skeleton-tree utility (link2rcs)
 src/link2rcs/src/link2rcs.c     create symbolic- or hard-link tree
+src/link2rcs/src/makefile.in    cm_tools/src/link2rcs/src makefile template
 src/link2rcs/test               subdirectory
-src/link2rcs/test/Makefile      make-file for link2rcs test
 src/link2rcs/test/case1.ref     reference for case 1
 src/link2rcs/test/case1.sh      script for case 1
 src/link2rcs/test/case2.ref     reference for case 2
 src/link2rcs/test/case2.sh      script for case 2
 src/link2rcs/test/listtree.sh   list tree contents in standard form, for testing
+src/link2rcs/test/makefile.in   cm_tools/src/link2rcs/test makefile template
 src/link2rcs/test/run_test.sh   test-script for link2rcs
+src                             subdirectory
+src/makefile.in                 cm_tools/src makefile template
 src/permit                      subdirectory
-src/permit/Makefile             top-level makefile for the CM_TOOLS 'permit' utility
+src/permit/makefile.in          cm_tools/src/permit makefile template
 src/permit/src                  subdirectory
-src/permit/src/Makefile         
+src/permit/src/makefile.in      cm_tools/src/permit/src makefile template
 src/permit/src/permit.c         setuid-style admin utility
 src/permit/test                 subdirectory
-src/permit/test/Makefile        makefile for 'permit' regression tests
 src/permit/test/case0.ref       reference for case0
 src/permit/test/case0.sh        script for case0
 src/permit/test/case1.ref       reference for case1
@@ -119,39 +122,40 @@ src/permit/test/case4.ref       reference for case4
 src/permit/test/case4.sh        script for case4
 src/permit/test/case5.ref       reference for case5
 src/permit/test/case5.sh        script for case5
+src/permit/test/makefile.in     cm_tools/src/permit/test makefile template
 src/permit/test/run_test.sh     test/example script for 'permit' utility (no-op mode only)
 src/vcs                         subdirectory
-src/vcs/Makefile                top-level makefile for CM_TOOLS's VCS utility
+src/vcs/makefile.in             cm_tools/src/vcs/makefile template
 src/vcs/src                     subdirectory
-src/vcs/src/Makefile            makefile for VCS-tool
 src/vcs/src/delete.c            performs deletion-function for 'vcs'
 src/vcs/src/insert.c            performs insertion-function for 'vcs'
+src/vcs/src/makefile.in         cm_tools/src/vcs/src makefile template
 src/vcs/src/unlock.c            performs unlock-function for 'vcs'
 src/vcs/src/vcs.c               first sketch of VCS tool (far from complete!)
 src/vcs/src/vcs.h               interface between vcs main + utilities + functions
 src/vcs/test                    subdirectory
-src/vcs/test/Makefile           makefile for VCS's test-directory
 src/vcs/test/compare.sh         compare test-results
 src/vcs/test/delete.ref         reference for 'vce' delete-test
 src/vcs/test/insert.ref         reference for 'vce' insert-test
+src/vcs/test/makefile.in        cm_tools/src/vcs/test makefile template
 src/vcs/test/run_test.sh        simple script for testing 'vcs' (how do I regress?)
 src/vcs/test/unlock.ref         reference for 'vce' unlock-test
 support                         subdirectory
-support/Makefile                make-file for CM_TOOLS support utilities
 support/copy.sh                 copy-script to use til we have a working copy utility
+support/makefile.in             cm_tools/support makefile template
 support/run_tool.c              sets mtime of a given file
 support/set_date.c              runs specific tool in rcs-path
 support/testinit.sh             sets common vcs environment-variables for testing
 support/testpath.sh             sets up PATH variable for tests
 support/who_suid.sh             finds an executable, echos owner iff it is set-uid
 user                            subdirectory
-user/Makefile                   make-file (for installation and source-control) of user-documentation
 user/baseline.man               manual for baseline utility
 user/checkin.man                manual for checkin utility
 user/checkout.man               manual for checkout utility
 user/checkup.man                manual for checkup utility
 user/copy.man                   manual for copy utility
 user/link2rcs.man               manual for link2rcs utility
+user/makefile.in                cm_tools/user makefile template
 user/permit.man                 manual for permit utility
 user/rcsget.man                 manual for rcsget utility
 user/rcsput.man                 manual for rcsput utility

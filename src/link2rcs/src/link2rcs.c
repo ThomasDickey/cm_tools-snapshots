@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * Modified:
+ *		08 Sep 1997, added 'o' option.
  *		21 Sep 1995, added '-F' option
  *		22 Sep 1993, gcc warnings.  Purify found an alloc-too-small.
  *		03 Sep 1993, qsort-definitions.
@@ -61,7 +62,7 @@
 #include	<td_qsort.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: link2rcs.c,v 11.4 1995/09/21 16:22:10 tom Exp $")
+MODULE_ID("$Id: link2rcs.c,v 11.5 1997/09/08 14:19:19 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -92,6 +93,7 @@ static	int	files_too;		/* "-f" option */
 static	int	hard_links;		/* "-F" option */
 static	int	merge;			/* "-m" option */
 static	int	no_op;			/* "-n" option */
+static	int	overwrite;		/* "-o" option */
 static	int	relative;		/* "-r" option */
 static	int	verbose;		/* "-v" option */
 
@@ -300,6 +302,25 @@ _DCL(char *,	path)
 }
 
 static int
+ok_if_unlink(
+_AR1(char *,	path))
+_DCL(char *,	path)
+{
+	int	ok = TRUE;
+
+	if (no_op)
+		ok = (access(path, 0) == 0);
+	else
+		ok = (unlink(path) == 0);
+
+	if (!ok) {
+		tell_it("(cannot unlink)", path);
+		return (FALSE);
+	}
+	return TRUE;
+}
+
+static int
 samelink(
 _ARX(char *,	dst)
 _AR1(char *,	src)
@@ -382,30 +403,26 @@ conflict(
 					return (tell_merged(path));
 				VERBOSE "%% rm -f %s\n", path);
 				total_relinks++;
-				if (!no_op) {
-					if (unlink(path) < 0)
-						failed(path);
-				}
+				return (!ok_if_unlink(path));
+			} else if (overwrite && (mode != S_IFDIR)) {
+				return (!ok_if_unlink(path));
 			} else {
 				return (tell_merged(path));
 			}
-			return (FALSE);
 		} else if ((files_too || hard_links)
 		    &&  mode == S_IFLNK
 		    &&  MODE(sb.st_mode) == S_IFREG
 		    &&  stat_file(from, &sb2) == 0
 		    &&  same_ino(&sb, &sb2)) {
-			if (hard_links)
+			if (hard_links) {
 				return (tell_merged(path));
-			else {
+			} else {
 				VERBOSE "%% rm -f %s\n", path);
 				total_relinks++;
-				if (!no_op) {
-					if (unlink(path) < 0)
-						failed(path);
-				}
-				return FALSE;
+				return (!ok_if_unlink(path));
 			}
+		} else if (overwrite && (mode != S_IFDIR)) {
+			return (!ok_if_unlink(path));
 		} else {
 			return tell_existing(path);
 		}
@@ -448,21 +465,27 @@ _DCL(char *,	dst)
 _DCL(char *,	what)
 {
 	if (!conflict(dst, S_IFLNK, src)) {
+		int ok = TRUE;
+
 		tell_it(what, dst);
 		if (hard_links && same_dev(src, dst)) {
 			VERBOSE "%% ln %s %s\n", src, dst);
 			total_hard_links++;
 			if (!no_op) {
-				if (link(src, dst) < 0)
-					failed(dst);
+				ok = (link(src, dst) == 0);
 			}
 		} else {
 			VERBOSE "%% ln -s %s %s\n", src, dst);
 			total_soft_links++;
 			if (!no_op) {
-				if (symlink(src, dst) < 0)
-					failed(dst);
+				ok = (symlink(src, dst) == 0);
 			}
+		}
+		if (!ok) {
+			if (overwrite)
+				tell_it("(cannot link)", dst);
+			else
+				failed(dst);
 		}
 	}
 }
@@ -689,6 +712,7 @@ usage(_AR0)
 	,"  -F      hardlink to files if possible"
 	,"  -m      merge against destination"
 	,"  -n      no-op"
+	,"  -o      overwrite existing files or links"
 	,"  -r      construct relative symbolic links"
 	,"  -q      quiet undoes normal verbosness"
 	,"  -s dir  specify source-directory (default .)"
@@ -714,7 +738,7 @@ _MAIN
 	register int j;
 
 	(void)getwd(Current);
-	while ((j = getopt(argc, argv, "ab:d:e:fFmnrqs:v")) != EOF)
+	while ((j = getopt(argc, argv, "ab:d:e:fFmnorqs:v")) != EOF)
 		switch (j) {
 		case 'a':	allnames++;			break;
 		case 'b':	baseline = strtol(optarg, &p, 0);
@@ -728,6 +752,7 @@ _MAIN
 		case 'F':	hard_links++;			break;
 		case 'm':	merge++;			break;
 		case 'n':	no_op++;			break;
+		case 'o':	overwrite++;			break;
 		case 'r':	relative++;			break;
 		case 'q':	verbose--;			break;
 		case 'v':	verbose++;			break;
@@ -792,7 +817,7 @@ _MAIN
 	(void)chdir(Target);
 	make_dst(Target);
 
-	TELL "Totals: %ld directories, %ld soft links, %ld hard links (%ld remade)%s made",
+	TELL "Totals: %ld directories, %ld soft links, %ld hard links (%ld remade)%s made\n",
 		total_mkdirs,
 		total_soft_links,
 		total_hard_links,

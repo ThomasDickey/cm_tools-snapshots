@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.2 1992/10/30 07:52:41 dickey Exp $
+# $Id: run_test.sh,v 11.3 1997/09/14 21:34:13 tom Exp $
 date
 #
 # run from test-versions:
@@ -32,7 +32,7 @@ mkdir junk
 cd junk
 rm -f junk.* RCS/junk.*
 #
-cp ../Makefile junk.txt
+cp ../makefile.in junk.txt
 echo 'test file'>>junk.desc
 #
 cat <<eof/

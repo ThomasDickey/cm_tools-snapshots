@@ -1,0 +1,34 @@
+# $Id: makefile.in,v 11.1 1997/09/13 16:36:50 tom Exp $
+# make-file for testing RCS permission utility
+
+THIS	= permit
+
+@make_include_left@@TD_LIB_rules@/td_lib.mk@make_include_right@
+
+####### (Standard Lists) #######################################################
+REF_FILES =\
+	case0.ref \
+	case1.ref \
+	case2.ref \
+	case3.ref \
+	case4.ref \
+	case5.ref
+
+SCRIPTS	=\
+	case0.sh \
+	case1.sh \
+	case2.sh \
+	case3.sh \
+	case4.sh \
+	case5.sh \
+	run_test.sh
+
+SOURCES	= $(SCRIPTS) $(REF_FILES)
+
+####### (Standard Productions) #################################################
+all:		$(SOURCES)
+clean:				; -$(RM) $(CLEAN)
+distclean::	clean
+sources:	$(SOURCES)
+lint.out:
+run_test:	$(SOURCES)	; $(RUN_TESTS)

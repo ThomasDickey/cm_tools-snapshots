@@ -1,0 +1,44 @@
+# $Id: makefile.in,v 11.1 1997/09/13 16:46:03 tom Exp $
+# Top-level makefile for CM_TOOLS src-directory
+
+
+
+@make_include_left@@TD_LIB_rules@/td_lib.mk@make_include_right@
+
+####### (Standard Lists) #######################################################
+MFILES	=\
+	baseline/makefile.in\
+	checkin/makefile.in\
+	checkout/makefile.in\
+	checkup/makefile.in\
+	copy/makefile.in\
+	link2rcs/makefile.in\
+	permit/makefile.in\
+	vcs/makefile.in
+
+SOURCES	=\
+	makefile.in
+
+####### (Standard Productions) #################################################
+all::		$(SOURCES)
+
+all\
+clean\
+distclean\
+sources\
+lint.out\
+run_test\
+install\
+deinstall::	$(MFILES)
+	cd baseline &&	$(MAKE) $(MAKE_OPTS) $@
+	cd checkin &&	$(MAKE) $(MAKE_OPTS) $@
+	cd checkout &&	$(MAKE) $(MAKE_OPTS) $@
+	cd checkup &&	$(MAKE) $(MAKE_OPTS) $@
+	cd copy &&	$(MAKE) $(MAKE_OPTS) $@
+	cd link2rcs &&	$(MAKE) $(MAKE_OPTS) $@
+	cd permit &&	$(MAKE) $(MAKE_OPTS) $@
+	cd vcs &&	$(MAKE) $(MAKE_OPTS) $@
+
+clean\
+distclean::		; -$(RM) $(CLEAN)
+distclean::			; -$(RM) */makefile
