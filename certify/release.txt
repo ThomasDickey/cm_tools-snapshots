@@ -1,6 +1,20 @@
-$Id: release.txt,v 7.0 1990/04/24 12:29:45 ste_cm Rel $
+$Id: release.txt,v 7.4 1990/05/14 13:52:53 dickey Exp $
 
 --------------------------------------------------------------------------------
+
+Version 8.0:
+-----------
+Added options "-b" "-e" and "-f" to 'link2rcs'.
+
+Added "-l" option to 'copy'; corrected handling of tilde in src/dst args there.
+Modified treatment of destination-as-directory: if more than 2 args are given,
+or if the destination ends with '/', we assume the user wants to copy into the
+given destination-directory.
+
+Propagate "-t" option of 'ded' to ded-subprocesses.
+
+Added/broke-out 'sccsdefs.h' and 'sccsname.c' for use in rewrite of 'sccsput'
+(see SCCS_TOOLS).
 
 Version 7.0:
 -----------

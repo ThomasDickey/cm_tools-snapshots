@@ -1,21 +1,19 @@
-# $Id: Makefile,v 7.0 1989/10/05 09:45:39 ste_cm Rel $
+# $Id: Makefile,v 8.0 1990/05/21 14:37:54 ste_cm Rel $
 # Top-level make-file for CM_TOOLS
+# (see also CM_TOOLS/src/common)
 #
 # $Log: Makefile,v $
-# Revision 7.0  1989/10/05 09:45:39  ste_cm
-# BASELINE Mon Apr 30 12:49:21 1990 -- (CPROTO)
+# Revision 8.0  1990/05/21 14:37:54  ste_cm
+# BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
 #
-#	Revision 6.0  89/10/05  09:45:39  ste_cm
-#	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+#	Revision 7.3  90/05/21  14:37:54  dickey
+#	corrected 'clobber' rule
 #	
-#	Revision 5.0  89/10/05  09:45:39  ste_cm
-#	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+#	Revision 7.2  90/05/21  14:12:38  dickey
+#	notes
 #	
-#	Revision 4.1  89/10/05  09:45:39  dickey
-#	added 'lint.out', 'lincnt.out' rules
-#	
-#	Revision 4.0  89/08/22  08:24:46  ste_cm
-#	BASELINE Thu Aug 24 09:12:03 EDT 1989 -- support:navi_011(rel2)
+#	Revision 7.1  90/05/10  15:11:20  dickey
+#	simplified using "::" rules and "-x" option of 'checkout'
 #	
 #	Revision 7.0  89/10/05  09:45:39  ste_cm
 #	BASELINE Mon Apr 30 12:49:21 1990 -- (CPROTO)
@@ -24,7 +22,8 @@
 ####### (Development) ##########################################################
 INSTALL_PATH = /ste_site/ste/bin
 INSTALL_DOCS = /ste_site/ste/doc
-MAKE	= make $(MFLAGS) -k$(MAKEFLAGS)
+RCS_PATH= `which rcs | sed -e s+/rcs$$+/+`
+GET	= checkout
 THIS	= Makefile
 CFLAGS	=
 MAKE	= make $(MFLAGS) -k$(MAKEFLAGS) GET=$(GET) CFLAGS="$(CFLAGS)"
@@ -64,20 +63,17 @@ all:		$(FIRST)
 	cd certificate;	$(MAKE) $@
 	cd support;	$(MAKE) $@
 	cd src;		$(MAKE) install
-clean:		$(MFILES)
+	cd user;	$(MAKE) $@
+	cd bin;		$(MAKE) $@
+
 clean\
 clobber\
 destroy::	$(MFILES)
 	cd certificate;	$(MAKE) $@
 	cd support;	$(MAKE) $@
 	cd src;		$(MAKE) $@
-clobber:	$(MFILES)
-	cd certificate;	$(MAKE) $@
-	cd support;	$(MAKE) $@
-	cd src;		$(MAKE) $@
 	cd user;	$(MAKE) $@
 	cd bin;		$(MAKE) $@
-	rm -f $(HACKS) $(MKFILE)
 
 clobber::
 	rm -rf $(HACKS) $(MKFILE) $(DIRS)
@@ -93,12 +89,7 @@ deinstall:	$(FIRST)
 	cd certificate;	$(MAKE) $@
 	cd support;	$(MAKE) $@
 	cd src;		$(MAKE) $@
-destroy:	$(MFILES)
-	cd certificate;	$(MAKE) $@
-	cd support;	$(MAKE) $@
-	cd src;		$(MAKE) $@
 	cd user;	$(MAKE) $@
-	cd bin;		$(MAKE) $@
 	cd bin;		$(MAKE) $@ INSTALL_PATH=$(INSTALL_PATH)
 
 destroy::
@@ -108,11 +99,11 @@ destroy::
 ####### (Details of Productions) ###############################################
 .first:		$(FIRST)
 
-bin/Makefile:			; cd bin;		$(GET) Makefile
-certificate/Makefile:		; cd certificate;	$(GET) Makefile
-support/Makefile:		; cd support;		$(GET) Makefile
-src/Makefile:			; cd src;		$(GET) Makefile
-user/Makefile:			; cd user;		$(GET) Makefile
+$(SOURCES):			; $(GET) $@
+$(DIRS):			; mkdir $@
+
+bin/Makefile\
+certificate/Makefile\
 support/Makefile\
 src/Makefile\
 user/Makefile:			; $(GET) -x $@
