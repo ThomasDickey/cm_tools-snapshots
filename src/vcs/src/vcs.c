@@ -1,12 +1,9 @@
-#ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/vcs/src/RCS/vcs.c,v 11.0 1991/10/17 17:14:01 ste_cm Rel $";
-#endif
-
 /*
  * Title:	vcs.c (version-control-system utility)
  * Author:	T.E.Dickey
  * Created:	06 Sep 1989
  * Modified:
+ *		22 Sep 1993, gcc warnings
  *		17 Oct 1991, split out 'vcs_insert.c' and 'vcs_unlock.c'
  *		10 Oct 1991, began rewrite (never did finish this!)
  *
@@ -14,7 +11,9 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/vcs/src/RCS
  */
 
 #define	MAIN
-#include "vcs.h"
+#include <vcs.h>
+
+MODULE_ID("$Id: vcs.c,v 11.2 1993/09/22 14:50:11 tom Exp $")
 
 /************************************************************************
  *	utility procedures						*
@@ -159,9 +158,9 @@ _DCL(char *,	name)
 
 /******************************************************************************/
 static
-DoArg(
-_AR1(char *,	name))
-_DCL(char *,	name)
+void	DoArg(
+	_AR1(char *,	name))
+	_DCL(char *,	name)
 {
 	char	base[BUFSIZ];
 
@@ -180,12 +179,14 @@ _DCL(char *,	name)
 			VERBOSE(".. completed %s.x %s\n", base, name);
 		(void)chdir(original);
 		break;
+	default:
+		break;
 	}
 }
 
 /******************************************************************************/
 static
-usage(_AR0)
+void	usage(_AR0)
 {
 	static	char	*msg[] = {
 "Usage: vcs [options] [names]",

@@ -1,30 +1,29 @@
-#ifndef	lint
-static	char	Id[] = "$Id: unlock.c,v 11.1 1992/10/28 07:48:17 dickey Exp $";
-#endif
-
 /*
  * Title:	vcs_unlock.c
  * Author:	T.E.Dickey
  * Created:	16 Oct 1991 (from 'vcs.c')
  * Modified:
+ *		22 Sep 1993, gcc warnings
  *
  * Function:	Unlocks an RCS archive-file for the user.  If the user happens
  *		to own the file, all locks are undone, otherwise only those
  *		locks that the user has made are undone.
  */
 
-#include "vcs.h"
+#include <vcs.h>
+
+MODULE_ID("$Id: unlock.c,v 11.3 1993/09/22 14:51:18 tom Exp $")
 
 /******************************************************************************/
 static
-GetLock(
-_ARX(char *,	name)
-_ARX(char *,	lock_rev)
-_AR1(char *,	lock_by)
-	)
-_DCL(char *,	name)
-_DCL(char *,	lock_rev)
-_DCL(char *,	lock_by)
+int	GetLock(
+	_ARX(char *,	name)
+	_ARX(char *,	lock_rev)
+	_AR1(char *,	lock_by)
+		)
+	_DCL(char *,	name)
+	_DCL(char *,	lock_rev)
+	_DCL(char *,	lock_by)
 {
 	int	header	= TRUE,
 		code	= S_FAIL;

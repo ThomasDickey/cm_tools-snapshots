@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 11.3 1992/12/04 14:21:30 ste_cm Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 11.4 1993/09/22 14:43:19 dickey Exp $";
 #endif
 
 /*
@@ -48,8 +48,6 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/
 #include	<rcsdefs.h>
 #include	<ctype.h>
 #include	<time.h>
-extern	char	*mktemp();
-extern	char	*strtok();
 
 /************************************************************************
  *	local definitions						*
@@ -142,11 +140,12 @@ void	del_list(
 	auto	 char	*base = list;
 
 	while (*list) {
-		if (next = strchr(list, ',')) {
+		if ((next = strchr(list, ',')) != NULL) {
 			if ((next++ - list) == len)
 				if (!strncmp(list,key,len)) {
 					char	*save = list;
-					while (*list++ = *next++);
+					while ((*list++ = *next++) != EOS)
+						;
 					next = save;
 				}
 		} else {
@@ -378,7 +377,7 @@ void	modify_access(
  */
 static
 /*ARGSUSED*/
-WALK_FUNC(do_arcs)
+int	WALK_FUNC(do_arcs)
 {
 #ifdef	PATCH
 	int	got_lock= FALSE;	/* true if lock found */
@@ -489,6 +488,7 @@ WALK_FUNC(do_arcs)
  * the specified user from the access lists, and incidentally computing the
  * highest version, from which the most recent baseline can be inferred.
  */
+static
 void	scan_arcs(
 	_ARX(char *,	path)
 	_ARX(char *,	name)
@@ -553,7 +553,7 @@ int	do_base(
  * directory-tree, and looking for RCS-directories at each point, to process.
  */
 static
-WALK_FUNC(do_tree)
+int	WALK_FUNC(do_tree)
 {
 	char	*notes;
 	int	mode	= (sp != 0) ? (sp->st_mode & S_IFMT) : 0;

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/src/RCS/baseline.c,v 11.0 1992/01/17 12:50:02 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/src/RCS/baseline.c,v 11.1 1993/09/22 13:58:29 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/baseline/sr
  * Author:	T.E.Dickey
  * Created:	24 Oct 1989
  * Modified:
+ *		22 Sep 1993, gcc warnings
  *		17 Jan 1992, added "-L" option.  Renamed "-r" to "-R" option
  *			     and "-f" to "-p" for consistency.
  *		22 Oct 1991, use 'shoarg()'
@@ -193,7 +194,7 @@ _DCL(time_t,	edited)
 }
 
 static
-WALK_FUNC(scan_tree)
+int	WALK_FUNC(scan_tree)
 {
 	auto	char	tmp[BUFSIZ],
 			*s = pathcat(tmp, path, name);

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.c,v 11.0 1992/02/06 12:57:07 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.c,v 11.1 1993/09/22 14:25:25 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		22 Sep 1993, gcc warnings
  *		06 Feb 1992, revised filename-parsing with 'rcsargpair()',
  *			     obsoleted "-x" option.
  *		11 Oct 1991, converted to ANSI
@@ -57,9 +58,9 @@ static	int	n_opt;		/* no-op mode */
 static	int	quiet;		/* "-q" option */
 
 static
-set_wd(
-_AR1(char *,	path))
-_DCL(char *,	path)
+void	set_wd(
+	_AR1(char *,	path))
+	_DCL(char *,	path)
 {
 	if (!n_opt)
 		if (chdir(path) < 0)
@@ -67,13 +68,12 @@ _DCL(char *,	path)
 }
 
 static
-void
-Checkout(
-_ARX(char *,	working)
-_AR1(char *,	archive)
-	)
-_DCL(char *,	working)
-_DCL(char *,	archive)
+void	Checkout(
+	_ARX(char *,	working)
+	_AR1(char *,	archive)
+		)
+	_DCL(char *,	working)
+	_DCL(char *,	archive)
 {
 	auto	char	args[BUFSIZ];
 
@@ -89,10 +89,9 @@ _DCL(char *,	archive)
 }
 
 static
-int
-an_archive(
-_AR1(char *,	name))
-_DCL(char *,	name)
+int	an_archive(
+	_AR1(char *,	name))
+	_DCL(char *,	name)
 {
 	register int	len_name = strlen(name),
 			len_type = strlen(RCS_SUFFIX);
@@ -104,10 +103,9 @@ _DCL(char *,	name)
  * Test for directories that we don't try to scan
  */
 static
-int
-ignore_dir(
-_AR1(char *,	path))
-_DCL(char *,	path)
+int	ignore_dir(
+	_AR1(char *,	path))
+	_DCL(char *,	path)
 {
 	if (!a_opt && *pathleaf(path) == '.'
 	 && sameleaf(path, sccs_dir())) {
@@ -131,7 +129,7 @@ _DCL(char *,	why)
 
 static
 /*ARGSUSED*/
-WALK_FUNC(scan_archive)
+int	WALK_FUNC(scan_archive)
 {
 	auto	char	tmp[BUFSIZ];
 
@@ -152,7 +150,7 @@ WALK_FUNC(scan_archive)
 }
 
 static
-WALK_FUNC(scan_tree)
+int	WALK_FUNC(scan_tree)
 {
 	auto	char	tmp[BUFSIZ],
 			*s = pathcat(tmp, path, name);

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.19 1993/04/27 11:02:35 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.20 1993/09/23 20:54:36 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		23 Sep 1993, gcc warnings
  *		11 Nov 1992, initialize access-list of each module to match
  *			     the permit-list.
  *		05 Nov 1992, added "-w" option to simplify apollo setuid code.
@@ -230,7 +231,7 @@ void	GiveBack(
 /*
  * Remove working-file for set-uid process if the matching temp-file was.
  */
-static	int	rm_work(_AR0) { return (unlink(Working)); }
+static	void	rm_work(_AR0) { (void)unlink(Working); }
 
 static	void	clean_file(_AR0)
 {
@@ -501,7 +502,7 @@ int	DoIt (
 	int	code;
 	int	fix_id;
 
-	if (fix_id = (!geteuid() && getuid())) {
+	if ((fix_id = (!geteuid() && getuid())) != 0) {
 		if (!no_op) {
 			(void)setruid(geteuid());
 			(void)setrgid(getegid());
@@ -837,7 +838,7 @@ char *	copy_to(
 	_DCL(char *,	src)
 {
 	char	delim;
-	if (delim = *src) {
+	if ((delim = *src) != EOS) {
 		src++;
 		while (*src != delim) {
 			if (!(*dst++ = *src))	/* look out for EOS ! */
@@ -881,7 +882,7 @@ int	RcsInitialize(_AR0)
 		define_prefix(".e",	" * ");
 		define_prefix(".mms",	"#\t");
 		define_prefix(".mk",	"#\t");
-		if (s = getenv("RCS_COMMENT")) {
+		if ((s = getenv("RCS_COMMENT")) != NULL) {
 			char	suffix[BUFSIZ], prefix[BUFSIZ];
 			while (*s) {
 				s = copy_to(suffix, s);
@@ -906,13 +907,13 @@ int	RcsInitialize(_AR0)
 		if (EMPTY(list)) {
 			register struct passwd *p;
 
-			if (p = getpwuid(geteuid() ? geteuid() : RCS_uid))
+			if ((p = getpwuid(geteuid() ? geteuid() : RCS_uid)) != 0)
 				FORMAT(list, "-a%s", p->pw_name);
 			else
 				GiveUp("owner of RCS directory for", Working);
 
 			if (getuid() != HIS_uid) {
-				if (p = getpwuid(HIS_uid))
+				if ((p = getpwuid(HIS_uid)) != 0)
 					FORMAT(list + strlen(list), ",%s", p->pw_name);
 				else
 					GiveUp("owner of directory for", Working);
@@ -927,13 +928,14 @@ int	RcsInitialize(_AR0)
 		||	!strcmp(t, "AMakefile")
 		||	!strcmp(t, "makefile")) )
 		CATARG(cmds, "-c#\t");
-	else if (s = get_prefix(s))
+	else if ((s = get_prefix(s)) != NULL)
 		CATARG(cmds, s);
 
 	if (silent) CATARG(cmds, "-q");
 	CATARG(cmds, Archive);
 	if (DoIt(RCS_TOOL, dyn_string(cmds)) < 0)
 		GiveUp("rcs initialization for", Working);
+	return 0;
 }
 
 /*
@@ -1227,7 +1229,7 @@ _MAIN
 					OwnWorking();
 			}
 #else	/* RCS_VERSION >= 5 */
-			if (new_file = (rcs_archive(Archive, &sb) < 0)) {
+			if ((new_file = (rcs_archive(Archive, &sb) < 0)) != 0) {
 				MakeDirectory();
 				if (for_admin(RcsInitialize) < 0)
 					failed(Archive);

@@ -1,4 +1,4 @@
-$Id: release.txt,v 11.6 1993/05/06 13:35:09 dickey Exp $
+$Id: release.txt,v 11.7 1993/09/23 21:08:32 dickey Exp $
 
 --------------------------------------------------------------------------------
 
@@ -16,6 +16,10 @@ New features in 'copy':
 
 New features in 'permit':
 	* added "-l" option.
+
+Tested with gcc's warnings enabled.
+
+Tested with Purify (demo) for memory leaks.
 
 Version 11.0: 
 ------------

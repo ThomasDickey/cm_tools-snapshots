@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 11.5 1993/06/24 17:24:43 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 11.6 1993/09/22 14:22:57 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		22 Sep 1993, gcc warnings
  *		24 Jun 1993, fixes for apollo-setuid for RCS version 5.
  *		02 Nov 1992, mods for RCS version 5.
  *		16 Jul 1992, corrected call on 'cutoff()'
@@ -146,7 +147,7 @@ _DCL(char *,	name)
 }
 
 static
-WhoAmI(_AR0)
+void	WhoAmI(_AR0)
 {
 	if (debug)
 		show_uids(stdout);
@@ -237,7 +238,7 @@ _DCL(char *,	s)
 	register char *t = strrchr(s, '.');
 	if (t != 0) {
 		*t = EOS;
-		if (t = strrchr(s, '.')) {
+		if ((t = strrchr(s, '.')) != NULL) {
 			;
 		} else
 			*s = EOS;	/* trunk (i.e., "9.1") */
