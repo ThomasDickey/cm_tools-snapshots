@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		25 Aug 1996, fix conflict between -l, -u options
  *		28 Jan 1995, retain 's' modes on destination directory.
  *		18 Jun 1994, removed 'S' setuid option.  Corrected test for
  *			     overwrite of same-inode.  Added S/D MSDOS
@@ -105,7 +106,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.17 1995/05/13 23:09:02 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.19 1996/08/25 17:48:43 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -154,6 +155,21 @@ static	int	copyit(		/* forward-reference */
 		_arx(char *,	dst)
 		_arx(int,	no_dir_yet)
 		_ar1(int,	tested_acc));
+
+static
+void	problem(
+	_ARX(char *,	command)
+	_AR1(char *,	argument)
+		)
+	_DCL(char *,	command)
+	_DCL(char *,	argument)
+{
+	char temp[BUFSIZ + MAXPATHLEN];
+	strcpy(temp, command);
+	strcat(temp, " ");
+	strcat(temp, argument);
+	perror(temp);
+}
 
 #ifdef	apollo
 #ifndef apollo_sr10
@@ -276,7 +292,7 @@ int	SetMode(
 	DEBUG("++ chmod %03o %s\n", mode, path);
 	if (!n_opt) {
 		if (chmod(path, mode) < 0) {
-			perror(path);
+			problem("chmod", path);
 			return -1;
 		}
 	}
@@ -358,7 +374,7 @@ int	copyfile(
 	char	bfr2[BUFSIZ];
 
 	if (access(src,R_OK) < 0) {
-		perror(src);
+		problem("access", src);
 		return(-1);
 	}
 	*bfr1 = EOS;
@@ -396,28 +412,30 @@ int	copyfile(
 #else	/* unix	*/
 	FILE	*ifp, *ofp;
 	int	num;
+	int	did_chmod = TRUE;
 	int	old_mode = new_sb->st_mode & S_MODEBITS,
 		tmp_mode = old_mode | S_IWUSR;	/* must be writeable! */
 
 	if ((ifp = fopen(src, "r")) == 0) {
-		perror(src);
+		problem("fopen(src)", src);
 	} else if (previous && SetMode(dst, tmp_mode) < 0) {
-		perror(dst);
+		did_chmod = FALSE;
 	} else if ((ofp = fopen(dst, previous ? "w+" : "w")) == 0) {
-		perror(dst);
+		problem("fopen(dst)", dst);
 	} else {
 		retval = 0;		/* probably will go ok now */
 		while ((num = fread(bfr1, 1, sizeof(bfr1), ifp)) > 0)
 			if (fwrite(bfr1, 1, (size_t)num, ofp) != num) {
 					/* no, error found anyway */
 				retval = -1;
-				perror(dst);
+				problem("fwrite", dst);
 				break;
 			}
 		FCLOSE(ofp);
 	}
 	FCLOSE(ifp);
-	if (retval < 0)		/* restore old-mode in case of err */
+	if (retval < 0		/* restore old-mode in case of err */
+	 && did_chmod)
 		RestoreMode(dst, new_sb);
 #endif	/* apollo/unix */
 	return (retval);
@@ -464,11 +482,11 @@ int	copylink(
 	auto	char	bfr[BUFSIZ];
 
 	if (!ReadLink(src, bfr)) {
-		perror(src);
+		problem("ReadLink(src)", src);
 		return(-1);
 	}
 	if (symlink(bfr, dst) < 0) {
-		perror(dst);
+		problem("symlink", dst);
 		return(-1);
 	}
 	return (0);
@@ -537,7 +555,7 @@ int	copydir(
 		DEBUG("++ rmdir %s\n", bfr1);
 		if (!n_opt) {
 			if (rmdir(bfr1) < 0) {
-				perror(dst);
+				problem("rmdir", dst);
 				return(-1);
 			}
 		}
@@ -554,7 +572,7 @@ int	copydir(
 					auto	int	save = errno;
 					if (dir_exists(bfr1, &dst_sb) < 0) {
 						errno = save;
-						perror(dst);
+						problem("dir_exists", dst);
 						return (-1);
 					}
 				}
@@ -627,15 +645,17 @@ int	copyit(
 	if (ok1 && ok2) {
 		int same_inode	=  (src_sb.st_ino == dst_sb.st_ino)
 				&& (src_sb.st_dev == dst_sb.st_dev);
-		if (same_inode) {
-			FPRINTF(stderr, "?? %s and %s are identical (not copied)\n",
+		if (same_inode) { /* files might be hard-linked */
+			DEBUG("?? %s and %s are identical (not copied)\n",
 				src, dst);
 			return FALSE;
 		}
 		if (u_opt) {
 #ifdef	S_IFLNK
-			lstat(bfr1, &src_sb);
-			lstat(bfr2, &dst_sb);
+			if (!l_opt) {
+				lstat(bfr1, &src_sb);
+				lstat(bfr2, &dst_sb);
+			}
 #endif
 			if (isFILE(src_sb.st_mode) && isFILE(dst_sb.st_mode)) {
 #if DOS_VISIBLE
@@ -665,12 +685,14 @@ int	copyit(
 	}
 #ifdef	S_IFLNK
 	else if (u_opt) {
-		lstat(bfr1, &src_sb);
-		lstat(bfr2, &dst_sb);
+		if (!l_opt) {
+			lstat(bfr1, &src_sb);
+			lstat(bfr2, &dst_sb);
+		}
 		if (isLINK(src_sb.st_mode) && isLINK(dst_sb.st_mode)) {
 			if (samelink(src,dst))
 				return FALSE;
-			}
+		}
 	}
 #endif
 	DEBUG("** src: \"%s\"\n** dst: \"%s\"\n", bfr1, bfr2);
@@ -746,7 +768,7 @@ int	copyit(
 #ifdef	S_IFLNK
 		if (num && !isDIR(src_sb.st_mode) && isLINK(dst_sb.st_mode)) {
 			if (unlink(dst) < 0) {
-				perror(dst);
+				problem("unlink(dst)", dst);
 				return forced;
 			}
 		}
@@ -790,7 +812,7 @@ static
 void	usage(_AR0)
 {
 	auto	char	bfr[BUFSIZ];
-	static	char	*tbl[] = {
+	static	const	char	*const tbl[] = {
  "Usage: copy [options] {[-d] | source [...]} destination"
 ,""
 ,"Options:"

@@ -1,3 +1,14 @@
+1996-08-25  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/copy/src/copy.c:
+	make some of the perror calls easier to figure out by showing the operation
+	I was trying.
+
+	* src/copy/src/copy.c:
+	don't yell about hardlinked-files (it gets in my way with XFree86 tree).
+	also, if -l option is set, don't use lstat() in the -u option (more
+	tuning may be needed)
+
 1996-07-05  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/checkup/src/checkup.c:
