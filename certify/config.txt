@@ -1,0 +1,25 @@
+$Header: /users/source/archives/cm_tools.vcs/certify/RCS/config.txt,v 1.2 1989/03/29 11:38:43 dickey Exp $
+
+--------------------------------------------------------------------------------
+
+The CM_TOOLS set of programs is designed to be run in a BSD-unix environment.
+The tools are written in C.  The make-procedure assumes that 'make', 'tar' and
+'sed' are available.
+
+Most of the tools are built assuming that RCS is available; these have been
+tested only on Apollo SR9.7 (bsd4.2).
+
+The non-RCS tools (e.g., 'copy' and 'ded') have been tested on the Gould
+and Sun systems at the SPC.  All of the programs have been built on all
+three platforms.
+
+--------------------------------------------------------------------------------
+
+	Miscellaneous tools not included here, which are used in non-critical
+	make-rules:
+
+	Lint tools for the above systems:
+		tdlint
+		makellib
+
+	lincnt - C-language line counter

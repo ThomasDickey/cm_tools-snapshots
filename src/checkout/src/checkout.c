@@ -1,12 +1,31 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkout.c	1.26 89/01/24 08:29:02";
+static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 3.0 1989/03/29 14:48:40 ste_cm Rel $";
 #endif	lint
 
 /*
  * Title:	checkout.c (front end for RCS checkout)
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
- * Modified:
+ * $Log: checkout.c,v $
+ * Revision 3.0  1989/03/29 14:48:40  ste_cm
+ * BASELINE Mon Jun 19 13:12:40 EDT 1989
+ *
+ *		Revision 2.0  89/03/29  14:48:40  ste_cm
+ *		BASELINE Thu Apr  6 09:22:38 EDT 1989
+ *		
+ *		Revision 1.31  89/03/29  14:48:40  dickey
+ *		if we cannot find the archive, this may be because the user has
+ *		hidden his directory (and therefore we cannot see it in setuid
+ *		mode).  revert to normal rights in this case and try again.
+ *		
+ *		Revision 1.30  89/03/28  15:08:13  dickey
+ *		forgot to invoke 'rcspermit()' to check directory-level permit.
+ *		
+ *		Revision 1.29  89/03/21  14:12:59  dickey
+ *		sccs2rcs keywords
+ *		
+ *		21 Mar 1989, strip setuid privilege if caller wants to check out
+ *			     a file not owned by the setuid process.
  *		24 Jan 1989, don't insist that archive be owned by user or euid
  *			     if no lock is being made.  Corrected hole which
  *			     caused working file to be deleted if setuid-use
@@ -45,6 +64,7 @@ static	char	sccs_id[] = "@(#)checkout.c	1.26 89/01/24 08:29:02";
  */
 
 #define		ACC_PTYPES
+#define		STR_PTYPES
 #include	"ptypes.h"
 #include	"rcsdefs.h"
 
@@ -55,9 +75,6 @@ extern	long	packdate();
 extern	char	*ctime();
 extern	char	*getuser();
 extern	char	*pathhead();
-extern	char	*strcat();
-extern	char	*strcpy();
-extern	char	*strchr();
 extern	time_t	cutoff();
 
 extern	char	*optarg;
@@ -270,8 +287,22 @@ int	owner;			/* TRUE if euid, FALSE if uid */
 	if (stat(name, &sb) >= 0) {
 		if ((S_IFMT & sb.st_mode) == S_IFREG) {
 			if (owner) {	/* setup for archive: effective */
-				if (locked)
+				char	RCSdir[BUFSIZ],
+					*s = strrchr(strcpy(RCSdir, name),'/');
+				if (s != 0)
+					*s = EOS;
+				else
+					(void)strcpy(RCSdir, "./");
+					DEBUG(("++ RCSdir='%s'\n", RCSdir))
+
+				if (Effect != sb.st_uid) {
+					revert(debug ? "non-CM use":(char *)0);
+					Effect = geteuid();
+				} else if (!rcspermit(RCSdir,(char *)0))
+					revert("not listed in permit-file");
+				if (locked) {
 					permit(name, &sb, uid = Effect);
+				}
 			} else {	/* setup for working: real */
 				permit(name, &sb, uid = Caller);
 			}
@@ -323,9 +354,13 @@ char	*name;
 	Archive = name2rcs(name);
 
 	DEBUG(("...do_file(%s) => %s %s\n", name, Working, Archive))
+
 	if (PreProcess(Archive,TRUE) == TRUE) {
-		WARN "?? can't find archive \"%s\"\n", Archive);
-		(void)exit(FAIL);
+		revert(debug ? "directory access" : (char *)0);
+		if (PreProcess(Archive,TRUE) == TRUE) {
+			WARN "?? can't find archive \"%s\"\n", Archive);
+			(void)exit(FAIL);
+		}
 	}
 
 	if (mtime = PreProcess (Working,FALSE)) {

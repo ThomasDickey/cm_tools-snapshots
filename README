@@ -1,0 +1,51 @@
+$Header: /users/source/archives/cm_tools.vcs/RCS/README,v 9.0 1989/03/28 10:49:15 ste_cm Rel $
+
+--------------------------------------------------------------------------------
+
+This module consists of the following programs (or scripts):
+
+	baseline
+	checkin
+	checkout
+	checkup
+	copy
+	ded
+	link2rcs
+	permit
+	rcsget
+	rcsput
+
+To build the system from sources, do the following:
+
+	(1) Put the bin-directory of this module in your path.
+	(2) Adjust the top-level makefile, if necessary, to reflect the
+	    installation-path (INSTALL_PATH) of these programs
+	(3) Adjust the top-level makefile, if necessary, to point to the
+	    directory containing the rcs binary programs (RCS_PATH).
+
+Make the system by typing
+
+	make all
+
+This will build all binary programs into staging directories (bin) below
+the src-directory, then install them into the top-level bin-directory.
+
+You may build the binary programs into the staging directories alone,
+and run tests by typing
+
+	cd src
+	make all
+	make run_tests
+
+Some of the tests write into a log-file.  Others do not (since the program
+changes behavior when piping output).  Note that few are self-contained;
+for example, the checkin and checkout package tests assume that the other
+utility (as well as the rcs utilities) are available.
+
+When you are satisfied that the individual programs are ready for
+installation, type (from this directory)
+
+	make install
+
+That will first copy from the staging directories, then from the top-level
+bin-directory to the $(INSTALL_PATH) directory.

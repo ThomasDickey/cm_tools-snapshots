@@ -1,3 +1,820 @@
+1989-03-31  dickey@software.org
+
+	* src/checkin/src/checkin.c: only close temp-file if we have opened it!
+
+	* src/permit/src/permit.c:
+	eliminated a couple of unnecessary "rcs -a" commands.
+
+1989-03-31  ste_cm@software.org
+
+	* src/permit/src/permit.c: BASELINE Thu Apr  6 13:54:53 EDT 1989
+
+1989-03-31  dickey@software.org
+
+	* src/permit/test/run_test.sh:
+	added extra (preamble) test in case we have no RCS directory already.
+
+1989-03-31  ste_cm@software.org
+
+	* src/permit/test/run_test.sh:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/permit/test/run_test.sh:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/permit/test/run_test.sh:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/permit/test/run_test.sh:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/permit/test/run_test.sh: BASELINE Mon Jun 19 14:50:57 EDT 1989
+
+	* src/permit/test/run_test.sh: BASELINE Thu Apr  6 13:59:39 EDT 1989
+
+	* src/permit/test/run_test.sh:
+	BASELINE Thu Aug 24 10:41:43 EDT 1989 -- support:navi_011(rel2)
+
+	* src/permit/test/run_test.sh:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-03-31  dickey@software.org
+
+	* src/permit/src/permit.c:
+	RCS-directory may be a symbolic link; avoid use of ".." arg
+	to chdir to exit from it.
+
+1989-03-30  dickey@software.org
+
+	* src/copy/src/copy.c:
+	modified normal unix file-copy code so that if the destination file
+	could not be opened for output, then we restore its protection.
+
+1989-03-30  ste_cm@software.org
+
+	* src/copy/src/copy.c: BASELINE Mon Jun 19 14:17:23 EDT 1989
+
+	* src/copy/src/copy.c: BASELINE Thu Apr  6 13:08:58 EDT 1989
+
+	* src/copy/src/copy.c:
+	BASELINE Thu Aug 24 10:16:23 EDT 1989 -- support:navi_011(rel2)
+
+1989-03-30  dickey@software.org
+
+	* src/copy/test/run_test.sh:
+	tee-normal test-results so we look like other CM_TOOLS test-scripts
+
+1989-03-30  ste_cm@software.org
+
+	* src/copy/test/run_test.sh:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/copy/test/run_test.sh:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/copy/test/run_test.sh:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/copy/test/run_test.sh:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/copy/test/run_test.sh: BASELINE Mon Jun 19 14:19:05 EDT 1989
+
+	* src/copy/test/run_test.sh: BASELINE Thu Apr  6 13:10:28 EDT 1989
+
+	* src/copy/test/run_test.sh:
+	BASELINE Thu Aug 24 10:17:44 EDT 1989 -- support:navi_011(rel2)
+
+	* src/copy/test/run_test.sh:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-03-30  dickey@software.org
+
+	* src/checkout/test/run_test.sh: corrected path for module-under-test
+
+1989-03-30  ste_cm@software.org
+
+	* src/checkout/test/run_test.sh:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/checkout/test/run_test.sh:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkout/test/run_test.sh:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/checkout/test/run_test.sh:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/checkout/test/run_test.sh: BASELINE Mon Jun 19 13:14:48 EDT 1989
+
+	* src/checkout/test/run_test.sh: BASELINE Thu Apr  6 09:27:46 EDT 1989
+
+	* src/checkout/test/run_test.sh:
+	BASELINE Thu Aug 24 09:29:10 EDT 1989 -- support:navi_011(rel2)
+
+	* src/checkout/test/run_test.sh:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-03-30  dickey@software.org
+
+	* src/checkin/test/run_test.sh: corrected path for module-under-test
+
+1989-03-30  ste_cm@software.org
+
+	* src/checkin/test/run_test.sh:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/checkin/test/run_test.sh:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkin/test/run_test.sh:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/checkin/test/run_test.sh:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/checkin/test/run_test.sh: BASELINE Mon Jun 19 13:09:53 EDT 1989
+
+	* src/checkin/test/run_test.sh: BASELINE Thu Apr  6 09:17:23 EDT 1989
+
+	* src/checkin/test/run_test.sh:
+	BASELINE Thu Aug 24 09:25:26 EDT 1989 -- support:navi_011(rel2)
+
+	* src/checkin/test/run_test.sh:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-03-30  dickey@software.org
+
+	* src/baseline/test/run_test.sh:
+	modified so this works if there is no RCS directory to copy from.
+
+1989-03-30  ste_cm@software.org
+
+	* src/baseline/test/run_test.sh: BASELINE Tue Apr  4 16:08:39 EDT 1989
+
+1989-03-30  dickey@software.org
+
+	* src/baseline/src/baseline.sh:
+	set state "Rel" (release) on baselined-files
+
+1989-03-30  ste_cm@software.org
+
+	* src/baseline/src/baseline.sh: BASELINE Tue Apr  4 16:06:13 EDT 1989
+
+1989-03-29  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	if we cannot find the archive, this may be because the user has
+	hidden his directory (and therefore we cannot see it in setuid
+	mode).  revert to normal rights in this case and try again.
+
+1989-03-29  ste_cm@software.org
+
+	* src/checkout/src/checkout.c: BASELINE Mon Jun 19 13:12:40 EDT 1989
+
+	* src/checkout/src/checkout.c: BASELINE Thu Apr  6 09:22:38 EDT 1989
+
+1989-03-29  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	if working file cannot be found, this may be because checkin is
+	running in set-uid mode.  revert to normal rights and try again.
+
+	* certify/config.txt: put this properly into English.
+
+	* src/baseline/src/baseline.sh:
+	added "-v" (verbose) option.  Invoke 'permit' to keep its idea of the
+	baseline-version up to date.
+
+	* src/permit/src/permit.c:
+	added "-b" option to use in 'baseline'.  Completed 'set_baseline()'
+	and modified 'create_permit()' to support this.
+
+	* user/Makefile:
+	don't remove ".doc" files, in 'clobber', but do remove non-archived stuff
+
+1989-03-29  ste_cm@software.org
+
+	* user/Makefile: BASELINE Thu Apr  6 14:48:29 EDT 1989
+
+1989-03-29  dickey@software.org
+
+	* Makefile: added missing Makefile-dependencies
+
+1989-03-29  ste_cm@software.org
+
+	* Makefile: BASELINE Mon Jun 19 12:54:05 EDT 1989
+
+	* Makefile: BASELINE Tue Apr  4 15:54:07 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* Makefile: added 'make' rules for user-documentation directory
+
+	* user/Makefile: RCS_BASE
+
+	* Makefile: source-arg of 'copy.sh' must be a simple file...
+
+	* src/checkout/src/checkout.c:
+	forgot to invoke 'rcspermit()' to check directory-level permit.
+
+	* bin/Makefile: added 'rdiff' to install-list
+
+1989-03-28  ste_cm@software.org
+
+	* bin/Makefile: BASELINE Mon Jun 19 12:55:50 EDT 1989
+
+	* bin/Makefile: BASELINE Tue Apr  4 16:02:47 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/permit/Makefile: added 'all' dependency to 'install'
+
+1989-03-28  ste_cm@software.org
+
+	* src/permit/Makefile: BASELINE Mon Jun 19 14:47:51 EDT 1989
+
+	* src/permit/Makefile: BASELINE Thu Apr  6 13:51:54 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* Makefile: corrected INSTALL_PATH default value
+
+	* src/checkup/src/Makefile: added 'run_tests' rule
+
+1989-03-28  ste_cm@software.org
+
+	* src/checkup/src/Makefile: BASELINE Mon Jun 19 13:17:34 EDT 1989
+
+	* src/checkup/src/Makefile: BASELINE Thu Apr  6 09:32:39 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/permit/test/Makefile:
+	write test results (including stderr) to both terminal and run_tests.out
+
+	* src/permit/src/Makefile: added 'run_tests' rule
+
+1989-03-28  ste_cm@software.org
+
+	* src/permit/src/Makefile: BASELINE Mon Jun 19 14:49:13 EDT 1989
+
+	* src/permit/src/Makefile: BASELINE Thu Apr  6 13:54:53 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/link2rcs/test/run_test.sh: corrected test-cleanup
+
+1989-03-28  ste_cm@software.org
+
+	* src/link2rcs/test/run_test.sh:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/link2rcs/test/run_test.sh: BASELINE Mon Jun 19 14:46:26 EDT 1989
+
+	* src/link2rcs/test/run_test.sh: BASELINE Thu Apr  6 13:50:00 EDT 1989
+
+	* src/link2rcs/test/run_test.sh:
+	BASELINE Thu Aug 24 10:38:03 EDT 1989 -- support:navi_011(rel2)
+
+1989-03-28  dickey@software.org
+
+	* src/link2rcs/test/run_test.sh:
+	rewrote, making this check for plausible errors
+
+	* src/link2rcs/src/link2rcs.sh: updated getopt/usage for -m option
+
+1989-03-28  ste_cm@software.org
+
+	* src/link2rcs/src/link2rcs.sh:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/link2rcs/src/link2rcs.sh: BASELINE Mon Jun 19 14:44:56 EDT 1989
+
+	* src/link2rcs/src/link2rcs.sh: BASELINE Thu Apr  6 13:37:00 EDT 1989
+
+	* src/link2rcs/src/link2rcs.sh:
+	BASELINE Thu Aug 24 10:36:51 EDT 1989 -- support:navi_011(rel2)
+
+1989-03-28  dickey@software.org
+
+	* src/link2rcs/test/Makefile: write test result to run_tests.out
+
+	* src/link2rcs/src/Makefile: add 'run_tests' rule
+
+1989-03-28  ste_cm@software.org
+
+	* src/link2rcs/src/Makefile: BASELINE Mon Jun 19 14:44:56 EDT 1989
+
+	* src/link2rcs/src/Makefile: BASELINE Thu Apr  6 13:37:00 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/copy/src/Makefile: added 'run_tests' rule
+
+1989-03-28  ste_cm@software.org
+
+	* src/copy/src/Makefile: BASELINE Mon Jun 19 14:17:23 EDT 1989
+
+	* src/copy/src/Makefile: BASELINE Thu Apr  6 13:08:12 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/checkout/test/Makefile: pipe test result to run_tests.out
+
+	* src/checkout/src/Makefile: added 'run_tests' rule.
+
+1989-03-28  ste_cm@software.org
+
+	* src/checkout/src/Makefile: BASELINE Mon Jun 19 13:12:40 EDT 1989
+
+	* src/checkout/src/Makefile: BASELINE Thu Apr  6 09:22:38 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/checkin/test/Makefile: pipe the test result to run_tests.out
+
+	* src/checkin/src/Makefile: added 'run_tests' rule
+
+1989-03-28  ste_cm@software.org
+
+	* src/checkin/src/Makefile: BASELINE Mon Jun 19 13:07:30 EDT 1989
+
+	* src/checkin/src/Makefile: BASELINE Thu Apr  6 08:47:10 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/baseline/test/run_test.sh:
+	made this work properly if RCS is a link (without permissions on target)
+
+	* src/baseline/test/Makefile: pipe the test-result to run_tests.out
+
+	* src/baseline/src/Makefile: added rule for 'run_tests'
+
+1989-03-28  ste_cm@software.org
+
+	* src/baseline/src/Makefile: BASELINE Mon Jun 19 13:02:34 EDT 1989
+
+	* src/baseline/src/Makefile: BASELINE Tue Apr  4 16:06:13 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/checkup/test/run_test.sh:
+	corrected test (did not work without RCS-permissions), and ensure that
+	we send the checkup-path listing by piping to /dev/tty
+
+1989-03-28  ste_cm@software.org
+
+	* src/checkup/test/run_test.sh:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/checkup/test/run_test.sh:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkup/test/run_test.sh:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/checkup/test/run_test.sh:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/checkup/test/run_test.sh: BASELINE Mon Jun 19 13:19:10 EDT 1989
+
+	* src/checkup/test/run_test.sh: BASELINE Thu Apr  6 09:36:30 EDT 1989
+
+	* src/checkup/test/run_test.sh:
+	BASELINE Thu Aug 24 09:32:43 EDT 1989 -- support:navi_011(rel2)
+
+	* src/checkup/test/run_test.sh:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-03-28  dickey@software.org
+
+	* src/checkup/test/Makefile:
+	pipe test-result to run_tests.out as well as to terminal
+
+	* README: fixed top-level "make all"
+
+1989-03-28  ste_cm@software.org
+
+	* README:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* README: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* README: BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* README: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* README: BASELINE Mon Jun 19 12:54:05 EDT 1989
+
+	* README:
+	BASELINE Thu Aug 24 09:13:16 EDT 1989 -- support:navi_011(rel2)
+
+	* README:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+	* README: BASELINE Tue Apr  4 15:54:07 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* Makefile: use MAKE-variable to encapsulate recursive-make info.
+
+	* src/link2rcs/Makefile:
+	use MAKE-variable to encapsulate recursive-build info.
+
+1989-03-28  ste_cm@software.org
+
+	* src/link2rcs/Makefile: BASELINE Mon Jun 19 14:43:39 EDT 1989
+
+	* src/link2rcs/Makefile: BASELINE Thu Apr  6 13:35:53 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/checkup/Makefile:
+	use MAKE-variable to encapsulate recursive-build info.
+
+1989-03-28  ste_cm@software.org
+
+	* src/checkup/Makefile: BASELINE Mon Jun 19 13:16:18 EDT 1989
+
+	* src/checkup/Makefile: BASELINE Thu Apr  6 09:30:32 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/baseline/Makefile:
+	use MAKE-variable to encapsulate recursive-build info.
+
+1989-03-28  ste_cm@software.org
+
+	* src/baseline/Makefile: BASELINE Mon Jun 19 13:01:15 EDT 1989
+
+	* src/baseline/Makefile: BASELINE Tue Apr  4 16:05:09 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/Makefile: use MAKE-variable to encapsulate recursive-build info.
+
+1989-03-28  ste_cm@software.org
+
+	* src/Makefile: BASELINE Mon Jun 19 13:00:20 EDT 1989
+
+	* src/Makefile: BASELINE Tue Apr  4 16:04:14 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/permit/Makefile, src/copy/Makefile:
+	use MAKE-variable to encapsulate recursive-build info.
+
+1989-03-28  ste_cm@software.org
+
+	* src/copy/Makefile: BASELINE Mon Jun 19 14:16:05 EDT 1989
+
+	* src/copy/Makefile: BASELINE Thu Apr  6 13:07:02 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/checkout/Makefile:
+	use MAKE-variable to encapsulate recursive-build info.
+
+1989-03-28  ste_cm@software.org
+
+	* src/checkout/Makefile: BASELINE Mon Jun 19 13:11:22 EDT 1989
+
+	* src/checkout/Makefile: BASELINE Thu Apr  6 09:18:19 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* src/checkin/Makefile:
+	use MAKE-variable to encapsulate recursive-build info.
+
+1989-03-28  ste_cm@software.org
+
+	* src/checkin/Makefile: BASELINE Mon Jun 19 13:06:11 EDT 1989
+
+	* src/checkin/Makefile: BASELINE Thu Apr  6 08:44:53 EDT 1989
+
+1989-03-28  dickey@software.org
+
+	* support/copy.sh: make this ignore options it does not process
+
+1989-03-28  ste_cm@software.org
+
+	* support/copy.sh:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* support/copy.sh: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* support/copy.sh:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* support/copy.sh: BASELINE Mon Jun 19 15:29:09 EDT 1989
+
+	* support/copy.sh: BASELINE Thu Apr  6 14:45:24 EDT 1989
+
+	* support/copy.sh:
+	BASELINE Thu Aug 24 11:12:20 EDT 1989 -- support:navi_011(rel2)
+
+	* support/copy.sh:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-03-28  dickey@software.org
+
+	* bin/Makefile: corrected 'clobber' rule
+
+	* src/link2rcs/src/link2rcs.sh: added -m (merge) option.
+
+1989-03-27  dickey@software.org
+
+	* README: RCS_BASE
+
+	* Makefile: cleanup of top-level, prepare for build on sun/gould
+
+	* COPYING: RCS_BASE
+
+1989-03-27  ste_cm@software.org
+
+	* COPYING:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* COPYING: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* COPYING: BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* COPYING: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* COPYING: BASELINE Mon Jun 19 12:54:05 EDT 1989
+
+	* COPYING:
+	BASELINE Thu Aug 24 09:13:16 EDT 1989 -- support:navi_011(rel2)
+
+	* COPYING:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+	* COPYING: BASELINE Tue Apr  4 15:54:07 EDT 1989
+
+1989-03-27  dickey@software.org
+
+	* certify/Makefile: RCS_BASE
+
+1989-03-27  ste_cm@software.org
+
+	* certify/Makefile: BASELINE Mon Jun 19 12:57:11 EDT 1989
+
+	* certify/Makefile: BASELINE Tue Apr  4 16:00:32 EDT 1989
+
+1989-03-27  dickey@software.org
+
+	* certify/README, certify/release.txt: RCS_BASE
+
+1989-03-27  ste_cm@software.org
+
+	* certify/release.txt: BASELINE Tue Apr  4 16:00:32 EDT 1989
+
+1989-03-27  dickey@software.org
+
+	* support/Makefile: RCS_BASE
+
+1989-03-27  ste_cm@software.org
+
+	* support/Makefile: BASELINE Mon Jun 19 15:29:09 EDT 1989
+
+	* support/Makefile: BASELINE Thu Apr  6 14:45:24 EDT 1989
+
+1989-03-27  dickey@software.org
+
+	* support/copy.sh: use tar to preserve dates as we copy files
+
+	* support/copy.sh, Makefile: RCS_BASE
+
+	* src/permit/Makefile, src/link2rcs/Makefile, src/copy/Makefile, src/checkup/Makefile, src/checkout/Makefile, src/checkin/Makefile, src/baseline/Makefile:
+	integration/cleanup for recursive make
+
+	* bin/Makefile: RCS_BASE
+
+	* src/Makefile: integration/cleanup for recursive make
+
+	* src/Makefile: RCS_BASE
+
+	* src/checkout/src/Makefile:
+	maintain 'rcsget' script in same directory as 'checkout' module.
+
+	* src/checkin/src/Makefile:
+	maintain 'rcsput' script in same directory as 'checkin' module.
+
+	* src/checkin/Makefile: maintain 'rcsput' script with 'checkin' module.
+
+	* src/checkout/Makefile:
+	maintain 'rcsget' script in same directory as 'checkout' module
+
+	* src/checkout/test/run_test.sh, src/checkin/test/run_test.sh, src/checkin/test/Makefile, src/baseline/test/run_test.sh, src/baseline/test/run_test.sed:
+	New file.
+
+1989-03-27  ste_cm@software.org
+
+	* src/baseline/test/run_test.sed:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* src/baseline/test/run_test.sed:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/baseline/test/run_test.sed:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/baseline/test/run_test.sed:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/baseline/test/run_test.sed:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/baseline/test/run_test.sed: BASELINE Mon Jun 19 13:04:14 EDT 1989
+
+	* src/baseline/test/run_test.sed:
+	BASELINE Thu Aug 24 09:21:12 EDT 1989 -- support:navi_011(rel2)
+
+	* src/baseline/test/run_test.sed:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+	* src/baseline/test/run_test.sed:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+	* src/baseline/test/run_test.sed: BASELINE Tue Apr  4 16:08:39 EDT 1989
+
+1989-03-27  dickey@software.org
+
+	* src/baseline/test/Makefile, src/link2rcs/src/Makefile, src/baseline/src/Makefile, src/baseline/Makefile, src/link2rcs/test/run_test.sh, src/link2rcs/test/Makefile, src/link2rcs/Makefile:
+	New file.
+
+	* src/copy/src/copy.c:
+	added logic to test for success of Aegis 'cpf' (must rely on
+	the file-statistics differing).  Also, use 'abspath()' on the
+	argument passed to 'mkdir()' to make this tolerant of '.' in
+	the arguments.
+
+1989-03-24  dickey@software.org
+
+	* src/checkin/src/Makefile: revised to CM-standard format
+
+	* src/checkin/Makefile, src/checkout/test/Makefile: New file.
+
+	* src/checkout/src/Makefile: revised to CM-standard format
+
+	* src/checkout/Makefile, src/checkup/test/run_test.sh, src/checkup/test/Makefile:
+	New file.
+
+	* src/checkup/src/Makefile: revised to standard CM-format
+
+	* src/checkup/Makefile, src/copy/test/run_test.sh, src/copy/test/Makefile:
+	New file.
+
+1989-03-23  dickey@software.org
+
+	* src/copy/src/Makefile: converted to CM-standard format
+
+	* src/permit/src/permit.c: minor fixes to smooth out regression-tests
+
+	* src/permit/test/run_test.sh, src/permit/test/Makefile, src/copy/Makefile, src/permit/Makefile:
+	New file.
+
+	* src/permit/src/permit.c:
+	mod to prevent rcs-substitution of header/log keywords
+
+	* src/permit/src/permit.c: sccs2rcs keywords
+
+	* src/permit/src/Makefile: revised to standard CM-format
+
+1989-03-21  dickey@software.org
+
+	* certify/config.txt: RCS_BASE
+
+	* src/checkout/src/checkout.c:
+	revert on any checkout where the setuid process does not own the archive
+
+	* src/checkout/src/checkout.c: sccs2rcs keywords
+
+	* src/checkin/src/checkin.c:
+	after invoking 'revert()', was unable (apollo?) to use temp-file pointer.
+	moved temp-file invocation for fix this.
+
+	* src/checkin/src/checkin.c: sccs2rcs keywords
+
+	* src/checkout/src/checkout.c: use 'revert()' if user locks non-CM file
+
+1989-03-16  dickey@software.org
+
+	* user/ded.doc: documented log-file format
+
+1989-03-15  dickey@software.org
+
+	* user/baseline.doc, user/checkin.doc: purged
+
+1989-03-15  ste_cm@software.org
+
+	* user/checkin.doc: BASELINE Thu Apr  6 14:48:29 EDT 1989
+
+1989-03-15  dickey@software.org
+
+	* user/rcsget.doc: inherit page number
+
+1989-03-15  ste_cm@software.org
+
+	* user/rcsget.doc: BASELINE Thu Apr  6 14:48:29 EDT 1989
+
+1989-03-15  dickey@software.org
+
+	* user/rcsput.doc: inherit page number
+
+1989-03-15  ste_cm@software.org
+
+	* user/rcsput.doc: BASELINE Thu Apr  6 14:48:29 EDT 1989
+
+1989-03-15  dickey@software.org
+
+	* user/permit.doc, user/checkup.doc: inherit page number
+
+1989-03-15  ste_cm@software.org
+
+	* user/checkup.doc: BASELINE Thu Apr  6 14:48:29 EDT 1989
+
+1989-03-15  dickey@software.org
+
+	* user/link2rcs.doc: inherit page number
+
+1989-03-15  ste_cm@software.org
+
+	* user/link2rcs.doc: BASELINE Thu Apr  6 14:48:29 EDT 1989
+
+1989-03-15  dickey@software.org
+
+	* user/ded.doc, user/copy.doc: inherit page number
+
+1989-03-15  ste_cm@software.org
+
+	* user/copy.doc: BASELINE Thu Apr  6 14:48:29 EDT 1989
+
+1989-03-15  dickey@software.org
+
+	* user/checkout.doc: inherit page number
+
+1989-03-15  ste_cm@software.org
+
+	* user/checkout.doc: BASELINE Thu Apr  6 14:48:29 EDT 1989
+
+1989-03-15  dickey@software.org
+
+	* user/checkin.doc, user/baseline.doc: inherit page number
+
+	* src/checkin/src/Makefile: added 'rcsdefs.h' dependency
+
+	* src/checkin/src/Makefile: sccs2rcs keywords
+
+	* src/checkin/src/checkin.c:
+	mods so we know about non-strict locks and 'rcs -i' (empty) files.
+
+1989-03-13  dickey@software.org
+
+	* user/permit.doc: New file.
+
+	* src/permit/src/permit.c:
+	use 'vcs_file()' module; more tuning of "-n" option.
+
+	* user/checkin.doc: documented interaction with 'permit' file
+
+	* user/copy.doc: documented that we can copy symbolic links
+
+	* src/copy/src/copy.c: added code to set 's' mode on target
+
+	* src/copy/src/copy.c: sccs2rcs keywords
+
+	* src/permit/src/permit.c:
+	corrected handling of items in 'to_find' which were not found in access-list
+
+	* src/permit/src/permit.c: cleanup of code for multiple user-ids
+
+1989-03-10  dickey@software.org
+
+	* src/permit/src/permit.c: cleanup of options; ready for first release
+
+1989-03-09  dickey@software.org
+
+	* src/permit/src/permit.c, src/permit/src/Makefile: New file.
+
+	* src/permit/src/Makefile: sccs2rcs keywords
+
+1989-03-08  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	test for special cases in which we must disable setuid-mode.
+
+1989-03-07  dickey@software.org
+
+	* src/copy/src/copy.c: added code to copy symbolic links.
+	made summary show totals for directories and links as well, but tersely.
+
+1989-03-02  dickey@software.org
+
+	* user/rcsput.bug: RCS_BASE
+
 1989-02-27  dickey@software.org
 
 	* src/checkin/src/checkin.c:

@@ -11,29 +11,17 @@
 	F34 = Classic 14 Bold,
 	F31 = Classic 12 Bold,
 	F32 = Classic 12 Italic,
-	F49 = Modern 12,
-	F6 = Symbols 12>
+	F6 = Symbols 12,
+	F49 = Modern 12>
 
-<!Page>
+<!Page,
+	Starting Page # = 	Inherit>
 
-<!Autonumber Stream, List, 1>
+<!Autonumber Stream, List, 2>
 
 <!Autonumber Stream, Outline, 3,
 	Level 1 Symbol Type =	UPPER ROMAN,
 	Level 2 Symbol Type =	UPPER ALPHA>
-
-<!Class, bullet,
-	Top Margin =		0.083 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		0.50 inches,
-	First Indent =		-0.25 inches,
-	Font =			F30>
-
-<!Class, caption,
-	Top Margin =		0.07 inches,
-	Bottom Margin =		0.07 inches,
-	Line Spacing =		1.100 lines,
-	Font =			F30>
 
 <!Class, fixed,
 	Top Margin =		0.083 inches,
@@ -80,73 +68,6 @@
 	Left Margin =		0.25 inches,
 	Font =			F30>
 
-<!Class, subheader,
-	Top Margin =		0.097 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		0.25 inches,
-	Alignment =		Left,
-	Font =			F31,
-	Allow Page Break Within = no,
-	Allow Page Break After = no>
-
-<!Class, suboption,
-	Top Margin =		0.042 inches,
-	Bottom Margin =		0 inches,
-	Left Margin =		2.50 inches,
-	First Indent =		-1 inches,
-	Font =			F30,
-	Hyphenation =		off,
-	Allow Page Break Within = no,
-	Left Tab =		0/0.75/1.50 inches>
-
-<!Master Frame,
-	Name =			"At Anchor",
-	Placement =		At Anchor,
-	Width =			0.41 inches,
-	Height =		0.137 inches,
-	Vertical Alignment =	0.03 inches,
-	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
-
-<!Master Frame,
-	Name =			Bottom,
-	Placement =		Bottom of Page,
-	Horizontal Alignment =	Center,
-	Width =			5.70 inches,
-	Height =		2.85 inches,
-	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
-
-<!Master Frame,
-	Name =			"Following Anchor",
-	Placement =		Following Anchor,
-	Horizontal Alignment =	Center,
-	Width =			5.70 inches,
-	Height =		2.85 inches,
-	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
-
-<!Master Frame,
-	Name =			"Following Text",
-	Placement =		Following Text,
-	Horizontal Alignment =	Center,
-	Width =			5.70 inches,
-	Height =		2.85 inches,
-	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
-
 <!Master Frame,
 	Name =			Footnote,
 	Placement =		Bottom of Page,
@@ -160,25 +81,13 @@ V4,
  (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
   667,6))>
 
-<!Master Frame,
-	Name =			Top,
-	Placement =		Top of Page,
-	Horizontal Alignment =	Center,
-	Width =			5.70 inches,
-	Height =		2.85 inches,
-	Diagram =
-V4,
-(g9,32767,0
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
-
 <Page Header, Frame =
 V4,
 (g9,1,0
  (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,August\ 24\,\ 1988)
  (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ baseline\ version\ script)
  (t8,3,4,0,0.438782,0,17,@nnclas12b,baseline)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
   667,6))>
 
 <Page Footer, Frame =
@@ -245,7 +154,7 @@ are the same.
 
 <End Text>)
  (v4,2,0,-0.1,0,0.9,0,17,1,0)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
   667,6))>
 <F6>!<F0>.  A baseline version consists of a group of files which 
 can be referenced by a common version number.  The baseline program 
@@ -261,7 +170,7 @@ uses for this purpose 2.0, 3.0, etc
 	Diagram =
 V4,
 (g9,1,0
- (T8,1,12,0.066667,0.066667,5.546667,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
+ (T8,1,12,0.066667,0.066667,5.546669,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
   ,512,102,1101,3,
 <footnote>
 
@@ -269,7 +178,7 @@ V4,
 version is, by convention, 1.1.
 
 <End Text>)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0,1,1,1,0.066667,0.066667,6,6,0,0.066
   667,6))>
 <F6>@<F0>.  After baselining, you may use <F31>checkout<F0> to 
 obtain a particular set of files.  For example,
@@ -280,7 +189,7 @@ checkout -r2.0 file
 
 <paragraph>
 
-obtain the baseline <#7f>2.0" version, while
+obtains the baseline <#7f>2.0" version, while
 
 <fixed>
 
