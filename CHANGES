@@ -1,3 +1,7 @@
+1992-04-08  dickey@software.org
+
+	* certify/release.txt: note about restructuring (whew)
+
 1992-03-04  dickey@software.org
 
 	* src/checkin/src/rcsput.c: "-f" should not suppress 'different()'
