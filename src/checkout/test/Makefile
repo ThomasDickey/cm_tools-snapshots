@@ -1,8 +1,8 @@
-# $Id: Makefile,v 11.0 1991/09/09 07:37:39 ste_cm Rel $
+# $Id: Makefile,v 11.1 1992/08/07 14:46:03 dickey Exp $
 # make-file for testing RCS checkout utility
-#
+
 ####### (Development) ##########################################################
-GET	= checkout
+include ../../common.mk
 
 ####### (Standard Lists) #######################################################
 SCRIPTS	=\
@@ -11,11 +11,10 @@ SCRIPTS	=\
 SOURCES	= Makefile $(SCRIPTS)
 
 ####### (Standard Productions) #################################################
-all:		sources
-clean:				; rm -f *.out *.bak core
+all:		$(SOURCES)
+clean:				; rm -f $(CLEAN)
 clobber:	clean
-destroy:
-	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
+destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
 lincnt.out:

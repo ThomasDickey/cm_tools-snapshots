@@ -1,8 +1,23 @@
-$Id: release.txt,v 11.0 1992/05/27 17:04:10 ste_cm Rel $
+$Id: release.txt,v 11.3 1992/08/28 15:20:44 dickey Exp $
 
 --------------------------------------------------------------------------------
 
-Version 11.0:
+Version 12.0:
+------------
+Renamed common archive to "common.a" from "lib.a" for consistency.
+
+Modified interface of spreadsheet put/get functions to allow arbitrary-size
+fields.
+
+New features in 'ded':
+
+	* integrated inline and line editing (e.g., '=', '%' commands).
+	* added erase-word to inline/line editing.
+	* added search commands to workspace pager
+	* added '-commands to repeat specific inline-commands
+	* added history to inline- and workspace-commands.
+
+Version 11.0: 
 ------------
 Modified all tools to use same letter for recursion (R), and links (L) options,
 where applicable.

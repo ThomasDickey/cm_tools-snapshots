@@ -1,25 +1,23 @@
-# $Id: Makefile,v 11.0 1992/02/27 09:56:59 ste_cm Rel $
+# $Id: Makefile,v 11.1 1992/08/07 14:35:19 dickey Exp $
 # Top-level makefile for RCS admin utility
 
 ####### (Development) ##########################################################
-B	= ../../bin
-L	= ../common/lib
+include ../common.mk
 
-GET	= checkout
-COPY	= cp -p
-PUT	= rm -f $@; $(COPY) $? $@
-MAKE	= make $(MFLAGS) -k$(MAKEFLAGS)	CFLAGS="$(CFLAGS)" COPY="$(COPY)"
+B	= $(TOP)/bin
+L	= ../$(THAT)/lib
 
 ####### (Standard Lists) #######################################################
 THIS	= vcs
-ALL	= $B/$(THIS)
-
+ALL	=\
+	$B/$(THIS)
 MFILES	=\
 	src/Makefile\
 	test/Makefile
 
 ####### (Standard Productions) #################################################
-all::		$L/lib.a bin
+all\
+run_tests::	$L/$(THAT).a bin
 
 all\
 clean\
@@ -32,14 +30,14 @@ lint.out::	$(MFILES)
 	cd src;		$(MAKE) $@
 	cd test;	$(MAKE) $@
 
+clean\
+clobber::			; rm -f $(CLEAN)
 clobber\
-destroy::
-	rm -rf bin
-destroy::
-	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
+destroy::			; rm -rf bin
+destroy::			; $(DESTROY)
 
 install:	all $(ALL)
-deinstall:		; rm -f $(ALL)
+deinstall:			; rm -f $(ALL)
 
 ####### (Details of Productions) ###############################################
 bin:				; mkdir $@

@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19920717
+MANIFEST for cm_tools, version t19920828
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -78,6 +78,8 @@ src/checkup/src/checkup.c       utility to find files not checked-in
 src/checkup/test                subdirectory
 src/checkup/test/Makefile       make-file for 'checkup' test
 src/checkup/test/run_test.sh    test-script for 'checkup'
+src                             subdirectory
+src/common.mk                   split out common definitions to simplify my life!
 src/copy                        subdirectory
 src/copy/Makefile               top-level makefile for unix copy-utility
 src/copy/src                    subdirectory

@@ -1,13 +1,12 @@
-# $Id: Makefile,v 11.0 1992/02/11 13:18:09 ste_cm Rel $
+# $Id: Makefile,v 11.1 1992/08/07 14:42:17 dickey Exp $
 # make-file for testing RCS checkin utility
-#
-####### (Development) ##########################################################
-GET	= checkout
 
-TOP	= ../../common
-INCLUDES= -I$(TOP)/interface
+####### (Development) ##########################################################
+include ../../common.mk
+
+INCLUDES= -I$I
 CPP_OPTS= $(DEFINES) $(INCLUDES)
-LIBS	= $(TOP)/lib/lib.a
+LIBS	= $L/common.a
 
 ####### (Standard Lists) #######################################################
 REF_FILES=\
@@ -47,10 +46,9 @@ ALL	= set_date
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES) $(ALL)
-clean:				; rm -f *.bak *.log *.out core *.o
+clean:				; rm -f $(CLEAN)
 clobber:	clean		; rm -f $(ALL)
-destroy:
-	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
+destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
 lincnt.out:

@@ -1,3 +1,43 @@
+1992-08-28  dickey@software.org
+
+	* user/ded.man: documented the other changes
+
+	* user/ded.man: documented changes to inline-editing
+
+	* certify/release.txt: summarized recent changes to 'ded'.
+
+1992-08-07  dickey@software.org
+
+	* src/vcs/test/Makefile, src/permit/test/Makefile, src/link2rcs/test/Makefile, src/copy/test/Makefile, src/checkup/test/Makefile, src/checkout/test/Makefile, src/baseline/test/Makefile, src/checkin/test/Makefile, src/checkout/Makefile, src/checkup/Makefile, src/copy/Makefile, src/link2rcs/Makefile, src/permit/Makefile, src/vcs/Makefile, src/baseline/Makefile, src/checkin/Makefile:
+	use:common.mk
+
+	* src/common.mk: added definition of MAKE
+
+1992-08-06  dickey@software.org
+
+	* certify/release.txt: starting new version
+
+1992-08-05  dickey@software.org
+
+	* src/checkout/src/Makefile, src/checkin/src/Makefile: use:common.mk
+
+	* src/common.mk: added include-definitions and LINT_EACH
+
+	* src/baseline/src/Makefile, src/vcs/src/Makefile, src/permit/src/Makefile, src/link2rcs/src/Makefile, src/copy/src/Makefile, src/checkup/src/Makefile:
+	use:common.mk
+
+	* src/Makefile: added 'common.mk' to sources list
+
+	* src/common.mk: RCS_BASE
+
+1992-08-04  dickey@software.org
+
+	* user/ded.man: added ctl/r and ctl/l to workspace pager
+
+1992-08-03  dickey@software.org
+
+	* certify/release.txt: modified interface of 'get_field_of()'
+
 1992-07-17  dickey@software.org
 
 	* src/checkin/src/checkin.c:

@@ -1,44 +1,31 @@
-# $Id: Makefile,v 11.0 1991/10/18 08:13:26 ste_cm Rel $
+# $Id: Makefile,v 11.1 1992/08/05 14:30:05 dickey Exp $
 # MAKE-file for enhanced unix copy utility
 
 ####### (Environment) ##########################################################
-B	= ../bin
-I	= ../../common/interface
-L	= ../../common/lib
-GET	= checkout
-
-####### (Command-line Options) #################################################
-INCLUDES= -I$I
-CPP_OPTS= $(DEFINES) $(INCLUDES)
-
-LIBS	= $L/lib.a
-DATE	= echo '****'`date` >> $@
-LINTOPT	= $(CPP_OPTS) -ltd -lapollo
+THIS	= copy
+include ../../common.mk
 
 ####### (Standard Lists) #######################################################
-ALL	= $B/copy
-CSRC	= copy.c
+ALL	= $B/$(THIS)
+CSRC	= $(THIS).c
 SOURCES	= Makefile $(CSRC)
-MAIN_O	= copy.o $(LIBS)
+MAIN_O	= $(THIS).o $(LIBS)
 
 ####### (Standard Productions) #################################################
-all:		sources $(ALL)
+all\
+install:	$(SOURCES) $(ALL)
 
-clean:				; rm -f *.o *.out *.bak core
+clean:				; rm -f $(CLEAN)
 clobber: 	clean		; rm -f $(ALL)
-destroy:
-	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
+destroy:			; $(DESTROY)
 run_tests:
 sources: 	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
-$B/copy:	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
-copy.o:		$I/ptypes.h
+$B/$(THIS):	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
+$(THIS).o:	$(PTYPES_H)
 
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
 lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
 lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@
-
-.c.o:
-	$(CC) $(CFLAGS) $(CPP_OPTS) -c $<

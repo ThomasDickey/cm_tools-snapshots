@@ -1,6 +1,5 @@
-# $Id: Makefile,v 11.0 1992/02/27 09:56:25 ste_cm Rel $
+# $Id: Makefile,v 11.1 1992/08/05 13:52:47 dickey Exp $
 # Top-level makefile for CM_TOOLS src-directory
-#
 
 ####### (Development) ##########################################################
 GET	= checkout
@@ -9,6 +8,7 @@ MAKE	= make $(MFLAGS) -k$(MAKEFLAGS)	CFLAGS="$(CFLAGS)" COPY="$(COPY)"
 
 ####### (Standard Lists) #######################################################
 MFILES	=\
+	common.mk\
 	common/Makefile\
 	baseline/Makefile\
 	checkin/Makefile\
