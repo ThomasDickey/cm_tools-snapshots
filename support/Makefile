@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.4 1994/11/09 00:16:43 tom Exp $
+# $Id: Makefile,v 11.5 1995/01/29 00:36:23 tom Exp $
 
 TOP	= ../..
 include $(TOP)/td_lib/support/td_lib.mk
@@ -24,7 +24,7 @@ all:	$(SOURCES) $(ALL)
 clean:			; -$(RM) $(CLEAN)
 clobber:	clean	; -$(RM) $(ALL)
 destroy:		; $(DESTROY)
-run_tests:
+run_test:
 sources:	$(SOURCES)
 install:
 deinstall:

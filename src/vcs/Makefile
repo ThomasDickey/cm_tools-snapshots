@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.4 1994/11/09 00:17:28 tom Exp $
+# $Id: Makefile,v 11.5 1995/01/29 00:39:58 tom Exp $
 # Top-level makefile for RCS admin utility
 
 ####### (Development) ##########################################################
@@ -18,14 +18,14 @@ MFILES	=\
 
 ####### (Standard Productions) #################################################
 all\
-run_tests::	$L/$(TD_LIB).a bin
+run_test::	$L/$(TD_LIB).a bin
 
 all\
 clean\
 clobber\
 destroy\
 sources\
-run_tests\
+run_test\
 lint.out::	$(MFILES)
 	cd src;		$(MAKE) $@
 	cd test;	$(MAKE) $@

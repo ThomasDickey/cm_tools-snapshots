@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.6 1994/11/09 00:10:07 tom Exp $
+# $Id: Makefile,v 11.7 1995/01/29 00:38:48 tom Exp $
 # MAKE-file for RCS directory-permissions utility
 
 ####### (Environment) ##########################################################
@@ -19,7 +19,7 @@ install:	$(SOURCES) $B $(ALL)
 clean:				; -$(RM) $(CLEAN)
 clobber:	clean		; -$(RM) $(ALL)
 destroy:			; $(DESTROY)
-run_tests:
+run_test:
 sources:	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
