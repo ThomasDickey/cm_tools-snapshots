@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.0 1992/07/17 10:14:44 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.1 1992/09/02 08:24:07 dickey Exp $";
 #endif
 
 /*
@@ -951,7 +951,7 @@ MakeDirectory(_AR0)
 	} else {
 
 		if (getegid() != sb.st_gid) {
-			(void)setegid(sb.st_gid);
+			(void)setegid((int)sb.st_gid);
 			WhoAmI();
 		}
 
