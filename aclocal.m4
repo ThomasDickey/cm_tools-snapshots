@@ -1,4 +1,4 @@
-dnl $Id: aclocal.m4,v 11.3 2000/12/26 13:51:35 tom Exp $
+dnl $Id: aclocal.m4,v 11.4 2001/08/29 00:16:28 tom Exp $
 dnl Macros for CM_TOOLS configure script.
 dnl ---------------------------------------------------------------------------
 dnl ---------------------------------------------------------------------------
@@ -248,7 +248,7 @@ AC_DEFUN([CF_LIB_PREFIX],
 [
 	case $cf_cv_system_name in
 	OS/2*)	LIB_PREFIX=''     ;;
-	os2)	LIB_PREFIX=''     ;;
+	os2*)	LIB_PREFIX=''     ;;
 	*)	LIB_PREFIX='lib'  ;;
 	esac
 ifelse($1,,,[$1=$LIB_PREFIX])
@@ -315,6 +315,7 @@ all :
 	@echo 'cf_make_include=\$(RESULT)'
 CF_EOF
 	cf_make_include=""
+	CDPATH=; export CDPATH
 	eval `(cd $cf_dir && ${MAKE-make}) 2>&AC_FD_CC | grep cf_make_include=OK`
 	if test -n "$cf_make_include"; then
 		make_include_left="$cf_include"
@@ -406,9 +407,7 @@ dnl Make an uppercase version of a variable
 dnl $1=uppercase($2)
 AC_DEFUN([CF_UPPER],
 [
-changequote(,)dnl
 $1=`echo "$2" | sed y%abcdefghijklmnopqrstuvwxyz./-%ABCDEFGHIJKLMNOPQRSTUVWXYZ___%`
-changequote([,])dnl
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl Use AC_VERBOSE w/o the warnings

@@ -3,6 +3,8 @@
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		28 Aug 2001, show percent-progress on very large files.
+ *			     Remove apollo code.
  *		09 Jan 2001, add -a option.
  *		26 Dec 2000, add -p, -z options.  Make copy-dir less verbose.
  *			     Resolve conflict between -u and -U options.
@@ -113,7 +115,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.25 2001/01/09 21:59:38 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.26 2001/08/28 23:20:55 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -179,76 +181,6 @@ void	problem(
 	strcat(temp, argument);
 	perror(temp);
 }
-
-#ifdef	apollo
-#ifndef apollo_sr10
-#include	</sys/ins/base.ins.c>
-#include	</sys/ins/name.ins.c>
-
-/*
- * Use the Apollo naming-server to perform complete substitution on a pathname.
- * This is used (rather than 'name2s()'), because Apollo's 'cpf' does not work
- * properly when we have a symbolic link whose text is an absolute pathname
- * (i.e., //dickey/tmp).
- *
- * We still must use 'name2s()' to make a correct string for a leaf which does
- * not yet exist.
- */
-static
-char *	convert(
-	_ARX(char *,	dst)
-	_AR1(char *,	src)
-		)
-	_DCL(char *,	dst)
-	_DCL(char *,	src)
-{
-	name_$pname_t	in_name, out_name;
-	short		in_len,
-			out_len;
-	register char	*s, *d;
-	status_$t	st;
-
-#ifdef	lint
-	out_len = 0;
-#endif
-	in_len = strlen(strcpy(in_name, src));
-	name_$get_path(in_name, in_len, out_name, out_len, st);
-	if (st.all == status_$ok)
-		strncpy(dst, out_name, (size_t)out_len)[out_len] = EOS;
-	else {
-		if (	(st.all == name_$not_found)
-		&&	(s = strrchr(in_name, '/'))
-		&&	(s > in_name)
-		&&	(s[-1] != '/') ) {
-			*s = EOS;
-			d = convert(dst, in_name);
-			d += strlen(d);
-			*d++ = '/';
-			(void)name2s(d, BUFSIZ - (d - dst), ++s, 6);
-		} else
-			(void)name2s(dst, BUFSIZ, src, 6);
-	}
-	DEBUG("++ \"%s\" => \"%s\"\n", src, dst);
-	return (dst);
-}
-#else		/* apollo sr10.x or unix */
-/*
- * Use 'abshome()' to expand the tilde-only portion of the name to avoid
- * conflict between ".." trimming and symbolic links.
- */
-static
-char *	convert(
-	_ARX(char *,	dst)
-	_AR1(char *,	src)
-		)
-	_DCL(char *,	dst)
-	_DCL(char *,	src)
-{
-	abshome(strcpy(dst, src));
-	return (dst);
-}
-#endif		/* apollo sr9.7	*/
-#endif		/* apollo */
 
 /*
  * This procedure is used in the special case in which a user supplies source
@@ -382,9 +314,35 @@ void	RestoreMode(
 }
 
 /*
- * On apollo machines, each file has an object type, which is not necessarily
- * mapped into the unix system properly.  Invoke the native APOLLO program
- * to do the copy.
+ * Show percent-progress if we're verbose
+ */
+static
+void	progress(
+	_ARX(unsigned long, numer)
+	_AR1(unsigned long, denom)
+		)
+	_DCL(unsigned long, numer)
+	_DCL(unsigned long, denom)
+{
+	static time_t last;
+	time_t now;
+
+	if_Verbose {
+		if (denom != 0
+		 && isatty(fileno(stderr))) {
+			if (numer == 0) {
+				last = time((time_t *)0);
+			} else if ((now = time((time_t *)0)) != last) {
+				last = now;
+				fprintf(stderr, "%.1f%%\r",
+					(numer * 100.0) / denom);
+			}
+		}
+	}
+}
+
+/*
+ * Copy the file...
  */
 static
 int	copyfile(
@@ -400,55 +358,9 @@ int	copyfile(
 {
 	int	retval	= -1;
 	char	bfr1[BUFSIZ];
-#ifdef	apollo
-	char	bfr2[BUFSIZ];
-
-	if (access(src,R_OK) < 0) {
-		problem("access", src);
-		return(-1);
-	}
-
-	VERBOSE("** copy %s to %s\n", src, dst);
-	if (n_opt)
-		return 0;
-
-	*bfr1 = EOS;
-#ifdef	__STDC__
-	catarg(bfr1, "-p");	/* ...so we can test for success of copy */
-	catarg(bfr1, "-o");	/* ...to copy "real" apollo objects */
-	if (previous)
-		catarg(bfr1, "-f");
-	catarg(bfr1, convert(bfr2, src));
-	catarg(bfr1, convert(bfr2, dst));
-	DEBUG("++ cp %s\n", bfr1);
-	if (execute("/bin/cp", bfr1) < 0)
-#else	/* apollo sr9 */
-	catarg(bfr1, convert(bfr2,src));
-	catarg(bfr1, convert(bfr2,dst));
-	catarg(bfr1, "-pdt");	/* ...so we can test for success of copy */
-	if (previous)
-		catarg(bfr1, "-r");
-	DEBUG("++ cpf %s\n", bfr1);
-	if (execute("/com/cpf", bfr1) < 0)
-#endif	/* apollo sr10/sr9 */
-	{
-		(void)fflush(stdout);
-		FPRINTF(stderr, "?? copy to %s failed\n", dst);
-		(void)fflush(stderr);
-		return (-1);
-	}
-	if (previous) {		/* verify that we copied file */
-		Stat_t	sb;
-		if (stat(dst, &sb) < 0)
-			return (-1);
-		if ((sb.st_mtime != new_sb->st_mtime)
-		||  (sb.st_size  != new_sb->st_size))
-			return (-1);	/* copy was not successful */
-	}
-	retval = 0;
-#else	/* unix	*/
 	FILE	*ifp, *ofp;
-	unsigned num;
+	unsigned long num;
+	unsigned long transferred = 0;
 	int	did_chmod = TRUE;
 	int	old_mode = new_sb->st_mode & S_MODEBITS,
 		tmp_mode = old_mode | S_IWUSR;	/* must be writeable! */
@@ -465,20 +377,22 @@ int	copyfile(
 		problem("fopen(dst)", dst);
 	} else {
 		retval = 0;		/* probably will go ok now */
-		while ((num = fread(bfr1, 1, sizeof(bfr1), ifp)) > 0)
+		while ((num = fread(bfr1, 1, sizeof(bfr1), ifp)) > 0) {
+			progress(transferred, new_sb->st_size);
 			if (fwrite(bfr1, 1, (size_t)num, ofp) != num) {
 					/* no, error found anyway */
 				retval = -1;
 				problem("fwrite", dst);
 				break;
 			}
+			transferred += num;
+		}
 		FCLOSE(ofp);
 	}
 	FCLOSE(ifp);
 	if (retval < 0		/* restore old-mode in case of err */
 	 && did_chmod)
 		RestoreMode(dst, new_sb);
-#endif	/* apollo/unix */
 	return (retval);
 }
 
