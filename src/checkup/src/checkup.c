@@ -66,7 +66,7 @@
 #include	<sccsdefs.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: checkup.c,v 11.16 2002/07/03 12:54:14 tom Exp $")
+MODULE_ID("$Id: checkup.c,v 11.17 2002/07/05 13:55:00 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -525,7 +525,7 @@ _MAIN
 	if (!(stderr->_flag & _IOLBF))
 		(void)setvbuf(stderr, bfr, _IOLBF, sizeof(bfr));
 #else
-#  if HAVE_SETLINEBUF
+#  if defined(HAVE_SETLINEBUF)
 	(void)setlinebuf(stderr);
 #  endif
 #endif

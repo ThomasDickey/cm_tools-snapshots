@@ -118,7 +118,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.29 2002/07/03 18:06:25 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.30 2002/07/05 13:55:00 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -136,7 +136,7 @@ MODULE_ID("$Id: copy.c,v 11.29 2002/07/03 18:06:25 tom Exp $")
 #define	DOS_VISIBLE 1
 #endif
 
-#if DOS_VISIBLE
+#if defined(DOS_VISIBLE)
 typedef	enum _systype { Unix, MsDos} SysType;
 static	SysType	dst_type;
 static	SysType	src_type;
@@ -277,7 +277,7 @@ int	SetDate(
 	_DCL(time_t,	modified)
 	_DCL(time_t,	accessed)
 {
-#if	DOS_VISIBLE
+#if	defined(DOS_VISIBLE)
 	if (dst_type != src_type) {
 		if (dst_type == MsDos) {	/* Linux to MsDos */
 			modified &= ~1L;
@@ -631,7 +631,7 @@ int	copyit(
 			}
 #endif
 			if (isFILE(src_sb.st_mode) && isFILE(dst_sb.st_mode)) {
-#if DOS_VISIBLE
+#if defined(DOS_VISIBLE)
 				if (dst_type != src_type) {
 					time_t it = dst_sb.st_mtime;
 					it &= ~1L;
@@ -820,7 +820,7 @@ void	usage(_AR0)
 ,"  -U      update-only (same as -u, but copies newer files)"
 ,"  -v      verbose"
 ,"  -z      suppress dot-files"
-#if	DOS_VISIBLE
+#if	defined(DOS_VISIBLE)
 ,"  -S      source is local-time filesystem"
 ,"  -D      destination is local-time filesystem"
 ,"  -F file specify MSDOS/Unix name-conversions"
@@ -999,7 +999,7 @@ _MAIN
 	case 'U':	u_opt = 2;	break;
 	case 'v':	v_opt++;	break;
 	case 'z':	z_opt = TRUE;	break;
-#if	DOS_VISIBLE
+#if	defined(DOS_VISIBLE)
 	case 'S':	src_type = MsDos;		break;
 	case 'D':	dst_type = MsDos;		break;
 	case 'F':	/* patch */			break;
