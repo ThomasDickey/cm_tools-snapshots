@@ -1,0 +1,7 @@
+MANIFEST for cm_tools, version t19880519
+--------------------------------------------------------------------------------
+MANIFEST                        this file
+src/checkin/src                 subdirectory
+src/checkin/src/Makefile        
+src/checkin/src/checkin.c       wrapper for 'ci'
+src/checkin/src/rcsput.sh       
