@@ -1,15 +1,24 @@
 #ifndef	lint
-static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 8.0 1989/07/25 14:28:33 ste_cm Rel $";
-#endif	lint
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 9.0 1991/05/31 16:09:56 ste_cm Rel $";
+#endif
 
 /*
  * Title:	permit.c (RCS directory-permissions)
  * Author:	T.E.Dickey
  * Created:	09 Mar 1989
  * $Log: permit.c,v $
- * Revision 8.0  1989/07/25 14:28:33  ste_cm
- * BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+ * Revision 9.0  1991/05/31 16:09:56  ste_cm
+ * BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
  *
+ *		Revision 8.2  91/05/31  16:09:56  dickey
+ *		lint (unused arg of 'do_arcs()')
+ *		
+ *		Revision 8.1  91/05/20  12:56:15  dickey
+ *		mods to compile on apollo sr10.3
+ *		
+ *		Revision 8.0  89/07/25  14:28:33  ste_cm
+ *		BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+ *		
  *		Revision 7.0  89/07/25  14:28:33  ste_cm
  *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
  *		
@@ -366,6 +375,7 @@ char	*file, *name, *opt;
  * we may expunge them.
  */
 static
+/*ARGSUSED*/
 do_arcs(path, name, sp, readable, level)
 char	*path;
 char	*name;
@@ -373,7 +383,7 @@ struct	stat	*sp;
 {
 #ifdef	PATCH
 	int	got_lock= FALSE;	/* true if lock found */
-#endif	PATCH
+#endif
 	int	got_owner= FALSE;	/* true if owner is on access list */
 	int	mode	= (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
 	int	header	= TRUE,
@@ -437,7 +447,7 @@ struct	stat	*sp;
 #ifdef	PATCH
 			if (*tmp)
 				got_lock = TRUE;
-#endif	PATCH
+#endif
 			/* patch: am not handling multiple users for lock */
 			/* patch: not sure what to do about locks yet */
 			break;
@@ -593,7 +603,7 @@ struct	stat	*sp;
 			notes = " (link)";
 			readable = -1;
 		}
-#endif	S_IFLNK
+#endif
 		indent(level);
 		TELL "%s%s\n", name, notes);
 	}

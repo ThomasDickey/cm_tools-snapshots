@@ -1,15 +1,18 @@
 #ifndef	lint
-static	char	Id[] = "$Id: rcsget.c,v 8.0 1990/08/14 14:08:48 ste_cm Rel $";
-#endif	lint
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.c,v 8.1 1991/05/20 12:38:24 dickey Exp $";
+#endif
 
 /*
  * Title:	rcsget.c (rcs get-tree)
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * $Log: rcsget.c,v $
- * Revision 8.0  1990/08/14 14:08:48  ste_cm
- * BASELINE Tue Aug 14 14:11:43 1990 -- ADA_TRANS, LINCNT
+ * Revision 8.1  1991/05/20 12:38:24  dickey
+ * mods to compile on apollo sr10.3
  *
+ *		Revision 8.0  90/08/14  14:08:48  ste_cm
+ *		BASELINE Tue Aug 14 14:11:43 1990 -- ADA_TRANS, LINCNT
+ *		
  *		Revision 7.1  90/08/14  14:08:48  dickey
  *		lint
  *		

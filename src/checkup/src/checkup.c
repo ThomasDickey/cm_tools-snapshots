@@ -1,15 +1,21 @@
 #ifndef	lint
-static	char	Id[] = "$Id: checkup.c,v 8.0 1990/03/30 12:50:15 ste_cm Rel $";
-#endif	lint
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 9.0 1991/05/20 12:40:56 ste_cm Rel $";
+#endif
 
 /*
  * Title:	checkup.c (link/directory tree)
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * $Log: checkup.c,v $
- * Revision 8.0  1990/03/30 12:50:15  ste_cm
- * BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+ * Revision 9.0  1991/05/20 12:40:56  ste_cm
+ * BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
  *
+ *		Revision 8.1  91/05/20  12:40:56  dickey
+ *		mods to compile on apollo sr10.3
+ *		
+ *		Revision 8.0  90/03/30  12:50:15  ste_cm
+ *		BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+ *		
  *		Revision 7.0  90/03/30  12:50:15  ste_cm
  *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
  *		
@@ -301,7 +307,7 @@ struct	stat	*sp;
 			change = " (link)";
 			readable = -1;
 		}
-#endif	S_IFLNK
+#endif
 		indent(level);
 		TELL "%s%s\n", name, change);
 	} else if (mode == S_IFREG && !suppress(name)) {

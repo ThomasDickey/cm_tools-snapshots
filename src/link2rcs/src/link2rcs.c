@@ -1,18 +1,21 @@
 #ifndef	lint
-static	char	Id[] = "$Id: link2rcs.c,v 8.2 1990/08/21 14:42:48 dickey Exp $";
-#endif	lint
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/link2rcs.c,v 8.3 1991/05/20 12:54:15 dickey Exp $";
+#endif
 
 /*
  * Title:	link2rcs.c (link/directory tree)
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * $Log: link2rcs.c,v $
- * Revision 8.2  1990/08/21 14:42:48  dickey
- * pass the value of the "-s" option down to 'find_src()' so that
- * in case the user combines this with a wildcard on the actual
- * source-paths, we can prune off the beginning portion of the
- * source-path arguments (fixes a problem using 'relpath()').
+ * Revision 8.3  1991/05/20 12:54:15  dickey
+ * mods to compile on apollo sr10.3
  *
+ *		Revision 8.2  90/08/21  14:42:48  dickey
+ *		pass the value of the "-s" option down to 'find_src()' so that
+ *		in case the user combines this with a wildcard on the actual
+ *		source-paths, we can prune off the beginning portion of the
+ *		source-path arguments (fixes a problem using 'relpath()').
+ *		
  *		Revision 8.1  90/08/21  08:37:02  dickey
  *		corrected code in 'path_to()', which was not properly testing
  *		for leading "./" in its argument.

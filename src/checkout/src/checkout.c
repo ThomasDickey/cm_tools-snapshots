@@ -1,15 +1,18 @@
 #ifndef	lint
-static	char	what[] = "$Id: checkout.c,v 8.0 1990/08/14 14:02:29 ste_cm Rel $";
-#endif	lint
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 8.1 1991/05/20 12:38:02 dickey Exp $";
+#endif
 
 /*
  * Title:	checkout.c (front end for RCS checkout)
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * $Log: checkout.c,v $
- * Revision 8.0  1990/08/14 14:02:29  ste_cm
- * BASELINE Tue Aug 14 14:11:43 1990 -- ADA_TRANS, LINCNT
+ * Revision 8.1  1991/05/20 12:38:02  dickey
+ * mods to compile on apollo sr10.3
  *
+ *		Revision 8.0  90/08/14  14:02:29  ste_cm
+ *		BASELINE Tue Aug 14 14:11:43 1990 -- ADA_TRANS, LINCNT
+ *		
  *		Revision 7.1  90/08/14  14:02:29  dickey
  *		lint
  *		
@@ -106,6 +109,7 @@ static	char	what[] = "$Id: checkout.c,v 8.0 1990/08/14 14:02:29 ste_cm Rel $";
  */
 
 #define		ACC_PTYPES
+#define		SIG_PTYPES
 #define		STR_PTYPES
 #include	"ptypes.h"
 #include	"rcsdefs.h"
@@ -160,7 +164,7 @@ clean_file()
 }
 
 static
-SIGS_T
+void
 cleanup(sig)
 {
 	(void)signal(sig, SIG_IGN);

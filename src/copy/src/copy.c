@@ -1,15 +1,24 @@
 #ifndef	lint
-static	char	Id[] = "$Id: copy.c,v 8.0 1990/06/28 16:02:28 ste_cm Rel $";
-#endif	lint
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 9.0 1991/05/31 16:05:06 ste_cm Rel $";
+#endif
 
 /*
  * Title:	copy.c (enhanced unix copy utility)
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * $Log: copy.c,v $
- * Revision 8.0  1990/06/28 16:02:28  ste_cm
- * BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+ * Revision 9.0  1991/05/31 16:05:06  ste_cm
+ * BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
  *
+ *		Revision 8.2  91/05/31  16:05:06  dickey
+ *		lint (SunOs): ifdef'd out 'convert()'
+ *		
+ *		Revision 8.1  91/05/20  12:44:10  dickey
+ *		mods to compile on apollo sr10.3
+ *		
+ *		Revision 8.0  90/06/28  16:02:28  ste_cm
+ *		BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+ *		
  *		Revision 7.5  90/06/28  16:02:28  dickey
  *		corrected handling of (non-Apollo) user requests to copy to
  *		a directory-path beginning with "~".
@@ -163,7 +172,7 @@ extern	char	*pathcat(),
 #define	isLINK(s)	((s.st_mode & S_IFMT) == S_IFLNK)
 #else
 #define	lstat	stat
-#endif	S_IFLNK
+#endif	/* S_IFLNK */
 
 static	long	total_dirs,
 		total_links,
@@ -182,7 +191,8 @@ static	int	no_dir_yet;	/* disables access-test on destination-dir */
  *	local procedures						*
  ************************************************************************/
 
-#if	defined(apollo) && !defined(apollo_sr10)
+#ifdef	apollo
+#ifndef apollo_sr10
 #include	</sys/ins/base.ins.c>
 #include	</sys/ins/name.ins.c>
 
@@ -208,7 +218,7 @@ char	*dst, *src;
 
 #ifdef	lint
 	out_len = 0;
-#endif	lint
+#endif
 	in_len = strlen(strcpy(in_name, src));
 	name_$get_path(in_name, in_len, out_name, out_len, st);
 	if (st.all == status_$ok)
@@ -243,6 +253,7 @@ char	*dst, *src;
 	return (dst);
 }
 #endif		/* apollo sr9.7	*/
+#endif		/* apollo */
 
 /*
  * This procedure is used in the special case in which a user supplies source
@@ -373,7 +384,7 @@ char	*src, *dst;
 	}
 	return (0);
 }
-#endif	S_IFLNK
+#endif	/* S_IFLNK */
 
 static
 copydir(src, dst, previous)
@@ -475,11 +486,11 @@ char	*src, *dst;
 		TELL "?? file not found: \"%s\"\n", src);
 		return;
 	}
-#endif	S_IFLNK
+#endif
 	if (!isFILE(src_sb)
 #ifdef	S_IFLNK
 	&&  !isLINK(src_sb)
-#endif	S_IFLNK
+#endif
 	&&  !isDIR(src_sb)) {
 		TELL "?? not a file: \"%s\"\n", src);
 		return;
@@ -492,7 +503,7 @@ char	*src, *dst;
 		if (isFILE(dst_sb)
 #ifdef	S_IFLNK
 		||  isLINK(dst_sb)
-#endif	S_IFLNK
+#endif
 		) {
 			if (i_opt) {
 				TELL "%s ? ", dst);
@@ -527,7 +538,7 @@ char	*src, *dst;
 			if (copylink(src,dst) < 0)
 				return;
 		}
-#endif	S_IFLNK
+#endif	/* S_IFLNK */
 		if (isFILE(src_sb) && copyfile(src,dst,num,&src_sb) < 0)
 			return;
 		if (isFILE(src_sb) || isDIR(src_sb)) {
@@ -551,7 +562,7 @@ char	*src, *dst;
 #ifdef	S_IFLNK
 	if (isLINK(src_sb))
 		total_links++;
-#endif	S_IFLNK
+#endif
 }
 
 static
@@ -644,7 +655,7 @@ char	*argv[];
 		} else if (isFILE(dst_sb)
 #ifdef	S_IFLNK
 			|| isLINK(dst_sb)
-#endif	S_IFLNK
+#endif
 		) {
 			copyit(argv[optind], dst);
 		} else {
@@ -721,7 +732,7 @@ char	*argv[];
 #ifdef	S_IFLNK
 	if (total_links)VERBOSE "** %ld link%s %scopied\n",
 			SUMMARY(total_links));
-#endif	S_IFLNK
+#endif
 	if (total_files)VERBOSE "** %ld file%s %scopied, %ld bytes\n",
 			SUMMARY(total_files),
 			total_bytes);
