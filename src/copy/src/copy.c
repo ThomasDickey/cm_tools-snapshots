@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)copy.c	1.7 88/08/25 15:48:55";
+static	char	sccs_id[] = "@(#)copy.c	1.9 89/01/24 11:41:32";
 #endif	lint
 
 /*
@@ -7,6 +7,9 @@ static	char	sccs_id[] = "@(#)copy.c	1.7 88/08/25 15:48:55";
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		24 Jan 1989, use 'pathleaf()' to correct pathnames of copy into
+ *			     an existing directory.  Added copy-directory with
+ *			     "-m" option.
  *		25 Aug 1988, added "-u" option for checkin/checkout setuid.
  *		23 Aug 1988, replaced call on 'name2s()' by call to apollo
  *			     naming-server to translate names (works better)
@@ -22,13 +25,11 @@ static	char	sccs_id[] = "@(#)copy.c	1.7 88/08/25 15:48:55";
  *		* preserves modification time of copied file
  *		* lists names as they are copied
  *
- * patch:	how can we properly copy/replace a tree?
- *
  * patch:	if running as root, should try also to keep owner/mode of the
  *		destination intact.
  *
- * patch:	this copies only files; must handle other stuff such as
- *		directories, symbolic links and devices.
+ * patch:	this copies only files and directories; must handle other stuff
+ *		such as symbolic links and devices.
  *
  * patch:	how do we keep from losing the destination file if we have a
  *		fault in the system?
@@ -37,7 +38,9 @@ static	char	sccs_id[] = "@(#)copy.c	1.7 88/08/25 15:48:55";
 #define		DIR_PTYPES	/* include directory-definitions */
 #include	"ptypes.h"
 extern	int	optind;		/* index in 'argv[]' of first argument */
-extern	char	*strcat(),
+extern	char	*pathcat(),
+		*pathleaf(),
+		*strcat(),
 		*strcpy(),
 		*strrchr();
 
@@ -49,6 +52,9 @@ extern	char	*strcat(),
 #endif	S_IFLNK
 
 #define	TELL	FPRINTF(stderr,
+#define	VERBOSE	if (v_opt) TELL
+#define	DEBUG	if (v_opt > 1)	TELL
+
 #define	isFILE(s)	((s.st_mode & S_IFMT) == S_IFREG)
 #define	isDIR(s)	((s.st_mode & S_IFMT) == S_IFDIR)
 
@@ -56,9 +62,10 @@ static	long	total_files,
 		total_bytes;
 static	int	d_opt,		/* obtain source from destination arg */
 		i_opt,		/* interactive: force prompt before overwrite */
+		m_opt,		/* merge directories */
 		n_opt,		/* true if we don't actually do copies */
-		r_opt,		/* recursive in directories */
 		v_opt;		/* verbose */
+static	int	no_dir_yet;	/* disables access-test on destination-dir */
 
 /************************************************************************
  *	local procedures						*
@@ -109,8 +116,7 @@ char	*dst, *src;
 		} else
 			(void)name2s(dst, BUFSIZ, src, 6);
 	}
-	if (v_opt > 1)
-		TELL "++ \"%s\" => \"%s\"\n", src, dst);
+	DEBUG "++ \"%s\" => \"%s\"\n", src, dst);
 	return (dst);
 }
 #endif	apollo
@@ -134,10 +140,9 @@ char	*src, *dst;
 	*bfr1 = EOS;
 	catarg(bfr1, convert(bfr2,src));
 	catarg(bfr1, convert(bfr2,dst));
-	if (previous >= 0)
+	if (previous)
 		catarg(bfr1, "-r");
-	if (v_opt > 1)
-		TELL "++ cpf %s\n", bfr1);
+	DEBUG "++ cpf %s\n", bfr1);
 	return (execute("/com/cpf", bfr1));
 #else	apollo
 	FILE	*ifp, *ofp;
@@ -147,12 +152,12 @@ char	*src, *dst;
 		perror(src);
 		return(-1);
 	}
-	if (previous >= 0 && unlink(dst) < 0) {
+	if (previous && chmod(dst, 0644) < 0) {
 		FCLOSE(ifp);
 		perror(dst);
 		return(-1);
 	}
-	if ((ofp = fopen(dst, "w")) == 0) {
+	if ((ofp = fopen(dst, previous ? "w+" : "w")) == 0) {
 		FCLOSE(ifp);
 		perror(dst);
 		return(-1);
@@ -168,6 +173,52 @@ char	*src, *dst;
 #endif	apollo
 }
 
+static
+copydir(src, dst, previous)
+char	*src, *dst;
+{
+	auto	DIR		*dp;
+	auto	struct	direct	*de;
+	auto	char		bfr1[BUFSIZ],
+				bfr2[BUFSIZ];
+	auto	int		save_dir = no_dir_yet;
+
+	DEBUG "copydir(%s, %s, %d)\n", src, dst, previous);
+	if (previous > 0) {
+		if (!n_opt) {
+			if (unlink(dst) < 0) {
+				perror(dst);
+				return(-1);
+			}
+		}
+	}
+
+	if (previous >= 0) {	/* called from 'copyit()' */
+		VERBOSE "** make directory \"%s\"\n", dst);
+		if (!n_opt) {
+			if (mkdir(dst, 0755) < 0) {
+				perror(dst);
+				return (-1);
+			}
+		}
+		no_dir_yet = n_opt;
+	}
+
+	if (dp = opendir(src)) {
+		while (de = readdir(dp)) {
+			if (!dotname(de->d_name))
+				copyit(	pathcat(bfr1, src, de->d_name),
+					pathcat(bfr2, dst, de->d_name));
+		}
+		(void)closedir(dp);
+	}
+	no_dir_yet = save_dir;
+	return (0);	/* no errors found */
+}
+
+/*
+ * Set up and perform a COPY
+ */
 static
 copyit(src, dst)
 char	*src, *dst;
@@ -186,7 +237,13 @@ char	*src, *dst;
 		exit(FAIL);
 	}
 
-	if (s = strrchr(bfr2, '/')) {
+	DEBUG "** src: \"%s\"\n** dst: \"%s\"\n", bfr1, bfr2);
+
+	if (!no_dir_yet && (s = strrchr(bfr2, '/'))) {
+#ifdef	apollo
+		if ((s == (bfr2 + 1)) && (s[-1] == '/'))
+			s++;
+#endif	apollo
 		*s = EOS;
 		if (access(bfr2, W_OK) < 0) {
 			TELL "?? directory is not writeable: \"%s\"\n", bfr2);
@@ -194,21 +251,20 @@ char	*src, *dst;
 		}
 	}
 
-	if (v_opt)
-		TELL "** copy \"%s\" to \"%s\"\n", src, dst);
+	VERBOSE "** copy \"%s\" to \"%s\"\n", src, dst);
 
 	/* Verify that the source is a legal file */
 	if (lstat(src, &src_sb) < 0) {
 		TELL "?? file not found: \"%s\"\n", src);
 		return;
 	}
-	if (! isFILE(src_sb)) {
+	if (!isFILE(src_sb) && !isDIR(src_sb)) {
 		TELL "?? not a file: \"%s\"\n", src);
 		return;
 	}
 
 	/* Check to see if we can overwrite the destination */
-	if ((num = lstat(dst, &dst_sb)) >= 0) {
+	if (num = (lstat(dst, &dst_sb) >= 0)) {
 		if (isFILE(dst_sb)) {
 			if (i_opt) {
 				TELL "%s ? ", dst);
@@ -218,6 +274,8 @@ char	*src, *dst;
 				} else
 					return;
 			}
+		} else if (isDIR(dst_sb) && isDIR(src_sb)) {
+			num = FALSE;	/* we will merge directories */
 		} else {
 			TELL "?? cannot overwrite \"%s\"\n", dst);
 			return;
@@ -226,21 +284,34 @@ char	*src, *dst;
 		dst_sb = src_sb;
 
 	/* Unless disabled, copy the file */
+	if (isDIR(src_sb) && copydir(src,dst,num) < 0)
+		return;
 	if (!n_opt) {
-		if (copyfile(src,dst,num) < 0)
+		if (isFILE(src_sb) && copyfile(src,dst,num) < 0)
 			return;
 		(void)chmod(dst, (int)(dst_sb.st_mode & 0777));
 		(void)setmtime(dst, src_sb.st_mtime);
 	}
 
-	total_files++;
-	total_bytes += src_sb.st_size;
+	if (isFILE(src_sb)) {
+		total_files++;
+		total_bytes += src_sb.st_size;
+	}
 }
 
 static
 usage()
 {
-	TELL "usage: copy [-i] [-v] [-u] {[-d] | source [...]} destination\n");
+	auto	char	bfr[BUFSIZ];
+	setbuf(stderr, bfr);
+	TELL "usage: copy [-i] [-v] [-u] {[-d] | source [...]} destination\n\
+Options:\n\
+  -d  infer source (leaf) from destination path\n\
+  -i  interactive (prompt before overwriting)\n\
+  -m  merge directories\n\
+  -n  no-op (show what would be copied)\n\
+  -u  reset effective uid before executing\n\
+  -v  verbose\n");
 	(void)exit(FAIL);
 }
 
@@ -252,9 +323,10 @@ arg_pairs(argc, argv)
 char	*argv[];
 {
 	register int	j;
-	struct	stat	dst_sb;
-	int	num;
-	char	dst[BUFSIZ];
+	auto	struct	stat	dst_sb,
+				src_sb;
+	auto	int	num;
+	auto	char	dst[BUFSIZ];
 
 	if ((num = (argc - optind)) < 2) {
 		TELL "?? You must give both source and destination names\n");
@@ -262,11 +334,30 @@ char	*argv[];
 	}
 
 	if (lstat(strcpy(dst, argv[argc-1]), &dst_sb) >= 0) {
+
+		if (m_opt) {
+			if (num == 2 && isDIR(dst_sb)) {
+				VERBOSE "** merge directories\n");
+				if ((lstat(argv[optind], &src_sb) >= 0)
+				&&  (isDIR(src_sb))) {
+					(void)copydir(
+						argv[optind],
+						argv[argc-1], -1);
+					return;
+				}
+			}
+			TELL "?? both arguments must be directories with -m\n");
+			usage();
+		}
+
 		if (isDIR(dst_sb)) {
 			/* copy one or more items into directory */
 			for (j = optind; j < argc-1; j++) {
 			char	*s = dst + strlen(dst);
-				(void)strcat(strcpy(s, "/"), argv[j]);
+				*s = EOS;
+				if (s[-1] != '/')
+					(void)strcpy(s, "/");
+				(void)strcat(s, pathleaf(argv[j]));
 				copyit(argv[j], dst);
 				*s = EOS;
 			}
@@ -321,11 +412,11 @@ char	*argv[];
 {
 	register int	j;
 
-	while ((j = getopt(argc, argv, "dinruv")) != EOF) switch (j) {
+	while ((j = getopt(argc, argv, "dimnuv")) != EOF) switch (j) {
 	case 'd':	d_opt = TRUE;	break;
 	case 'i':	i_opt = TRUE;	break;
+	case 'm':	m_opt = TRUE;	break;
 	case 'n':	n_opt = TRUE;	break;
-	case 'r':	r_opt = TRUE;	break;
 	case 'u':	(void)setuid(getuid());	break;
 	case 'v':	v_opt++;	break;
 	default:	usage();
@@ -336,8 +427,7 @@ char	*argv[];
 	else
 		arg_pairs(argc, argv);
 
-	if (v_opt)
-		TELL "** %ld file%s %scopied, %ld bytes\n",
+	VERBOSE "** %ld file%s %scopied, %ld bytes\n",
 			total_files,
 			total_files == 1 ? "" : "s",
 			n_opt ? "would be " : "",

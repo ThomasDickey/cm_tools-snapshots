@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkout.c	1.25 88/12/14 11:24:21";
+static	char	sccs_id[] = "@(#)checkout.c	1.26 89/01/24 08:29:02";
 #endif	lint
 
 /*
@@ -7,6 +7,10 @@ static	char	sccs_id[] = "@(#)checkout.c	1.25 88/12/14 11:24:21";
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		24 Jan 1989, don't insist that archive be owned by user or euid
+ *			     if no lock is being made.  Corrected hole which
+ *			     caused working file to be deleted if setuid-use
+ *			     prompted for overwrite which was rejected.
  *		14 Dec 1988, use 'vercmp()' rather than 'dotcmp()', to make
  *			     retrieval of increments within a baseline get a
  *			     correct timestamp.
@@ -100,6 +104,7 @@ cleanup(sig)
 	(void)signal(sig, SIG_IGN);
 	WARN "checkout: cleaning up\n\n");
 	clean_file();
+	(void)exit(FAIL);
 }
 
 /*
@@ -214,14 +219,17 @@ time_t	mtime;
 	TELL("** co %s\n", cmds);
 	if (execute(rcspath("co"), cmds) >= 0) {
 		if (stat(UidHack, &sb) >= 0) {
+			DEBUG(("=> file \"%s\"\n", UidHack))
+			DEBUG(("=> size = %d\n", sb.st_size))
+			DEBUG(("=> date = %s", ctime(&sb.st_mtime)))
+			if (sb.st_mtime == mtime) {
+				TELL("** checkout was not performed\n");
+				return (FALSE);
+			}
 			if (strcmp(UidHack,Working)) {
 				if (usercopy(UidHack, Working) < 0)
 					return (FALSE);
 				clean_file();
-			}
-			if (sb.st_mtime == mtime) {
-				TELL("** checkout was not performed\n");
-				return (FALSE);
 			}
 			mode = (sb.st_mode & 0777);
 			if (!locked)
@@ -262,11 +270,11 @@ int	owner;			/* TRUE if euid, FALSE if uid */
 	if (stat(name, &sb) >= 0) {
 		if ((S_IFMT & sb.st_mode) == S_IFREG) {
 			if (owner) {	/* setup for archive: effective */
-				uid = Effect;
+				if (locked)
+					permit(name, &sb, uid = Effect);
 			} else {	/* setup for working: real */
-				uid = Caller;
+				permit(name, &sb, uid = Caller);
 			}
-			permit(name, &sb, uid);
 			DEBUG(("=> date = %s", ctime(&sb.st_mtime)))
 			return (sb.st_mtime);
 		}
@@ -286,8 +294,10 @@ permit(name, sb_, uid)
 char		*name;
 struct	stat	*sb_;
 {
-	if (uid != sb_->st_uid)
+	if (uid != sb_->st_uid) {
+		DEBUG(("=> uid  = %o, file = %o\n", uid, sb_->st_uid))
 		noPERM(name);
+	}
 }
 
 #include <errno.h>

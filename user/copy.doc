@@ -172,7 +172,7 @@ V4,
 <Page Header, Frame =
 V4,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,August\ 25\,\ 1988)
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,September\ 24\,\ 1989)
  (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,unix\ copy\ utility)
  (t8,3,4,0,0.438782,0,17,@nnclas12b,copy)
  (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
@@ -255,6 +255,30 @@ will cause an old file to be overwritten.  A <#7f>y" answer causes
 copy to continue.  Any other answer prevents it from overwriting the 
 file.
 
+<F30@R>-<F31@R>m<F30@R><Tab>permits you to merge directories.  If the source 
+and destination are directories, <F31@R>copy<F30@R> will normally create 
+a new directory under the destination with the same leaf name as the 
+source.  For example,
+
+<fixed>
+
+<F21@R><Tab><Tab>copy /local/bin /usr/local/bin
+
+<options>
+
+<F30@R><Tab>will create and copy into the directory <#7f>/usr/local/bin/bin" 
+if <#7f>/usr/local/bin" exists.  Use the <#7f>-<F31@R>m<F30@R>" option 
+to copy onto an existing directory.
+
+<|,2><F30@R>-<F31@R>n<F30@R><Tab>disables the actual creation or modification 
+of files, and (depending on the level of verboseness) shows the effect 
+which the <F31@R>copy<F30@R> command would have.
+
+<F30@R>-<F31@R>u<F30@R><Tab>resets the effective uid before executing.  
+If <F31@R>copy<F30@R> is invoked from a set-uid program, this undoes the 
+effect of the set-uid by restoring the original permissions of the 
+user.
+
 -<F31>v<F0><Tab>verbose mode directs <F31>copy<F0> to print the 
 names (to standard error) of the files which it copies.  On Apollo, 
 repeating this option causes <F31>copy<F0> to show the underlying 
@@ -270,7 +294,7 @@ OPERATIONS
 
 <header>
 
-<|,2>ENVIRONMENT
+ENVIRONMENT
 
 <paragraph>
 
@@ -293,8 +317,7 @@ ANTICIPATED CHANGES
 <paragraph>
 
 <F31>Copy<F0> does not currently know how to handle symbolic links 
-and special files.  It does not support the <#7f>-<F31>r<F0>" option 
-provided by some unix <#7f><F31>cp<F0>" utilities.
+and special files.
 
 <header>
 
