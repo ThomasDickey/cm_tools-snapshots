@@ -1,4 +1,4 @@
-.\" $Id: copy.man,v 11.2 1992/12/03 10:05:56 dickey Exp $
+.\" $Id: copy.man,v 11.3 1994/06/24 00:15:46 tom Exp $
 .de DS
 .RS
 .nf
@@ -96,12 +96,6 @@ which the \fBcopy\fR command would have.
 enables the set-uid and set-gid file modes in
 the target.
 .TP
-.B \-S
-resets the effective uid before executing.
-If \fBcopy\fR
-is invoked from a set-uid program, this undoes the effect of the set-uid
-by restoring the original permissions of the user.
-.TP
 .B \-u
 copies files only if their size or modification date differs,
 and links only if the link-text differs.
@@ -112,6 +106,14 @@ names (to standard error) of the files which it copies.
 On Apollo,
 repeating this option causes \fBcopy\fR to show the underlying
 "\fBcpf\fR" command as well.
+.TP
+.B \-S
+(Linux only) tells \fBcopy\fR that the source is on an MS-DOS system, and
+that appropriate adjustments must be made in the timestamp computation.
+.TP
+.B \-D
+(Linux only) tells \fBcopy\fR that the destination is on an MS-DOS system, and
+that appropriate adjustments must be made in the timestamp computation.
 .SH OPERATIONS
 .PP
 \fBCopy\fR is used exactly as one would use \fBcp\fR (for

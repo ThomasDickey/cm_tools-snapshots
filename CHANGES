@@ -1,3 +1,19 @@
+1994-08-03  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/checkup/src/Makefile: adapted to autoconf'd td_lib
+
+	* src/checkup/src/checkup.c:
+	use new module 'lastrev()' so I can combine RCS/SCCS/CMVision
+
+1994-06-23  Thomas E. Dickey  <dickey@clark.net>
+
+	* user/copy.man: removed -S (setuid) option
+	added -S and -D (Linux/MS-DOS conversion) options.
+
+	* src/copy/src/copy.c:
+	plugged a hole that caused symbolic links that didn't point to anything
+	to be copied during -u updates
+
 1994-06-18  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/copy/src/copy.c: corrected a couple of minus-signs

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.11 1994/06/18 20:51:43 tom Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.12 1994/06/24 00:07:46 tom Exp $";
 #endif
 
 /*
@@ -651,6 +651,16 @@ int	copyit(
 #endif
 		}
 	}
+#ifdef	S_IFLNK
+	else if (u_opt) {
+		lstat(bfr1, &src_sb);
+		lstat(bfr2, &dst_sb);
+		if (isLINK(src_sb.st_mode) && isLINK(dst_sb.st_mode)) {
+			if (samelink(src,dst))
+				return FALSE;
+			}
+	}
+#endif
 	DEBUG("** src: \"%s\"\n** dst: \"%s\"\n", bfr1, bfr2);
 
 	if (!no_dir_yet && !tested_acc) { /* we must test-access */

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 11.2 1993/09/22 14:30:54 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 11.3 1994/08/03 13:06:50 tom Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * Modified:
+ *		03 Aug 1994, use 'lastrev()'; related interface changes.
  *		22 Sep 1992, gcc warnings
  *		30 Oct 1992, added checks for RCS version 5 (GMT dates).
  *		01 May 1992, added "-L" option.
@@ -267,9 +268,7 @@ void	do_obs(
 				TELL "%s (non-file)\n", tname);
 				continue;
 			}
-			rcslast(path, tname, &vers, &cdate, &owner);
-			if ((cdate == 0) && (*vers == '?'))
-				sccslast(path, tname, &vers, &cdate, &owner);
+			lastrev(path, tname, &vers, &cdate, &owner);
 
 			/*
 			 * If 'cdate' is zero, then we could not (for whatever
@@ -329,7 +328,7 @@ int	WALK_FUNC(do_stat)
 		abspath(s);		/* get rid of "." and ".." names */
 		t = pathleaf(s);	/* obtain leaf-name for "-a" option */
 		if (*t == '.' && !allnames)	return (-1);
-		if (sameleaf(s, sccs_dir())
+		if (sameleaf(s, sccs_dir(path, name))
 		||  sameleaf(s, rcs_dir())) {
 			if (obsolete)
 				do_obs(path, name, level);
@@ -360,9 +359,7 @@ int	WALK_FUNC(do_stat)
 			readable = -1;
 		} else {
 #endif
-		rcslast(path, name, &vers, &cdate, &owner);
-		if ((cdate == 0) && (*vers == '?'))
-			sccslast(path, name, &vers, &cdate, &owner);
+		lastrev(path, name, &vers, &cdate, &owner);
 		if (*owner != EOS && *owner != '?')
 			locked_by = owner;
 		else
