@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.4 1992/11/24 07:17:42 dickey Exp $
+# $Id: Makefile,v 11.5 1992/12/04 10:35:38 ste_cm Exp $
 # Top-level make-file for CM_TOOLS
 
 THIS	= cm_tools
@@ -14,6 +14,7 @@ MFILES	=\
 	bin/Makefile\
 	certificate/Makefile\
 	src/Makefile\
+	support/Makefile\
 	user/Makefile
 
 ####### (Standard Productions) #################################################

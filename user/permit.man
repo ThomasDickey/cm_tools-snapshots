@@ -1,4 +1,4 @@
-.\" $Id: permit.man,v 11.0 1991/09/25 08:59:08 ste_cm Rel $
+.\" $Id: permit.man,v 11.1 1992/12/04 14:16:43 dickey Exp $
 .de DS
 .RS
 .nf
@@ -64,6 +64,9 @@ are archived using \fBcheckin\fR in the directory.
 .BI \-e userlist
 expunges the list of specified
 users to each RCS archive access list.
+.TP
+.BI \-l
+show symbolic links
 .TP
 .BI \-m msg
 overrides \fBpermit\fR's default revision-log

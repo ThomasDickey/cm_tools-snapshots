@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.17 1992/11/23 08:17:15 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.18 1992/12/21 10:19:47 dickey Exp $";
 #endif
 
 /*
@@ -205,16 +205,6 @@ static	char	old_date[BUFSIZ],	/* subprocess variables */
  ************************************************************************/
 
 static
-int	has_saved_uid(_AR0)	/* patch */
-{
-#ifdef	apollo
-	return FALSE;
-#else
-	return TRUE;
-#endif
-}
-
-static
 void	GiveUp(
 	_ARX(char *,	msg)
 	_AR1(char *,	arg)
@@ -278,7 +268,7 @@ void	HackMode(
 	_AR1(int,	save))
 	_DCL(int,	save)
 {
-	if (!geteuid()) {
+	if (!geteuid() || saves_uid()) {
 		;
 	} else if (save) {
 		if ((RCSdir[0] != EOS)
@@ -542,7 +532,7 @@ int	RcsCheckin(_AR0)
 #if	RCS_VERSION >= 5
 	CATARG(cmds, "-M");
 #endif
-	if (!from_keys || !has_saved_uid())
+	if (!from_keys || !saves_uid())
 		if (!w_opts)
 			CATARG2(cmds, "-w", uid2s(HIS_uid));
 	APPEND(cmds, dyn_string(opt_all));
@@ -577,7 +567,10 @@ int	Execute(_AR0)
 	TMP_file = rcstemp(Working, TRUE);
 
 #if	RCS_VERSION >= 5
-	code = for_admin(RcsCheckin);
+	if (saves_uid())
+		code = RcsCheckin();
+	else
+		code = for_admin(RcsCheckin);
 #else
 	code = RcsCheckin();
 #endif

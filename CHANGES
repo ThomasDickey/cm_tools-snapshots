@@ -1,3 +1,68 @@
+1992-12-21  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	moved 'saves_uid()' function to CM_LIBRARY; tested non-root
+	setuid on SunOs
+
+1992-12-14  dickey@software.org
+
+	* src/vcs/test/compare.sh: filter out places where ADMIN is LOGNAME
+
+	* src/checkin/test/admin.sh:
+	make this work on SunOs as well as on apollo
+
+1992-12-04  ste_cm@software.org
+
+	* src/permit/src/permit.c:
+	added "-l" option to control whether we show symbolic-links
+
+1992-12-04  dickey@software.org
+
+	* user/permit.man: added "-l" option
+
+	* certify/release.txt: added new options to copy, permit
+
+1992-12-04  ste_cm@software.org
+
+	* src/link2rcs/test/Makefile: forgot to add case[12].sh to SCRIPTS
+
+	* support/Makefile: forgot to add C_SRC to SOURCES
+
+	* Makefile: forgot to add support/Makefile to MFILES
+
+1992-12-03  dickey@software.org
+
+	* src/copy/src/copy.c:
+	corrected a couple of places that broke ~ expansion in
+	my changes to access-testing in 'copyit()'
+
+	* src/copy/src/copy.c: trace
+
+	* user/copy.man: added "-f" option
+
+	* src/copy/src/copy.c:
+	implemented "-f" option, which tells 'copy' to temporarily
+	change protection of directories into which we want to copy
+	when they are not accessible.
+
+	* src/copy/src/copy.c:
+	added logic to ensure that we don't try to recreate a
+	directory that already exists.
+	moved global 'no_dir_yet' into arg-lists.
+	added stub for "-f" option (unimplemented)
+
+1992-12-02  dickey@software.org
+
+	* user/copy.man: renamed "-u" option to "-S"
+	added new "-u" option
+
+1992-12-01  dickey@software.org
+
+	* src/copy/src/copy.c:
+	changed "-u" option to "-S" for consistency, while I added
+	a new "-u" option that copies only to update (must still
+	test copy-link-update).
+
 1992-11-24  dickey@software.org
 
 	* src/link2rcs/test/Makefile, src/link2rcs/test/run_test.sh:

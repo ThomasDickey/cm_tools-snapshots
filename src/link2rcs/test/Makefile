@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.3 1992/11/24 16:14:25 dickey Exp $
+# $Id: Makefile,v 11.4 1992/12/04 14:06:27 ste_cm Exp $
 # make-file for testing RCS skeleton tree utility
 
 ####### (Development) ##########################################################
@@ -11,6 +11,8 @@ REF_FILES =\
 	case2.ref
 
 SCRIPTS	=\
+	case1.sh\
+	case2.sh\
 	list_tree.sh\
 	run_tests.sh
 

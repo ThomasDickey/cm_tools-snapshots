@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.1 1992/11/24 08:21:57 dickey Exp $
+# $Id: Makefile,v 11.2 1992/12/04 11:12:32 ste_cm Exp $
 
 TOP	= ../..
 include $(TOP)/cm_library/support/cm_library.mk
@@ -13,7 +13,7 @@ C_SRC	= \
 	run_tool.c \
 	set_date.c
 
-SOURCES	= $(SCRIPTS)
+SOURCES	= $(SCRIPTS) $(C_SRC)
 
 ALL	= \
 	run_tool \
