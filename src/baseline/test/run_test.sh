@@ -1,14 +1,15 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.0 1991/10/11 13:27:09 ste_cm Rel $
+# $Id: run_test.sh,v 11.2 1992/10/28 12:02:52 dickey Exp $
 # test-script for RCS baseline utility
 #
 F="Makefile run_tests.sh"
 date
 #
 # run from test-versions:
-rcstool=`which rcs`
-PATH=:`pwd`:`cd ../bin;pwd`:`cd ../../../bin;pwd`:/bin:/usr/bin:/usr/ucb
-export PATH
+for n in .. ../../.. ../../checkin ../../copy
+do	PATH=`cd $n/bin;pwd`:$PATH
+done
+PATH=:`pwd`:$PATH export PATH
 #
 rm -rf junk
 mkdir junk junk/RCS
@@ -27,10 +28,10 @@ fi
 ls -l
 #
 chmod -w $F
-$rcstool -e -q RCS/Makefile,v
+run_tool rcs -e -q RCS/Makefile,v
 #
 touch not_baselined
-N=`grep 'head[ ]*[0-9.]*;$' RCS/Makefile,v | sed -f ../run_tests.sed`
+N=`grep 'head[ 	]*[0-9.]*;$' RCS/Makefile,v | sed -f ../run_tests.sed`
 if test -n "$N"
 then
 	B=`expr $N + 1` 

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.1 1992/09/02 08:24:07 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.6 1992/10/27 12:01:15 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		22 Oct 1992, mods to accommodate RCS version 5.
  *		17 Jul 1992, if no lock found, don't exit early from GetLock!
  *		10 Feb 1992, change "-d" to "-D".  Make this recognize symbolic
  *			     revisions and branches.
@@ -423,15 +424,14 @@ ReProcess (_AR0)
  * modification date.
  */
 static
-void
-PostProcess (_AR0)
+void	PostProcess (_AR0)
 {
-int	header	= TRUE,
-	match	= FALSE,
-	changed	= FALSE;
-char	*s	= 0,
-	*old,
-	token[BUFSIZ];
+	int	header	= TRUE,
+		match	= FALSE,
+		changed	= FALSE,
+		code	= S_FAIL;
+	char	*s	= 0,
+		token[BUFSIZ];
 
 	if_D_option(return)
 
@@ -440,15 +440,12 @@ char	*s	= 0,
 	if (!rcsopen(Archive, debug, FALSE))
 		return;
 
-	while (header && (s = rcsread(s))) {
+	while (header && (s = rcsread(s, code))) {
 		s = rcsparse_id(token, s);
 
-		switch (rcskeys(token)) {
+		switch (code = rcskeys(token)) {
 		case S_HEAD:
 			s = rcsparse_num(token, s);
-			break;
-		case S_COMMENT:
-			s = rcsparse_str(s, NULL_FUNC);
 			break;
 		case S_VERS:
 			if (dotcmp(token, opt_rev) < 0)
@@ -458,13 +455,13 @@ char	*s	= 0,
 		case S_DATE:
 			if (!match)
 				break;
-			s = rcsparse_num(old_date, old = s);
+			s = rcsparse_num(old_date, s);
 			if (*old_date) {
 				if (from_keys) {
 					modtime = rcs2time(old_date);
 				} else {
 					time2rcs(new_date, modtime);
-					rcsedit(old, old_date, new_date);
+					rcsedit(old_date, new_date);
 				}
 				TELL("** revision %s\n", opt_rev);
 				TELL("** modified %s", ctime(&modtime));
@@ -534,7 +531,10 @@ Execute(_AR0)
 
 	dyn_init(&cmds, BUFSIZ);
 	APPEND(cmds, dyn_string(opt_all));
-	CATARG2(cmds, opt_opt, opt_rev);
+	if (EMPTY(opt_rev))
+		CATARG(cmds, opt_opt);
+	else
+		CATARG2(cmds, opt_opt, opt_rev);
 	CATARG(cmds, Archive);
 	CATARG(cmds, TMP_file);
 
@@ -557,7 +557,7 @@ Execute(_AR0)
 			}
 			clean_file();
 			if (sb.st_mtime == modtime) {
-				TELL("** checkin was not performed\n");
+				DEBUG(("...working file was not modified\n"))
 				return (FALSE);
 			}
 		} else if (strcmp(TMP_file, Working)
@@ -580,13 +580,13 @@ Execute(_AR0)
  *	 0 - no lock was set (or can be forced)
  */
 static
-int
-GetLock(_AR0)
+int	GetLock(_AR0)
 {
 	int	done	= FALSE,
 		strict	= FALSE,
 		implied	= EMPTY(opt_rev),
-		match;
+		match,
+		code	= S_FAIL;
 
 	char	*s	= 0,
 		lock_rev[REVSIZ],
@@ -606,10 +606,10 @@ GetLock(_AR0)
 	if (!rcsopen(Archive, -debug, TRUE))
 		return (FALSE);	/* could not open file anyway */
 
-	while (!done && (s = rcsread(s))) {
+	while (!done && (s = rcsread(s, code))) {
 		s = rcsparse_id(key, s);
 
-		switch (rcskeys(key)) {
+		switch (code = rcskeys(key)) {
 		/*
 		 * Begin the admin-node
 		 */
@@ -629,11 +629,6 @@ GetLock(_AR0)
 			else
 				(void)strcpy(next_rev, RCSbase);
 			DEBUG(("=>%s (next)\n", next_rev))
-			break;
-
-		case S_BRANCH:
-		case S_ACCESS:
-			/* ignored */
 			break;
 
 		case S_STRICT:
@@ -681,10 +676,6 @@ GetLock(_AR0)
 			DEBUG(("=>%s (resulting version)\n", opt_rev))
 			break;
 
-		case S_COMMENT:
-			s = rcsparse_str(s, NULL_FUNC);
-			break;
-
 		/*
 		 * Begin a delta-description
 		 */
@@ -708,13 +699,6 @@ GetLock(_AR0)
 			}
 			break;
 
-		case S_AUTHOR:
-		case S_STATE:
-		case S_BRANCHES:
-		case S_NEXT:
-			/* ignored */
-			break;
-
 		/*
 		 * Begin the delta-contents
 		 */
@@ -727,6 +711,7 @@ GetLock(_AR0)
 		default:
 			DEBUG(("undecoded case %s in %s, line %d\n",
 				key, __FILE__, __LINE__))
+		case S_BRANCH: case S_ACCESS: case S_COMMENT:
 			break;
 		}
 	}

@@ -1,24 +1,13 @@
-# $Id: Makefile,v 11.0 1992/02/18 11:48:23 ste_cm Rel $
-
-####### (Development) ##########################################################
-INSTALL_MAN=../../install_man
-
-GET	= checkout
-COPY	= cp -p
-PUT	= rm -f $@; $(COPY) $? $@
+# $Id: Makefile,v 11.2 1992/10/16 09:30:30 dickey Exp $
 
 THIS	= cm_tools
+TOP	= ../..
+include $(TOP)/cm_library/support/cm_library.mk
 
+####### (Development) ##########################################################
 USE	= man
 SECTION	= 1
 PREFIX	= $(INSTALL_MAN)/$(USE)$(SECTION)/
-
-.SUFFIXES:
-.SUFFIXES: .man .cat
-#
-.man.cat:
-	rm -f $@
-	nroff -man $? >$@
 
 ####### (Standard Lists) #######################################################
 IT	=\
@@ -50,15 +39,14 @@ SOURCES	=\
 ALL	=
 
 ####### (Standard Productions) #################################################
-all:		$(ALL)
-clean:					; rm -f *.bak *.log *.out core
-clobber:	clean			; rm -f *.cat
-destroy:	clobber
-	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
+all:		$(SOURCES) $(ALL)
+clean:					; rm -f $(CLEAN)
+clobber:	clean			; rm -f $(ALL) *.cat
+destroy:	clobber			; $(DESTROY)
 run_tests:
 sources:	$(SOURCES)
 install:	$(IT)
-deinstall:		; rm -f $(IT)
+deinstall:				; rm -f $(IT)
 
 ####### (Details of Productions) ###############################################
 $(PREFIX)baseline.$(SECTION):	baseline.$(USE)	; $(PUT)

@@ -1,8 +1,9 @@
-# $Id: Makefile,v 11.1 1992/08/07 14:46:07 dickey Exp $
+# $Id: Makefile,v 11.2 1992/10/09 12:47:21 dickey Exp $
 # make-file for testing RCS/sccs checkup utility
 
 ####### (Development) ##########################################################
-include ../../common.mk
+TOP	= ../../../..
+include $(TOP)/cm_library/support/cm_library.mk
 
 ####### (Standard Lists) #######################################################
 SCRIPTS	=\
@@ -18,7 +19,7 @@ destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
 lincnt.out:
-run_tests:	$(SOURCES)	; sh -c '$@.sh 2>&1 | tee -a $@.out'
+run_tests:	$(SOURCES)	; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################
 $(SOURCES):			; $(GET) $@

@@ -1,9 +1,9 @@
-# $Id: Makefile,v 11.1 1992/08/05 14:33:16 dickey Exp $
+# $Id: Makefile,v 11.3 1992/10/16 09:27:19 dickey Exp $
 # Make-file for RCS baseline utility
 
-####### (Environment) ##########################################################
 THIS	= baseline
-include ../../common.mk
+TOP	= ../../../..
+include $(TOP)/cm_library/support/cm_library.mk
 
 ####### (Standard Lists) #######################################################
 ALL	= $B/$(THIS)
@@ -27,5 +27,5 @@ $(THIS).o:	$(RCSDEFS_H)
 
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
-lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
+lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPTS) $? >>$@
 lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 11.0 1992/02/17 15:25:55 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 11.1 1992/10/28 07:47:39 dickey Exp $";
 #endif
 
 /*
@@ -387,6 +387,7 @@ _DCL(int,	level)
 	int	got_owner= FALSE;	/* true if owner is on access list */
 	int	mode	= (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
 	int	header	= TRUE,
+		code	= S_FAIL,
 		num	= strlen(name) - (sizeof(RCS_SUFFIX) - 1);
 	char	*s	= 0,
 		list	[BUFSIZ],	/* users to add/expunge */
@@ -413,10 +414,10 @@ _DCL(int,	level)
 	if (!rcsopen(name, verbose > 1, TRUE))
 		return (FALSE);	/* could not open file anyway */
 
-	while (header && (s = rcsread(s))) {
+	while (header && (s = rcsread(s, code))) {
 		s = rcsparse_id(key, s);
 
-		switch (rcskeys(key)) {
+		switch (code = rcskeys(key)) {
 		case S_HEAD:
 			s = rcsparse_num(tip, s);
 			num = dotcmp(tip, high_ver);
@@ -453,9 +454,6 @@ _DCL(int,	level)
 			break;
 		case S_VERS:
 			header = FALSE;
-			break;
-		case S_COMMENT:
-			s = rcsparse_str(s, NULL_FUNC);
 			break;
 		}
 	}

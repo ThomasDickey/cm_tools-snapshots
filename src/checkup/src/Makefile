@@ -1,9 +1,9 @@
-# $Id: Makefile,v 11.1 1992/08/05 14:27:58 dickey Exp $
+# $Id: Makefile,v 11.3 1992/10/16 09:26:31 dickey Exp $
 # MAKE-file for RCS/SCCS tree display
 
-####### (Environment) ##########################################################
 THIS	= checkup
-include ../../common.mk
+TOP	= ../../../..
+include $(TOP)/cm_library/support/cm_library.mk
 
 ####### (Standard Lists) #######################################################
 ALL	= $B/$(THIS)
@@ -27,5 +27,5 @@ $(THIS).o:	$(RCSDEFS_H)
 
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
-lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
+lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPTS) $? >>$@
 lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

@@ -1,9 +1,9 @@
-# $Id: Makefile,v 11.1 1992/08/05 14:37:33 dickey Exp $
+# $Id: Makefile,v 11.3 1992/10/16 09:26:45 dickey Exp $
 # Make-file for RCS checkout utilities
 
-####### (Environment) ##########################################################
 THIS	= checkout
-include ../../common.mk
+TOP	= ../../../..
+include $(TOP)/cm_library/support/cm_library.mk
 
 ####### (Standard Lists) #######################################################
 ALL	= $B/$(THIS)   $B/rcsget

@@ -1,9 +1,11 @@
-# $Id: Makefile,v 11.1 1992/08/05 14:31:12 dickey Exp $
+# $Id: Makefile,v 11.3 1992/10/16 09:24:57 dickey Exp $
 # MAKE-file for RCS skeleton tree utility
 
 ####### (Environment) ##########################################################
+TOP	= ../../../..
+include $(TOP)/cm_library/support/cm_library.mk
+
 THIS	= link2rcs
-include ../../common.mk
 
 ####### (Standard Lists) #######################################################
 ALL	= $B/$(THIS)
@@ -27,5 +29,5 @@ $(THIS).o:	$(RCSDEFS_H)
 
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
-lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
+lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPTS) $? >>$@
 lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

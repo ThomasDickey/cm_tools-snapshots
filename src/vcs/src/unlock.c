@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: unlock.c,v 11.0 1991/10/17 09:53:25 ste_cm Rel $";
+static	char	Id[] = "$Id: unlock.c,v 11.1 1992/10/28 07:48:17 dickey Exp $";
 #endif
 
 /*
@@ -26,7 +26,8 @@ _DCL(char *,	name)
 _DCL(char *,	lock_rev)
 _DCL(char *,	lock_by)
 {
-	int	header	= TRUE;
+	int	header	= TRUE,
+		code	= S_FAIL;
 	char	*s	= 0,
 		tip[BUFSIZ],
 		key[BUFSIZ];
@@ -37,10 +38,10 @@ _DCL(char *,	lock_by)
 	if (!rcsopen(name, -debug, TRUE))
 		return (FALSE);	/* could not open file anyway */
 
-	while (header && (s = rcsread(s))) {
+	while (header && (s = rcsread(s, code))) {
 		s = rcsparse_id(key, s);
 
-		switch (rcskeys(key)) {
+		switch (code = rcskeys(key)) {
 		case S_HEAD:
 			s = rcsparse_num(tip, s);
 			if (!*tip)
@@ -53,9 +54,6 @@ _DCL(char *,	lock_by)
 
 		case S_VERS:
 			header = FALSE;
-			break;
-		case S_COMMENT:
-			s = rcsparse_str(s, NULL_FUNC);
 			break;
 		}
 	}

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.0 1992/07/16 09:25:21 ste_cm Rel $
+# $Id: run_test.sh,v 11.2 1992/10/27 09:41:03 dickey Exp $
 #
 #	Runs regression tests for 'checkin' and 'rcsput'
 #
@@ -33,7 +33,7 @@ then
 			NAME=`basename $NN .sh`
 			rm -f $NAME.out $NAME.log
 			. $NN
-			rlog $WORK | sed -e s@`whoami`@USER@g >$NAME.log
+			./run_tool rlog $WORK | sed -e s@`whoami`@USER@g >$NAME.log
 			if test -f $NAME.ref
 			then
 				if cmp -s $NAME.log $NAME.ref
@@ -42,6 +42,7 @@ then
 					rm -f $NAME.log
 				else
 					echo '?? diff '$NAME.log
+					diff $NAME.log $NAME.ref
 					mv junk/$RCS_DIR/`basename $WORK`,v $NAME.out
 					exit 1
 				fi

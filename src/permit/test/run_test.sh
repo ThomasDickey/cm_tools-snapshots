@@ -1,13 +1,15 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.0 1991/10/18 16:02:52 ste_cm Rel $'
+# $Id: run_test.sh,v 11.1 1992/10/30 08:20:04 dickey Exp $'
 # run regression test for RCS permission utility
 #
-
 date
 #
 # run from test-versions:
 rcstool=`which rcs`
-PATH=:`pwd`:`cd ../bin;pwd`:`cd ../../../bin;pwd`:/bin:/usr/bin:/usr/ucb
+for n in .. ../../.. ../../checkin
+do	PATH=`cd $n/bin;pwd`:$PATH
+done
+PATH=:`pwd`:$PATH
 export PATH
 #
 Q="-q"

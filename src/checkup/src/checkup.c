@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 11.0 1992/05/01 11:55:19 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 11.1 1992/10/30 07:47:01 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * Modified:
+ *		30 Oct 1992, added checks for RCS version 5 (GMT dates).
  *		01 May 1992, added "-L" option.
  *		11 Oct 1991, converted to ANSI
  *		15 Jul 1991, distinguish between non-archive/obsolete files.
@@ -381,7 +382,8 @@ WALK_FUNC(do_stat)
 			} else if (cdate > sp->st_mtime) {
 				change	= compared("older", vers);
 			} else if (cdate < sp->st_mtime) {
-				change	= compared("newer", vers);
+				if (sp->st_mtime - cdate != gmt_offset(cdate))
+					change	= compared("newer", vers);
 			}
 		} else if (ok_text = istextfile(name)) {
 			change	= "not archived";

@@ -1,3 +1,111 @@
+1992-10-30  dickey@software.org
+
+	* src/vcs/test/run_test.sh, src/permit/test/run_test.sh: corrected path
+
+	* src/checkup/test/run_test.sh:
+	added hooks to allow RCS_DEBUG to work properly
+
+	* src/checkup/src/checkup.c:
+	added a quick hack to suppress spurious complaints about
+	GMT-based vs localtime-based dates.
+
+1992-10-28  dickey@software.org
+
+	* src/checkup/test/run_test.sh: nail down the path
+
+	* src/baseline/test/Makefile:
+	ensure we build 'run_tool' for run_tests-rule
+
+	* src/checkout/test/Makefile: added 'run_tool.c'
+
+	* src/checkout/test/run_test.sh: nail down the path a little better
+
+	* src/baseline/test/run_test.sh:
+	RCS version 5 formats 'head' with a tab
+
+	* src/baseline/test/run_test.sh:
+	modified paths so I can do better testing between RCS versions
+
+	* src/baseline/test/Makefile:
+	added 'run_tool' to simplify path-changes between RCS versions
+
+	* src/vcs/src/unlock.c, src/permit/src/permit.c:
+	modified interface to 'rcsread()'
+
+	* src/checkin/test/case3_f.ref:
+	I think one of my corrections fixed this
+
+1992-10-27  dickey@software.org
+
+	* src/checkin/test/case2_d.ref: RCS-5.6.4-beta
+
+	* src/checkin/test/case3_e.sh:
+	use 'run_tool' to ensure we get the right version of rcs
+
+	* src/checkin/src/checkin.c:
+	stifle a debug-message about undecoded cases
+
+	* src/checkin/test/run_test.sh: use 'run_tool' to invoke rlog
+
+	* src/baseline/test/run_tool.c, src/checkin/test/run_tool.c, src/checkout/test/run_tool.c, support/run_tool.c:
+	RCS_BASE
+
+1992-10-27  Thomas E. Dickey  <dickey@software.org>
+
+	* src/baseline/test/run_tool.c: module-id
+
+1992-10-27  dickey@software.org
+
+	* src/checkin/test/Makefile: added 'run_tool'
+
+	* src/checkin/src/checkin.c:
+	removed other (now redundant) cases in 'rcsread()' loop
+
+	* src/checkin/test/run_test.sh: show diffs in the log if we have any
+
+	* src/checkout/src/checkout.c: modified interface to 'rcsread()'
+
+	* src/checkin/src/checkin.c: removed (now redundant) case for S_COMMENT
+
+	* src/checkin/src/checkin.c: simplified interface to 'rcsedit()'
+
+1992-10-26  dickey@software.org
+
+	* src/checkin/test/case2_c.ref, src/checkin/test/case2_b.ref, src/checkin/test/case2_a.ref, src/checkin/test/case1_b.ref, src/checkin/test/case1_a.ref:
+	RCS-5.6.4-beta
+
+	* src/checkin/src/checkin.c:
+	modified interface to 'rcsread()' to support RCS version 5.
+	also, corrected an instance of CATARG2: want always to
+	concatenate 'opt_opt' and 'opt_rev'.
+
+1992-10-16  dickey@software.org
+
+	* Makefile: fix lint-rule
+
+	* src/Makefile: always make sources
+
+	* bin/Makefile: use INSTALL_BIN directly
+
+	* user/Makefile: always make sources
+	got rid of local 'makefile'
+
+	* src/vcs/src/Makefile: renamed LINTOPT to LINTOPTS
+
+	* src/baseline/src/Makefile: LINT-DEF
+
+	* src/checkin/src/Makefile, src/checkout/src/Makefile: clutter
+
+	* src/checkup/src/Makefile, src/copy/src/Makefile, src/link2rcs/src/Makefile, src/permit/src/Makefile:
+	clutter, lint-def
+
+	* Makefile: got rid of dependent 'makefile' rules
+
+1992-10-09  dickey@software.org
+
+	* src/vcs/test/Makefile, src/permit/test/Makefile, src/permit/src/Makefile, src/vcs/Makefile, src/permit/Makefile, src/link2rcs/Makefile, src/copy/Makefile, src/checkout/test/Makefile, src/checkup/Makefile, src/checkout/src/Makefile, src/checkout/Makefile, src/checkin/src/Makefile, src/checkin/Makefile, src/baseline/Makefile, src/Makefile, bin/Makefile, user/Makefile, src/vcs/src/Makefile, src/link2rcs/test/Makefile, src/link2rcs/src/Makefile, src/copy/test/Makefile, src/copy/src/Makefile, src/checkup/test/Makefile, src/checkup/src/Makefile, src/checkin/test/Makefile, src/baseline/test/Makefile, src/baseline/src/Makefile, certify/Makefile, Makefile:
+	split off CM_LIBRARY
+
 1992-09-04  dickey@software.org
 
 	* certify/release.txt: added ctl/V to ded command-editing (a la 'vi')

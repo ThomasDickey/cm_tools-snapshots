@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 11.0 1992/07/16 08:03:19 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 11.1 1992/10/27 08:38:19 dickey Exp $";
 #endif
 
 /*
@@ -280,7 +280,8 @@ _DCL(char *,	save_rev)
 		tmp[BUFSIZ],
 		this_rev[REVSIZ],
 		*s	= 0;
-	int	header	= TRUE;
+	int	header	= TRUE,
+		code	= S_FAIL;
 
 	if (!rcsopen(Archive, -debug, TRUE)) {
 		FPRINTF(stderr, "? cannot open archive %s\n", Archive);
@@ -291,10 +292,10 @@ _DCL(char *,	save_rev)
 	if (!EMPTY(opt_rev))
 		(void)strcpy(save_rev, opt_rev);
 
-	while (header && (s = rcsread(s))) {
+	while (header && (s = rcsread(s, code))) {
 		s = rcsparse_id(key, s);
 
-		switch (rcskeys(key)) {
+		switch (code = rcskeys(key)) {
 		/*
 		 * Begin an admin description.  If the user did not specify a
 		 * revision, we assume the 'tip' version, unless he had one
@@ -304,10 +305,6 @@ _DCL(char *,	save_rev)
 			s = rcsparse_num(this_rev, s);
 			if (EMPTY(save_rev))
 				(void)strcpy(save_rev, this_rev);
-			break;
-		case S_BRANCH:
-		case S_ACCESS:
-			/* ignored */
 			break;
 		case S_SYMBOLS:
 			s = rcssymbols(s, save_rev, save_rev);
@@ -323,9 +320,7 @@ _DCL(char *,	save_rev)
 				(void)strcpy(save_rev, this_rev);
 			}
 			break;
-		case S_COMMENT:
-			s = rcsparse_str(s, NULL_FUNC);
-			break;
+
 		/*
 		 * Begin a delta description.  We are looking (like 'co') for
 		 * the last version along a branch which matches the cutoff,
@@ -358,9 +353,7 @@ _DCL(char *,	save_rev)
 			DEBUG((log_fp, "state   = %s\n", key))
 			if (ok_vers && MISMATCH(opt_sta,key))	ok_vers = FALSE;
 			break;
-		case S_BRANCHES:
-			/* ignored */
-			break;
+
 			/* 'next' is the last keyword in a delta description */
 		case S_NEXT:
 			if (ok_vers && ok_date) {

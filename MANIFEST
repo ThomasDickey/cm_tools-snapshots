@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19920904
+MANIFEST for cm_tools, version t19921030
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -23,6 +23,7 @@ src/baseline/test               subdirectory
 src/baseline/test/Makefile      make-file for baseline utility regression test
 src/baseline/test/run_test.sed  sed-script to extract the tip-version of an RCS-file (infers baseline).
 src/baseline/test/run_test.sh   test-script for baseline utility
+src/baseline/test/run_tool.c    uses 'rcspath()' to exec
 src/checkin                     subdirectory
 src/checkin/Makefile            top-level makefile for RCS checkin utility
 src/checkin/src                 subdirectory
@@ -60,6 +61,7 @@ src/checkin/test/case3_e.sh     script for case 3e
 src/checkin/test/case3_f.ref    reference for case 3f
 src/checkin/test/case3_f.sh     script for case 3f
 src/checkin/test/run_test.sh    test-script for RCS checkin-utility
+src/checkin/test/run_tool.c     quick tool to exec its argument via 'rcspath()'
 src/checkin/test/set_date.c     sets a date on a file (used here so I can use rlog's output in comparisons)
 src/checkout                    subdirectory
 src/checkout/Makefile           top-level makefile for 'checkout' utility
@@ -70,6 +72,7 @@ src/checkout/src/rcsget.c       wrapper for 'checkout'
 src/checkout/test               subdirectory
 src/checkout/test/Makefile      make-file for 'checkout' regression tests
 src/checkout/test/run_test.sh   test-script for RCS checkout package
+src/checkout/test/run_tool.c    sets mtime of a given file
 src/checkup                     subdirectory
 src/checkup/Makefile            top-level makefile for RCS/sccs checkup utility
 src/checkup/src                 subdirectory
@@ -78,8 +81,6 @@ src/checkup/src/checkup.c       utility to find files not checked-in
 src/checkup/test                subdirectory
 src/checkup/test/Makefile       make-file for 'checkup' test
 src/checkup/test/run_test.sh    test-script for 'checkup'
-src                             subdirectory
-src/common.mk                   split out common definitions to simplify my life!
 src/copy                        subdirectory
 src/copy/Makefile               top-level makefile for unix copy-utility
 src/copy/src                    subdirectory
@@ -123,6 +124,7 @@ src/vcs/test/unlock.ref         reference for 'vce' unlock-test
 support                         subdirectory
 support/Makefile                make-file for CM_TOOLS support utilities
 support/copy.sh                 copy-script to use til we have a working copy utility
+support/run_tool.c              sets mtime of a given file
 support/set_date.c              runs specific tool in rcs-path
 user                            subdirectory
 user/Makefile                   make-file (for installation and source-control) of user-documentation

@@ -1,7 +1,8 @@
-# $Id: Makefile,v 11.0 1992/02/17 15:18:36 ste_cm Rel $
+# $Id: Makefile,v 11.1 1992/10/09 12:39:04 dickey Exp $
 
 ####### (Development) ##########################################################
-GET	= checkout
+TOP	= ../..
+include $(TOP)/cm_library/support/cm_library.mk
 
 ####### (Standard Lists) #######################################################
 SOURCES	=\
@@ -12,10 +13,9 @@ SOURCES	=\
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES)
-clean:		; rm -f *.bak *.log *.out core
+clean:				; rm -f $(CLEAN)
 clobber:	clean
-destroy:
-	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
+destroy:			; $(DESTROY)
 run_tests:
 sources:	$(SOURCES)
 install:
