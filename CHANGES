@@ -1,3 +1,16 @@
+1991-07-15  dickey@software.org
+
+	* src/checkup/src/checkup.c:
+	distinguish between non-archive/obsolete files.  Corrected
+	the code which prints the names of these files (had wrong
+	leafname).
+
+1991-07-11  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	check if we are running in root-setuid to see if effective
+	user has to own the RCS-directory.
+
 1991-06-20  dickey@software.org
 
 	* src/checkout/src/checkout.c, src/checkout/src/rcsget.c, src/checkin/src/rcsput.c, src/checkin/src/checkin.c:
