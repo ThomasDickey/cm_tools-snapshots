@@ -1,4 +1,4 @@
-.\" $Id: copy.man,v 11.6 2000/12/26 14:01:22 tom Exp $
+.\" $Id: copy.man,v 11.7 2000/12/26 18:09:30 tom Exp $
 .de DS
 .RS
 .nf
@@ -110,9 +110,9 @@ do not exist in the destination.
 .B \-v
 verbose mode directs \fBcopy\fR to print the
 names (to standard error) of the files which it copies.
-On Apollo,
-repeating this option causes \fBcopy\fR to show the underlying
-"\fBcpf\fR" command as well.
+.TP
+.B \-z
+omit dot-files (names beginning with '.').
 .TP
 .B \-S
 (Linux only) tells \fBcopy\fR that the source is on a filesystem using local
@@ -142,9 +142,6 @@ existing directory rather than create a new one.
 .SH FILES
 .PP
 \fBCopy\fR is a single binary file, "copy".
-On the Apollo DOMAIN/IX\*R system it invokes the
-native "cpf" or "cp" command to copy files
-while preserving their object types (see OBTY).
 .SH ANTICIPATED CHANGES
 .PP
 \fBCopy\fR does not currently know how to handle special files

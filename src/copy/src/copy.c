@@ -3,7 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
- *		26 Dec 2000, add -p option.  Make copy-dir less verbose.
+ *		26 Dec 2000, add -p, -z options.  Make copy-dir less verbose.
  *			     Resolve conflict between -u and -U options.
  *		15 Jan 1999, use pathcat2 when combining data read from the
  *			     directory entries, since "~" does not mean anything
@@ -112,7 +112,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.23 2000/12/26 16:06:58 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.24 2000/12/26 18:06:35 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -149,7 +149,8 @@ static	int	d_opt,		/* obtain source from destination arg */
 		p_opt,		/* true if we try to preserve ownership */
 		s_opt,		/* enable set-uid/gid in target files */
 		u_opt,		/* update (1=all, 2=newer) */
-		v_opt;		/* verbose */
+		v_opt,		/* verbose */
+		z_opt;		/* no dotfiles or dot-directories */
 
 /************************************************************************
  *	local procedures						*
@@ -290,7 +291,7 @@ int	SetOwner(
 	if (p_opt) {
 		DEBUG("++ chown %03o %s\n", uid, path);
 		DEBUG("++ chgrp %03o %s\n", gid, path);
-		if (!n_opt && (chown(path, uid, gid) < 0)) {
+		if (!n_opt && (chown(path, uid, gid) < 0) && getuid() == 0) {
 			problem("chown", path);
 			return -1;
 		}
@@ -677,6 +678,9 @@ int	copyit(
 		bfr2[BUFSIZ],
 		temp[BUFSIZ];
 
+	if (z_opt && *fleaf(src) == '.')
+		return 0;
+
 	abshome(strcpy(bfr1, src));
 	abshome(strcpy(bfr2, dst));
 	src_sb.st_mode =
@@ -798,7 +802,7 @@ int	copyit(
 				(void)fflush(stdout);
 				FPRINTF(stderr, "%s ? ", dst);
 				(void)fflush(stderr);
-				if (gets(temp)) {
+				if (fgets(temp, sizeof(temp), stdin)) {
 					if (*temp != 'y' && *temp != 'Y')
 						return forced;
 				} else
@@ -1051,7 +1055,7 @@ _MAIN
 {
 	register int	j;
 
-	while ((j = getopt(argc, argv, "dfilmnpsuUvSDF:")) != EOF) switch (j) {
+	while ((j = getopt(argc, argv, "dfilmnpsuUvzSDF:")) != EOF) switch (j) {
 	case 'd':	d_opt = TRUE;	break;
 	case 'f':	f_opt = TRUE;	break;
 	case 'i':	i_opt = TRUE;	break;
@@ -1065,6 +1069,7 @@ _MAIN
 	case 'u':	u_opt = 1;	break;
 	case 'U':	u_opt = 2;	break;
 	case 'v':	v_opt++;	break;
+	case 'z':	z_opt = TRUE;	break;
 #if	DOS_VISIBLE
 	case 'S':	src_type = MsDos;		break;
 	case 'D':	dst_type = MsDos;		break;

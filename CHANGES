@@ -1,3 +1,12 @@
+2000-12-28  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/checkout/src/checkout.c:
+	ugh: going to Slackware 7.1 (and Mandrake 7.1, at least), I had to recompile
+	the rcs programs because they give me an unspecified "Permission denied"
+	when doing co from checkout.  Recompiling makes that go away, but I'm left
+	with co leaving the ,v file owned by root when checkout is setuid'd to root.
+	So I tweaked that here.
+
 2000-12-26  Thomas E. Dickey  <dickey@clark.net>
 
 	* user/copy.man: omit dot-files
