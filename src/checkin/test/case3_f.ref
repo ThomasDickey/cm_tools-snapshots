@@ -1,0 +1,36 @@
+
+RCS file:        junk/RCS/dummy,v;   Working file:    junk/dummy
+head:            4.1
+branch:          
+locks:           USER: 2.3.3.1;  strict
+access list:     USER
+symbolic names:  case3_f: 2.3.3.1;  case3_e: 2.3.2.1;  case3_d: 4.1;  case3_c: 2.3;  case3_b: 2.2;
+comment leader:  "# "
+total revisions: 6;    selected revisions: 6
+description:
+----------------------------
+revision 4.1        
+date: 90/02/02 12:34:56;  author: USER;  state: Exp;  lines added/del: 0/0
+no-change
+----------------------------
+revision 2.3        
+date: 90/02/02 12:34:56;  author: USER;  state: Exp;  lines added/del: 1/0
+branches:  2.3.2;  2.3.3;  
+new-line
+----------------------------
+revision 2.2        
+date: 89/02/02 12:34:56;  author: USER;  state: Exp;  lines added/del: 2/2
+new-date
+----------------------------
+revision 2.1        
+date: 88/01/01 12:34:56;  author: USER;  state: Exp;  
+RCS_BASE
+----------------------------
+revision 2.3.3.1        locked by: USER;       
+date: 90/03/04 12:34:56;  author: USER;  state: Exp;  lines added/del: 0/0
+modify-branch
+----------------------------
+revision 2.3.2.1        
+date: 90/03/02 12:34:56;  author: USER;  state: Exp;  lines added/del: 0/0
+new-branch
+=============================================================================

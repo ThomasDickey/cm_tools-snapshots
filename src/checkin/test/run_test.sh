@@ -1,40 +1,56 @@
 #!/bin/sh
-# $Id: run_test.sh,v 10.0 1991/10/18 07:48:37 ste_cm Rel $
-# test-script for RCS checkin-package.  Cannot really test setuid mode from
-# a dumb script, but this does at least verify that the code is "sane".
+# $Id: run_test.sh,v 10.12 1992/02/11 12:41:23 dickey Exp $
 #
-date
-rm -rf junk
-mkdir junk
-cp Makefile junk/dummy
-cd junk
-PROG=../../bin/checkin
+#	Runs regression tests for 'checkin' and 'rcsput'
 #
-touch null_description
+if test $# != 0
+then
+	echo '** '`date`
+	PATH=`cd ../bin;pwd`:`pwd`:$PATH; export PATH
+	RCS_DIR=RCS;	export RCS_DIR
+	RCS_BASE="";	export RCS_BASE
+	RCS_COMMENT="";	export RCS_COMMENT
 
-cat <<eof/
-**
-**	Show the original date for the new file:
-eof/
-ls -l dummy
+	rm -rf junk null_description
+	trap "rm -rf junk null_description" 0
+	mkdir junk
+	touch null_description
 
-cat <<eof/
-**
-**	Archive the file:
-eof/
-$PROG -u -tnull_description dummy
-
-cat <<eof/
-**
-**	Show the resulting date for the new file:
-eof/
-ls -l dummy
-
-cat <<eof/
-**
-**	Show the RCS log for the new file 'dummy':
-eof/
-rlog dummy
-#
-cd ..
-rm -rf junk
+	for N in $*
+	do
+		name=`basename $N .sh`
+		if test ! -f $name.sh
+		then	continue
+		fi
+		echo '**'
+		echo '** testing '$name
+		. $name.sh
+		for NN in ${name}_*.sh
+		do
+			if test ! -f $NN
+			then	break
+			fi
+			NAME=`basename $NN .sh`
+			rm -f $NAME.out $NAME.log
+			. $NN
+			rlog $WORK | sed -e s@`whoami`@USER@g >$NAME.log
+			if test -f $NAME.ref
+			then
+				if cmp -s $NAME.log $NAME.ref
+				then
+					echo '** ok   '$NAME
+					rm -f $NAME.log
+				else
+					echo '?? diff '$NAME.log
+					mv junk/$RCS_DIR/$WORK,v $NAME.out
+					exit 1
+				fi
+			else
+				echo '** save '$NAME.ref
+				mv $NAME.log $NAME.ref
+			fi
+		done
+	done
+else
+	$0 case?.sh
+fi

@@ -1,11 +1,12 @@
-# $Id: Makefile,v 10.0 1991/10/21 08:33:07 ste_cm Rel $
+# $Id: Makefile,v 11.0 1992/02/27 09:56:22 ste_cm Rel $
 # Top-level make-file for CM_TOOLS
 # (see also CM_TOOLS/src/common)
-#
 
 ####### (Development) ##########################################################
 INSTALL_BIN = ../install_bin
 INSTALL_MAN = ../install_man
+
+GET	= checkout
 COPY	= cp -p
 MAKE	= make $(MFLAGS) -k$(MAKEFLAGS) CFLAGS="$(CFLAGS)" COPY="$(COPY)"
 THIS	= cm_tools
@@ -59,9 +60,14 @@ destroy::	$(MFILES)
 	cd user;	$(MAKE) $@
 	cd bin;		$(MAKE) $@
 
+clean\
+clobber::
+	rm -f *.bak *.log *.out core
+
 clobber::
 	rm -rf $(HACKS) $(MKFILE) $(DIRS)
 
+lintlib\
 lint.out\
 lincnt.out:	$(FIRST)
 	cd src;		$(MAKE) $@
@@ -86,7 +92,7 @@ destroy::
 .first:		$(FIRST)
 
 $(MFILES)\
-$(SOURCES):			; checkout -x $@
+$(SOURCES):			; $(GET) $@
 $(DIRS):			; mkdir $@
 
 # Embed default installation path in places where we want it compiled-in.
@@ -104,10 +110,10 @@ user/makefile:	user/Makefile	Makefile
 # been removed from our path as part of a clean-build.
 interface/rcspath.h:		Makefile
 	rm -f $@
-	echo "#define	RCS_PATH	\"$(RCS_PATH)\"" >$@
-	sh -c 'if ( grep "\"no\ rcs\ in" $@ )\
+	echo "#define RCS_PATH \"$(RCS_PATH)\"" >$@
+	@sh -c 'if ( grep "\"no\ rcs\ in" $@ )\
 		then echo "#define RCS_PATH \"`cd $(INSTALL_BIN);pwd`/\"" >$@;\
-		else echo found rcs-path; fi'
+		else echo ...found rcs-path; fi'
 
 # We use the 'copy' utility rather than the unix 'cp' utility, since it
 # preserves file-dates.  This is normally not in your path when first building

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.c,v 10.0 1991/10/18 07:52:26 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.c,v 11.0 1992/02/06 12:57:07 ste_cm Rel $";
 #endif
 
 /*
@@ -7,6 +7,8 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		06 Feb 1992, revised filename-parsing with 'rcsargpair()',
+ *			     obsoleted "-x" option.
  *		11 Oct 1991, converted to ANSI
  *		25 Sep 1991, added options R and L. Ensure that RCS-directory
  *			     exists before trying to extract the file.
@@ -41,17 +43,11 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
 #include	<ptypes.h>
 #include	<rcsdefs.h>
 #include	<sccsdefs.h>
-
-#define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
-#define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
-
-#ifdef	S_IFLNK
-#define	isLINK(mode)	((mode & S_IFMT) == S_IFLNK)
-#endif
+#include	<errno.h>
 
 #define	VERBOSE	if (!quiet) PRINTF
 
-static	char	working[BUFSIZ];	/* working-directory for scan_archive */
+static	char	user_wd[BUFSIZ];/* working-directory for scan_archive */
 static	char	co_opts[BUFSIZ];
 static	char	*verb	= "checkout";
 static	int	a_opt;		/* all-directory scan */
@@ -59,7 +55,6 @@ static	int	R_opt;		/* recur/directory-mode */
 static	int	L_opt;		/* follow links */
 static	int	n_opt;		/* no-op mode */
 static	int	quiet;		/* "-q" option */
-static	int	x_opt;		/* "-x" option */
 
 static
 set_wd(
@@ -72,22 +67,29 @@ _DCL(char *,	path)
 }
 
 static
-checkout(
-_AR1(char *,	name))
-_DCL(char *,	name)
+void
+Checkout(
+_ARX(char *,	working)
+_AR1(char *,	archive)
+	)
+_DCL(char *,	working)
+_DCL(char *,	archive)
 {
 	auto	char	args[BUFSIZ];
 
-	catarg(strcpy(args, co_opts), name);
+	(void)strcpy(args, co_opts);
+	catarg(args, working);
+	catarg(args, archive);
 
 	if (!quiet || n_opt) shoarg(stdout, verb, args);
 	if (!n_opt) {
 		if (execute(verb, args) < 0)
-			failed(name);
+			failed(working);
 	}
 }
 
 static
+int
 an_archive(
 _AR1(char *,	name))
 _DCL(char *,	name)
@@ -98,7 +100,25 @@ _DCL(char *,	name)
 	&&  !strcmp(name + len_name - len_type, RCS_SUFFIX));
 }
 
+/*
+ * Test for directories that we don't try to scan
+ */
 static
+int
+ignore_dir(
+_AR1(char *,	path))
+_DCL(char *,	path)
+{
+	if (!a_opt && *pathleaf(path) == '.'
+	 && sameleaf(path, sccs_dir())) {
+		if (!quiet) PRINTF("...skip %s\n", path);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static
+void
 Ignore(
 _ARX(char *,	name)
 _AR1(char *,	why)
@@ -115,7 +135,7 @@ WALK_FUNC(scan_archive)
 {
 	auto	char	tmp[BUFSIZ];
 
-	if (!strcmp(working,path))	/* account for initial argument */
+	if (!strcmp(user_wd,path))	/* account for initial argument */
 		return (readable);
 	if (!isFILE(sp->st_mode)
 	||  !an_archive(name)) {
@@ -125,8 +145,8 @@ WALK_FUNC(scan_archive)
 	if (!strcmp(vcs_file((char *)0, strcpy(tmp,name),FALSE), name))
 		return (readable);
 
-	set_wd(working);
-	checkout(rcs2name(strcpy(tmp, name),x_opt));
+	set_wd(user_wd);
+	Checkout(name, pathcat(tmp, rcs_dir(), name));
 	set_wd(path);
 	return(readable);
 }
@@ -136,7 +156,7 @@ WALK_FUNC(scan_tree)
 {
 	auto	char	tmp[BUFSIZ],
 			*s = pathcat(tmp, path, name);
-	auto	struct	stat	sb;
+	auto	STAT	sb;
 
 	if (RCS_DEBUG)
 		PRINTF("++ %s%sscan (%s, %s, %s%d)\n",
@@ -144,20 +164,20 @@ WALK_FUNC(scan_tree)
 			L_opt ? "L " : "",
 			path, name, (sp == 0) ? "no-stat, " : "", level);
 
+	if (!quiet || n_opt)
+		track_wd(path);
+
 	if (sp == 0) {
 		if (R_opt && (level > 0)) {
 			Ignore(name, " (no such file)");
-		} else
-			checkout(name);
+		}
 	} else if (isDIR(sp->st_mode)) {
 		abspath(s);		/* get rid of "." and ".." names */
-		if (!a_opt && *pathleaf(s) == '.')
-			readable = -1;
-		else if (sameleaf(s, sccs_dir()))
+		if (ignore_dir(s))
 			readable = -1;
 		else if (sameleaf(s, rcs_dir())) {
 			if (R_opt) {
-				(void)walktree(strcpy(working,path),
+				(void)walktree(strcpy(user_wd,path),
 					name, scan_archive, "r", level);
 			}
 			readable = -1;
@@ -167,22 +187,10 @@ WALK_FUNC(scan_tree)
 			&&  (lstat(s, &sb) < 0 || isLINK(sb.st_mode))) {
 				Ignore(name, " (is a link)");
 				readable = -1;
-			} else
+			}
 #endif
-			if (!quiet || n_opt)
-				track_wd(path);
 		}
-	} else if (isFILE(sp->st_mode)) {
-		if (!quiet || n_opt)
-			track_wd(path);
-		if (R_opt && (level > 0)) {
-			;
-		} else if (stat(name2rcs(name,x_opt), &sb) >= 0
-		    &&	isFILE(sb.st_mode))
-			checkout(name);
-		else
-			Ignore(name, RCS_DEBUG ? " (no archive for it)" : "");
-	} else {
+	} else if (!isFILE(sp->st_mode)) {
 		Ignore(name, RCS_DEBUG ? " (not a file)" : "");
 		readable = -1;
 	}
@@ -190,14 +198,14 @@ WALK_FUNC(scan_tree)
 }
 
 static
+void
 do_arg(
 _AR1(char *,	name))
 _DCL(char *,	name)
 {
-	VERBOSE("** process %s\n", name);
 #ifdef	S_IFLNK
 	if (!L_opt) {
-		struct	stat	sb;
+		STAT	sb;
 		if (lstat(name, &sb) >= 0 && isLINK(sb.st_mode)) {
 			Ignore(name, " (is a link)");
 			return;
@@ -208,6 +216,7 @@ _DCL(char *,	name)
 }
 
 static
+void
 usage(
 _AR1(int,	option))
 _DCL(int,	option)
@@ -228,7 +237,7 @@ _DCL(int,	option)
 	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
 		FPRINTF(stderr, "%s\n", tbl[j]);
 	if (option == '?')
-		checkout("-?");
+		(void)execute(verb, "-?");
 	exit(FAIL);
 }
 
@@ -237,38 +246,52 @@ _MAIN
 {
 	register int	j;
 	register char	*s, *t;
-	auto	 int	had_args = FALSE;
 
 	track_wd((char *)0);
-	for (j = 1; j < argc; j++) {
-		if (*(s = argv[j]) == '-') {
-			t = s + strlen(s);
-			if (strchr("lpqrcswjx", s[1]) != 0) {
-				catarg(co_opts, s);
-				switch (s[1]) {
-				case 'q':	quiet = TRUE;	break;
-				case 'x':	x_opt = TRUE;	break;
-				}
-			} else while (s[1]) {
-				switch (s[1]) {
-				case 'a':	a_opt = TRUE;	break;
-				case 'R':
-				case 'd':	R_opt = TRUE;	break;
-				case 'L':	L_opt = TRUE;	break;
-				case 'n':	n_opt = TRUE;	break;
-				case 'T':	verb  = s+2;	s = t; break;
-				default:	usage(s[1]);
-				}
-				s++;
+
+	/* process options */
+	for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
+		t = s + strlen(s);
+		if (strchr("lpqrcswj", s[1]) != 0) {
+			catarg(co_opts, s);
+			if (s[1] == 'q')
+				quiet = TRUE;
+		} else while (s[1]) {
+			switch (s[1]) {
+			case 'a':	a_opt = TRUE;		break;
+			case 'R':
+			case 'd':	R_opt = TRUE;		break;
+			case 'L':	L_opt = TRUE;		break;
+			case 'n':	n_opt = TRUE;		break;
+			case 'T':	verb  = s+2;	s = t;	break;
+			default:	usage(s[1]);
 			}
-		} else {
-			do_arg(s);
-			had_args = TRUE;
+			s++;
 		}
 	}
 
-	if (!had_args)
+	/* process filenames */
+	if (j < argc) {
+		while (j < argc) {
+			char	working[MAXPATHLEN];
+			char	archive[MAXPATHLEN];
+			STAT	sb;
+
+			j = rcsargpair(j, argc, argv);
+			if (rcs_working(working, &sb) < 0 && errno != EISDIR)
+				failed(working);
+
+			if (isDIR(sb.st_mode)) {
+				if (!ignore_dir(working))
+					do_arg(working);
+			} else {
+				(void)rcs_archive(archive, (STAT *)0);
+				Checkout(working, archive);
+			}
+		}
+	} else
 		do_arg(".");
+
 	exit(SUCCESS);
 	/*NOTREACHED*/
 }

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 10.0 1991/10/18 07:42:28 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 10.6 1992/02/07 11:14:20 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,9 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		05 Feb 1992, revised filename-parsing with 'rcsargpair()',
+ *			     obsoleted "-x".
+ *		04 Feb 1992, pass piped-in text via "-m" option.
  *		11 Oct 1991, converted to ANSI
  *		01 Oct 1991, added "-B" option for 'checkin'
  *		13 Sep 1991, moved 'filesize()' to common-lib
@@ -38,15 +41,14 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
 #include	<ptypes.h>
 #include	<rcsdefs.h>
 #include	<sccsdefs.h>
-extern	FILE	*popen();
-extern	char	*tmpnam();
+#include	<dyn_string.h>
+extern	FILE	*popen(_arx(char *,cmd) _ar1(char *,mode));
+extern	char	*tmpnam(_ar1(char *,name));
 
-#define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
-#define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
 #define	VERBOSE		if (!quiet) PRINTF
 
-static	char	ci_opts[BUFSIZ];
-static	char	diff_opts[BUFSIZ];
+static	DYN *	ci_opts;
+static	DYN *	diff_opts;
 static	char	*verb = "checkin";
 static	FILE	*log_fp;
 static	int	a_opt;		/* all-directory scan */
@@ -54,7 +56,6 @@ static	int	no_op;		/* no-op mode */
 static	char	*pager;		/* nonzero if we don't cat diffs */
 static	int	force;
 static	int	quiet;
-static	int	x_opt;
 
 static
 cat2fp(
@@ -81,19 +82,34 @@ different(
 _AR1(char *,	working))
 _DCL(char *,	working)
 {
+	static	DYN	*cmds, *opts;
+	static	char	*prog = "rcsdiff";
+
 	auto	FILE	*ifp, *ofp;
 	auto	char	buffer[BUFSIZ],
 			out_diff[BUFSIZ];
 	auto	int	changed	= FALSE;
 	auto	size_t	n;
 
-	FORMAT(buffer, "rcsdiff %s %s", diff_opts, working);
-	VERBOSE("%% %s\n", buffer);
+	dyn_init(&opts, BUFSIZ);
+	APPEND(opts, dyn_string(diff_opts));
+	CATARG(opts, working);
+
+	if (!quiet) shoarg(stdout, prog, dyn_string(opts));
+
+	/* kludgey, but we don't do many pipes */
+	dyn_init(&cmds, dyn_length(opts) + strlen(prog) + 2);
+	APPEND(cmds, prog);
+	APPEND(cmds, " ");
+	(void) bldcmd(dyn_string(cmds) + dyn_length(cmds),
+		      dyn_string(opts),  dyn_length(opts));
+
 	if (!tmpnam(out_diff) || !(ofp = fopen(out_diff,"w")))
 		failed("tmpnam");
 
-	if (!(ifp = popen(buffer, "r")))
+	if (!(ifp = popen(dyn_string(cmds), "r")))
 		failed("popen");
+
 	/* copy the result to a file so we can send it two places */
 	while ((n = fread(buffer, sizeof(char), sizeof(buffer), ifp)) > 0) {
 		if (fwrite(buffer, sizeof(char), n, ofp) != n)
@@ -116,7 +132,7 @@ _DCL(char *,	working)
 			PRINTF("appending to logfile");
 			cat2fp(log_fp, out_diff);
 		}
-	} else {
+	} else if (!quiet) {
 		PRINTF("*** no differences found ***\n");
 	}
 
@@ -127,14 +143,14 @@ _DCL(char *,	working)
 static
 checkin(
 _ARX(char *,	path)
-_AR1(char *,	name)
+_ARX(char *,	working)
+_AR1(char *,	archive)
 	)
 _DCL(char *,	path)
-_DCL(char *,	name)
+_DCL(char *,	working)
+_DCL(char *,	archive)
 {
-	auto	char	args[BUFSIZ];
-	auto	char	*working = rcs2name(name,x_opt);
-	auto	char	*archive = name2rcs(name,x_opt);
+	static	DYN	*args;
 	auto	int	first;
 
 	if (first = (filesize(archive) < 0)) {
@@ -158,23 +174,45 @@ _DCL(char *,	name)
 		}
 	}
 
-	(void)strcpy(args, ci_opts);
-	catarg(args, working);
+	dyn_init(&args, BUFSIZ);
+	(void) dyn_append(args, dyn_string(ci_opts));
+	CATARG(args, working);
+	CATARG(args, archive);
 
 	if (!no_op) {
 		PRINTF("*** %s \"%s\"\n",
 			first	? "Initial RCS insertion of"
 				: "Applying RCS delta to",
-			name);
-		if (!quiet) shoarg(stdout, verb, args);
-		if (execute(verb, args) < 0)
-			failed(working);
+			working);
 	} else {
 		PRINTF("--- %s \"%s\"\n",
 			first	? "This would be initial for"
 				: "Delta would be applied to",
-			name);
+			working);
 	}
+
+	if (!quiet) shoarg(stdout, verb, dyn_string(args));
+	if (!no_op) {
+		if (execute(verb, dyn_string(args)) < 0)
+			failed(working);
+	}
+}
+
+/*
+ * Test for directories that we don't try to scan
+ */
+static
+int
+ignore_dir(
+_AR1(char *,	path))
+_DCL(char *,	path)
+{
+	if (sameleaf(path, sccs_dir())
+	||  sameleaf(path, rcs_dir())) {
+		if (!quiet) PRINTF("...skip %s\n", path);
+		return TRUE;
+	}
+	return FALSE;
 }
 
 /*ARGSUSED*/
@@ -184,23 +222,27 @@ WALK_FUNC(scan_tree)
 	auto	char	tmp[BUFSIZ],
 			*s = pathcat(tmp, path, name);
 
+	if (RCS_DEBUG)
+		PRINTF("++ scan %s / %s\n", path, name);
+
 	if (sp == 0 || readable < 0) {
 		readable = -1;
-		perror(name);
-		if (!force)
-			exit(FAIL);
+		if (!ignore_dir(s)) {	/* could be RCS-dir we cannot scan */
+			perror(name);
+			if (!force)
+				exit(FAIL);
+		}
 	} else if (isDIR(sp->st_mode)) {
 		abspath(s);		/* get rid of "." and ".." names */
 		if (!a_opt && *pathleaf(s) == '.')
 			readable = -1;
-		else if (sameleaf(s, sccs_dir())
-		    ||	 sameleaf(s, rcs_dir()))
+		else if (ignore_dir(s))
 			readable = -1;
 		else
 			track_wd(path);
 	} else if (isFILE(sp->st_mode)) {
 		track_wd(path);
-		checkin(path,name);
+		checkin(path, name, name2rcs(name,FALSE));
 	} else
 		readable = -1;
 
@@ -245,49 +287,75 @@ _MAIN
 {
 	register int	j;
 	register char	*s;
-	auto	 int	had_args = FALSE;
+	auto	 char	*cat_input = 0;
+	auto	 int	m_opt	 = FALSE;
+	auto	 char	original[MAXPATHLEN];
+
+	if (!isatty(fileno(stdin)) && interactive())
+		cat_input = strtrim(file2mem("-"));
 
 	track_wd((char *)0);
 	pager = dftenv("more -l", "PAGER");
-	for (j = 1; j < argc; j++) {
-		if (*(s = argv[j]) == '-') {
-			if (strchr("BqrfklumnNstx", s[1]) != 0) {
-				catarg(ci_opts, s);
-				switch (s[1]) {
-				case 'f':
-					force = TRUE;
-					break;
-				case 'q':
-					quiet = TRUE;
-					catarg(diff_opts, s);
-					break;
-				case 'x':
-					x_opt = TRUE;
-				}
-			} else {
-				switch (s[1]) {
-				case 'a':	a_opt = TRUE;		break;
-				case 'b':
-				case 'h':	catarg(diff_opts, s);	break;
-				case 'c':	pager = 0;		break;
-				case 'd':	no_op = TRUE;		break;
-				case 'L':	if (s[2] == EOS)
-							s = "logfile";
-						if (!(log_fp = fopen(s, "a+")))
-							usage(0);
-						break;
-				case 'T':	verb = s+2;		break;
-				default:	usage(s[1]);
-				}
+
+	if (!getwd(original))
+		failed("getwd");
+
+	dyn_init(&ci_opts, BUFSIZ);
+	dyn_init(&diff_opts, BUFSIZ);
+
+	/* process options */
+	for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
+		if (strchr("BqrfklumnNst", s[1]) != 0) {
+			CATARG(ci_opts, s);
+			switch (s[1]) {
+			case 'f':	force = TRUE;		break;
+			case 'm':	m_opt = TRUE;		break;
+			case 'q':	quiet = TRUE;
+					CATARG(diff_opts, s);	break;
 			}
 		} else {
-			do_arg(s);
-			had_args = TRUE;
+			switch (s[1]) {
+			case 'a':	a_opt = TRUE;		break;
+			case 'b':
+			case 'h':	CATARG(diff_opts, s);	break;
+			case 'c':	pager = 0;		break;
+			case 'd':	no_op = TRUE;		break;
+			case 'L':	if (s[2] == EOS)
+						s = "logfile";
+					if (!(log_fp = fopen(s, "a+")))
+						usage(0);
+					break;
+			case 'T':	verb = s+2;		break;
+			default:	usage(s[1]);
+			}
 		}
 	}
 
-	if (!had_args)
+	if (cat_input && !m_opt)
+		CATARG2(ci_opts, "-m", cat_input);
+
+	/* process list of filenames */
+	if (j < argc) {
+		while (j < argc) {
+			char	working[MAXPATHLEN];
+			char	archive[MAXPATHLEN];
+			STAT	sb;
+
+			j = rcsargpair(j, argc, argv);
+			if (rcs_working(working, &sb) < 0)
+				failed(working);
+
+			if (isDIR(sb.st_mode)) {
+				if (!ignore_dir(working))
+					do_arg(working);
+			} else {
+				(void)rcs_archive(archive, (STAT *)0);
+				checkin(original, working, archive);
+			}
+		}
+	} else
 		do_arg(".");
+
 	exit(SUCCESS);
 	/*NOTREACHED*/
 }

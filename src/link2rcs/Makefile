@@ -1,11 +1,13 @@
-# $Id: Makefile,v 10.0 1991/10/18 12:30:02 ste_cm Rel $
+# $Id: Makefile,v 11.0 1992/02/27 09:56:54 ste_cm Rel $
 # Top-level makefile for RCS skeleton tree utility
 
 ####### (Development) ##########################################################
 B	= ../../bin
 L	= ../common/lib
 
+GET	= checkout
 COPY	= cp -p
+PUT	= rm -f $@; $(COPY) $? $@
 MAKE	= make $(MFLAGS) -k$(MAKEFLAGS)	CFLAGS="$(CFLAGS)" COPY="$(COPY)"
 
 ####### (Standard Lists) #######################################################
@@ -42,5 +44,5 @@ deinstall:		; rm -f $(ALL)
 
 ####### (Details of Productions) ###############################################
 bin:				; mkdir $@
-$(MFILES):			; checkout -x $@
-$B/$(PROG):	bin/$(PROG)	; $(COPY) $? $@
+$(MFILES):			; $(GET) $@
+$B/$(PROG):	bin/$(PROG)	; $(PUT)

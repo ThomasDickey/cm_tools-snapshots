@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 10.0 1991/10/18 08:24:33 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.0 1992/02/17 15:21:03 ste_cm Rel $";
 #endif
 
 /*
@@ -7,6 +7,9 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RC
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		03 Feb 1992, ensure that if I am copying directory to name that
+ *			     happens to be a file, I leave the directory mode
+ *			     executable.
  *		11 Oct 1991, convert to ANSI
  *		31 May 1991, lint (SunOs): ifdef'd out 'convert()'
  *		20 May 1991, mods to compile on apollo sr10.3
@@ -98,12 +101,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RC
 #define	VERBOSE	if (v_opt) TELL
 #define	DEBUG	if (v_opt > 1)	TELL
 
-#define	isFILE(s)	((s.st_mode & S_IFMT) == S_IFREG)
-#define	isDIR(s)	((s.st_mode & S_IFMT) == S_IFDIR)
-
-#ifdef	S_IFLNK
-#define	isLINK(s)	((s.st_mode & S_IFMT) == S_IFLNK)
-#else
+#ifndef	S_IFLNK
 #define	lstat	stat
 #endif	/* S_IFLNK */
 
@@ -232,6 +230,7 @@ _DCL(char *,	path)
  * to do the copy.
  */
 static
+int
 copyfile(
 _ARX(char *,	src)
 _ARX(char *,	dst)
@@ -316,6 +315,7 @@ _DCL(struct stat *,new_sb)
 
 #ifdef	S_IFLNK
 static
+int
 copylink(
 _ARX(char *,	src)
 _AR1(char *,	dst)
@@ -340,6 +340,7 @@ _DCL(char *,	dst)
 #endif	/* S_IFLNK */
 
 static
+int
 copydir(
 _ARX(char *,	src)
 _ARX(char *,	dst)
@@ -369,10 +370,13 @@ _DCL(int,	previous)
 	if (previous >= 0) {	/* called from 'copyit()' */
 		VERBOSE "** make directory \"%s\"\n", dst);
 		if (!n_opt) {
-			if (mkdir(bfr1, 0755) < 0) {
+			int	omask	= umask(0);
+			int	ok_make	= mkdir(bfr1, 0755) == 0;
+			(void)umask(omask);
+			if (!ok_make) {
 				auto	int		save = errno;
 				auto	struct	stat	sb;
-				if ((stat(bfr1, &sb) < 0) || !isDIR(sb)) {
+				if ((stat(bfr1, &sb) < 0) || !isDIR(sb.st_mode)) {
 					errno = save;
 					perror(dst);
 					return (-1);
@@ -398,6 +402,7 @@ _DCL(int,	previous)
  * Set up and perform a COPY
  */
 static
+int
 copyit(
 _ARX(char *,	src)
 _AR1(char *,	dst)
@@ -431,7 +436,7 @@ _DCL(char *,	dst)
 	DEBUG "** src: \"%s\"\n** dst: \"%s\"\n", bfr1, bfr2);
 
 	if (!no_dir_yet) {
-		if (isDIR(dst_sb))
+		if (isDIR(dst_sb.st_mode))
 			(void)strcpy(temp, bfr2);
 		else
 			(void)strcpy(temp, pathhead(bfr2, &dst_sb));
@@ -450,11 +455,11 @@ _DCL(char *,	dst)
 		return;
 	}
 #endif
-	if (!isFILE(src_sb)
+	if (!isFILE(src_sb.st_mode)
 #ifdef	S_IFLNK
-	&&  !isLINK(src_sb)
+	&&  !isLINK(src_sb.st_mode)
 #endif
-	&&  !isDIR(src_sb)) {
+	&&  !isDIR(src_sb.st_mode)) {
 		TELL "?? not a file: \"%s\"\n", src);
 		return;
 	}
@@ -463,9 +468,9 @@ _DCL(char *,	dst)
 
 	/* Check to see if we can overwrite the destination */
 	if (num = (lstat(dst, &dst_sb) >= 0)) {
-		if (isFILE(dst_sb)
+		if (isFILE(dst_sb.st_mode)
 #ifdef	S_IFLNK
-		||  isLINK(dst_sb)
+		||  isLINK(dst_sb.st_mode)
 #endif
 		) {
 			if (i_opt) {
@@ -476,7 +481,7 @@ _DCL(char *,	dst)
 				} else
 					return;
 			}
-		} else if (isDIR(dst_sb) && isDIR(src_sb)) {
+		} else if (isDIR(dst_sb.st_mode) && isDIR(src_sb.st_mode)) {
 			num = FALSE;	/* we will merge directories */
 		} else {
 			TELL "?? cannot overwrite \"%s\"\n", dst);
@@ -486,49 +491,52 @@ _DCL(char *,	dst)
 		dst_sb = src_sb;
 
 	/* Unless disabled, copy the file */
-	if (isDIR(src_sb) && copydir(src,dst,num) < 0)
+	if (isDIR(src_sb.st_mode) && copydir(src,dst,num) < 0)
 		return;
 
 	if (!n_opt) {
 #ifdef	S_IFLNK
-		if (num && !isDIR(src_sb) && isLINK(dst_sb)) {
+		if (num && !isDIR(src_sb.st_mode) && isLINK(dst_sb.st_mode)) {
 			if (unlink(dst) < 0) {
 				perror(dst);
 				return;
 			}
 		}
-		if (isLINK(src_sb)) {
+		if (isLINK(src_sb.st_mode)) {
 			if (copylink(src,dst) < 0)
 				return;
 		}
 #endif	/* S_IFLNK */
-		if (isFILE(src_sb) && copyfile(src,dst,num,&src_sb) < 0)
+		if (isFILE(src_sb.st_mode) && copyfile(src,dst,num,&src_sb) < 0)
 			return;
-		if (isFILE(src_sb) || isDIR(src_sb)) {
+		if (isFILE(src_sb.st_mode) || isDIR(src_sb.st_mode)) {
 			int	mode	= dst_sb.st_mode & 0777;
-			if (isFILE(src_sb) && s_opt) {
+			if (isFILE(src_sb.st_mode) && s_opt) {
 				mode	&= ~0222;	/* can't be writeable */
 				mode	|=  (S_ISUID | S_ISGID);
 			}
+			if (isDIR(src_sb.st_mode) && !isDIR(dst_sb.st_mode))
+				mode	&= 0111;
 			(void)chmod(dst, mode);
 			(void)setmtime(dst, src_sb.st_mtime);
 		}
 	}
 
-	if (isDIR(src_sb))
+	if (isDIR(src_sb.st_mode))
 		total_dirs++;
 
-	if (isFILE(src_sb)) {
+	if (isFILE(src_sb.st_mode)) {
 		total_files++;
 		total_bytes += src_sb.st_size;
 	}
 #ifdef	S_IFLNK
-	if (isLINK(src_sb))
+	if (isLINK(src_sb.st_mode))
 		total_links++;
 #endif
 }
 
 static
+void
 usage(_AR0)
 {
 	auto	char	bfr[BUFSIZ];
@@ -559,6 +567,7 @@ usage(_AR0)
  * Process argument list, turning it into source/destination pairs
  */
 static
+void
 arg_pairs(
 _ARX(int,	argc)
 _AR1(char **,	argv)
@@ -590,10 +599,10 @@ _DCL(char **,	argv)
 	if (ok_dst) {
 
 		if (m_opt) {
-			if (num == 2 && isDIR(dst_sb)) {
+			if (num == 2 && isDIR(dst_sb.st_mode)) {
 				VERBOSE "** merge directories\n");
 				if ((lstat(argv[optind], &src_sb) >= 0)
-				&&  (isDIR(src_sb))) {
+				&&  (isDIR(src_sb.st_mode))) {
 					(void)copydir(
 						argv[optind],
 						argv[argc-1], -1);
@@ -604,7 +613,7 @@ _DCL(char **,	argv)
 			usage();
 		}
 
-		if (isDIR(dst_sb)) {
+		if (isDIR(dst_sb.st_mode)) {
 			/* copy one or more items into directory */
 			for (j = optind; j < argc-1; j++) {
 			auto	char	*s = dst + strlen(dst),
@@ -619,9 +628,9 @@ _DCL(char **,	argv)
 		} else if (num != 2) {
 			TELL "?? Destination is not a directory\n");
 			usage();
-		} else if (isFILE(dst_sb)
+		} else if (isFILE(dst_sb.st_mode)
 #ifdef	S_IFLNK
-			|| isLINK(dst_sb)
+			|| isLINK(dst_sb.st_mode)
 #endif
 		) {
 			copyit(argv[optind], dst);
@@ -643,6 +652,7 @@ _DCL(char **,	argv)
  * each argument.
  */
 static
+void
 derived(
 _ARX(int,	argc)
 _AR1(char **,	argv)

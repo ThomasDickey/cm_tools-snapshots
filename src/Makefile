@@ -1,8 +1,9 @@
-# $Id: Makefile,v 10.0 1991/10/11 08:50:11 ste_cm Rel $
+# $Id: Makefile,v 11.0 1992/02/27 09:56:25 ste_cm Rel $
 # Top-level makefile for CM_TOOLS src-directory
 #
 
 ####### (Development) ##########################################################
+GET	= checkout
 COPY	= cp -p
 MAKE	= make $(MFLAGS) -k$(MAKEFLAGS)	CFLAGS="$(CFLAGS)" COPY="$(COPY)"
 
@@ -41,10 +42,15 @@ deinstall::	$(MFILES)
 	cd permit;	$(MAKE) $@
 	cd vcs;		$(MAKE) $@
 
+clean\
+clobber::
+	rm -f *.bak *.log *.out core
+
 destroy::
 	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 
-rdestroy: destroy
+lintlib::	$(MFILES)
+	cd common;	$(MAKE) $@
 
 ####### (Details of Productions) ###############################################
-$(MFILES):		; checkout -x $@
+$(MFILES):		; $(GET) $@

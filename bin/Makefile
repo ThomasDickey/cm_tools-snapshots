@@ -1,40 +1,11 @@
-# $Id: Makefile,v 10.0 1991/10/11 12:03:36 ste_cm Rel $
-#
-# $Log: Makefile,v $
-# Revision 10.0  1991/10/11 12:03:36  ste_cm
-# BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
-#
-#	Revision 9.1  91/10/11  12:03:36  dickey
-#	added 'vcs' program
-#	
-#	Revision 9.0  89/10/13  13:57:35  ste_cm
-#	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
-#	
-#	Revision 8.0  89/10/13  13:57:35  ste_cm
-#	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
-#	
-#	Revision 7.0  89/10/13  13:57:35  ste_cm
-#	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
-#	
-#	Revision 6.0  89/10/13  13:57:35  ste_cm
-#	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
-#	
-#	Revision 5.0  89/10/13  13:57:35  ste_cm
-#	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
-#	
-#	Revision 4.1  89/10/13  13:57:35  dickey
-#	removed 'rdiff' from install-list
-#	
-#	Revision 4.0  89/08/22  08:23:21  ste_cm
-#	BASELINE Thu Aug 24 09:14:19 EDT 1989 -- support:navi_011(rel2)
-#	
+# $Id: Makefile,v 11.0 1992/02/04 10:01:51 ste_cm Rel $
 
 ####### (Development) ##########################################################
-INSTALL_PATH=/ste_site/ste/bin
+INSTALL_PATH=../../install_bin
 B	= $(INSTALL_PATH)
 
 ####### (Standard Lists) #######################################################
-ALL	=\
+IT	=\
 	$B/baseline\
 	$B/checkin\
 	$B/checkout\
@@ -49,15 +20,15 @@ ALL	=\
 	$B/vcs
 
 ####### (Standard Productions) #################################################
-all:		; @echo '** use "make install"'
-clean:
+all:
+clean:			; rm -f *.bak *.log *.out core
 clobber:	clean	; rm -f [a-z]*
 destroy:
 	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 run_tests:
 sources:
-install:	$(ALL)
-deinstall:	; rm -f $(ALL)
+install:	$(IT)
+deinstall:	; rm -f $(IT)
 
 ####### (Details of Productions) ###############################################
 USER	= ./copy -d $@

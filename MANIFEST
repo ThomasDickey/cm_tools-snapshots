@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19920117
+MANIFEST for cm_tools, version t19920228
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -31,7 +31,36 @@ src/checkin/src/checkin.c       wrapper for 'ci'
 src/checkin/src/rcsput.c        wrapper for 'checkin'
 src/checkin/test                subdirectory
 src/checkin/test/Makefile       make-file for RCS checkin-utility tests
+src/checkin/test/README         description of src/checkin/test
+src/checkin/test/case1.sh       script for case 1
+src/checkin/test/case1_a.ref    reference for case 1a
+src/checkin/test/case1_a.sh     script for case 1a
+src/checkin/test/case1_b.ref    reference for case 1b
+src/checkin/test/case1_b.sh     script for case 1b
+src/checkin/test/case2.sh       script for case 2
+src/checkin/test/case2_a.ref    reference for case 2a
+src/checkin/test/case2_a.sh     script for case 2a
+src/checkin/test/case2_b.ref    reference for case 2b
+src/checkin/test/case2_b.sh     script for case 2b
+src/checkin/test/case2_c.ref    reference for case 2c
+src/checkin/test/case2_c.sh     script for case 2c
+src/checkin/test/case2_d.ref    reference for case 2d
+src/checkin/test/case2_d.sh     script for case 2d
+src/checkin/test/case3.sh       script for case 3
+src/checkin/test/case3_a.ref    reference for case 3a
+src/checkin/test/case3_a.sh     script for case 3a
+src/checkin/test/case3_b.ref    reference for case 3b
+src/checkin/test/case3_b.sh     script for case 3b
+src/checkin/test/case3_c.ref    reference for case 3c
+src/checkin/test/case3_c.sh     script for case 3c
+src/checkin/test/case3_d.ref    reference for case 3d
+src/checkin/test/case3_d.sh     script for case 3d
+src/checkin/test/case3_e.ref    reference for case 3e
+src/checkin/test/case3_e.sh     script for case 3e
+src/checkin/test/case3_f.ref    reference for case 3f
+src/checkin/test/case3_f.sh     script for case 3f
 src/checkin/test/run_test.sh    test-script for RCS checkin-utility
+src/checkin/test/set_date.c     sets a date on a file (used here so I can use rlog's output in comparisons)
 src/checkout                    subdirectory
 src/checkout/Makefile           top-level makefile for 'checkout' utility
 src/checkout/src                subdirectory
@@ -92,6 +121,7 @@ src/vcs/test/unlock.ref         reference for 'vce' unlock-test
 support                         subdirectory
 support/Makefile                make-file for CM_TOOLS support utilities
 support/copy.sh                 copy-script to use til we have a working copy utility
+support/set_date.c              runs specific tool in rcs-path
 user                            subdirectory
 user/Makefile                   make-file (for installation and source-control) of user-documentation
 user/baseline.man               manual for baseline utility

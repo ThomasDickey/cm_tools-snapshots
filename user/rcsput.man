@@ -1,4 +1,4 @@
-.\" $Id: rcsput.man,v 10.0 1991/10/17 15:28:14 ste_cm Rel $
+.\" $Id: rcsput.man,v 11.0 1992/02/06 10:03:43 ste_cm Rel $
 .de DS
 .RS
 .nf
@@ -102,14 +102,6 @@ is specified, rcsput assumes "logfile".
 .BI \-T path
 specifies an alternate tool to invoke,
 overrides the default "\fBcheckin\fR".
-.TP
-.B \-x
-direct \fBrcsput\fR
-to retain the pathname when translating between working and archive
-files, e.g, "\fBpath/name\fR" becomes "\fBpath/RCS/name,v\fR".
-If the "\-\fBx\fR" option is not set, "\fBpath/name\fR"
-becomes "\fB./RCS/name,v\fR", and "\fBpath/RCS/name,v\fR"
-becomes "\fB./name\fR".
 .SH OPERATIONS
 .PP
 The \fBrcsput\fR utility is designed for use in small development
@@ -127,7 +119,7 @@ the convention is to make a string which will permit the \fBident\fR
 utility to show the versions of the modules which make up a program:
 .DS
 #ifndef	lint
-static	char	ident[] = "$Id: rcsput.man,v 10.0 1991/10/17 15:28:14 ste_cm Rel $";
+static	char	ident[] = "$\&Id: rcsput.man,v 10.1 92/02/06 10:01:45 dickey Exp $";
 #endif
 .DE
 .TP
