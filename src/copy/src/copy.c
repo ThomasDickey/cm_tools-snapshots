@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: copy.c,v 5.0 1989/10/10 16:06:35 ste_cm Rel $";
+static	char	Id[] = "$Id: copy.c,v 6.0 1990/01/24 13:15:02 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,22 @@ static	char	Id[] = "$Id: copy.c,v 5.0 1989/10/10 16:06:35 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * $Log: copy.c,v $
- * Revision 5.0  1989/10/10 16:06:35  ste_cm
- * BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+ * Revision 6.0  1990/01/24 13:15:02  ste_cm
+ * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
  *
+ *		Revision 5.2  90/01/24  13:15:02  dickey
+ *		added missing 'break' in 'skip_dots()' loop
+ *		
+ *		Revision 5.1  90/01/03  09:43:28  dickey
+ *		corrected handling of relative pathnames in source-args.
+ *		this is fixed by not passing the "../" constructs to the
+ *		destination-name!  also, modified the test for writeable
+ *		destination-directory so it handles directory-names (such
+ *		as "." or "~") which have no "/".
+ *		
+ *		Revision 5.0  89/10/10  16:06:35  ste_cm
+ *		BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+ *		
  *		Revision 4.3  89/10/10  16:06:35  dickey
  *		added code for apollo SR10.1 (ifdef'd to permit SR9 version)
  *		which uses the new 'cp' utility to copy files (and their
@@ -72,6 +85,10 @@ static	char	Id[] = "$Id: copy.c,v 5.0 1989/10/10 16:06:35 ste_cm Rel $";
  *
  * patch:	how do we keep from losing the destination file if we have a
  *		fault in the system?
+ *
+ * patch:	should add an option to copy link-targets
+ *
+ * patch:	should have an option to preserve the sense of hard-links.
  */
 
 #define		ACC_PTYPES	/* include access-definitions */
@@ -164,6 +181,35 @@ char	*dst, *src;
 }
 #endif		/* __STDC__	*/
 #endif		/* apollo	*/
+
+/*
+ * This procedure is used in the special case in which a user supplies source
+ * arguments beginning with ".." constructs.  Strip these off before appending
+ * to the destination-directory.
+ */
+static
+char	*
+skip_dots(path)
+char	*path;
+{
+	while (path[0] == '.') {
+		if (path[1] == '.') {
+			if (path[2] == '/')
+				path += 3;		/* skip "../" */
+			else {
+				if (path[2] == EOS)
+					path += 2;	/* skip ".." */
+				break;
+			}
+		} else if (path[1] == '/') {
+			path += 2;			/* skip "./" */
+		} else if (path[1] == EOS) {
+			path++;				/* skip "." */
+		} else
+			break;				/* other .name */
+	}
+	return (path);
+}
 
 /*
  * On apollo machines, each file has an object type, which is not necessarily
@@ -341,12 +387,17 @@ char	*src, *dst;
 
 	DEBUG "** src: \"%s\"\n** dst: \"%s\"\n", bfr1, bfr2);
 
-	if (!no_dir_yet && (s = strrchr(bfr2, '/'))) {
+	if (!no_dir_yet) {
+		if (stat(bfr2, &dst_sb) < 0
+		|| !isDIR(dst_sb)) {
+			if (s = strrchr(bfr2, '/')) {
 #ifdef	apollo
-		if ((s == (bfr2 + 1)) && (s[-1] == '/'))
-			s++;
+				if ((s == (bfr2 + 1)) && (s[-1] == '/'))
+					s++;
 #endif	apollo
-		*s = EOS;
+				*s = EOS;
+			}
+		}
 		if (access(bfr2, W_OK) < 0) {
 			TELL "?? directory is not writeable: \"%s\"\n", bfr2);
 			return;
@@ -492,11 +543,12 @@ char	*argv[];
 		if (isDIR(dst_sb)) {
 			/* copy one or more items into directory */
 			for (j = optind; j < argc-1; j++) {
-			char	*s = dst + strlen(dst);
+			auto	char	*s = dst + strlen(dst),
+					*t = skip_dots(argv[j]);
 				*s = EOS;
 				if (s[-1] != '/')
 					(void)strcpy(s, "/");
-				(void)strcat(s, pathleaf(argv[j]));
+				(void)strcat(s, pathleaf(t));
 				copyit(argv[j], dst);
 				*s = EOS;
 			}

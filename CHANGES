@@ -1,3 +1,42 @@
+1990-01-24  dickey@software.org
+
+	* src/copy/src/copy.c: added missing 'break' in 'skip_dots()' loop
+
+1990-01-24  ste_cm@software.org
+
+	* src/copy/src/copy.c:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-01-03  dickey@software.org
+
+	* src/baseline/src/baseline.c:
+	corrected code which infers baseline revision (if no rcs
+	directory existed, this did not notice!)
+
+1990-01-03  ste_cm@software.org
+
+	* src/baseline/src/baseline.c:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-01-03  dickey@software.org
+
+	* src/baseline/src/baseline.c:
+	added logic (for "-l" option) so that we can allow a locked
+	file to be baselined (if it is locked, but not changed).
+
+	* certify/release.txt: added notes about changes to 'baseline'
+
+	* src/baseline/src/baseline.c: added "-l" option for stluka
+
+	* certify/release.txt: added notes about changes to 'copy' and 'ded'
+
+	* src/copy/src/copy.c:
+	corrected handling of relative pathnames in source-args.
+	this is fixed by not passing the "../" constructs to the
+	destination-name!  also, modified the test for writeable
+	destination-directory so it handles directory-names (such
+	as "." or "~") which have no "/".
+
 1989-12-12  dickey@software.org
 
 	* src/checkout/src/checkout.c: lint (SunOs 4.0.3)
