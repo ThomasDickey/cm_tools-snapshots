@@ -1,4 +1,4 @@
-: '@(#)rcsput.sh	1.5 88/05/27 14:40:19'
+: '@(#)rcsput.sh	1.6 88/06/02 15:09:24'
 # Check-in one or more modules to RCS (T.E.Dickey).
 # This uses 'checkin' to maintain file modification dates as the checkin times.
 # 
@@ -19,9 +19,11 @@
 #	RUNLIB	- location of this & supporting code
 #
 # hacks to make this run on Apollo:
-SYS5=/sys5/bin
-#
-BASE=${RUNLIB-//dickey/local/dickey/bin}/checkin
+if [ -f /com/vt100 ]
+then	PATH=$PATH:/sys5/bin
+	BASE=${RUNLIB-//dickey/local/dickey/bin}/checkin
+else	BASE=${RUNLIB-/u1/dickey/bin}/checkin
+fi
 #
 BLANKS=
 SILENT=
@@ -37,12 +39,12 @@ for i in $*
 do	case $i in
 	-q*)	SILENT="-s"
 		REV="$REV $i";;
-	-[rfklumnNst])	REV="$REV $i";;
+	-[rfklumnNst]*)	REV="$REV $i";;
 	-L*)	F=`echo "$i" | sed -e s/-L//`
 		if [ -z "$F" ]
 		then	F="logfile"
 		fi
-		D=`$SYS5/dirname $F`
+		D=`dirname $F`
 		F=`basename $F`
 		cd $D
 		LOG=`pwd`/$F
@@ -64,7 +66,7 @@ for i in $*
 do
 	ACT=
 	cd $WD
-	D=`$SYS5/dirname $i`
+	D=`dirname $i`
 	F=`basename $i`
 	if [ -n "$LOG" ]
 	then	echo '*** '$WD/$i >>$LOG

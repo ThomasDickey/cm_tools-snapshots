@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkin.c	1.4 88/05/27 10:54:31";
+static	char	sccs_id[] = "@(#)checkin.c	1.5 88/06/13 07:02:43";
 #endif	lint
 
 /*
@@ -24,6 +24,9 @@ static	char	sccs_id[] = "@(#)checkin.c	1.4 88/05/27 10:54:31";
  *		user is permitted to check file in.  Or, Pyster wants to
  *		prohibit users from checkin files in (though they may have the
  *		right to make locks for checking files out).
+ *
+ *		Want the ability to set the default checkin-version on a global
+ *		basis (i.e., for directory) to other than 1.1 (again, pyster).
  */
 
 #include	"ptypes.h"
@@ -34,7 +37,6 @@ static	char	sccs_id[] = "@(#)checkin.c	1.4 88/05/27 10:54:31";
 #include	<time.h>
 extern	struct	tm *localtime();
 extern	FILE	*tmpfile();
-extern	long	adj2est();
 extern	char	*getuser();
 extern	char	*rcsname();
 extern	char	*rcsread(), *rcsparse_id(), *rcsparse_num(), *rcsparse_str();
@@ -179,14 +181,15 @@ char	*s	= 0,
 				break;
 			s = rcsparse_num(old_date, old = s);
 			if (*old_date) {
-			time_t	xtime	= mtime + adj2est(FALSE);
-			struct	tm *t	= localtime(&xtime);
+			struct	tm *t;
+				newzone(5,0,FALSE);	/* format for EST5EDT */
+				t = localtime(&mtime);
 				FORMAT(new_date, FMT_DATE,
 					t->tm_year, t->tm_mon + 1,
 					t->tm_mday, t->tm_hour,
 					t->tm_min,  t->tm_sec);
 				rcsedit(old, old_date, new_date);
-				set2est();	/* patch: restore my timezone */
+				oldzone();
 				TELL("** revision %s\n", revision);
 				TELL("** modified %s", ctime(&mtime));
 			}
