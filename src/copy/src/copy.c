@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.0 1992/02/17 15:21:03 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.5 1992/12/03 13:49:32 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,10 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RC
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		02 Dec 1992, use 'rmdir()' rather than 'unlink()'.  Added logic
+ *			     to ensure that we don't try to recreate a directory
+ *			     that already exists.  Added "-f" (force) option.
+ *		01 Dec 1992, renamed "-u" to "-S".  Added "-u" option.
  *		03 Feb 1992, ensure that if I am copying directory to name that
  *			     happens to be a file, I leave the directory mode
  *			     executable.
@@ -110,13 +114,14 @@ static	long	total_dirs,
 		total_files,
 		total_bytes;
 static	int	d_opt,		/* obtain source from destination arg */
+		f_opt,		/* force: write into protected destination */
 		i_opt,		/* interactive: force prompt before overwrite */
 		l_opt,		/* copy symbolic-link-targets */
 		m_opt,		/* merge directories */
 		n_opt,		/* true if we don't actually do copies */
 		s_opt,		/* enable set-uid/gid in target files */
+		u_opt,		/* update-only */
 		v_opt;		/* verbose */
-static	int	no_dir_yet;	/* disables access-test on destination-dir */
 
 /************************************************************************
  *	local procedures						*
@@ -137,13 +142,12 @@ static	int	no_dir_yet;	/* disables access-test on destination-dir */
  * not yet exist.
  */
 static
-char *
-convert(
-_ARX(char *,	dst)
-_AR1(char *,	src)
-	)
-_DCL(char *,	dst)
-_DCL(char *,	src)
+char *	convert(
+	_ARX(char *,	dst)
+	_AR1(char *,	src)
+		)
+	_DCL(char *,	dst)
+	_DCL(char *,	src)
 {
 	name_$pname_t	in_name, out_name;
 	short		in_len,
@@ -180,13 +184,12 @@ _DCL(char *,	src)
  * conflict between ".." trimming and symbolic links.
  */
 static
-char *
-convert(
-_ARX(char *,	dst)
-_AR1(char *,	src)
-	)
-_DCL(char *,	dst)
-_DCL(char *,	src)
+char *	convert(
+	_ARX(char *,	dst)
+	_AR1(char *,	src)
+		)
+	_DCL(char *,	dst)
+	_DCL(char *,	src)
 {
 	abshome(strcpy(dst, src));
 	return (dst);
@@ -200,10 +203,9 @@ _DCL(char *,	src)
  * to the destination-directory.
  */
 static
-char	*
-skip_dots(
-_AR1(char *,	path))
-_DCL(char *,	path)
+char *	skip_dots(
+	_AR1(char *,	path))
+	_DCL(char *,	path)
 {
 	while (path[0] == '.') {
 		if (path[1] == '.') {
@@ -225,22 +227,55 @@ _DCL(char *,	path)
 }
 
 /*
+ * Enable protection of a file temporarily, so we can write into it
+ */
+static
+int	ForceMode(
+	_ARX(char *,	path)
+	_AR1(int,	mode)
+		)
+	_DCL(char *,	path)
+	_DCL(int,	mode)
+{
+	DEBUG "++ chmod %03o %s\n", mode, path);
+	if (!n_opt)
+		if (chmod(path, mode) < 0) {
+			perror(path);
+			return -1;
+		}
+	return 0;
+}
+
+/*
+ * Restore protection of a file that we changed temporarily
+ */
+static
+void	RestoreMode(
+	_ARX(char *,	path)
+	_AR1(STAT *,	sb)
+		)
+	_DCL(char *,	path)
+	_DCL(STAT *,	sb)
+{
+	(void)ForceMode(path, (int)(sb->st_mode & 0777));
+}
+
+/*
  * On apollo machines, each file has an object type, which is not necessarily
  * mapped into the unix system properly.  Invoke the native APOLLO program
  * to do the copy.
  */
 static
-int
-copyfile(
-_ARX(char *,	src)
-_ARX(char *,	dst)
-_ARX(int,	previous)
-_AR1(struct stat *,new_sb)
-	)
-_DCL(char *,	src)
-_DCL(char *,	dst)
-_DCL(int,	previous)
-_DCL(struct stat *,new_sb)
+int	copyfile(
+	_ARX(char *,	src)
+	_ARX(char *,	dst)
+	_ARX(int,	previous)
+	_AR1(STAT *,	new_sb)
+		)
+	_DCL(char *,	src)
+	_DCL(char *,	dst)
+	_DCL(int,	previous)
+	_DCL(STAT *,	new_sb)
 {
 	int	retval	= -1;
 	char	bfr1[BUFSIZ];
@@ -275,7 +310,7 @@ _DCL(struct stat *,new_sb)
 		return (-1);
 	}
 	if (previous) {		/* verify that we copied file */
-		struct	stat	sb;
+		STAT	sb;
 		if (stat(dst, &sb) < 0)
 			return (-1);
 		if ((sb.st_mtime != new_sb->st_mtime)
@@ -291,7 +326,7 @@ _DCL(struct stat *,new_sb)
 
 	if ((ifp = fopen(src, "r")) == 0) {
 		perror(src);
-	} else if (previous && chmod(dst, tmp_mode) < 0) {
+	} else if (previous && ForceMode(dst, tmp_mode) < 0) {
 		perror(dst);
 	} else if ((ofp = fopen(dst, previous ? "w+" : "w")) == 0) {
 		perror(dst);
@@ -308,29 +343,55 @@ _DCL(struct stat *,new_sb)
 	}
 	FCLOSE(ifp);
 	if (retval < 0)		/* restore old-mode in case of err */
-		(void)chmod(dst, old_mode);
+		RestoreMode(dst, new_sb);
 #endif	/* apollo/unix */
 	return (retval);
 }
 
 #ifdef	S_IFLNK
 static
-int
-copylink(
-_ARX(char *,	src)
-_AR1(char *,	dst)
-	)
-_DCL(char *,	src)
-_DCL(char *,	dst)
+int	ReadLink(
+	_ARX(char *,	src)
+	_AR1(char *,	dst)
+		)
+	_DCL(char *,	src)
+	_DCL(char *,	dst)
+{
+	register int	len = readlink(src, dst, BUFSIZ);
+	if (len >= 0)
+		dst[len] = EOS;
+	return (len >= 0);
+}
+
+static
+int	samelink(
+	_ARX(char *,	src)
+	_AR1(char *,	dst)
+		)
+	_DCL(char *,	src)
+	_DCL(char *,	dst)
+{
+	auto	char	bfr1[BUFSIZ],
+			bfr2[BUFSIZ];
+	if (ReadLink(src, bfr1) && ReadLink(dst, bfr2))
+		return !strcmp(bfr1, bfr2);
+	return FALSE;
+}
+
+static
+int	copylink(
+	_ARX(char *,	src)
+	_AR1(char *,	dst)
+		)
+	_DCL(char *,	src)
+	_DCL(char *,	dst)
 {
 	auto	char	bfr[BUFSIZ];
-	auto	int	len;
 
-	if ((len = readlink(src, bfr, sizeof(bfr))) < 0) {
+	if (!ReadLink(src, bfr)) {
 		perror(src);
 		return(-1);
 	}
-	bfr[len] = EOS;
 	if (symlink(bfr, dst) < 0) {
 		perror(dst);
 		return(-1);
@@ -340,27 +401,67 @@ _DCL(char *,	dst)
 #endif	/* S_IFLNK */
 
 static
-int
-copydir(
-_ARX(char *,	src)
-_ARX(char *,	dst)
-_AR1(int,	previous)
-	)
-_DCL(char *,	src)
-_DCL(char *,	dst)
-_DCL(int,	previous)
+int	dir_exists(	/* patch: like 'stat_dir()', but uses lstat */
+	_ARX(char *,	path)
+	_AR1(STAT *,	sb)
+		)
+	_DCL(char *,	path)
+	_DCL(STAT *,	sb)
 {
-	auto	DIR		*dp;
-	auto	struct	direct	*de;
-	auto	char		bfr1[BUFSIZ],
-				bfr2[BUFSIZ];
-	auto	int		save_dir = no_dir_yet;
+	if (lstat(path, sb) >= 0) {
+		if (isDIR(sb->st_mode))
+			return 0;
+		errno = ENOTDIR;
+	}
+	return -1;
+}
+
+/*
+ * Given a path, find the directory, so we can test access
+ */
+static
+void	FindDir(
+	_ARX(char *,	parent)
+	_ARX(STAT *,	parent_sb)
+	_AR1(char *,	path)
+		)
+	_DCL(char *,	parent)
+	_DCL(STAT *,	parent_sb)
+	_DCL(char *,	path)
+{
+	if (dir_exists(path, parent_sb) >= 0)
+		(void)strcpy(parent, path);
+	else
+		(void)strcpy(parent, pathhead(path, parent_sb));
+}
+
+/*
+ * (Re)creates the destination-directory, recursively copies the contents of
+ * the source-directory into the destination.
+ */
+static
+int	copydir(
+	_ARX(char *,	src)
+	_ARX(char *,	dst)
+	_AR1(int,	previous)
+		)
+	_DCL(char *,	src)
+	_DCL(char *,	dst)
+	_DCL(int,	previous)
+{
+	auto	DIR	*dp;
+	auto	DIRENT	*de;
+	auto	STAT	dst_sb;
+	auto	char	bfr1[BUFSIZ],
+			bfr2[BUFSIZ];
+	auto	int	no_dir_yet = FALSE;
 
 	DEBUG "copydir(%s, %s, %d)\n", src, dst, previous);
 	abshome(strcpy(bfr1, dst));
 	if (previous > 0) {
+		DEBUG "++ rmdir %s\n", bfr1);
 		if (!n_opt) {
-			if (unlink(bfr1) < 0) {
+			if (rmdir(bfr1) < 0) {
 				perror(dst);
 				return(-1);
 			}
@@ -368,51 +469,74 @@ _DCL(int,	previous)
 	}
 
 	if (previous >= 0) {	/* called from 'copyit()' */
-		VERBOSE "** make directory \"%s\"\n", dst);
-		if (!n_opt) {
-			int	omask	= umask(0);
-			int	ok_make	= mkdir(bfr1, 0755) == 0;
-			(void)umask(omask);
-			if (!ok_make) {
-				auto	int		save = errno;
-				auto	struct	stat	sb;
-				if ((stat(bfr1, &sb) < 0) || !isDIR(sb.st_mode)) {
-					errno = save;
-					perror(dst);
-					return (-1);
+		if (dir_exists(bfr1, &dst_sb) < 0) {
+			VERBOSE "** make directory \"%s\"\n", dst);
+			if (!n_opt) {
+				int	omask	= umask(0);
+				int	ok_make	= (mkdir(bfr1, 0755) >= 0);
+				(void)umask(omask);
+				if (!ok_make) {
+					auto	int	save = errno;
+					if (dir_exists(bfr1, &dst_sb) < 0) {
+						errno = save;
+						perror(dst);
+						return (-1);
+					}
 				}
 			}
+			no_dir_yet = n_opt;
+		} else {
+			total_dirs--;	/* am not really copying it... */
 		}
-		no_dir_yet = n_opt;
+	} else if (dir_exists(bfr1, &dst_sb) < 0) {
+		failed(dst);
 	}
 
 	if (dp = opendir(src)) {
+		char	parent[MAXPATHLEN];
+		int	tested	= 0,
+			forced	= 0;
+
+		(void)strcpy(parent, bfr1);
 		while (de = readdir(dp)) {
 			if (!dotname(de->d_name))
-				copyit(	pathcat(bfr1, src, de->d_name),
-					pathcat(bfr2, dst, de->d_name));
+				forced |= copyit(parent, &dst_sb,
+					pathcat(bfr1, src, de->d_name),
+					pathcat(bfr2, dst, de->d_name),
+					no_dir_yet,
+					tested++);
 		}
 		(void)closedir(dp);
+		if (forced)
+			RestoreMode(dst, &dst_sb);
 	}
-	no_dir_yet = save_dir;
 	return (0);	/* no errors found */
 }
 
 /*
- * Set up and perform a COPY
+ * Set up and perform a COPY.  Returns true the first time we must modify the
+ * parent's protection.
  */
 static
-int
-copyit(
-_ARX(char *,	src)
-_AR1(char *,	dst)
-	)
-_DCL(char *,	src)
-_DCL(char *,	dst)
+int	copyit(
+	_ARX(char *,	parent)
+	_ARX(STAT *,	parent_sb)
+	_ARX(char *,	src)
+	_ARX(char *,	dst)
+	_ARX(int,	no_dir_yet)	/* true if we can test access */
+	_AR1(int,	tested_acc)	/* true iff we already tested */
+		)
+	_DCL(char *,	parent)
+	_DCL(STAT *,	parent_sb)
+	_DCL(char *,	src)
+	_DCL(char *,	dst)
+	_DCL(int,	no_dir_yet)
+	_DCL(int,	tested_acc)
 {
-	struct	stat	dst_sb, src_sb;
+	STAT	dst_sb, src_sb;
 	int	num,
-		ok1, ok2;
+		ok1, ok2,
+		forced	= FALSE;
 	char	bfr1[BUFSIZ],
 		bfr2[BUFSIZ],
 		temp[BUFSIZ];
@@ -432,17 +556,38 @@ _DCL(char *,	dst)
 				src, dst);
 			exit(FAIL);
 		}
+		if (u_opt) {
+			if (isFILE(src_sb.st_mode) && isFILE(dst_sb.st_mode)) {
+				if ((src_sb.st_size  == dst_sb.st_size)
+				 && (src_sb.st_mtime == dst_sb.st_mtime))
+					return FALSE;
+			}
+#ifdef	S_IFLNK
+			if (isLINK(src_sb.st_mode) && isLINK(dst_sb.st_mode)) {
+				if (samelink(src,dst))
+					return FALSE;
+			}
+#endif
+		}
 	}
 	DEBUG "** src: \"%s\"\n** dst: \"%s\"\n", bfr1, bfr2);
 
-	if (!no_dir_yet) {
-		if (isDIR(dst_sb.st_mode))
-			(void)strcpy(temp, bfr2);
-		else
-			(void)strcpy(temp, pathhead(bfr2, &dst_sb));
-		if (access(temp, W_OK) < 0) {
-			TELL "?? directory is not writeable: \"%s\"\n", temp);
-			return;
+	if (!no_dir_yet && !tested_acc) { /* we must test-access */
+		int	writeable;
+		if (!*parent)	/* ...we haven't tested-access here yet */
+			FindDir(parent, parent_sb, bfr2);
+		writeable = (access(parent, W_OK | X_OK | R_OK) >= 0);
+		DEBUG ".. ACC: \"%s\" %s\n", parent, writeable ? "YES" : "NO");
+		if (!writeable) {
+			if (f_opt) {
+				if (ForceMode(parent, 0755) < 0)
+					return FALSE;
+				forced = TRUE;
+			} else {
+				TELL "?? directory is not writeable: \"%s\"\n",
+					parent);
+				return FALSE;
+			}
 		}
 	}
 
@@ -452,7 +597,7 @@ _DCL(char *,	dst)
 #ifdef	S_IFLNK
 	if ((!l_opt && (lstat(bfr1, &src_sb) < 0)) || src_sb.st_mode == 0) {
 		TELL "?? file not found: \"%s\"\n", src);
-		return;
+		return forced;
 	}
 #endif
 	if (!isFILE(src_sb.st_mode)
@@ -461,7 +606,7 @@ _DCL(char *,	dst)
 #endif
 	&&  !isDIR(src_sb.st_mode)) {
 		TELL "?? not a file: \"%s\"\n", src);
-		return;
+		return forced;
 	}
 	src = bfr1;		/* correct tilde, if any */
 	dst = bfr2;
@@ -477,38 +622,38 @@ _DCL(char *,	dst)
 				TELL "%s ? ", dst);
 				if (gets(temp)) {
 					if (*temp != 'y' && *temp != 'Y')
-						return;
+						return forced;
 				} else
-					return;
+					return forced;
 			}
 		} else if (isDIR(dst_sb.st_mode) && isDIR(src_sb.st_mode)) {
 			num = FALSE;	/* we will merge directories */
 		} else {
 			TELL "?? cannot overwrite \"%s\"\n", dst);
-			return;
+			return forced;
 		}
 	} else
 		dst_sb = src_sb;
 
 	/* Unless disabled, copy the file */
 	if (isDIR(src_sb.st_mode) && copydir(src,dst,num) < 0)
-		return;
+		return forced;
 
 	if (!n_opt) {
 #ifdef	S_IFLNK
 		if (num && !isDIR(src_sb.st_mode) && isLINK(dst_sb.st_mode)) {
 			if (unlink(dst) < 0) {
 				perror(dst);
-				return;
+				return forced;
 			}
 		}
 		if (isLINK(src_sb.st_mode)) {
 			if (copylink(src,dst) < 0)
-				return;
+				return forced;
 		}
 #endif	/* S_IFLNK */
 		if (isFILE(src_sb.st_mode) && copyfile(src,dst,num,&src_sb) < 0)
-			return;
+			return forced;
 		if (isFILE(src_sb.st_mode) || isDIR(src_sb.st_mode)) {
 			int	mode	= dst_sb.st_mode & 0777;
 			if (isFILE(src_sb.st_mode) && s_opt) {
@@ -533,11 +678,11 @@ _DCL(char *,	dst)
 	if (isLINK(src_sb.st_mode))
 		total_links++;
 #endif
+	return forced;
 }
 
 static
-void
-usage(_AR0)
+void	usage(_AR0)
 {
 	auto	char	bfr[BUFSIZ];
 	static	char	*tbl[] = {
@@ -545,6 +690,7 @@ usage(_AR0)
 ,""
 ,"Options:"
 ,"  -d  infer source (leaf) from destination path"
+,"  -f  force (write into protected destination"
 ,"  -i  interactive (prompt before overwriting)"
 #ifdef	S_IFLNK
 ,"  -l  copy link-targets"
@@ -552,12 +698,13 @@ usage(_AR0)
 ,"  -m  merge directories"
 ,"  -n  no-op (show what would be copied)"
 ,"  -s  enable set-uid/gid in target"
-,"  -u  reset effective uid before executing"
+,"  -S  reset effective uid before executing"
+,"  -u  update-only (copies only new files or those differing in size or date)"
 ,"  -v  verbose"
 		};
 	register int	j;
 	setbuf(stderr, bfr);
-	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
+	for (j = 0; j < SIZEOF(tbl); j++)
 		FPRINTF(stderr, "%s\n", tbl[j]);
 	(void)fflush(stderr);
 	(void)exit(FAIL);
@@ -567,18 +714,19 @@ usage(_AR0)
  * Process argument list, turning it into source/destination pairs
  */
 static
-void
-arg_pairs(
-_ARX(int,	argc)
-_AR1(char **,	argv)
-	)
-_DCL(int,	argc)
-_DCL(char **,	argv)
+void	arg_pairs(
+	_ARX(int,	argc)
+	_AR1(char **,	argv)
+		)
+	_DCL(int,	argc)
+	_DCL(char **,	argv)
 {
 	register int	j;
-	auto	struct	stat	dst_sb,
-				src_sb;
+	auto	STAT	parent_sb,
+			dst_sb,
+			src_sb;
 	auto	int	num, ok_dst;
+	auto	char	parent[MAXPATHLEN];
 	auto	char	dst[BUFSIZ];
 
 	if ((num = (argc - optind)) < 2) {
@@ -588,6 +736,7 @@ _DCL(char **,	argv)
 
 	/* hacks to allow copying to a symbolic-link, or into a directory */
 	abshome(strcpy(dst, argv[argc-1]));
+	(void)strcpy(parent, dst);
 #ifdef	S_IFLNK
 	if (num == 2 && (dst[strlen(dst)-1] != '/'))
 		ok_dst = (lstat(dst, &dst_sb) >= 0);
@@ -613,8 +762,9 @@ _DCL(char **,	argv)
 			usage();
 		}
 
-		if (isDIR(dst_sb.st_mode)) {
-			/* copy one or more items into directory */
+		if (isDIR(dst_sb.st_mode)) { /* copy items into directory */
+			int	tested	= 0,
+				forced	= 0;
 			for (j = optind; j < argc-1; j++) {
 			auto	char	*s = dst + strlen(dst),
 					*t = skip_dots(argv[j]);
@@ -622,9 +772,12 @@ _DCL(char **,	argv)
 				if (s[-1] != '/')
 					(void)strcpy(s, "/");
 				(void)strcat(s, pathleaf(t));
-				copyit(argv[j], dst);
+				forced |= copyit(parent, &dst_sb,
+					argv[j], dst, FALSE, tested++);
 				*s = EOS;
 			}
+			if (forced)
+				RestoreMode(parent, &dst_sb);
 		} else if (num != 2) {
 			TELL "?? Destination is not a directory\n");
 			usage();
@@ -633,7 +786,10 @@ _DCL(char **,	argv)
 			|| isLINK(dst_sb.st_mode)
 #endif
 		) {
-			copyit(argv[optind], dst);
+			*parent = EOS;
+			if (copyit(parent, &parent_sb,
+					argv[optind], dst, FALSE, FALSE))
+				RestoreMode(parent, &parent_sb);
 		} else {
 			TELL "?? Destination is not a file\n");
 			usage();
@@ -643,7 +799,9 @@ _DCL(char **,	argv)
 			TELL "?? Wrong number of arguments\n");
 			usage();
 		}
-		copyit(argv[optind], dst);
+		*parent = EOS;
+		if (copyit(parent, &parent_sb, argv[optind], dst, FALSE, FALSE))
+			RestoreMode(parent, &parent_sb);
 	}
 }
 
@@ -652,22 +810,30 @@ _DCL(char **,	argv)
  * each argument.
  */
 static
-void
-derived(
-_ARX(int,	argc)
-_AR1(char **,	argv)
-	)
-_DCL(int,	argc)
-_DCL(char **,	argv)
+void	derived(
+	_ARX(int,	argc)
+	_AR1(char **,	argv)
+		)
+	_DCL(int,	argc)
+	_DCL(char **,	argv)
 {
 	register int	j;
-	char	dst[BUFSIZ], *s;
+	register char	*s;
+	auto	int	tested	= 0,
+			forced	= 0;
+	auto	char	parent[MAXPATHLEN],
+			dst[BUFSIZ];
+	auto	STAT	parent_sb;
 
+	FindDir(parent, &parent_sb, dst);
 	for (j = optind; j < argc; j++) {
 		(void)strcpy(dst, argv[j]);
 		while (s = strrchr(dst, '/')) {
 			if (s[1]) {
-				copyit(s+1, dst);
+				forced |= copyit(parent, &parent_sb,
+					s+1,
+					dst,
+					FALSE, tested++);
 				break;
 			} else
 				*s = EOS;
@@ -675,6 +841,8 @@ _DCL(char **,	argv)
 		if (s == 0)
 			TELL "?? No destination directory: \"%s\"\n", argv[j]);
 	}
+	if (forced)
+		RestoreMode(parent, &parent_sb);
 }
 
 /************************************************************************
@@ -685,8 +853,9 @@ _MAIN
 {
 	register int	j;
 
-	while ((j = getopt(argc, argv, "dilmnsuv")) != EOF) switch (j) {
+	while ((j = getopt(argc, argv, "dfilmnsSuv")) != EOF) switch (j) {
 	case 'd':	d_opt = TRUE;	break;
+	case 'f':	f_opt = TRUE;	break;
 	case 'i':	i_opt = TRUE;	break;
 #ifdef	S_IFLNK
 	case 'l':	l_opt = TRUE;	break;
@@ -694,7 +863,8 @@ _MAIN
 	case 'm':	m_opt = TRUE;	break;
 	case 'n':	n_opt = TRUE;	break;
 	case 's':	s_opt = TRUE;	break;
-	case 'u':	(void)setuid(getuid());	break;
+	case 'S':	(void)setuid(getuid());	break;
+	case 'u':	u_opt = TRUE;	break;
 	case 'v':	v_opt++;	break;
 	default:	usage();
 	}

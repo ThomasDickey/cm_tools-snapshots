@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 11.2 1992/11/23 12:00:31 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 11.3 1992/12/04 14:21:30 ste_cm Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/
  * Author:	T.E.Dickey
  * Created:	09 Mar 1989
  * Modified:
+ *		04 Dec 1992, added "-l" option, to allow links to be shown
  *		23 Nov 1992, allow user-names to be given that are not in the
  *			     passwd-file.  Fixed an error with "-a" option,
  *			     when owner was already present, caused option to
@@ -66,6 +67,7 @@ extern	char	*strtok();
 static	int	add_opt;		/* "-a" option */
 static	int	base_opt;		/* "-b" option */
 static	int	expunge_opt;		/* "-e" option */
+static	int	link_opt;		/* "-l" option */
 static	int	purge_opt;		/* "-p" option */
 static	int	null_opt;		/* "-n" option */
 static	int	report_opt;		/* "-u" option */
@@ -83,12 +85,12 @@ static	char	m_buffer[BUFSIZ];	/* baseline-message */
  * to the given argument.
  */
 static
-on_list(
-_ARX(char *,	list)
-_AR1(char *,	s)
-	)
-_DCL(char *,	list)
-_DCL(char *,	s)
+int	on_list(
+	_ARX(char *,	list)
+	_AR1(char *,	s)
+		)
+	_DCL(char *,	list)
+	_DCL(char *,	s)
 {
 	int	ok	= FALSE;
 	if (list != 0) {
@@ -163,9 +165,9 @@ void	del_list(
  * Indent the report for the given number of directory-levels.
  */
 static
-indent(
-_AR1(int,	level))
-_DCL(int,	level)
+void	indent(
+	_AR1(int,	level))
+	_DCL(int,	level)
 {
 	++lines;
 	if (verbose >= 0) {
@@ -180,12 +182,12 @@ _DCL(int,	level)
  * updated properly.
  */
 static
-set_revision(
-_ARX(char *,	dst)
-_AR1(char *,	opt)
-	)
-_DCL(char *,	dst)
-_DCL(char *,	opt)
+void	set_revision(
+	_ARX(char *,	dst)
+	_AR1(char *,	opt)
+		)
+	_DCL(char *,	dst)
+	_DCL(char *,	opt)
 {
 	auto	char	*d;
 	auto	char	bfr[20];
@@ -210,9 +212,9 @@ _DCL(char *,	opt)
  * Initialize an RCS-command string
  */
 static
-set_command(
-_AR1(char *,	dst))
-_DCL(char *,	dst)
+void	set_command(
+	_AR1(char *,	dst))
+	_DCL(char *,	dst)
 {
 	*dst = EOS;
 	if (verbose < 0)
@@ -223,7 +225,7 @@ _DCL(char *,	dst)
  * The permit-file has no tip-version.  Force it to have one.
  */
 static
-set_baseline(_AR0)
+void	set_baseline(_AR0)
 {
 	auto	char	tmp[BUFSIZ],
 			acc_file[BUFSIZ];
@@ -252,15 +254,15 @@ set_baseline(_AR0)
  * history of this file.
  */
 static
-create_permit(
-_AR1(char *,	s))
-_DCL(char *,	s)
+void	create_permit(
+	_AR1(char *,	s))
+	_DCL(char *,	s)
 {
 	auto	char	tmp[BUFSIZ];
 	auto	char	bfr[BUFSIZ];
 	auto	char	owner[BUFSIZ];
 	auto	FILE	*fp;
-	auto	struct stat sb;
+	auto	STAT	sb;
 	auto	char	acc_file[BUFSIZ],
 			tmp_file[BUFSIZ],
 			*tmp_desc;
@@ -330,7 +332,7 @@ _DCL(char *,	s)
  * known value of tip-version from the RCS archive files.
  */
 static
-compute_base(_AR0)
+void	compute_base(_AR0)
 {
 	register char *s;
 
@@ -346,14 +348,14 @@ compute_base(_AR0)
  * list.
  */
 static
-modify_access(
-_ARX(char *,	file)
-_ARX(char *,	name)
-_AR1(char *,	opt)
-	)
-_DCL(char *,	file)
-_DCL(char *,	name)
-_DCL(char *,	opt)
+void	modify_access(
+	_ARX(char *,	file)
+	_ARX(char *,	name)
+	_AR1(char *,	opt)
+		)
+	_DCL(char *,	file)
+	_DCL(char *,	name)
+	_DCL(char *,	opt)
 {
 	char	cmd[BUFSIZ], tmp[BUFSIZ];
 
@@ -376,18 +378,7 @@ _DCL(char *,	opt)
  */
 static
 /*ARGSUSED*/
-do_arcs(
-_ARX(char *,	path)
-_ARX(char *,	name)
-_ARX(struct stat *,sp)
-_ARX(int,	readable)
-_AR1(int,	level)
-	)
-_DCL(char *,	path)
-_DCL(char *,	name)
-_DCL(struct stat *,sp)
-_DCL(int,	readable)
-_DCL(int,	level)
+WALK_FUNC(do_arcs)
 {
 #ifdef	PATCH
 	int	got_lock= FALSE;	/* true if lock found */
@@ -498,14 +489,14 @@ _DCL(int,	level)
  * the specified user from the access lists, and incidentally computing the
  * highest version, from which the most recent baseline can be inferred.
  */
-scan_arcs(
-_ARX(char *,	path)
-_ARX(char *,	name)
-_AR1(int,	level)
-	)
-_DCL(char *,	path)
-_DCL(char *,	name)
-_DCL(int,	level)
+void	scan_arcs(
+	_ARX(char *,	path)
+	_ARX(char *,	name)
+	_AR1(int,	level)
+		)
+	_DCL(char *,	path)
+	_DCL(char *,	name)
+	_DCL(int,	level)
 {
 	*high_ver = EOS;
 	(void)walktree(path, name, do_arcs, "r", level);
@@ -524,20 +515,20 @@ _DCL(int,	level)
  * the RCS directory is on the access list of the permit-file.
  */
 static
-do_base(
-_ARX(char *,	path)
-_ARX(char *,	parent)
-_ARX(int,	level)
-_AR1(int *,	flag_)
-	)
-_DCL(char *,	path)
-_DCL(char *,	parent)
-_DCL(int,	level)
-_DCL(int *,	flag_)
+int	do_base(
+	_ARX(char *,	path)
+	_ARX(char *,	parent)
+	_ARX(int,	level)
+	_AR1(int *,	flag_)
+		)
+	_DCL(char *,	path)
+	_DCL(char *,	parent)
+	_DCL(int,	level)
+	_DCL(int *,	flag_)
 {
-	char		nextpath[BUFSIZ];
-	char		acc_file[BUFSIZ];
-	struct	stat	sb;
+	char	nextpath[BUFSIZ];
+	char	acc_file[BUFSIZ];
+	STAT	sb;
 
 	(void)vcs_file((char *)0, acc_file, FALSE);
 	if ((stat(pathcat(nextpath, path, acc_file), &sb) >= 0)
@@ -562,18 +553,7 @@ _DCL(int *,	flag_)
  * directory-tree, and looking for RCS-directories at each point, to process.
  */
 static
-do_tree(
-_ARX(char *,	path)
-_ARX(char *,	name)
-_ARX(struct stat *,sp)
-_ARX(int,	readable)
-_AR1(int,	level)
-	)
-_DCL(char *,	path)
-_DCL(char *,	name)
-_DCL(struct stat *,sp)
-_DCL(int,	readable)
-_DCL(int,	level)
+WALK_FUNC(do_tree)
 {
 	char	*notes;
 	int	mode	= (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
@@ -628,6 +608,8 @@ _DCL(int,	level)
 		&&  (sp->st_mode & S_IFMT) == S_IFLNK) {
 			notes = " (link)";
 			readable = -1;
+			if (!link_opt)
+				return readable;
 		}
 #endif
 		indent(level);
@@ -640,16 +622,17 @@ _DCL(int,	level)
  * Process a single argument: a directory name.
  */
 static
-do_arg(
-_AR1(char *,	name))
-_DCL(char *,	name)
+void	do_arg(
+	_AR1(char *,	name))
+	_DCL(char *,	name)
 {
 	TELL "** path = %s\n", name);
 	lines	= 0;
 	(void)walktree((char *)0, name, do_tree, "r", 0);
 }
 
-usage()
+static
+void	usage(_AR0)
 {
 	auto	char	buffer[BUFSIZ];
 	static	char	*tbl[] = {
@@ -662,6 +645,9 @@ usage()
 	"  -aUSER  add specified user(s) to access list",
 	"  -bBASE  set baseline value for directory (must be > 0)",
 	"  -eUSER  expunge specified user(s) from access list",
+#ifdef	S_IFLNK
+	"  -l      show symbolic link-names, otherwise ignored",
+#endif
 	"  -mTEXT  specifies baseline-message (default: BASELINE {date}",
 	"  -n      no-op mode (shows actions that would be done)",
 	"  -p      purge all users from access list",
@@ -677,7 +663,7 @@ usage()
 }
 
 static
-disjoint(_AR0)
+void	disjoint(_AR0)
 {
 	if (add_opt || expunge_opt || purge_opt)
 		usage();
@@ -698,7 +684,7 @@ _MAIN
 
 	(void)strclean(strcat(strcpy(m_buffer, "-mBASELINE at "), ctime(&now)));
 
-	while ((j = getopt(argc, argv, "a:b:e:m:npqsu:v")) != EOF)
+	while ((j = getopt(argc, argv, "a:b:e:lm:npqsu:v")) != EOF)
 		switch (j) {
 		case 'a':
 			disjoint();
@@ -714,6 +700,9 @@ _MAIN
 			disjoint();
 			expunge_opt = TRUE;	/* expunge */
 			user_opt = optarg;
+			break;
+		case 'l':
+			link_opt = TRUE;
 			break;
 		case 'm':
 			(void)strcpy(m_buffer+2, optarg);

@@ -1,4 +1,4 @@
-.\" $Id: copy.man,v 11.0 1991/09/25 08:58:39 ste_cm Rel $
+.\" $Id: copy.man,v 11.2 1992/12/03 10:05:56 dickey Exp $
 .de DS
 .RS
 .nf
@@ -53,6 +53,10 @@ in the current working directory.
 This is provided to simplify installation
 of files in a directory.
 .TP
+.B \-f
+forces copy into protected directories by temporarily changing the
+destination protection.
+.TP
 .B \-i
 prompt with the name of the file whenever the copy
 will cause an old file to be overwritten.
@@ -92,11 +96,15 @@ which the \fBcopy\fR command would have.
 enables the set-uid and set-gid file modes in
 the target.
 .TP
-.B \-u
+.B \-S
 resets the effective uid before executing.
 If \fBcopy\fR
 is invoked from a set-uid program, this undoes the effect of the set-uid
 by restoring the original permissions of the user.
+.TP
+.B \-u
+copies files only if their size or modification date differs,
+and links only if the link-text differs.
 .TP
 .B \-v
 verbose mode directs \fBcopy\fR to print the

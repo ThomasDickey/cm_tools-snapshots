@@ -1,15 +1,20 @@
 #!/bin/sh
-# $Id: admin.sh,v 11.3 1992/11/10 09:30:15 dickey Exp $
+# $Id: admin.sh,v 11.4 1992/12/14 14:45:46 dickey Exp $
 #
 # Reset the test-RCS directory to an initial-state at the beginning of a test
 # cycle.
 #
+umask 022
 BASE=${1-0}
 #
 WD=`pwd`
 WORK=junk/dummy
 RCS_DIR=junk/RCS
 rm -f $WORK
+#
+if test ! -d junk
+then	mkdir junk
+fi
 #
 if test -d $RCS_DIR
 then
@@ -24,15 +29,17 @@ then
 	fi </tmp/admin$$
 fi
 #
-mkdir $RCS_DIR
 if test $BASE != 0
 then
 	TEXT=null_description
 	TEMP=/tmp/$TEXT
-	if test .$ADMIN = .$SETUID -a -f /com/vt100
+	if test .$ADMIN = .$SETUID
 	then
-		chacl -g spe $RCS_DIR;
-		chacl -u $ADMIN $RCS_DIR
+		chmod 777 junk
+		$SETUID mkdir $RCS_DIR
+		chmod 755 junk
+	else
+		mkdir $RCS_DIR
 	fi
 	cd $RCS_DIR
 	$SETUID cp $WD/$TEXT /tmp/
@@ -40,4 +47,6 @@ then
 	$SETUID rcs -q -a$ADMIN,$USER ./$TEXT,v
 	$SETUID mv ./$TEXT,v ./RCS,v
 	cd $WD
+else
+	mkdir $RCS_DIR
 fi
