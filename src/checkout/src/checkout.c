@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkout.c	1.24 88/12/06 09:12:54";
+static	char	sccs_id[] = "@(#)checkout.c	1.25 88/12/14 11:24:21";
 #endif	lint
 
 /*
@@ -7,6 +7,9 @@ static	char	sccs_id[] = "@(#)checkout.c	1.24 88/12/06 09:12:54";
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		14 Dec 1988, use 'vercmp()' rather than 'dotcmp()', to make
+ *			     retrieval of increments within a baseline get a
+ *			     correct timestamp.
  *		06 Dec 1988, added some DEBUG-traces.
  *		13 Sep 1988, added cleanup handler.  Refined permission-checks.
  *		09 Sep 1988, use 'rcspath()'
@@ -145,6 +148,7 @@ PostProcess()
 		case S_VERS:
 			tt = 0;
 			(void)strcpy(tmp_rev, key);
+			DEBUG(("version = %s\n", tmp_rev))
 			break;
 		case S_DATE:
 			s = rcsparse_num(tmp, s);
@@ -153,6 +157,7 @@ PostProcess()
 				newzone(5,0,FALSE);
 				tt = packdate(1900+yd, md,dd, ht,mt,st);
 				oldzone();
+				DEBUG(("date    = %s", ctime(&tt)))
 				if (opt_c != 0 && tt > opt_c)
 					tt = 0;
 			} else
@@ -170,7 +175,10 @@ PostProcess()
 		case S_NEXT:
 			if (tt != 0) {
 				char	*rev = *opt_rev ? opt_rev : dft_rev;
-				if (dotcmp(tmp_rev, rev) <=0) {
+				DEBUG(("compare %s %s => %d (for equality)\n",
+					tmp_rev, rev,
+					vercmp(tmp_rev, rev, TRUE)))
+				if (vercmp(tmp_rev, rev, TRUE) == 0) {
 					ok = tt;
 					header = FALSE;	/* force an exit */
 				}
