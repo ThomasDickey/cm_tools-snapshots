@@ -11,7 +11,6 @@ access list:
 symbolic names:
 	case3_c: 2.3
 	case3_b: 2.2
-comment leader: "# "
 keyword substitution: kv
 total revisions: 3;	selected revisions: 3
 description:

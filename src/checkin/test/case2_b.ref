@@ -9,7 +9,6 @@ access list:
 	USER
 symbolic names:
 	case2_b: 1.2
-comment leader: "# "
 keyword substitution: kv
 total revisions: 2;	selected revisions: 2
 description:

@@ -8,7 +8,6 @@ locks: strict
 access list:
 	USER
 symbolic names:
-comment leader: "# "
 keyword substitution: kv
 total revisions: 1;	selected revisions: 1
 description:

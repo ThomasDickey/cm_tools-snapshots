@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 11.6 1993/09/22 14:22:57 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 11.7 1994/11/08 23:56:40 tom Exp $";
 #endif
 
 /*
@@ -433,7 +433,7 @@ void	Execute(
 	_DCL(int,	co_mode)
 {
 	auto	int	code;
-	auto	STAT	sb;
+	auto	Stat_t	sb;
 
 	UidHack = to_stdout ? "" : rcstemp(Working, FALSE);
 
@@ -451,7 +451,7 @@ void	Execute(
 			int	copied = strcmp(UidHack,Working);
 
 			DEBUG((log_fp, "=> file \"%s\"\n", UidHack))
-			DEBUG((log_fp, "=> size = %d\n", sb.st_size))
+			DEBUG((log_fp, "=> size = %ld\n", (long)(sb.st_size)))
 			DEBUG((log_fp, "=> date = %s", ctime(&sb.st_mtime)))
 			DEBUG((log_fp, "..(comp)  %s", ctime(&oldtime)))
 			if (!copied && (sb.st_mtime == oldtime)) {
@@ -486,7 +486,7 @@ void	Execute(
 static
 void	do_file(_AR0)
 {
-	STAT	sb;
+	Stat_t	sb;
 	int	ok;
 	char	temp[MAXPATHLEN];
 	time_t	revtime;

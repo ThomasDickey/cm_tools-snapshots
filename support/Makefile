@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.3 1993/04/27 10:47:12 dickey Exp $
+# $Id: Makefile,v 11.4 1994/11/09 00:16:43 tom Exp $
 
 TOP	= ../..
 include $(TOP)/td_lib/support/td_lib.mk
@@ -21,8 +21,8 @@ ALL	= \
 
 ####### (Standard Productions) #################################################
 all:	$(SOURCES) $(ALL)
-clean:			; rm -f $(CLEAN)
-clobber:	clean	; rm -f $(ALL)
+clean:			; -$(RM) $(CLEAN)
+clobber:	clean	; -$(RM) $(ALL)
 destroy:		; $(DESTROY)
 run_tests:
 sources:	$(SOURCES)
@@ -30,8 +30,8 @@ install:
 deinstall:
 
 ####### (Details of Productions) ###############################################
-Z	= $(CC) $(CFLAGS) $(CPP_OPTS) -o $@ $@.c $(LIBS)
-run_tool:	$(RCSDEFS_H) $(LIBS) ; $Z
-set_date:	$(PTYPES_H)  $(LIBS) ; $Z
+Z	= $(CC) $(CFLAGS) $(CPP_OPTS) -o $@ $@.c $(LIB_ARGS)
+run_tool:	$(RCSDEFS_H) $(LIB_DEPS) ; $Z
+set_date:	$(PTYPES_H)  $(LIB_DEPS) ; $Z
 
 $(SOURCES):		; $(GET) $@

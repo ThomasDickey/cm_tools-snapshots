@@ -1,3 +1,7 @@
+#ifndef	lint
+static	char	*Id = "$Id: run_tool.c,v 11.1 1992/10/27 09:38:27 dickey Exp $";
+#endif
+
 /*
  * Title:	run_tool
  * Author:	T.E.Dickey
@@ -6,10 +10,8 @@
  * Function:	Invokes the proper pathname for the given rcs tool
  */
 
-#include <ptypes.h>
-#include <rcsdefs.h>
-
-MODULE_ID("$Id: run_tool.c,v 11.2 1992/10/27 09:38:27 tom Exp $")
+#include "ptypes.h"
+#include "rcsdefs.h"
 
 _MAIN
 {

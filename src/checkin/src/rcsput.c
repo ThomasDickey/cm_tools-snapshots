@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 11.3 1994/05/09 20:12:53 tom Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 11.4 1994/11/08 23:53:43 tom Exp $";
 #endif
 
 /*
@@ -211,7 +211,7 @@ ignore_dir(
 _AR1(char *,	path))
 _DCL(char *,	path)
 {
-	if (sameleaf(path, sccs_dir())
+	if (sameleaf(path, sccs_dir((char *)0, path))
 	||  sameleaf(path, rcs_dir())) {
 		if (!quiet) PRINTF("...skip %s\n", path);
 		return TRUE;
@@ -344,7 +344,7 @@ _MAIN
 		while (j < argc) {
 			char	working[MAXPATHLEN];
 			char	archive[MAXPATHLEN];
-			STAT	sb;
+			Stat_t	sb;
 
 			j = rcsargpair(j, argc, argv);
 			if (rcs_working(working, &sb) < 0)
@@ -354,7 +354,7 @@ _MAIN
 				if (!ignore_dir(working))
 					do_arg(working);
 			} else {
-				(void)rcs_archive(archive, (STAT *)0);
+				(void)rcs_archive(archive, (Stat_t *)0);
 				checkin(original, working, archive);
 			}
 		}

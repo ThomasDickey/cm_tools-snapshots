@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.5 1993/09/22 13:46:21 dickey Exp $
+# $Id: Makefile,v 11.6 1994/11/09 00:10:07 tom Exp $
 # MAKE-file for RCS directory-permissions utility
 
 ####### (Environment) ##########################################################
@@ -11,23 +11,22 @@ THIS	= permit
 ALL	= $B/$(THIS)
 CSRC	= $(THIS).c
 SOURCES	= $(CSRC)
-MAIN_O	= $(THIS).o $(LIBS)
 
 ####### (Standard Productions) #################################################
 all\
-install:	$(SOURCES) $(ALL)
+install:	$(SOURCES) $B $(ALL)
 
-clean:				; rm -f $(CLEAN)
-clobber:	clean		; rm -f $(ALL)
+clean:				; -$(RM) $(CLEAN)
+clobber:	clean		; -$(RM) $(ALL)
 destroy:			; $(DESTROY)
 run_tests:
 sources:	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
-$B/$(THIS):	$(MAIN_O)	; $(LINK) -o $@ $(MAIN_O)
+$B:				; mkdir $@
+$B/$(THIS):	$(THIS).o $(LIB_DEPS)	; $(LINK) -o $@ $(THIS).o $(LIB_ARGS)
 $(THIS).o:	$(RCSDEFS_H)
 
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
 lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPTS) $? >>$@
-lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

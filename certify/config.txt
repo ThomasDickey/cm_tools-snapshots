@@ -1,4 +1,4 @@
-$Id: config.txt,v 11.2 1993/09/24 13:49:24 ste_cm Exp $
+$Id: config.txt,v 11.3 1994/11/09 00:44:17 tom Exp $
 
 --------------------------------------------------------------------------------
 
@@ -27,14 +27,3 @@ Known limitations:
 	+ The 'vcs' utility fails if the effective user cannot 'getwd()'.  (The
 	  code should be modified to recover when a complete pathname cannot be
 	  used).
-
---------------------------------------------------------------------------------
-
-	Miscellaneous tools not included here, which are used in non-critical
-	make-rules:
-
-	Lint tools for the above systems (LINT_TOOLS):
-		tdlint
-		makellib
-
-	lincnt - C-language line counter (LINCNT)

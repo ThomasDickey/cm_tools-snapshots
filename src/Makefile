@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.5 1993/05/06 13:47:17 dickey Exp $
+# $Id: Makefile,v 11.6 1994/11/09 00:15:59 tom Exp $
 # Top-level makefile for CM_TOOLS src-directory
 
 ####### (Development) ##########################################################
@@ -28,7 +28,6 @@ clobber\
 destroy\
 sources\
 lint.out\
-lincnt.out\
 run_test\
 install\
 deinstall::	$(MFILES)
@@ -42,7 +41,7 @@ deinstall::	$(MFILES)
 	cd vcs;		$(MAKE) $@
 
 clean\
-clobber::		; rm -f $(CLEAN)
+clobber::		; -$(RM) $(CLEAN)
 
 destroy::		; $(DESTROY)
 

@@ -8,7 +8,6 @@ access list:
 	USER
 symbolic names:
 	Second: 14.1
-comment leader: "# "
 keyword substitution: kv
 total revisions: 2;	selected revisions: 2
 description:

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.c,v 11.1 1993/09/22 14:25:25 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.c,v 11.2 1994/11/08 23:57:02 tom Exp $";
 #endif
 
 /*
@@ -108,7 +108,7 @@ int	ignore_dir(
 	_DCL(char *,	path)
 {
 	if (!a_opt && *pathleaf(path) == '.'
-	 && sameleaf(path, sccs_dir())) {
+	 && sameleaf(path, sccs_dir((char *)0, path))) {
 		if (!quiet) PRINTF("...skip %s\n", path);
 		return TRUE;
 	}
@@ -154,7 +154,7 @@ int	WALK_FUNC(scan_tree)
 {
 	auto	char	tmp[BUFSIZ],
 			*s = pathcat(tmp, path, name);
-	auto	STAT	sb;
+	auto	Stat_t	sb;
 
 	if (RCS_DEBUG)
 		PRINTF("++ %s%sscan (%s, %s, %s%d)\n",
@@ -203,7 +203,7 @@ _DCL(char *,	name)
 {
 #ifdef	S_IFLNK
 	if (!L_opt) {
-		STAT	sb;
+		Stat_t	sb;
 		if (lstat(name, &sb) >= 0 && isLINK(sb.st_mode)) {
 			Ignore(name, " (is a link)");
 			return;
@@ -273,7 +273,7 @@ _MAIN
 		while (j < argc) {
 			char	working[MAXPATHLEN];
 			char	archive[MAXPATHLEN];
-			STAT	sb;
+			Stat_t	sb;
 
 			j = rcsargpair(j, argc, argv);
 			if (rcs_working(working, &sb) < 0 && errno != EISDIR)
@@ -283,7 +283,7 @@ _MAIN
 				if (!ignore_dir(working))
 					do_arg(working);
 			} else {
-				(void)rcs_archive(archive, (STAT *)0);
+				(void)rcs_archive(archive, (Stat_t *)0);
 				Checkout(working, archive);
 			}
 		}

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.5 1993/04/27 10:38:05 dickey Exp $
+# $Id: Makefile,v 11.6 1994/11/09 00:16:26 tom Exp $
 # make-file for testing RCS checkout utility
 
 ####### (Development) ##########################################################
@@ -14,12 +14,11 @@ ALL	=
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES) $(ALL)
-clean:				; rm -f $(CLEAN)
-clobber:	clean		; rm -f $(ALL)
+clean:				; -$(RM) $(CLEAN)
+clobber:	clean		; -$(RM) $(ALL)
 destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
-lincnt.out:
 run_test:	$(SOURCES) $(ALL) ; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################

@@ -1,4 +1,4 @@
-$Id: release.txt,v 11.7 1993/09/23 21:08:32 dickey Exp $
+$Id: release.txt,v 11.8 1994/11/09 00:43:45 tom Exp $
 
 --------------------------------------------------------------------------------
 
@@ -20,6 +20,8 @@ New features in 'permit':
 Tested with gcc's warnings enabled.
 
 Tested with Purify (demo) for memory leaks.
+
+Integrated with support for CmVision (a hybrid of RCS & SCCS).
 
 Version 11.0: 
 ------------

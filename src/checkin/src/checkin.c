@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.21 1994/05/09 19:49:25 tom Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.22 1994/11/08 23:49:52 tom Exp $";
 #endif
 
 /*
@@ -407,7 +407,7 @@ int	Filter(_AR0)
 static
 void	ReProcess (_AR0)
 {
-	auto	STAT	sb;
+	auto	Stat_t	sb;
 	auto	int	mode;
 
 	if (stat_file(Working, &sb) >= 0) {
@@ -500,9 +500,9 @@ int	DoIt (
 	_DCL(char *,	args)
 {
 	int	code;
+#ifndef linux
 	int	fix_id;
 
-#ifndef linux
 	if ((fix_id = (!geteuid() && getuid())) != 0) {
 		if (!no_op) {
 			(void)setruid(geteuid());
@@ -565,7 +565,7 @@ int	RcsCheckin(_AR0)
 static
 int	Execute(_AR0)
 {
-	auto	STAT	sb;
+	auto	Stat_t	sb;
 	auto	int	code;
 
 	HackMode(TRUE);
@@ -784,7 +784,7 @@ time_t	DateOf(
 	_AR1(char *,	name))
 	_DCL(char *,	name)
 {
-	auto	STAT	sb;
+	auto	Stat_t	sb;
 
 	DEBUG(("...DateOf(%s)\n", name))
 	if (stat_file(name, &sb) >= 0) {
@@ -949,7 +949,7 @@ int	RcsInitialize(_AR0)
 static
 void	MakeDirectory(_AR0)
 {
-	STAT	sb;
+	Stat_t	sb;
 	size_t	len	= strlen(RCSdir);
 
 	if (len != 0
@@ -1153,7 +1153,7 @@ void	usage(_AR0)
 /*ARGSUSED*/
 _MAIN
 {
-	auto	STAT	sb;
+	auto	Stat_t	sb;
 	auto	int	new_file;	/* per-file, true if no archive */
 	register int	j;
 	register char	*s;

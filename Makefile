@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.6 1993/04/27 10:39:03 dickey Exp $
+# $Id: Makefile,v 11.7 1994/11/09 00:15:59 tom Exp $
 # Top-level make-file for CM_TOOLS
 
 THIS	= cm_tools
@@ -37,11 +37,10 @@ sources::	$(MFILES)
 all::
 	cd src;		$(MAKE) install
 
-lint.out\
-lincnt.out::
+lint.out::
 	cd src;		$(MAKE) $@
 clean\
-clobber::			; rm -f $(CLEAN)
+clobber::			; -$(RM) $(CLEAN)
 destroy::			; $(DESTROY)
 
 ####### (Details of Productions) ###############################################

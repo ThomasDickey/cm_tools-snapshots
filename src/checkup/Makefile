@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.3 1993/04/27 10:49:35 dickey Exp $
+# $Id: Makefile,v 11.4 1994/11/08 23:58:23 tom Exp $
 # Top-level makefile for RCS/sccs checkup utility
 
 ####### (Development) ##########################################################
@@ -26,19 +26,18 @@ clobber\
 destroy\
 sources\
 run_test\
-lincnt.out\
 lint.out::	$(MFILES)
 	cd src;		$(MAKE) $@
 	cd test;	$(MAKE) $@
 
 clean\
-clobber::			; rm -f $(CLEAN)
+clobber::			; -$(RM) $(CLEAN)
 clobber\
-destroy::			; rm -rf bin
+destroy::			; -$(RM) -r bin
 destroy::			; $(DESTROY)
 
 install:	all $(ALL)
-deinstall:			; rm -f $(ALL)
+deinstall:			; -$(RM) $(ALL)
 
 ####### (Details of Productions) ###############################################
 bin:				; mkdir $@

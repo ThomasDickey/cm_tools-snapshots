@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.5 1993/09/22 13:46:22 dickey Exp $
+# $Id: Makefile,v 11.6 1994/11/08 23:50:31 tom Exp $
 # Make-file for RCS checkin utilities
 
 THIS	= checkin
@@ -12,17 +12,18 @@ SOURCES	= $(CSRC)
 
 ####### (Standard Productions) #################################################
 all\
-install:	$(SOURCES) $(ALL)
+install:	$(SOURCES) $B $(ALL)
 
-clean:				; rm -f $(CLEAN)
-clobber:	clean		; rm -f $(ALL)
+clean:				; -$(RM) $(CLEAN)
+clobber:	clean		; -$(RM) $(ALL)
 destroy:			; $(DESTROY)
 run_test:
 sources:	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
-$B/$(THIS):	$(THIS).o $(LIBS)	; $(LINK) -o $@ $(THIS).o $(LIBS)
-$B/rcsput:	rcsput.o  $(LIBS)	; $(LINK) -o $@ rcsput.o  $(LIBS)
+$B:				; mkdir $@
+$B/$(THIS):	$(THIS).o $(LIB_DEPS)	; $(LINK) -o $@ $(THIS).o $(LIB_ARGS)
+$B/rcsput:	rcsput.o  $(LIB_DEPS)	; $(LINK) -o $@ rcsput.o  $(LIB_ARGS)
 
 $(THIS).o \
 rcsput.o:	$(RCSDEFS_H)
@@ -30,4 +31,3 @@ rcsput.o:	$(RCSDEFS_H)
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
 lint.out:	$(CSRC)		; $(DATE); $(LINT_EACH)
-lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

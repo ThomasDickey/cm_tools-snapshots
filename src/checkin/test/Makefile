@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.8 1993/04/27 10:38:05 dickey Exp $
+# $Id: Makefile,v 11.9 1994/11/09 00:17:43 tom Exp $
 # make-file for testing RCS checkin utility
 
 ####### (Development) ##########################################################
@@ -45,12 +45,11 @@ ALL	=
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES) $(ALL)
-clean:				; rm -f $(CLEAN); rm -rf junk
-clobber:	clean		; rm -f $(ALL)
+clean:				; -$(RM) -r $(CLEAN) junk
+clobber:	clean		; -$(RM) $(ALL)
 destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
-lincnt.out:
 run_test:	$(SOURCES) $(ALL) ; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.3 1993/05/05 11:19:50 dickey Exp $
+# $Id: Makefile,v 11.4 1994/11/09 00:15:59 tom Exp $
 
 ####### (Development) ##########################################################
 TOP	= ../..
@@ -12,7 +12,7 @@ SOURCES	=\
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES)
-clean:				; rm -f $(CLEAN)
+clean:				; -$(RM) $(CLEAN)
 clobber:	clean
 destroy:			; $(DESTROY)
 run_test:

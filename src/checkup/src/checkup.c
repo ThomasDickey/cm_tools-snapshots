@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 11.3 1994/08/03 13:06:50 tom Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 11.5 1994/11/09 01:07:56 tom Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * Modified:
+ *		08 Nov 1994, refined interaction between stdout/stderr.
  *		03 Aug 1994, use 'lastrev()'; related interface changes.
  *		22 Sep 1992, gcc warnings
  *		30 Oct 1992, added checks for RCS version 5 (GMT dates).
@@ -58,6 +59,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src
 #define	DIR_PTYPES
 #define	STR_PTYPES
 #include	<ptypes.h>
+#include	<cmv_defs.h>	/* for 'lastrev()' */
 #include	<rcsdefs.h>
 #include	<sccsdefs.h>
 #include	<ctype.h>
@@ -92,6 +94,9 @@ static	int	show_links;		/* "-L" option */
 static	int	lines;			/* line-number, for report */
 static	char	*revision = "0";	/* required revision level */
 static	int	reverse;		/* true if we reverse revision-test */
+
+static	int	redir_out;		/* true if stdout isn't tty */
+static	int	redir_err;		/* true if stderr isn't tty */
 
 static	char	*original;		/* original directory, for "-p" */
 
@@ -162,7 +167,7 @@ int	suppress(
 					(void)strcpy(strcpy(bfr, name) + len,
 						p->if_ext);
 					if (stat(bfr, &sb) >= 0
-					&& (sb.st_mode & S_IFMT) == S_IFREG)
+					&& isFILE(sb.st_mode))
 						return (TRUE);
 				} else {		/* unconditional */
 					return (TRUE);
@@ -189,6 +194,11 @@ void	indent(
 	}
 }
 
+/*
+ * If we're logging the tree-display, or if we're redirecting standard output,
+ * send to the standard output a list of pathnames (with version numbers
+ * prepended if the "-c" option is specified).
+ */
 static
 void	pipes(
 	_ARX(char *,	path)
@@ -201,7 +211,7 @@ void	pipes(
 {
 	auto	char	tmp[BUFSIZ];
 
-	if ((verbose < 0) || !isatty(fileno(stdout))) {
+	if ((verbose < 0) || (redir_out && (redir_out != redir_err))) {
 		if (config_rev) {
 			if (*vers != '?')
 				PRINTF("%s ", vers);
@@ -248,7 +258,7 @@ void	do_obs(
 	auto	char		tpath[BUFSIZ],
 				tname[BUFSIZ];
 	auto	struct	stat	sb;
-	auto	char	*tag,
+	auto	char	*tag	= "?",
 			*vers,
 			*owner;
 	auto	time_t	cdate;
@@ -263,7 +273,7 @@ void	do_obs(
 		if (stat(pathcat(tname, name, de->d_name), &sb) >= 0) {
 			auto	int	show	= FALSE;
 
-			if ((sb.st_mode & S_IFMT) != S_IFREG) {
+			if (isFILE(sb.st_mode)) {
 				indent(level);
 				TELL "%s (non-file)\n", tname);
 				continue;
@@ -318,10 +328,10 @@ int	WALK_FUNC(do_stat)
 		*owner,
 		*locked_by = 0;
 	time_t	cdate;
-	int	mode	= (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
+	int	mode	= (sp != 0) ? sp->st_mode : 0;
 	int	ok_text = TRUE;
 
-	if (mode == S_IFDIR) {
+	if (isDIR(mode)) {
 		auto	char	tmp[BUFSIZ],
 				*s = pathcat(tmp, path, name),
 				*t;
@@ -338,22 +348,22 @@ int	WALK_FUNC(do_stat)
 
 	if (readable < 0 || sp == 0) {
 		VERBOSE "?? %s/%s\n", path, name);
-	} else if (mode == S_IFDIR) {
+	} else if (isDIR(mode)) {
 		change = (name[strlen(name)-1] == '/') ? "" : "/";
 #ifdef	S_IFLNK
 		if ((lstat(name, sp) >= 0)
-		&&  (sp->st_mode & S_IFMT) == S_IFLNK) {
+		&&  isLINK(sp->st_mode)) {
 			change = " (link)";
 			readable = -1;
 		}
 #endif
 		indent(level);
 		TELL "%s%s\n", name, change);
-	} else if (mode == S_IFREG && !suppress(name)) {
+	} else if (isFILE(mode) && !suppress(name)) {
 #ifdef	S_IFLNK
 		if (!show_links
 		&&  (lstat(name, sp) >= 0)
-		&&  (sp->st_mode & S_IFMT) == S_IFLNK) {
+		&&  isLINK(sp->st_mode)) {
 			change = 0;
 			vers   = "link";
 			readable = -1;
@@ -487,6 +497,9 @@ _MAIN
 	(void)setlinebuf(stderr);
 #endif
 
+	redir_out = !isatty(fileno(stdout));
+	redir_err = !isatty(fileno(stderr));
+
 	while ((j = getopt(argc, argv, "acdi:l:Lopqr:stvx:")) != EOF)
 		switch (j) {
 		case 'a':
@@ -502,9 +515,10 @@ _MAIN
 			ignore(optarg);
 			break;
 		case 'l':
-			if (!fopen(optarg, "a+"))
+			if (fopen(optarg, "a+") == 0
+			 || freopen(optarg, "a+", stderr) == 0)
 				failed(optarg);
-			(void)freopen(optarg, "a+", stderr);
+			redir_err = -TRUE;
 			break;
 #ifdef	S_IFLNK
 		case 'L':
