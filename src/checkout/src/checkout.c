@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkout.c	1.23 88/09/28 09:35:18";
+static	char	sccs_id[] = "@(#)checkout.c	1.24 88/12/06 09:12:54";
 #endif	lint
 
 /*
@@ -7,6 +7,7 @@ static	char	sccs_id[] = "@(#)checkout.c	1.23 88/09/28 09:35:18";
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		06 Dec 1988, added some DEBUG-traces.
  *		13 Sep 1988, added cleanup handler.  Refined permission-checks.
  *		09 Sep 1988, use 'rcspath()'
  *		30 Aug 1988, broke out 'userprot()'.
@@ -58,9 +59,11 @@ extern	int	optind;
 /* local definitions */
 #define	WARN	FPRINTF(stderr,
 #define	TELL	if (!silent) PRINTF
+#define	DEBUG(s)	if(debug) PRINTF s;
 
 static	time_t	opt_c	= 0;
 static	int	silent;
+static	int	debug;			/* set from environment RCS_DEBUG */
 static	int	locked;			/* TRUE if user is locking file */
 static	int	mode;			/* mode with which 'co' sets file */
 static	int	Effect, Caller;		/* effective/real uid's	*/
@@ -114,7 +117,7 @@ PostProcess()
 	time_t	tt	= 0;
 	int	yd, md, dd, ht, mt, st;
 
-	if (!rcsopen(Archive, -RCS_DEBUG))
+	if (!rcsopen(Archive, -debug))
 		return;
 
 	while (header && (s = rcsread(s))) {
@@ -247,6 +250,7 @@ int	owner;			/* TRUE if euid, FALSE if uid */
 	struct	stat	sb;
 	int		uid;
 
+	DEBUG(("...PreProcess(%s,%d)\n", name, owner))
 	if (stat(name, &sb) >= 0) {
 		if ((S_IFMT & sb.st_mode) == S_IFREG) {
 			if (owner) {	/* setup for archive: effective */
@@ -255,6 +259,7 @@ int	owner;			/* TRUE if euid, FALSE if uid */
 				uid = Caller;
 			}
 			permit(name, &sb, uid);
+			DEBUG(("=> date = %s", ctime(&sb.st_mtime)))
 			return (sb.st_mtime);
 		}
 		TELL ("** ignored (not a file)\n");
@@ -299,6 +304,7 @@ char	*name;
 	Working = rcs2name(name);
 	Archive = name2rcs(name);
 
+	DEBUG(("...do_file(%s) => %s %s\n", name, Working, Archive))
 	if (PreProcess(Archive,TRUE) == TRUE) {
 		WARN "?? can't find archive \"%s\"\n", Archive);
 		(void)exit(FAIL);
@@ -344,6 +350,7 @@ char	*argv[];
 	char		tmp[BUFSIZ];
 	register char	*s, *d;
 
+	debug  = RCS_DEBUG;
 	*options = EOS;
 	Caller = getuid();
 	Effect = geteuid();

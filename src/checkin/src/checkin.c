@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkin.c	1.23 88/09/28 08:53:30";
+static	char	sccs_id[] = "@(#)checkin.c	1.25 88/12/06 09:53:26";
 #endif	lint
 
 /*
@@ -7,6 +7,8 @@ static	char	sccs_id[] = "@(#)checkin.c	1.23 88/09/28 08:53:30";
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		06 Dec 1988, corrected handling of group-restricted archives.
+ *			     corrected setting of RCSprot -- used in HackMode().
  *		28 Sep 1988, use $RCS_DEBUG to control debug-trace.
  *		27 Sep 1988, forgot to make "rcs" utility perform "-t" option.
  *		13 Sep 1988, for ADA-files (".a" or ".ada", added rcs's comment
@@ -65,6 +67,7 @@ static	char	sccs_id[] = "@(#)checkin.c	1.23 88/09/28 08:53:30";
 extern	struct	tm *localtime();
 extern	FILE	*tmpfile();
 extern	long	packdate();
+extern	int	errno;
 extern	char	*ftype();
 extern	char	*getuser();
 extern	char	*strcat();
@@ -78,14 +81,17 @@ extern	char	*strncpy();
 
 #define	WARN	FPRINTF(stderr,
 #define	TELL	if (!silent) PRINTF
+#define	DEBUG(s)	if (debug) PRINTF s;
 
 static	FILE	*fpT;
 static	int	silent	= FALSE,
+		debug,			/* set by RCS_DEBUG environment */
 		locked	= FALSE,	/* set if file is re-locked */
 		from_keys = FALSE,	/* set if we get date from RCS file */
 		new_file,		/* per-file, true if no archive */
 		TMP_mode,		/* saved protection of RCS-directory */
 		RCS_uid,		/* archive's owner */
+		RCS_gid,		/* archive's group */
 		RCSprot;		/* protection of RCS-directory */
 static	time_t	modtime,		/* timestamp of working file */
 		oldtime;		/* timestamp of archive file */
@@ -218,7 +224,7 @@ char	*s	= 0,
 	revision[BUFSIZ],
 	token[BUFSIZ];
 
-	if (!rcsopen(Archive, RCS_DEBUG))
+	if (!rcsopen(Archive, debug))
 		return;
 	(void)strcpy(revision, opt_rev);
 
@@ -288,8 +294,10 @@ HackMode(save)
 
 	if (save) {
 		if ((RCSdir[0] != EOS)
-		&&  (getuid()  != geteuid())) {
-			need = (getegid() == getgid()) ? 0775 : 0777;
+		&&  (getuid()  != RCS_uid)) {
+			need = (getgid() == RCS_gid) ? 0775 : 0777;
+			DEBUG(("...chmod %04o %s, was %04o\n",
+				need, RCSdir, RCSprot))
 			if (need != RCSprot) {
 				TMP_mode = RCSprot | 01000;
 				if (chmod(RCSdir, need) < 0)
@@ -362,7 +370,7 @@ GetLock()
 
 	if (*opt_rev == EOS) {
 
-		if (!rcsopen(Archive, -RCS_DEBUG))
+		if (!rcsopen(Archive, -debug))
 			return (FALSE);	/* could not open file anyway */
 
 		while (header && (s = rcsread(s))) {
@@ -371,6 +379,7 @@ GetLock()
 			switch (rcskeys(key)) {
 			case S_HEAD:
 				s = rcsparse_num(tip, s);
+				DEBUG(("...GetLock tip = %s\n", tip))
 				break;
 			case S_LOCKS:
 				*tmp = EOS;
@@ -413,13 +422,18 @@ time_t
 PreProcess(name)
 char	*name;
 {
-struct	stat	sb;
+	auto	struct	stat	sb;
 
+	DEBUG(("...PreProcess(%s)\n", name))
+	errno = 0;
 	if (stat(name, &sb) >= 0) {
-		if ((S_IFMT & sb.st_mode) == S_IFREG)
+		if ((S_IFMT & sb.st_mode) == S_IFREG) {
+			DEBUG(("=> date = %s", ctime(&sb.st_mtime)))
 			return (sb.st_mtime);
+		}
 		GiveUp("not a file: %s");
 	}
+	DEBUG(("=> not found, errno=%d\n", errno))
 	return (0);
 }
 
@@ -489,14 +503,18 @@ MakeDirectory()
 
 		if (stat(RCSdir, &sb) >= 0) {
 			RCS_uid = sb.st_uid;
+			RCS_gid = sb.st_gid;
 			RCSprot = sb.st_mode & 0777;
 			if ((sb.st_mode & S_IFMT) == S_IFDIR)
 				return (TRUE);
 			TELL("?? not a directory: %s\n", RCSdir);
 			(void)exit(FAIL);
 		} else {
+			RCS_uid = getuid();
+			RCS_gid = getgid();
+			RCSprot = 0755;
 			TELL("** make directory %s\n", RCSdir);
-			if (mkdir(RCSdir, 0755) < 0)
+			if (mkdir(RCSdir, RCSprot) < 0)
 				failed(RCSdir);
 		}
 	} else		/* ...else... user is putting files in "." */
@@ -618,8 +636,11 @@ char	*argv[];
 	int		code;
 	register char	*s;
 
+	debug = RCS_DEBUG;
 	fpT = tmpfile();
 	catchall(cleanup);
+	DEBUG(("uid=%d, euid=%d, gid=%d, egid=%d\n",
+		getuid(), geteuid(), getgid(), getegid()))
 
 	/*
 	 * Process the argument list
