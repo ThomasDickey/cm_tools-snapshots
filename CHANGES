@@ -1,3 +1,46 @@
+1992-05-27  dickey@software.org
+
+	* certify/release.txt: "%D" and "%d" in '<' command of 'ded'
+
+1992-05-27  ste_cm@software.org
+
+	* certify/release.txt:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-05-27  dickey@software.org
+
+	* user/ded.man: make '<' command recognize "%D" and "%d"
+
+1992-05-27  ste_cm@software.org
+
+	* user/ded.man: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-05-01  dickey@software.org
+
+	* user/checkup.man: added "-L" option
+
+1992-05-01  ste_cm@software.org
+
+	* user/checkup.man: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-05-01  dickey@software.org
+
+	* src/checkup/src/checkup.c: fix conflict between "-L" and "-c" options
+
+1992-05-01  ste_cm@software.org
+
+	* src/checkup/src/checkup.c:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1992-05-01  dickey@software.org
+
+	* src/checkup/src/checkup.c:
+	added "-L" to cause this to show symbolic-link targets.
+	normally I want to suppress them.
+
+	* src/checkup/src/checkup.c:
+	declared procedures 'void' which should have been
+
 1992-04-08  dickey@software.org
 
 	* certify/release.txt: note about restructuring (whew)
