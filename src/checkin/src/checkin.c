@@ -1,17 +1,18 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkin.c	1.2 88/05/20 07:02:36";
+static	char	sccs_id[] = "@(#)checkin.c	1.3 88/05/21 12:30:33";
 #endif	lint
 
 /*
- * Title:	rcsbase.c (set rcs base-time)
+ * Title:	checkin.c (RCS checkin front-end)
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		21 May 1988, broke out common routines for 'checkout.c'.
  *
- * Function:	Modify the last delta-date of the corresponding RCS-file to be
- *		the same as the modification date of the file (provided that the
- *		delta-date is newer than the file).  The RCS-files are assumed
- *		to be in the standard location:
+ * Function:	Invoke RCS checkin 'ci', then modify the last delta-date of the
+ *		corresponding RCS-file to be the same as the modification date
+ *		of the file.  The RCS-files are assumed to be in the standard
+ *		location:
  *
  *			name => RCS/name,v
  *
@@ -26,23 +27,10 @@ static	char	sccs_id[] = "@(#)checkin.c	1.2 88/05/20 07:02:36";
 #include	<signal.h>
 extern	struct	tm *localtime();
 extern	FILE	*tmpfile();
-extern	long	packdate();
-#ifdef	SYSTEM5
-extern	long	timezone;
-#endif	SYSTEM5
-extern	char	*doalloc();
-extern	char	*getwd();
+extern	long	adj2est();
 extern	char	*strcat();
 extern	char	*strchr();
 extern	char	*strcpy();
-
-#ifndef	TIMEZONE
-#ifdef	unos
-#define	TIMEZONE	0		/* kludge for EST (I live there!) */
-#else
-#define	TIMEZONE	5		/* kludge for EST (I live there!) */
-#endif
-#endif	TIMEZONE
 
 /* local declarations: */
 #define	TRUE	1
@@ -58,7 +46,6 @@ static	FILE	*fpT;
 static	int	copy_opt = TRUE,
 		silent   = FALSE, ShowedIt;
 static	char	options[BUFSIZ];	/* options for 'ci' */
-static	char	**myargv;		/* argument vector for 'ci' */
 static	char	old_date[BUFSIZ],
 		new_date[BUFSIZ];
 
@@ -194,20 +181,7 @@ char	*s, *d,
 	if (changed) {
 		(void)copyback(name, (int)(sb.st_mode & 0777), lines);
 	}
-
-	{	/* update the file modification times */
-#ifdef	SYSTEM5
-	struct { time_t x, y; } tp;
-		tp.x = sb.st_atime;
-		tp.y = mtime;
-		(void)utime(name, &tp);
-#else	SYSTEM5
-	time_t	tv[2];
-		tv[0] = sb.st_atime;
-		tv[1] = mtime;
-		(void)utime(name, tv);
-#endif	SYSTEM5
-	}
+	(void)setmtime (name, mtime); /* update the file modification times */
 }
 
 /*
@@ -227,11 +201,6 @@ char	*name;
 time_t	mtime;
 {
 FILE	*fpS;
-#ifdef	SYSTEM5
-long	tzfix	= (timezone - (TIMEZONE*60*60));
-#else	SYSTEM5
-long	tzfix	= - (TIMEZONE * 60 * 60);
-#endif	SYSTEM5
 int	lines	= 0;
 unsigned
 int	j,
@@ -281,8 +250,8 @@ char	*s,
 			if (keyRCS(strcpy(old_date, bfr), "date")) {
 				for (s = bfr; !isdigit(*s) && *s; s++);
 				if (*s) {
-				time_t	xtime	= mtime + tzfix;
-				struct	tm *t = localtime(&xtime);
+				time_t	xtime	= mtime + adj2est(FALSE);
+				struct	tm *t	= localtime(&xtime);
 				TELL ("   old: %s", bfr);
 					FORMAT(new_date,
 						"%02d.%02d.%02d.%02d.%02d.%02d",
@@ -325,32 +294,21 @@ char	*s,
  * it will delete or modify the checked-in file -- return TRUE.  If no action
  * is taken, return false.
  */
-Execute(argc, name, mtime)
+Execute(name, mtime)
 char	*name;
 time_t	mtime;
 {
 char	cmds[BUFSIZ];
-int	pid ,
-	status;
 struct	stat	sb;
 
-	(void)strcat(strcat(strcpy(cmds, CHECKIN), options), name);
-	SHOW("** %s\n", cmds);
-	bldarg(argc+1, myargv, cmds);
-
-	if ((pid = fork()) > 0) {
-		while (wait(&status) >= 0);
-		if (stat(name, &sb) >= 0)
+	if (execute(CHECKIN, strcat(strcpy(cmds, options), name)) >= 0) {
+		if (stat(name, &sb) >= 0) {
 			if (sb.st_mtime == mtime) {
 				SHOW("** checkin was not performed\n");
 				return (FALSE);
 			}
+		}
 		return (TRUE);
-	} else if (pid < 0) {
-		PRINTF("fork failed\n");
-	} else {
-		execvp(*myargv, myargv);
-		exit(0);		/* just in case exec-failed */
 	}
 	return (FALSE);
 }
@@ -385,14 +343,8 @@ char	*argv[];
 int	j;
 time_t	mtime;
 
-	putenv("TZ=GST0GDT");
-	putenv("TZNAME=GST,GDT");
-#ifdef	SYSTEM5
-	tzset();	/* make sure we use existing TZ! */
-#endif	SYSTEM5
 	fpT = tmpfile();
 
-	myargv = (char **)doalloc(0, (argc+1) * sizeof(*myargv));
 	(void)strcpy(options, " ");
 
 	for (j = 1; j < argc; j++) {
@@ -406,7 +358,7 @@ time_t	mtime;
 					silent++;
 			}
 		} else if (mtime = PreProcess (s)) {
-			if (Execute(argc, argv[j], mtime)) {
+			if (Execute(s, mtime)) {
 				PostProcess (s, mtime);
 				ReProcess(s, mtime);
 			}

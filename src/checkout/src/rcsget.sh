@@ -1,7 +1,7 @@
-: '@(#)rcsget.sh	1.1 88/05/20 15:14:26'
+: '@(#)rcsget.sh	1.2 88/05/21 12:27:29'
 # Check files out of RCS (T.E.Dickey)
 #
-# Use 'rcsdate' to checkout one or more files from the RCS-directory which is
+# Use 'checkout' to checkout one or more files from the RCS-directory which is
 # located in the current working directory, and then, to set the modification
 # date of the checked-out files according to the last delta date (rather than
 # the current date, as RCS assumes).
@@ -18,7 +18,7 @@ SYS5=/sys5/bin
 TRACE=
 #
 WD=`pwd`
-BASE=${RUNLIB-//dickey/local/dickey/bin}/rcsdate
+BASE=${RUNLIB-//dickey/local/dickey/bin}/checkout
 OPTS=
 #
 OPTS=

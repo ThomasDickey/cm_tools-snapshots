@@ -1,3 +1,26 @@
+1988-05-21  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	oops: must save/restore revision-option between passes.
+
+	* src/checkout/src/checkout.c:
+	oops: did not properly exit date-scanning loop by 'dotcmp()' test
+
+	* src/checkin/src/checkin.c: Broke out common routines.
+
+	* src/checkout/src/rcsget.sh: renamed 'rcsdate' to 'checkout'.
+
+	* src/checkout/src/checkout.c: changed interface to 'adj2est()'.
+
+	* src/checkout/src/checkout.c, src/checkout/src/Makefile: New file.
+
+	* src/checkin/src/rcsput.sh:
+	renamed 'rcsbase' to 'checkin' -- more mnemonic.
+
+	* src/checkin/src/Makefile:
+	renamed 'rcsbase' to 'checkin' -- more mnemonic.
+	also, forgot lib-dependency.
+
 1988-05-20  dickey@software.org
 
 	* src/checkout/src/rcsget.sh: New file.

@@ -1,6 +1,6 @@
-: '@(#)rcsput.sh	1.2 88/05/20 07:11:44'
+: '@(#)rcsput.sh	1.3 88/05/21 10:06:55'
 # Check-in one or more modules to RCS (T.E.Dickey).
-# This uses 'rcsbase' to maintain file modification dates as the checkin times.
+# This uses 'checkin' to maintain file modification dates as the checkin times.
 # 
 # Options:
 #	-b (passed to 'diff' in display of differences)
@@ -21,7 +21,7 @@
 # hacks to make this run on Apollo:
 SYS5=/sys5/bin
 #
-BASE=${RUNLIB-//dickey/local/dickey/bin}/rcsbase
+BASE=${RUNLIB-//dickey/local/dickey/bin}/checkin
 #
 BLANKS=
 SILENT=
