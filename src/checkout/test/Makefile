@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.3 1992/10/28 12:10:14 dickey Exp $
+# $Id: Makefile,v 11.4 1992/11/24 07:43:58 dickey Exp $
 # make-file for testing RCS checkout utility
 
 ####### (Development) ##########################################################
@@ -9,8 +9,8 @@ include $(TOP)/cm_library/support/cm_library.mk
 SCRIPTS	=\
 	run_tests.sh
 
-SOURCES	= Makefile $(SCRIPTS) run_tool.c
-ALL	= run_tool
+SOURCES	= Makefile $(SCRIPTS)
+ALL	=
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES) $(ALL)
@@ -23,7 +23,4 @@ lincnt.out:
 run_tests:	$(SOURCES) $(ALL) ; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################
-run_tool:	run_tool.c $(PTYPES_H) $(RCSDEFS_H) $(LIBS)
-	$(CC) -o $@ $(CFLAGS) $(CPP_OPTS) $@.c $(LIBS)
-
 $(SOURCES):			; $(GET) $@

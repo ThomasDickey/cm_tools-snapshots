@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.3 1992/10/27 09:33:46 dickey Exp $
+# $Id: Makefile,v 11.7 1992/11/24 08:06:47 dickey Exp $
 # make-file for testing RCS checkin utility
 
 ####### (Development) ##########################################################
@@ -21,6 +21,7 @@ REF_FILES=\
 	case3_f.ref
 
 SCRIPTS	=\
+	admin.sh\
 	case1.sh\
 	case1_a.sh\
 	case1_b.sh\
@@ -36,18 +37,11 @@ SCRIPTS	=\
 	case3_d.sh\
 	case3_e.sh\
 	case3_f.sh\
+	clean.sh\
 	run_tests.sh
 
-C_SRC	=\
-	run_tool.c \
-	set_date.c
-
-PROGS	=\
-	run_tool \
-	set_date
-
-SOURCES	= Makefile $(SCRIPTS) $(REF_FILES) README $(C_SRC)
-ALL	= $(PROGS)
+SOURCES	= Makefile $(SCRIPTS) $(REF_FILES) README
+ALL	=
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES) $(ALL)
@@ -60,6 +54,4 @@ lincnt.out:
 run_tests:	$(SOURCES) $(ALL) ; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################
-set_date:	set_date.c	; $(CC) -o $@ $(CPP_OPTS) $@.c $(LIBS)
-run_tool:	run_tool.c	; $(CC) -o $@ $(CPP_OPTS) $@.c $(LIBS)
 $(SOURCES):			; $(GET) $@

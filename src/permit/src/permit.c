@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 11.1 1992/10/28 07:47:39 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 11.2 1992/11/23 12:00:31 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,10 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/
  * Author:	T.E.Dickey
  * Created:	09 Mar 1989
  * Modified:
+ *		23 Nov 1992, allow user-names to be given that are not in the
+ *			     passwd-file.  Fixed an error with "-a" option,
+ *			     when owner was already present, caused option to
+ *			     be ignored.
  *		17 Feb 1992, lint
  *		30 Oct 1991, allow "-b" value to be "1" (for initial-creation)
  *		15 Oct 1991, convert to ANSI.  Use 'shoarg()'
@@ -50,9 +54,9 @@ extern	char	*strtok();
  *	local definitions						*
  ************************************************************************/
 
-#define	CI	"ci"
-#define	CO	"co"
-#define	RCS	"rcs"
+#define	CI_TOOL		"ci"
+#define	CO_TOOL		"co"
+#define	RCS_TOOL	"rcs"
 
 #define	WARN	FPRINTF(stderr,
 #define	TELL	if(verbose >= 0) PRINTF(
@@ -86,6 +90,7 @@ _AR1(char *,	s)
 _DCL(char *,	list)
 _DCL(char *,	s)
 {
+	int	ok	= FALSE;
 	if (list != 0) {
 		auto	char	bfr[BUFSIZ];
 		register char	*d;
@@ -93,22 +98,23 @@ _DCL(char *,	s)
 		for (d = strtok(strcpy(bfr, list), ",");
 			d; d = strtok((char *)0, ",")) {
 			if (!strcmp(s, d))
-				return (TRUE);
+				ok = TRUE;
+				/* continue, to put back delimiter */
 		}
 	}
-	return (FALSE);
+	return ok;
 }
 
 /*
  * Append to a comma-separated access-list
  */
 static
-cat_list(
-_ARX(char *,	dst)
-_AR1(char *,	src)
-	)
-_DCL(char *,	dst)
-_DCL(char *,	src)
+void	cat_list(
+	_ARX(char *,	dst)
+	_AR1(char *,	src)
+		)
+	_DCL(char *,	dst)
+	_DCL(char *,	src)
 {
 	if (*src) {
 		if (*dst)
@@ -122,12 +128,12 @@ _DCL(char *,	src)
  * track of the ones we have found.
  */
 static
-del_list(
-_ARX(char *,	list)
-_AR1(char *,	key)
-	)
-_DCL(char *,	list)
-_DCL(char *,	key)
+void	del_list(
+	_ARX(char *,	list)
+	_AR1(char *,	key)
+		)
+	_DCL(char *,	list)
+	_DCL(char *,	key)
 {
 	register size_t	len = strlen(key);
 	register char	*next;
@@ -228,16 +234,16 @@ set_baseline(_AR0)
 	set_command(tmp);
 	catarg(tmp, "-l");
 	catarg(tmp, acc_file);
-	SHOW CO, tmp);
-	if (!null_opt && (execute(rcspath(CO), tmp) < 0))
+	SHOW CO_TOOL, tmp);
+	if (!null_opt && (execute(rcspath(CO_TOOL), tmp) < 0))
 		failed(msg);
 
 	set_command(tmp);
 	set_revision(tmp, "-f");
 	catarg(tmp, m_buffer);
 	catarg(tmp, acc_file);
-	SHOW CI, tmp);
-	if (!null_opt && (execute(rcspath(CI), tmp) < 0))
+	SHOW CI_TOOL, tmp);
+	if (!null_opt && (execute(rcspath(CI_TOOL), tmp) < 0))
 		failed(msg);
 }
 
@@ -298,21 +304,23 @@ _DCL(char *,	s)
 	set_revision(tmp, "-r");
 	catarg(tmp, tmp_file);
 	catarg(tmp, acc_file);
-	SHOW CI, tmp);
-	if (!null_opt && (execute(rcspath(CI), tmp) < 0))
+	SHOW CI_TOOL, tmp);
+	if (!null_opt && (execute(rcspath(CI_TOOL), tmp) < 0))
 		failed("creating permit-file");
 	(void)unlink(tmp_file);
 	(void)unlink(tmp_desc);
 
 	if (!purge_opt && !expunge_opt) {
+		char	temp_user[BUFSIZ];
+		del_list(strcpy(temp_user, user_name), owner);
 		set_command(tmp);
 		(void)strcat(strcpy(bfr, "-a"), owner);
-		if (add_opt && !on_list(user_name, owner))
-			cat_list(bfr, user_name);
+		if (add_opt)
+			cat_list(bfr, temp_user);
 		catarg(tmp, bfr);
 		catarg(tmp, acc_file);
-		SHOW RCS, tmp);
-		if (!null_opt && (execute(rcspath(RCS), tmp) < 0))
+		SHOW RCS_TOOL, tmp);
+		if (!null_opt && (execute(rcspath(RCS_TOOL), tmp) < 0))
 			failed("modifying permit-file");
 	}
 }
@@ -353,8 +361,8 @@ _DCL(char *,	opt)
 		set_command(cmd);
 		catarg(cmd, strcat(strcpy(tmp, opt), name));
 		catarg(cmd, file);
-		SHOW RCS, cmd);
-		if (!null_opt && (execute(rcspath(RCS), cmd) < 0))
+		SHOW RCS_TOOL, cmd);
+		if (!null_opt && (execute(rcspath(RCS_TOOL), cmd) < 0))
 			failed("adding to access list");
 	}
 }
@@ -743,10 +751,6 @@ _MAIN
 
 		for (s = strtok(s, ","); s; s = strtok((char *)0, ",")) {
 			VERBOSE "** user = %s\n",s);
-			if (s2uid(s) < 0) {
-				TELL "?? user \"%s\" not found\n", s);
-				(void)exit(FAIL);
-			}
 			cat_list(user_name, s);
 		}
 	}

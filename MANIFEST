@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19921030
+MANIFEST for cm_tools, version t19921124
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -33,6 +33,7 @@ src/checkin/src/rcsput.c        wrapper for 'checkin'
 src/checkin/test                subdirectory
 src/checkin/test/Makefile       make-file for RCS checkin-utility tests
 src/checkin/test/README         description of src/checkin/test
+src/checkin/test/admin.sh       simple script for testing setuid
 src/checkin/test/case1.sh       script for case 1
 src/checkin/test/case1_a.ref    reference for case 1a
 src/checkin/test/case1_a.sh     script for case 1a
@@ -60,9 +61,8 @@ src/checkin/test/case3_e.ref    reference for case 3e
 src/checkin/test/case3_e.sh     script for case 3e
 src/checkin/test/case3_f.ref    reference for case 3f
 src/checkin/test/case3_f.sh     script for case 3f
+src/checkin/test/clean.sh       cleanup-script for 'junk' directory
 src/checkin/test/run_test.sh    test-script for RCS checkin-utility
-src/checkin/test/run_tool.c     quick tool to exec its argument via 'rcspath()'
-src/checkin/test/set_date.c     sets a date on a file (used here so I can use rlog's output in comparisons)
 src/checkout                    subdirectory
 src/checkout/Makefile           top-level makefile for 'checkout' utility
 src/checkout/src                subdirectory
@@ -72,7 +72,6 @@ src/checkout/src/rcsget.c       wrapper for 'checkout'
 src/checkout/test               subdirectory
 src/checkout/test/Makefile      make-file for 'checkout' regression tests
 src/checkout/test/run_test.sh   test-script for RCS checkout package
-src/checkout/test/run_tool.c    sets mtime of a given file
 src/checkup                     subdirectory
 src/checkup/Makefile            top-level makefile for RCS/sccs checkup utility
 src/checkup/src                 subdirectory
@@ -96,6 +95,11 @@ src/link2rcs/src/Makefile       make-file for RCS skeleton-tree utility (link2rc
 src/link2rcs/src/link2rcs.c     create symbolic- or hard-link tree
 src/link2rcs/test               subdirectory
 src/link2rcs/test/Makefile      make-file for link2rcs test
+src/link2rcs/test/case1.ref     reference for case 1
+src/link2rcs/test/case1.sh      script for case 1
+src/link2rcs/test/case2.ref     reference for case 2
+src/link2rcs/test/case2.sh      script for case 2
+src/link2rcs/test/listtree.sh   list tree contents in standard form, for testing
 src/link2rcs/test/run_test.sh   test-script for link2rcs
 src/permit                      subdirectory
 src/permit/Makefile             top-level makefile for the CM_TOOLS 'permit' utility
@@ -104,6 +108,18 @@ src/permit/src/Makefile
 src/permit/src/permit.c         setuid-style admin utility
 src/permit/test                 subdirectory
 src/permit/test/Makefile        makefile for 'permit' regression tests
+src/permit/test/case0.ref       reference for case0
+src/permit/test/case0.sh        script for case0
+src/permit/test/case1.ref       reference for case1
+src/permit/test/case1.sh        script for case1
+src/permit/test/case2.ref       reference for case2
+src/permit/test/case2.sh        script for case2
+src/permit/test/case3.ref       reference for case3
+src/permit/test/case3.sh        script for case3
+src/permit/test/case4.ref       reference for case4
+src/permit/test/case4.sh        script for case4
+src/permit/test/case5.ref       reference for case5
+src/permit/test/case5.sh        script for case5
 src/permit/test/run_test.sh     test/example script for 'permit' utility (no-op mode only)
 src/vcs                         subdirectory
 src/vcs/Makefile                top-level makefile for CM_TOOLS's VCS utility
@@ -126,6 +142,9 @@ support/Makefile                make-file for CM_TOOLS support utilities
 support/copy.sh                 copy-script to use til we have a working copy utility
 support/run_tool.c              sets mtime of a given file
 support/set_date.c              runs specific tool in rcs-path
+support/testinit.sh             sets common vcs environment-variables for testing
+support/testpath.sh             sets up PATH variable for tests
+support/who_suid.sh             finds an executable, echos owner iff it is set-uid
 user                            subdirectory
 user/Makefile                   make-file (for installation and source-control) of user-documentation
 user/baseline.man               manual for baseline utility

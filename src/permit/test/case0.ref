@@ -1,0 +1,17 @@
+** path = junk
+   1:	junk/
+   2:	|-- FOO/
+   3:	|---|-- 1.1 > dummy,v (USER,no_dummy)
+% ci -mPERMIT\ FILE -tTMP -r1.1 ./FOO ./FOO,v 
+./FOO,v  <--  ./FOO
+initial revision: 1.1
+done
+% rcs -aUSER ./FOO,v 
+RCS file: ./FOO,v
+done
+   4:	|-- RCS/
+** path = junk
+   1:	junk/
+   2:	|-- FOO/
+   3:	|---|-- 1.1 > FOO,v (USER)
+   4:	|-- RCS/

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.3 1992/10/16 10:00:32 dickey Exp $
+# $Id: Makefile,v 11.4 1992/11/24 07:17:42 dickey Exp $
 # Top-level make-file for CM_TOOLS
 
 THIS	= cm_tools
@@ -29,6 +29,7 @@ install\
 deinstall\
 sources::	$(MFILES)
 	cd certificate;	$(MAKE) $@
+	cd support;	$(MAKE) $@
 	cd src;		$(MAKE) $@
 	cd user;	$(MAKE) $@ INSTALL_MAN=`cd ..;cd $(INSTALL_MAN);pwd`
 	cd bin;		$(MAKE) $@ INSTALL_BIN=`cd ..;cd $(INSTALL_BIN);pwd`

@@ -1,10 +1,11 @@
 #!/bin/sh
-# $Id: compare.sh,v 11.0 1991/10/18 15:52:40 ste_cm Rel $
+# $Id: compare.sh,v 11.1 1992/11/23 12:06:26 dickey Exp $
 # test-script for RCS baseline utility
 #
 echo '** comparing results'
 mv $1.tst $1.out
-sed	-e s/${LOGNAME-LOGNAME}/{LOGNAME}/\
+sed	-e s/${ADMIN-ADMIN}/{LOGNAME}/\
+	-e s/${LOGNAME-LOGNAME}/{LOGNAME}/\
 	-e s/${USER-LOGNAME}/{LOGNAME}/\
 	-e 's@/tmp/permit[a-z0-9]*@{TEXT}@' $1.out >$1.tst
 rm -f $1.out

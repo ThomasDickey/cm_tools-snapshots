@@ -1,0 +1,14 @@
+** path = ..
+   1:	../
+   2:	|-- bin/
+   3:	|-- src/
+   4:	|-- test/
+   5:	|---|-- junk/
+   6:	|---|---|-- FOO/
+   7:	|---|---|---|-- 1.1 > FOO,v (USER)
+% rcs -eUSER FOO,v 
+   8:	|---|---|---|-- 1.1 > dummy,v (USER,no_dummy)
+% rcs -eUSER,no_dummy dummy,v 
+   9:	|---|---|---|-- 1.1 > FOO,v (USER)
+% rcs -eUSER FOO,v 
+  10:	|---|---|-- RCS/
