@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 4.0 1989/04/04 10:44:41 ste_cm Rel $";
+static	char	Id[] = "$Id: checkin.c,v 5.0 1989/09/21 09:29:41 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,16 @@ static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checki
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * $Log: checkin.c,v $
- * Revision 4.0  1989/04/04 10:44:41  ste_cm
- * BASELINE Thu Aug 24 09:23:45 EDT 1989 -- support:navi_011(rel2)
+ * Revision 5.0  1989/09/21 09:29:41  ste_cm
+ * BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
  *
+ *		Revision 4.1  89/09/21  09:29:41  dickey
+ *		added "rcs -c" decoding for IMakefile, AMakefile, changed
+ *		the decoding for ".com"
+ *		
+ *		Revision 4.0  89/04/04  10:44:41  ste_cm
+ *		BASELINE Thu Aug 24 09:23:45 EDT 1989 -- support:navi_011(rel2)
+ *		
  *		Revision 3.0  89/04/04  10:44:41  ste_cm
  *		BASELINE Mon Jun 19 13:07:30 EDT 1989
  *		
@@ -505,12 +512,14 @@ SetAccess()
 	if (!strcmp(s, ".a") || !strcmp(s, ".ada"))
 		catarg(cmds, "-c--  ");
 	else if (!strcmp(s, ".com"))
-		catarg(cmds, "-c!\t");
+		catarg(cmds, "-c$!\t");
 	else if (!strcmp(s, ".e"))
 		catarg(cmds, "-c * ");	/* Interbase, like .c */
 	else if (!strcmp(s, ".mms")
 	||	 !strcmp(s, ".mk")
 	||	 !*s && (	!strcmp(t, "Makefile")
+			||	!strcmp(t, "IMakefile")
+			||	!strcmp(t, "AMakefile")
 			||	!strcmp(t, "makefile")) )
 		catarg(cmds, "-c#\t");
 

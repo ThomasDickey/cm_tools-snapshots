@@ -1,10 +1,22 @@
-# $Id: Makefile,v 4.0 1989/08/22 08:43:05 ste_cm Rel $
+# $Id: Makefile,v 7.0 1989/09/28 11:27:01 ste_cm Rel $
 # Top-level makefile for CM_TOOLS src-directory
 #
 # $Log: Makefile,v $
-# Revision 4.0  1989/08/22 08:43:05  ste_cm
-# BASELINE Thu Aug 24 09:17:54 EDT 1989 -- support:navi_011(rel2)
+# Revision 7.0  1989/09/28 11:27:01  ste_cm
+# BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
 #
+#	Revision 6.0  89/09/28  11:27:01  ste_cm
+#	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+#	
+#	Revision 5.0  89/09/28  11:27:01  ste_cm
+#	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+#	
+#	Revision 4.1  89/09/28  11:27:01  dickey
+#	deleted 'rdiff' utility from this tree
+#	
+#	Revision 4.0  89/08/22  08:43:05  ste_cm
+#	BASELINE Thu Aug 24 09:17:54 EDT 1989 -- support:navi_011(rel2)
+#	
 #	Revision 3.1  89/08/22  08:43:05  dickey
 #	corrected 'destroy' rule
 #	
@@ -26,8 +38,7 @@ FIRST	=\
 	copy/Makefile\
 	ded/Makefile\
 	link2rcs/Makefile\
-	permit/Makefile\
-	rdiff/Makefile
+	permit/Makefile
 
 ####### (Standard Productions) #################################################
 all\
@@ -49,7 +60,6 @@ deinstall:	$(FIRST)
 	cd ded;		$(MAKE) $@
 	cd link2rcs;	$(MAKE) $@
 	cd permit;	$(MAKE) $@
-	cd rdiff;	$(MAKE) $@
 
 destroy: rdestroy
 	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
@@ -64,4 +74,3 @@ copy/Makefile:		; cd copy;	$(GET) Makefile
 ded/Makefile:		; cd ded;	$(GET) Makefile
 link2rcs/Makefile:	; cd link2rcs;	$(GET) Makefile
 permit/Makefile:	; cd permit;	$(GET) Makefile
-rdiff/Makefile:		; cd rdiff;	$(GET) Makefile
