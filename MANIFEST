@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19890928
+MANIFEST for cm_tools, version t19891027
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -18,7 +18,7 @@ src/baseline                    subdirectory
 src/baseline/Makefile           top-level makefile for RCS baseline utility
 src/baseline/src                subdirectory
 src/baseline/src/Makefile       make-file for RCS baseline utility
-src/baseline/src/baseline.sh    
+src/baseline/src/baseline.c     utility to mark major-release version
 src/baseline/test               subdirectory
 src/baseline/test/Makefile      make-file for baseline utility regression test
 src/baseline/test/run_test.sed  sed-script to extract the tip-version of an RCS-file (infers baseline).
@@ -28,7 +28,7 @@ src/checkin/Makefile            top-level makefile for RCS checkin utility
 src/checkin/src                 subdirectory
 src/checkin/src/Makefile        
 src/checkin/src/checkin.c       wrapper for 'ci'
-src/checkin/src/rcsput.sh       
+src/checkin/src/rcsput.c        wrapper for 'checkin'
 src/checkin/test                subdirectory
 src/checkin/test/Makefile       make-file for RCS checkin-utility tests
 src/checkin/test/run_test.sh    test-script for RCS checkin-utility
@@ -37,7 +37,7 @@ src/checkout/Makefile           top-level makefile for 'checkout' utility
 src/checkout/src                subdirectory
 src/checkout/src/Makefile       
 src/checkout/src/checkout.c     wrapper for 'co'
-src/checkout/src/rcsget.sh      
+src/checkout/src/rcsget.c       wrapper for 'checkout'
 src/checkout/test               subdirectory
 src/checkout/test/Makefile      make-file for 'checkout' regression tests
 src/checkout/test/run_test.sh   test-script for RCS checkout package

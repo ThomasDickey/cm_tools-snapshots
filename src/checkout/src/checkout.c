@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	what[] = "$Id: checkout.c,v 4.2 1989/08/24 16:10:36 dickey Exp $";
+static	char	what[] = "$Id: checkout.c,v 5.0 1989/10/10 16:18:15 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,16 @@ static	char	what[] = "$Id: checkout.c,v 4.2 1989/08/24 16:10:36 dickey Exp $";
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * $Log: checkout.c,v $
- * Revision 4.2  1989/08/24 16:10:36  dickey
- * exit with error if 'usercopy()' fails
+ * Revision 5.0  1989/10/10 16:18:15  ste_cm
+ * BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
  *
+ *		Revision 4.3  89/10/10  16:18:15  dickey
+ *		corrected last change (if no directory name is explicit,
+ *		use ".")
+ *		
+ *		Revision 4.2  89/08/24  16:11:44  dickey
+ *		exit with error if 'usercopy()' fails
+ *		
  *		Revision 4.1  89/08/24  15:32:37  dickey
  *		suppress 'revert()' message if user does not want to lock the
  *		file.  also, verify that working file's directory exists
@@ -372,6 +379,8 @@ char	*name;
 
 	if (s = strrchr(strcpy(dirname, Working),'/'))
 		s[1] = EOS;
+	else
+		(void)strcpy(dirname, ".");
 	if (access(dirname, W_OK) < 0)
 		failed(dirname);
 

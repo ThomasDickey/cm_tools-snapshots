@@ -12,6 +12,7 @@
 	F32	=Classic 12 Italic,
 	F34	=Classic 14 Bold,
 	F49	=Modern 12,
+	F6	=Symbols 12,
 	F84	=Thames 10>
 
 <!Page,
@@ -187,8 +188,8 @@ V6,
 <Page Header, Frame =
 V6,
 (g9,1,0
- (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,September\ 2\,\ 1988)
- (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS\ Check-out\ Script)
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,October\ 26\,\ 1989)
+ (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS\ Check-Out\ Utility)
  (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,rcsget)
  (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
   0.066667,6,6,0,0.066667,6))>
@@ -208,7 +209,7 @@ NAME
 
 <paragraph>
 
-<F31>rcsget<F0> <#1f> rcs check-out script
+<F31>rcsget<F0> <#1f> rcs check-out utility
 
 <header>
 
@@ -255,23 +256,15 @@ to determine the correct modification date.  Options special to <F31>rcsget
 
 <options>
 
--<F31>c<F0> <F32>cutoff<F0><Tab>specifies the <F32>rcs<F0> cutoff 
-date, in SCCS-format
+-<F31>a<F0><Tab>permits <F31>rcsget<F0> to process directory names 
+beginning with <#7f>.".
 
-<Tab><Tab>YY[MM[DD[HH[MM[SS]]]]]
+-<F31>d<F0><Tab>directs <F31>rcsget<F0> to scan the <F32>rcs<F0> directories 
+to find the list of files which are checked-out.  Otherwise, <F31>rcsget<F0> 
+will select only those files which are already checked-out.
 
-<Tab>Punctuation in the date is permitted.  For example,
-
-<subfixed>
-
--c 77/2/2 9:22:25
-
--c 770202092225
-
-<options>
-
-<Tab>represent the same date.  This option is translated to the <F31>co<F0> 
-"-<F31>d<F0>" option.
+-<F31>n<F0><Tab>no-op mode directs <F31>rcsget<F0> to show what files 
+would be checked out without actually checking them out.
 
 <header>
 
@@ -282,10 +275,10 @@ OPERATIONS
 To extract files using <F31>rcsget<F0>, you must provide one or more 
 names.  They may be either file or directory names.
 
-<F31>Rcsget<F0> resolves names until it finds one of the form <#7f>RCS/<F32>fi
-le<F0>,v" before invoking <F31>co<F0>.  If it finds a directory 
-(other than <#7f>RCS"), <F31>rcsget<F0> will recur on itself to extract 
-files at lower levels.
+<F31>Rcsget<F0> resolves names until it finds one of the form <#7f>RCS/<F32>fil
+e<F0>,v" before invoking <F31>co<F0>.  If it finds a directory (other 
+than <#7f>RCS"), <F31>rcsget<F0> will recur to extract files at lower 
+levels.
 
 <header>
 
@@ -293,8 +286,7 @@ ENVIRONMENT
 
 <paragraph>
 
-<F31>Rcsget<F0> is a Bourne shell script.  On Apollo DOMAIN/IX, it 
-uses System<SP>5 features, including <F32>getopt<SP>(1)<F0>.
+<F31>Rcsget<F0> is written in C, and runs on UNIX<F6>T<F0> systems.
 
 <header>
 
@@ -306,10 +298,8 @@ FILES
 
 <options>
 
-<F49>rcsget<F0><Tab>the Bourne shell script
-
 <F49>checkout<F0><Tab>a utility which invokes <F31>co<F0> and then 
-modifies the file's modification date  so that it matches the version-date 
+modifies the file's modification date so that it matches the version-date 
 selected which was extracted via <F31>co<F0>.
 
 <header>

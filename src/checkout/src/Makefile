@@ -1,10 +1,19 @@
-# $Id: Makefile,v 4.0 1989/08/22 09:51:55 ste_cm Rel $
+# $Id: Makefile,v 5.0 1989/10/19 11:52:50 ste_cm Rel $
 # Make-file for RCS checkout utilities
 #
 # $Log: Makefile,v $
-# Revision 4.0  1989/08/22 09:51:55  ste_cm
-# BASELINE Thu Aug 24 09:27:38 EDT 1989 -- support:navi_011(rel2)
+# Revision 5.0  1989/10/19 11:52:50  ste_cm
+# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
 #
+# Revision 4.2  89/10/19  11:52:50  dickey
+# updated lint-rule (now two programs)
+# 
+# Revision 4.1  89/10/19  08:35:22  dickey
+# recoded 'rcsget' from Bourne-shell to C-language
+# 
+# Revision 4.0  89/08/22  09:51:55  ste_cm
+# BASELINE Thu Aug 24 09:27:38 EDT 1989 -- support:navi_011(rel2)
+# 
 # Revision 3.1  89/08/22  09:51:55  dickey
 # corrected 'destroy' rule
 # 
@@ -25,10 +34,13 @@ DATE	= echo '****'`date` >> $@
 LINTOPT	= $(DEFINES) $(INCLUDES) -ltd
 #
 ####### (Standard Lists) #######################################################
-ALL	= $B/checkout $B/rcsget
-CSRC	= checkout.c
-SCRIPTS	= rcsget.sh
-SOURCES	= Makefile $(CSRC) $(SCRIPTS)
+ALL	= \
+	$B/checkout \
+	$B/rcsget
+CSRC	= \
+	checkout.c \
+	rcsget.c
+SOURCES	= Makefile $(CSRC)
 MAIN_O	= checkout.o $(LIBS)
 #
 ####### (Standard Productions) #################################################
@@ -44,12 +56,15 @@ sources: 	$(SOURCES)
 install:	$B/checkout
 #
 ####### (Details of Productions) ###############################################
-$B/checkout:	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
-$B/rcsget:	rcsget.sh	; copy rcsget.sh $@
+$B/checkout:	checkout.o $(LIBS)	; $(CC) -o $@ checkout.o $(LIBS)
+$B/rcsget:	rcsget.o $(LIBS)	; $(CC) -o $@ rcsget.o $(LIBS)
 #
-checkout.o:	$I/ptypes.h	$I/rcsdefs.h
+checkout.o \
+rcsget.o:	$I/ptypes.h	$I/rcsdefs.h
 #
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
-lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
+lint.out:	$(CSRC)
+	$(DATE)
+	sh -c 'for i in $?;do tdlint $(LINTOPT) $$i >>$@;done'
 lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

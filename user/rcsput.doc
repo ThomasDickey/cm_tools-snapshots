@@ -177,8 +177,8 @@ V6,
 <Page Header, Frame =
 V6,
 (g9,1,0
- (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,September\ 2\,\ 1988)
- (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS\ Check-in\ Script)
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,October\ 26\,\ 1989)
+ (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS\ Check-In\ Utility)
  (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,rcsput)
  (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
   0.066667,6,6,0,0.066667,6))>
@@ -198,7 +198,7 @@ NAME
 
 <paragraph>
 
-<F31>rcsput<F0> <#1f> RCS check-in script
+<F31>rcsput<F0> <#1f> RCS check-in utility
 
 <header>
 
@@ -291,10 +291,11 @@ but not to check the files into <F32>rcs<F0>.
 -<F31>h<F0><Tab>is passed to <F31>diff<F0>, and permits it to handle 
 huge differences.
 
--<F31>L<F0> <F32>file<F0><Tab>causes <F31>rcsput<F0> to generate 
-a log-file of the files which are processed, and all differences which 
+-<F31>L<F0> <F32>file<F0><Tab>causes <F31>rcsput<F0> to generate a 
+log-file of the files which are processed, and all differences which 
 are encountered.  The log-file is inherited in recursion to lower 
-directory levels (i.e., it is written to the same place).
+directory levels (i.e., it is written to the same place).  If no argument 
+is specified, rcsput assumes <#7f>logfile".
 
 <header>
 
@@ -317,7 +318,8 @@ utility to show the versions of the modules which make up a program:
 <fixed>
 
 #ifndef<Tab>lint<HR>
-static<Tab>char<Tab>ident[] = "$Header: /users/source/archives/cm_tools.vcs/user/RCS/rcsput.doc,v 4.0 1989/06/15 15:23:44 ste_cm Rel $";<HR>
+static<Tab>char<Tab>ident[] = "$Id: //cashew/local/dickey/src/cm_tools/user/RCS
+/rcsput.doc,v 4.0 89/06/15 15:23:44 ste_cm Rel Locker: dickey $";<HR>
 #endif<Tab>lint
 
 <bullet>
@@ -412,9 +414,7 @@ ENVIRONMENT
 
 <paragraph>
 
-<F31>Rcsput<F0> is a Bourne shell script.  On Apollo DOMAIN/IX, it 
-uses System<SP>5 features including <F32>dirname<SP>(1)<F0> and <F32>getopt<SP>
-(1)<F0>.
+<F31>Rcsput<F0> is written in C, and runs on UNIX<F6>T<F0> systems.
 
 Environment variables imported by <F31>rcsput<F0> include:
 
@@ -435,8 +435,6 @@ FILES
 
 <options>
 
-<F49>rcsput<F0><Tab>the Bourne shell script
-
 <F49>checkin<F0><Tab>A utility which invokes <F31>ci<F0>, and modifies 
 the <F32>rcs<F0> <#7f>,v" file after check-in so that the check-in 
 date matches the file's modification date.
@@ -447,12 +445,7 @@ ANTICIPATED CHANGES
 
 <paragraph>
 
-Provide a mechanism for inserting dummy version numbers so that <F31>rcsput
-<F0> can bump the release number (for genuine major releases).  Currently, 
-the revision numbers are interpreted only as the underlying RCS utilities 
-do 
-them.  To handle major release numbers requires a scan of the 
-group of files affected to ensure that there are no conflicts.
+None.
 
 <header>
 

@@ -1,18 +1,21 @@
-# $Header: /users/source/archives/cm_tools.vcs/RCS/Makefile,v 4.0 1989/08/22 08:24:46 ste_cm Rel $
+# $Id: Makefile,v 7.0 1989/10/05 09:45:39 ste_cm Rel $
 # Top-level make-file for CM_TOOLS
 #
 # $Log: Makefile,v $
-# Revision 4.0  1989/08/22 08:24:46  ste_cm
-# BASELINE Thu Aug 24 09:12:03 EDT 1989 -- support:navi_011(rel2)
+# Revision 7.0  1989/10/05 09:45:39  ste_cm
+# BASELINE Mon Apr 30 12:49:21 1990 -- (CPROTO)
 #
-#	Revision 3.2  89/08/22  08:24:46  dickey
-#	'destroy' rule should be error-free
+#	Revision 6.0  89/10/05  09:45:39  ste_cm
+#	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
 #	
-#	Revision 3.1  89/08/22  08:16:43  dickey
-#	corrected/revised 'clean', 'clobber' & 'destroy' rules
+#	Revision 5.0  89/10/05  09:45:39  ste_cm
+#	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
 #	
-#	Revision 3.0  89/03/29  07:35:54  ste_cm
-#	BASELINE Mon Jun 19 12:54:05 EDT 1989
+#	Revision 4.1  89/10/05  09:45:39  dickey
+#	added 'lint.out', 'lincnt.out' rules
+#	
+#	Revision 4.0  89/08/22  08:24:46  ste_cm
+#	BASELINE Thu Aug 24 09:12:03 EDT 1989 -- support:navi_011(rel2)
 #	
 #	Revision 7.0  89/10/05  09:45:39  ste_cm
 #	BASELINE Mon Apr 30 12:49:21 1990 -- (CPROTO)
@@ -21,7 +24,7 @@
 ####### (Development) ##########################################################
 INSTALL_PATH = /ste_site/ste/bin
 INSTALL_DOCS = /ste_site/ste/doc
-MAKE	= make $(MFLAGS) -k$(MAKEFLAGS)	GET=$(GET)
+MAKE	= make $(MFLAGS) -k$(MAKEFLAGS)
 THIS	= Makefile
 CFLAGS	=
 MAKE	= make $(MFLAGS) -k$(MAKEFLAGS) GET=$(GET) CFLAGS="$(CFLAGS)"
@@ -75,6 +78,10 @@ clobber:	$(MFILES)
 	cd user;	$(MAKE) $@
 	cd bin;		$(MAKE) $@
 	rm -f $(HACKS) $(MKFILE)
+
+clobber::
+	rm -rf $(HACKS) $(MKFILE) $(DIRS)
+
 lint.out\
 lincnt.out:	$(FIRST)
 	cd src;		$(MAKE) $@

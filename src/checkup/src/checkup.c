@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	what[] = "$Id: checkup.c,v 4.0 1989/08/17 13:59:45 ste_cm Rel $";
+static	char	Id[] = "$Id: checkup.c,v 5.0 1989/10/26 10:20:32 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,15 @@ static	char	what[] = "$Id: checkup.c,v 4.0 1989/08/17 13:59:45 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * $Log: checkup.c,v $
- * Revision 4.0  1989/08/17 13:59:45  ste_cm
- * BASELINE Thu Aug 24 09:31:25 EDT 1989 -- support:navi_011(rel2)
+ * Revision 5.0  1989/10/26 10:20:32  ste_cm
+ * BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
  *
+ *		Revision 4.1  89/10/26  10:20:32  dickey
+ *		use new procedure 'istextfile()'
+ *		
+ *		Revision 4.0  89/08/17  13:59:45  ste_cm
+ *		BASELINE Thu Aug 24 09:31:25 EDT 1989 -- support:navi_011(rel2)
+ *		
  *		Revision 3.3  89/08/17  13:59:45  dickey
  *		if "-r" and "-o" are both set, use "-r" to limit the set of
  *		files shown as obsolete, rather than to select working files
@@ -144,38 +150,6 @@ char	*string;
 }
 
 /*
- * Open the given file, and scan it to see if it consists of entirely
- * "readable" text.  If any exception is found, return TRUE.
- */
-static
-isbinary(name)
-char	*name;
-{
-	FILE	*fp;
-	char	bfr[BUFSIZ];
-	int	binfile	= FALSE;
-
-	if (fp = fopen(name, "r")) {
-		register char	*s;
-		register int	n;
-		while ((n = fread(s = bfr, sizeof(char), sizeof(bfr), fp)) > 0)
-			while (n-- > 0) {
-				register c = *s++;
-				if (!(isascii(c)
-					&& (isprint(c) || isspace(c)))) {
-					binfile = TRUE;
-					break;
-				}
-			}
-		FCLOSE(fp);
-	} else {
-		VERBOSE "?? cannot open %s\n", name);
-		binfile = TRUE;	/* cannot open, don't complain? */
-	}
-	return (binfile);
-}
-
-/*
  * Test the given filename to see if it has any of the suffixes which the user
  * wishes to ignore.  If so, return TRUE.
  */
@@ -296,7 +270,7 @@ struct	stat	*sp;
 			} else if (cdate < sp->st_mtime) {
 				change	= "newer";
 			}
-		} else if (!isbinary(name)) {
+		} else if (istextfile(name)) {
 			change	= "not archived";
 		}
 		if ((change != 0) || (*owner != EOS && *owner != '?')) {
