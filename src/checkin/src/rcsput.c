@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 10.6 1992/02/07 11:14:20 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 11.0 1992/03/04 10:07:40 ste_cm Rel $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		04 Mar 1992, test "-f" after 'different()'
  *		05 Feb 1992, revised filename-parsing with 'rcsargpair()',
  *			     obsoleted "-x".
  *		04 Feb 1992, pass piped-in text via "-m" option.
@@ -168,7 +169,7 @@ _DCL(char *,	archive)
 		if (*vers == '?')
 			first = TRUE;	/* no revisions present */
 		else {
-			if (!force && !different(working))
+			if (!different(working) && !force)
 				return;
 			first = FALSE;
 		}
