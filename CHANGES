@@ -1,3 +1,7 @@
+1998-02-02  Thomas E. Dickey  <dickey@clark.net>
+
+	* mkdirs.sh: resync with my-autoconf
+
 1997-09-28  Thomas E. Dickey  <dickey@clark.net>
 
 	* makefile.in, bin/makefile.in, certify/makefile.in, src/baseline/makefile.in, src/checkin/makefile.in, src/checkout/makefile.in, src/checkup/makefile.in, src/copy/makefile.in, src/link2rcs/makefile.in, src/makefile.in, src/permit/makefile.in, src/vcs/makefile.in, support/makefile.in, user/makefile.in, src/baseline/src/makefile.in, src/baseline/test/makefile.in, src/checkin/src/makefile.in, src/checkin/test/makefile.in, src/checkout/src/makefile.in, src/checkout/test/makefile.in, src/checkup/src/makefile.in, src/checkup/test/makefile.in, src/copy/src/makefile.in, src/copy/test/makefile.in, src/link2rcs/src/makefile.in, src/link2rcs/test/makefile.in, src/permit/src/makefile.in, src/permit/test/makefile.in, src/vcs/src/makefile.in, src/vcs/test/makefile.in:
