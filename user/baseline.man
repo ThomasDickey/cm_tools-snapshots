@@ -1,10 +1,10 @@
-.\" $Id: baseline.man,v 10.0 1991/09/25 08:58:03 ste_cm Rel $
-.de DS
+.\" $Id: baseline.man,v 11.0 1992/01/17 12:40:14 ste_cm Rel $
+.de EX
 .RS
 .nf
 .sp
 ..
-.de DE
+.de EE
 .fi
 .RE
 .sp .5
@@ -40,14 +40,14 @@ since the first development version is, by convention, 1.1.
 After baselining, you may use \fBcheckout\fR to obtain
 a particular set of files.
 For example,
-.DS
+.EX
 checkout \-r2.0 file
-.DE
+.EE
 .PP
 obtains the baseline "2.0" version, while
-.DS
+.EX
 checkout \-r2 file1 file2 file3
-.DE
+.EE
 .PP
 obtains the last development version beginning with "2.0", but
 before "3.0".
@@ -59,9 +59,9 @@ before "3.0".
 \fRthe new baseline version, specified as a whole
 number after a hyphen, e.g.,
 .RS
-.DS
+.EX
 baseline \-2 file1 file2 file3
-.DE
+.EE
 .PP
 If no baseline version is specified, the most recent baseline
 version (as recorded in the \fBRCS,v\fR \fBpermit\fR-file) is
@@ -74,17 +74,13 @@ existing baseline.
 permits \fBbaseline\fR to process files in directories
 beginning with ".".
 .TP
-.B \-f
-the "fast" option preserves existing access
-lists in the archives.
-Normally \fBpermit\fR is invoked to purge
-the access lists to prevent locks while the baselining process is
-proceeding.
-.TP
 .B \-l
 leaves files locked after baselining.
 Also, if files
 are locked but not modified, no error is reported.
+.TP
+.B \-L
+allows \fBbaseline\fR to follow symbolic links to directories.
 .TP
 .BI \-m msg
 adds the string "\-\-\ \fImsg\fR" to
@@ -95,7 +91,11 @@ runs \fBbaseline\fR in no-op mode,
 showing where permissions would be purged,
 and listing files which would be baselined.
 .TP
-.B \-r
+.B \-p
+the "purge" option purges existing access lists in the archives
+to prevent locks while the baselining process is proceeding.
+.TP
+.B \-R
 permits \fBbaseline\fR to run recursively when
 it encounters a non-RCS directory.
 .TP

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 10.0 1991/10/25 15:20:18 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 10.1 1992/01/17 14:20:34 dickey Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		17 Jan 1992, "-k" and "-d" options of 'ci' are conflicting.
  *		25 Oct 1991, 'tmpfile()' resets effective uid/gid (don't use!)
  *		24 Oct 1991, corrected exit-condition in 'GetLock()' - was
  *			     reading past header.  Also, test for "-f" option in
@@ -269,7 +270,7 @@ DecodeArcDate(
 _AR1(char *,	from))
 _DCL(char *,	from)
 {
-	time_t	the_time;
+	time_t	the_time = 0;
 	int	year, mon, day, hour, min, sec;
 
 	newzone(5,0,FALSE);	/* format for EST5EDT */
@@ -1013,7 +1014,10 @@ _DCL(int,	code)
 	} else if (from_keys && !got_rev && !logmsg)
 		catarg(opt_all, "-mFROM_KEYS");
 
-	if_D_option(catarg(opt_all, "-d"))
+	if_D_option(
+		if (!from_keys && modtime != 0)
+			catarg(opt_all, "-d")
+		)
 }
 
 static
