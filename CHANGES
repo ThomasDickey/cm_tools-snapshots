@@ -1,3 +1,17 @@
+1988-10-05  dickey@software.org
+
+	* src/checkout/src/rcsget.sh: use RCS_DIR environment variable.
+	added "-d" option and rely also on 'checkout' to do name resolution to make this faster generally.
+
+	* src/checkin/src/rcsput.sh: sccs2rcs keywords
+
+	* src/checkin/src/rcsput.sh: use RCS_DIR environment variable.
+	modified invocation of 'rcsdiff' to check for case in which there are no revisions present (e.g., "rcs -i").
+
+1988-10-05  ste_cm@software.org
+
+	* src/checkin/src/rcsput.sh: BASELINE Thu Apr  6 08:47:10 EDT 1989
+
 1988-09-28  dickey@software.org
 
 	* src/checkout/src/checkout.c:

@@ -1,4 +1,4 @@
-: '@(#)rcsput.sh	1.8 88/08/17 10:07:39'
+: '$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.sh,v 2.0 1988/10/05 07:38:49 ste_cm Exp $'
 # Check-in one or more modules to RCS (T.E.Dickey).
 # This uses 'checkin' to maintain file modification dates as the checkin times.
 # 
@@ -16,12 +16,14 @@
 #
 # Environment:
 #	PAGER	- may override to use in difference listing
+#	RCS_DIR - name of rcs-directory
 #
 # hacks to make this run on Apollo:
 if [ -f /com/vt100 ]
 then	PATH=$PATH:/sys5/bin
 fi
 #
+RCS=${RCS_DIR-RCS}
 BLANKS=
 SILENT=
 NOP=
@@ -73,12 +75,12 @@ do
 	i=$F
 	if [ -f $i ]
 	then
-		if [ ! -d RCS -a -z "$NOP" ]
-		then	mkdir RCS
+		if [ ! -d $RCS -a -z "$NOP" ]
+		then	mkdir $RCS
 		fi
 	elif [ -d $i ]
 	then
-		if [ $i != RCS ]
+		if [ $i != RCS -a $i != $RCS ]
 		then	echo '*** recurring to '$i
 			cd $i
 			$0 $OPTS *
@@ -88,27 +90,33 @@ do
 		echo '*** Ignored "'$i'" (not a file)'
 		continue
 	fi
-	j=RCS/$i,v
+	j=$RCS/$i,v
 	if [ -f $j ]
 	then
 		echo '*** Checking differences for "'$i'"'
-		rcsdiff $BLANKS $i >/tmp/diff$$
-		if [ -s /tmp/diff$$ ]
+		rm -f /tmp/diff[SE]$$
+		rcsdiff $BLANKS $i >/tmp/diffS$$ 2>/tmp/diffE$$
+		cat /tmp/diffE$$ 1>&2
+		if [ -s /tmp/diffS$$ ]
 		then
 			if [ -z "$SILENT" ]
 			then
-				${PAGER-'more'} /tmp/diff$$
+				${PAGER-'more'} /tmp/diffS$$
 			fi
 			if [ -n "$LOG" ]
 			then
 				echo appending to logfile
-				cat /tmp/diff$$ >>$LOG
+				cat /tmp/diffS$$ >>$LOG
 			fi
 			ACT="D"
 		else
-			echo '*** no differences found ***'
+			ERR=`fgrep 'no revisions present' /tmp/diffE$$`
+			if [ -z "$ERR" ]
+			then	echo '*** no differences found ***'
+			else	ACT="I"
+			fi
 		fi
-		rm -f /tmp/diff$$
+		rm -f /tmp/diff[SE]$$
 	elif [ -f $i ]
 	then
 		if (file $i | fgrep -v packed | grep text$)
