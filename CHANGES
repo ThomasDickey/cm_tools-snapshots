@@ -1,3 +1,12 @@
+1992-03-04  dickey@software.org
+
+	* src/checkin/src/rcsput.c: "-f" should not suppress 'different()'
+
+1992-03-04  ste_cm@software.org
+
+	* src/checkin/src/rcsput.c:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
 1992-02-28  dickey@software.org
 
 	* certify/release.txt: newest fix
