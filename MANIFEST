@@ -1,6 +1,8 @@
-MANIFEST for cm_tools, version t19880613
+MANIFEST for cm_tools, version t19880729
 --------------------------------------------------------------------------------
 MANIFEST                        this file
+src/baseline/src                subdirectory
+src/baseline/src/baseline.sh    
 src/checkin/src                 subdirectory
 src/checkin/src/Makefile        
 src/checkin/src/checkin.c       wrapper for 'ci'

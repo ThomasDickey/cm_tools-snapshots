@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkin.c	1.5 88/06/13 07:02:43";
+static	char	sccs_id[] = "@(#)checkin.c	1.8 88/07/08 07:05:46";
 #endif	lint
 
 /*
@@ -7,6 +7,13 @@ static	char	sccs_id[] = "@(#)checkin.c	1.5 88/06/13 07:02:43";
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		08 Jul 1988, set "silent" before first call on GetLock if "-q"
+ *			     precedes filename in argv.
+ *		01 Jul 1988, added chmod to fix cases in which 'ci' leaves the
+ *			     file writeable (Apollo bug?).  Added interpretation
+ *			     for environment variable which specifies base
+ *			     value for revision if none is given in the options
+ *			     list.
  *		27 May 1988, recoded using 'rcsedit' module.
  *		21 May 1988, broke out common routines for 'checkout.c'.
  *
@@ -37,6 +44,7 @@ static	char	sccs_id[] = "@(#)checkin.c	1.5 88/06/13 07:02:43";
 #include	<time.h>
 extern	struct	tm *localtime();
 extern	FILE	*tmpfile();
+extern	char	*getenv();
 extern	char	*getuser();
 extern	char	*rcsname();
 extern	char	*rcsread(), *rcsparse_id(), *rcsparse_num(), *rcsparse_str();
@@ -49,6 +57,7 @@ extern	char	*strcpy();
 #define	TRUE	1
 #define	FALSE	0
 #define	CHECKIN	"ci"
+#define	REV_OPT	"rfluq"			/* patch: no support for -k */
 
 #define	PRINTF	(void) printf
 #define	FORMAT	(void) sprintf
@@ -56,10 +65,11 @@ extern	char	*strcpy();
 #define	TELL	if (ShowIt(name,FALSE)) PRINTF
 
 static	FILE	*fpT;
-static	int	silent   = FALSE,
+static	int	silent	= FALSE,
+		locked	= FALSE,	/* set if file is re-locked */
 		ShowedIt;
-static	char	options[BUFSIZ];	/* options for 'ci' */
-static	char	opt_rev[BUFSIZ],
+static	char	opt_all[BUFSIZ],	/* options for 'ci' */
+		opt_rev[BUFSIZ],
 		old_date[BUFSIZ],
 		new_date[BUFSIZ];
 
@@ -72,6 +82,7 @@ static	char	opt_rev[BUFSIZ],
  * If the silent-option is inactive, each filename is shown even if no messages
  * apply to it.
  */
+static
 ShowIt (name,doit)
 char	*name;
 {
@@ -87,6 +98,7 @@ int	show	= (doit || !silent);
  * If the given file is still checked-out, touch its time.
  * patch: should do keyword substitution for Header, Date a la 'co'.
  */
+static
 ReProcess (name, mtime)
 char	*name;
 time_t	mtime;
@@ -94,6 +106,7 @@ time_t	mtime;
 FILE	*fpS;
 struct	stat	sb;
 int	len	= strlen(old_date),
+	mode,
 	lines	= 0,
 	changed	= 0;		/* number of substitutions done */
 char	*s, *d,
@@ -133,10 +146,17 @@ char	*s, *d,
 	(void) fclose(fpS);
 
 	(void)stat(name, &sb);
+	mode = sb.st_mode & 0777;
 	if (changed) {
-		(void)copyback(fpT, name, (int)(sb.st_mode & 0777), lines);
+		(void)copyback(fpT, name, mode, lines);
 	}
-	(void)setmtime (name, mtime); /* update the file modification times */
+	if (!locked) {		/* cover up bugs on Apollo acls */
+		mode &= ~0222;
+		if (chmod(name, mode) < 0)
+			SHOW("?? \"chmod %03o %s\" failed\n", mode, name);
+	}
+	if (setmtime (name, mtime) < 0) /* update the file modification times */
+		SHOW("?? touch \"%s\" failed\n", name);
 }
 
 /*
@@ -214,7 +234,7 @@ time_t	mtime;
 char	cmds[BUFSIZ];
 struct	stat	sb;
 
-	if (execute(CHECKIN, strcat(strcpy(cmds, options), name)) >= 0) {
+	if (execute(CHECKIN, strcat(strcpy(cmds, opt_all), name)) >= 0) {
 		if (stat(name, &sb) >= 0) {
 			if (sb.st_mtime == mtime) {
 				SHOW("** checkin was not performed\n");
@@ -244,7 +264,7 @@ char	*s	= 0,
 
 	if (*opt_rev == EOS) {
 		if (stat(rcsname(name), &sb) < 0)
-			return (TRUE);	/* initial checkin */
+			return (-1);	/* initial checkin */
 
 		if (!rcsopen(name, !silent))
 			return (FALSE);	/* could not open file anyway */
@@ -314,6 +334,72 @@ struct	stat	sb;
 	return (0);
 }
 
+/*
+ * Generate the string 'opt_all[]' which we will pass to 'ci' for options.
+ * We may have to generate it before each file because some are initial
+ * checkins.
+ *
+ * For initial checkins we have a special case: if the environment variable
+ * RCS_BASE is set, we use this for the revision code rather than "1.1".
+ */
+static
+SetOpts(argc,argv,code)
+char	*argv[];
+{
+	int	last	= 0;
+	int	logmsg	= 0;
+	register int	j;
+	char	bfr[BUFSIZ];
+	char	*dft	= (code < 0) ? getenv("RCS_BASE") : 0;
+	register char *s;
+
+	*opt_rev = EOS;
+	(void)strcpy(opt_all, " ");
+	for (j = 1; j < argc; j++) {
+		s = argv[j];
+		if (*s == '-') {
+			catarg(opt_all, s);
+			if (*++s == 'q')
+				silent++;
+			if (strchr(REV_OPT, *s)) {
+				if (*s == 'l')	locked = TRUE;
+				(void)strcpy(opt_rev, ++s);
+				last = j;
+			} else if (*s == 'm')
+				logmsg = TRUE;
+		}
+	}
+
+	/*
+	 * If no revision was specified, and there is a default in effect,
+	 * reprocess the list of options so that it includes the default
+	 * revision.  Also, if no log-message was specified, add one so we
+	 * don't get prompted unnecessarily.
+	 */
+	if ((*opt_rev == EOS)
+	&&  (dft != 0)) {
+		if (last) {
+			(void)strcpy(opt_all, " ");
+			for (j = 1; j < argc; j++) {
+				s = argv[j];
+				if (*s == '-') {
+					if (j == last) {
+						FORMAT(bfr, "%s%s", s, dft);
+						s = bfr;
+					}
+					catarg(opt_all, s);
+				}
+			}
+		} else {	/* no revision-related option was given */
+			FORMAT(bfr, "-r%s", dft);
+			catarg(opt_all, bfr);
+		}
+		if (!logmsg) {
+			catarg(opt_all, "-mRCS_BASE");
+		}
+	}
+}
+
 /************************************************************************
  *	main program							*
  ************************************************************************/
@@ -321,30 +407,30 @@ struct	stat	sb;
 main (argc, argv)
 char	*argv[];
 {
-int	j;
-time_t	mtime;
-char	revision[BUFSIZ];
+	register int	j;
+	time_t		mtime;
+	int		code;
+	register char	*s;
 
 	fpT = tmpfile();
-	(void)strcpy(options, " ");
-	*revision = EOS;
 
+	/*
+	 * Process the argument list
+	 */
 	for (j = 1; j < argc; j++) {
-	char	*s = argv[j];
+		s = argv[j];
 		if (*s == '-') {
-			catarg(options, argv[j]);
-			if (*++s == 'q')
+			if (*(++s) == 'q')
 				silent++;
-			else if (strchr("rfluq", *s))
-				(void)strcpy(revision, s+1);
 		} else {
-			(void)strcpy(opt_rev, revision);
 			ShowedIt = FALSE;
 			if (mtime = PreProcess (s)) {
-				if (GetLock(s)
-				&&  Execute(s, mtime)) {
-					PostProcess (s, mtime);
-					ReProcess(s, mtime);
+				if (code = GetLock(s)) {
+					SetOpts(j,argv,code);
+					if (Execute(s, mtime)) {
+						PostProcess (s, mtime);
+						ReProcess(s, mtime);
+					}
 				}
 			}
 		}
