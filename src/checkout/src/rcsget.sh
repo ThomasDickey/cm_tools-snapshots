@@ -1,4 +1,4 @@
-: '@(#)rcsget.sh	1.6 88/10/05 08:19:40'
+: '$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.sh,v 4.0 1988/11/10 09:31:26 ste_cm Rel $'
 # Check files out of RCS (T.E.Dickey)
 #
 # Use 'checkout' to checkout one or more files from the RCS-directory which is
@@ -35,27 +35,40 @@ done
 #
 if [ -z "$1" ]
 then
-	$0 -d $OPTS .
-elif [ "$1" != '*' ]
-then
+	($0 -d $OPTS .)
+else
 	for i in $*
 	do
 		if [ -d $i ]
 		then
-			if [ $i = $RCS ]
-			then
-				$0 $OPTS $RCS/*,v
-			elif [ "$i" != sccs ]
-			then
+			case $i in
+			.|./*|..|../*)
+				cd $i
+				($0 $DOPT $OPTS *)
+				cd $WD
+				;;
+			sccs|SCCS|.*|\$.*.\$)
+				echo '?? ignored directory "'$i'"'
+				;;
+			$RCS)
+				($0 $OPTS $RCS/*,v $RCS/.*,v)
+				;;
+			*)
 				echo '** checkout directory "'$i'"'
 				cd $i
-				$0 $DOPT $OPTS *
+				($0 $DOPT $OPTS *)
 				cd $WD
-			fi
+				;;
+			esac
 		elif [ -z "$DOPT" ]
 		then
-			echo '** checkout '$OPTS $i
-			checkout $OPTS $i
+			case $i in
+			*\**)
+				;;
+			*)
+				echo '** checkout '$OPTS $i
+				checkout $OPTS $i
+			esac
 		fi
 	done
 fi

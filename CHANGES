@@ -1,3 +1,29 @@
+1988-11-10  dickey@software.org
+
+	* src/link2rcs/src/link2rcs.sh:
+	modified so we don't try to create '.'-directory names, or DSEE-directories.
+	also, use RCS_DIR environment variable.
+
+	* src/checkout/src/rcsget.sh:
+	don't really need (or want) message about wildcard misses
+
+	* src/checkout/src/rcsget.sh: sccs2rcs keywords
+
+1988-11-10  ste_cm@software.org
+
+	* src/checkout/src/rcsget.sh: BASELINE Mon Jun 19 13:12:40 EDT 1989
+
+	* src/checkout/src/rcsget.sh: BASELINE Thu Apr  6 09:22:38 EDT 1989
+
+	* src/checkout/src/rcsget.sh:
+	BASELINE Thu Aug 24 09:27:38 EDT 1989 -- support:navi_011(rel2)
+
+1988-11-10  dickey@software.org
+
+	* src/checkout/src/rcsget.sh:
+	rewrote to handle '.'-files, while ignoring '.'-directory and DSEE-directory.
+	fork subprocess to avoid having stack crash if one '$0' fails.
+
 1988-10-05  dickey@software.org
 
 	* src/checkout/src/rcsget.sh: use RCS_DIR environment variable.
