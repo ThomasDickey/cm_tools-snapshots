@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		10 May 1997, pass-thru -w option to checkin.
  *		09 May 1994, port to Linux
  *		22 Sep 1993, gcc warnings
  *		04 Mar 1992, test "-f" after 'different()'
@@ -43,7 +44,7 @@
 #include	<dyn_str.h>
 extern	char	*tmpnam(_ar1(char *,name));
 
-MODULE_ID("$Id: rcsput.c,v 11.5 1994/11/08 23:53:43 tom Exp $")
+MODULE_ID("$Id: rcsput.c,v 11.6 1997/05/10 12:29:37 tom Exp $")
 
 #define	VERBOSE		if (!quiet) PRINTF
 
@@ -308,7 +309,7 @@ _MAIN
 
 	/* process options */
 	for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
-		if (strchr("BqrfklumnNst", s[1]) != 0) {
+		if (strchr("BqrfklumnNstw", s[1]) != 0) {
 			CATARG(ci_opts, s);
 			switch (s[1]) {
 			case 'f':	force = TRUE;		break;

@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	09 Mar 1989
  * Modified:
+ *		10 May 1997, correct argument to mktemp() for descriptions.
  *		04 Dec 1992, added "-l" option, to allow links to be shown
  *		23 Nov 1992, allow user-names to be given that are not in the
  *			     passwd-file.  Fixed an error with "-a" option,
@@ -45,7 +46,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: permit.c,v 11.6 1994/11/09 00:09:19 tom Exp $")
+MODULE_ID("$Id: permit.c,v 11.7 1997/05/10 12:41:51 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -262,8 +263,8 @@ void	create_permit(
 	auto	Stat_t	sb;
 	auto	char	acc_file[BUFSIZ],
 			tmp_file[BUFSIZ],
+			TMP_DESC[BUFSIZ],
 			*tmp_desc;
-	static	char	TMP_DESC[] = "/tmp/permitXXXXXX";
 
 	/* create filenames */
 	(void)vcs_file("./", acc_file, FALSE);
@@ -290,7 +291,7 @@ void	create_permit(
 		FCLOSE(fp);
 	}
 
-	tmp_desc = mktemp(TMP_DESC);
+	tmp_desc = mktemp(strcpy(TMP_DESC, "/tmp/permitXXXXXX"));
 	if (tmp_desc != 0 && (fp = fopen(tmp_desc, "w"))) {
 		FPRINTF(fp, "directory-level permissions for:\n%s\n", s);
 		FCLOSE(fp);
