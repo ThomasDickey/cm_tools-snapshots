@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: copy.c,v 7.0 1990/04/30 13:08:18 ste_cm Rel $";
+static	char	Id[] = "$Id: copy.c,v 7.4 1990/05/14 13:46:31 dickey Exp $";
 #endif	lint
 
 /*
@@ -7,9 +7,25 @@ static	char	Id[] = "$Id: copy.c,v 7.0 1990/04/30 13:08:18 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * $Log: copy.c,v $
- * Revision 7.0  1990/04/30 13:08:18  ste_cm
- * BASELINE Mon Apr 30 13:08:44 1990 -- (CPROTO)
+ * Revision 7.4  1990/05/14 13:46:31  dickey
+ * cleaned up last change by permitting user to coerce the copy
+ * into a destination-directory by supplying a trailing '/'.
  *
+ *		Revision 7.3  90/05/14  12:28:16  dickey
+ *		corrected logic which verifies args in 'copyit()'.
+ *		also, added kludge so that copy via symbolic link to directory
+ *		sort of works (if there are more than 2 args) -- must fix.
+ *		
+ *		Revision 7.2  90/05/08  11:54:27  dickey
+ *		retain tilde-expansion on both src/dst in 'copyit()'
+ *		
+ *		Revision 7.1  90/05/08  11:46:47  dickey
+ *		corrected handling of tilde in src-path.
+ *		added "-l" option for copying link-targets.
+ *		
+ *		Revision 7.0  90/04/30  13:08:18  ste_cm
+ *		BASELINE Mon Apr 30 13:08:44 1990 -- (CPROTO)
+ *		
  *		Revision 6.7  90/04/30  13:08:18  ste_cm
  *		use of 'convert()' broke sr9.7 compatibility (fixed)
  *		
@@ -115,8 +131,6 @@ static	char	Id[] = "$Id: copy.c,v 7.0 1990/04/30 13:08:18 ste_cm Rel $";
  * patch:	how do we keep from losing the destination file if we have a
  *		fault in the system?
  *
- * patch:	should add an option to copy link-targets
- *
  * patch:	should have an option to preserve the sense of hard-links.
  */
 
@@ -150,6 +164,7 @@ static	long	total_dirs,
 		total_bytes;
 static	int	d_opt,		/* obtain source from destination arg */
 		i_opt,		/* interactive: force prompt before overwrite */
+		l_opt,		/* copy symbolic-link-targets */
 		m_opt,		/* merge directories */
 		n_opt,		/* true if we don't actually do copies */
 		s_opt,		/* enable set-uid/gid in target files */
@@ -410,33 +425,37 @@ copyit(src, dst)
 char	*src, *dst;
 {
 	struct	stat	dst_sb, src_sb;
-	int	num;
+	int	num,
+		ok1, ok2;
 	char	bfr1[BUFSIZ],
 		bfr2[BUFSIZ],
-		*s;
+		temp[BUFSIZ];
 
 	abshome(strcpy(bfr1, src));
 	abshome(strcpy(bfr2, dst));
+	src_sb.st_mode =
+	dst_sb.st_mode = 0;
+
 	/* Verify that the source and destinations are distinct */
-	if (stat(bfr1, &src_sb) >= 0
-	&&  stat(bfr2, &dst_sb) >= 0) {
+	ok1 = stat(bfr1, &src_sb) >= 0;
+	ok2 = stat(bfr2, &dst_sb) >= 0;
+	if (ok1 && ok2) {
 		if (src_sb.st_ino == dst_sb.st_ino
 		&&  src_sb.st_dev == dst_sb.st_dev) {
 			TELL "?? %s and %s are identical (not copied)\n",
 				src, dst);
 			exit(FAIL);
 		}
-	} else {
-		src_sb.st_mode =
-		dst_sb.st_mode = 0;
 	}
 	DEBUG "** src: \"%s\"\n** dst: \"%s\"\n", bfr1, bfr2);
 
 	if (!no_dir_yet) {
-		if (!isDIR(dst_sb)) 
-			(void)strcpy(bfr2, pathhead(bfr2, &dst_sb));
-		if (access(bfr2, W_OK) < 0) {
-			TELL "?? directory is not writeable: \"%s\"\n", bfr2);
+		if (isDIR(dst_sb))
+			(void)strcpy(temp, bfr2);
+		else
+			(void)strcpy(temp, pathhead(bfr2, &dst_sb));
+		if (access(temp, W_OK) < 0) {
+			TELL "?? directory is not writeable: \"%s\"\n", temp);
 			return;
 		}
 	}
@@ -444,10 +463,12 @@ char	*src, *dst;
 	VERBOSE "** copy \"%s\" to \"%s\"\n", src, dst);
 
 	/* Verify that the source is a legal file */
-	if (lstat(src, &src_sb) < 0) {
+#ifdef	S_IFLNK
+	if ((!l_opt && (lstat(bfr1, &src_sb) < 0)) || src_sb.st_mode == 0) {
 		TELL "?? file not found: \"%s\"\n", src);
 		return;
 	}
+#endif	S_IFLNK
 	if (!isFILE(src_sb)
 #ifdef	S_IFLNK
 	&&  !isLINK(src_sb)
@@ -456,6 +477,8 @@ char	*src, *dst;
 		TELL "?? not a file: \"%s\"\n", src);
 		return;
 	}
+	src = bfr1;		/* correct tilde, if any */
+	dst = bfr2;
 
 	/* Check to see if we can overwrite the destination */
 	if (num = (lstat(dst, &dst_sb) >= 0)) {
@@ -466,8 +489,8 @@ char	*src, *dst;
 		) {
 			if (i_opt) {
 				TELL "%s ? ", dst);
-				if (gets(bfr1)) {
-					if (*bfr1 != 'y' && *bfr1 != 'Y')
+				if (gets(temp)) {
+					if (*temp != 'y' && *temp != 'Y')
 						return;
 				} else
 					return;
@@ -529,10 +552,11 @@ usage()
 {
 	auto	char	bfr[BUFSIZ];
 	setbuf(stderr, bfr);
-	TELL "usage: copy [-i] [-v] [-u] {[-d] | source [...]} destination\n\
+	TELL "usage: copy [options] {[-d] | source [...]} destination\n\
 Options:\n\
   -d  infer source (leaf) from destination path\n\
   -i  interactive (prompt before overwriting)\n\
+  -l  copy link-targets\n\
   -m  merge directories\n\
   -n  no-op (show what would be copied)\n\
   -s  enable set-uid/gid in target\n\
@@ -552,7 +576,7 @@ char	*argv[];
 	register int	j;
 	auto	struct	stat	dst_sb,
 				src_sb;
-	auto	int	num;
+	auto	int	num, ok_dst;
 	auto	char	dst[BUFSIZ];
 
 	if ((num = (argc - optind)) < 2) {
@@ -560,7 +584,16 @@ char	*argv[];
 		usage();
 	}
 
-	if (lstat(strcpy(dst, argv[argc-1]), &dst_sb) >= 0) {
+	/* hacks to allow copying to a symbolic-link, or into a directory */
+	(void)strcpy(dst, argv[argc-1]);
+#ifdef	S_IFLNK
+	if (num == 2 && (dst[strlen(dst)-1] != '/'))
+		ok_dst = lstat(dst, &dst_sb) >= 0;
+	else
+#endif
+		ok_dst =  stat(dst, &dst_sb) >= 0;
+
+	if (ok_dst) {
 
 		if (m_opt) {
 			if (num == 2 && isDIR(dst_sb)) {
@@ -644,9 +677,10 @@ char	*argv[];
 {
 	register int	j;
 
-	while ((j = getopt(argc, argv, "dimnsuv")) != EOF) switch (j) {
+	while ((j = getopt(argc, argv, "dilmnsuv")) != EOF) switch (j) {
 	case 'd':	d_opt = TRUE;	break;
 	case 'i':	i_opt = TRUE;	break;
+	case 'l':	l_opt = TRUE;	break;
 	case 'm':	m_opt = TRUE;	break;
 	case 'n':	n_opt = TRUE;	break;
 	case 's':	s_opt = TRUE;	break;

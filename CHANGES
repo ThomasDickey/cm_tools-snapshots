@@ -1,3 +1,77 @@
+1990-05-21  dickey@software.org
+
+	* Makefile: corrected 'clobber' rule
+
+1990-05-21  ste_cm@software.org
+
+	* Makefile: BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+1990-05-21  dickey@software.org
+
+	* Makefile: notes
+
+1990-05-14  dickey@software.org
+
+	* certify/release.txt: added note about mods to 'copy'
+
+	* src/copy/src/copy.c:
+	cleaned up last change by permitting user to coerce the copy
+	into a destination-directory by supplying a trailing '/'.
+
+	* src/copy/src/copy.c:
+	corrected logic which verifies args in 'copyit()'.
+	also, added kludge so that copy via symbolic link to directory
+	sort of works (if there are more than 2 args) -- must fix.
+
+1990-05-10  dickey@software.org
+
+	* Makefile: simplified using "::" rules and "-x" option of 'checkout'
+
+1990-05-08  dickey@software.org
+
+	* src/Makefile: simplified using "::" rules and "-x" option of checkout
+
+1990-05-08  ste_cm@software.org
+
+	* src/Makefile: BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/Makefile: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1990-05-08  dickey@software.org
+
+	* certify/release.txt: added note about 'sccsname.c'
+
+	* certify/release.txt: fixes to 'ded' and 'copy'
+
+	* src/copy/src/copy.c:
+	retain tilde-expansion on both src/dst in 'copyit()'
+
+	* src/copy/src/copy.c: corrected handling of tilde in src-path.
+	added "-l" option for copying link-targets.
+
+1990-05-04  dickey@software.org
+
+	* certify/release.txt: mods to link2rcs
+
+	* src/link2rcs/src/link2rcs.c:
+	sort/purge list of items to remove repeats.  Added "-b" option
+	(currently only "-b0" value) to purge the tree when no RCS is
+	in a sub-directory.
+
+1990-05-04  ste_cm@software.org
+
+	* src/link2rcs/src/link2rcs.c:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+1990-05-03  dickey@software.org
+
+	* src/link2rcs/src/link2rcs.c:
+	added "-e" option (apollo-only) to create links with a given
+	environment variable.
+
+	* src/link2rcs/src/link2rcs.c:
+	added "-f" option to support linkages to ordinary files.
+
 1990-04-30  ste_cm@software.org
 
 	* src/copy/src/copy.c: BASELINE Mon Apr 30 13:08:44 1990 -- (CPROTO)

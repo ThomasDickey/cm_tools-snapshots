@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: link2rcs.c,v 7.0 1990/04/27 16:42:49 ste_cm Rel $";
+static	char	Id[] = "$Id: link2rcs.c,v 8.0 1990/05/04 10:21:26 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,24 @@ static	char	Id[] = "$Id: link2rcs.c,v 7.0 1990/04/27 16:42:49 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * $Log: link2rcs.c,v $
- * Revision 7.0  1990/04/27 16:42:49  ste_cm
- * BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+ * Revision 8.0  1990/05/04 10:21:26  ste_cm
+ * BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
  *
+ *		Revision 7.3  90/05/04  10:21:26  dickey
+ *		sort/purge list of items to remove repeats.  Added "-b" option
+ *		(currently only "-b0" value) to purge the tree when no RCS is
+ *		in a sub-directory.
+ *		
+ *		Revision 7.2  90/05/03  15:33:19  dickey
+ *		added "-e" option (apollo-only) to create links with a given
+ *		environment variable.
+ *		
+ *		Revision 7.1  90/05/03  14:49:26  dickey
+ *		added "-f" option to support linkages to ordinary files.
+ *		
+ *		Revision 7.0  90/04/27  16:42:49  ste_cm
+ *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+ *		
  *		Revision 6.1  90/04/27  16:42:49  dickey
  *		use 'chmod()' to ensure path-mode to cover up apollo sr10/sr9
  *		bug.
@@ -45,11 +60,14 @@ static	char	Id[] = "$Id: link2rcs.c,v 7.0 1990/04/27 16:42:49 ste_cm Rel $";
  * Options:	(see usage)
  *
  * To do:	add options for the following
- *		-e	edit apollo-style environment variable in src-path
  *		-b	specify baseline version which must appear in tree
  *		-p	create working directories only for those which the
  *			user has permissions (link to src for the rest)
+ *
  *		test src-RCS to see if it is a symbolic link (resolve link)
+ *
+ *		Add option like "-e", which causes a specified symbolic link
+ *		(in a fixed position) to be used as the src-pointer.
  */
 
 #define	STR_PTYPES
@@ -61,6 +79,7 @@ extern	char	*pathleaf();
 extern	char	*rcs_dir();
 extern	char	*relpath();
 extern	char	*txtalloc();
+extern	long	strtol();
 
 extern	int	optind;		/* 'getopt()' index to argv */
 extern	char	*optarg;	/* 'getopt()' argument in argv */
@@ -73,10 +92,13 @@ extern	char	*optarg;	/* 'getopt()' argument in argv */
 #define	TELL	if(verbose >= 0) PRINTF(
 #define	VERBOSE	if(verbose >  0) PRINTF(
 
+#define	is_PREFIX(dst,src,len)	(len < strlen(dst) && !strncmp(dst,src,len))
+
 typedef	struct	_list	{
 	struct	_list	*link;	/* link to next item in list */
 	char	*path;		/* path to define */
 	char	*from;		/* link to define */
+	char	*what;		/* annotation for sym-links */
 	} LIST;
 
 	/*ARGSUSED*/
@@ -84,14 +106,24 @@ typedef	struct	_list	{
 
 static	LIST	*list;
 static	int	allnames;		/* "-a" option */
+static	int	baseline = -1;		/* "-b" option */
+static	int	files_too;		/* "-f" option */
 static	int	merge;			/* "-m" option */
 static	int	no_op;			/* "-n" option */
 static	int	relative;		/* "-r" option */
 static	int	verbose;		/* "-v" option */
 
+#ifdef	apollo				/* "-e" option */
+static	char	*env_path;		/* variable-name */
+static	int	env_size;		/* corresponding path-size */
+#endif
+
 static	char	Source[BUFSIZ] = ".";
 static	char	Target[BUFSIZ] = ".";
 static	char	Current[BUFSIZ];
+
+static	char	*fmt_link = "link-to-RCS:";
+static	char	*fmt_file = "link-to-file";
 
 /*
  * Print normal-trace using a common format
@@ -101,6 +133,67 @@ tell_it(tag,path)
 char	*tag,*path;
 {
 	TELL "** %-16s%s\n", tag, path);
+}
+
+/*
+ * Check for leaf-names suppressed if "-a" option is not given.
+ */
+static
+suppress_dots(src)
+char	*src;
+{
+	register char *t;
+	abspath(src);		/* get rid of "." and ".." names */
+	t = pathleaf(src);	/* obtain leaf-name for "-a" option */
+	return (*t == '.' && !allnames);
+}
+
+/*
+ * Add to the end of the linked-list so we process subdirectories after their
+ * parents.
+ */
+static
+LIST	*
+new_LIST()
+{
+	register LIST	*p = ALLOC(LIST,1),
+			*q = list;
+	if (q != 0) {
+		while (q->link)
+			q = q->link;
+		q->link = p;
+	} else
+		list = p;
+	p->link = 0;
+	return (p);
+}
+
+/*
+ * Convert Source+src to destination-path, accounting for user-specified
+ * relative path, etc.
+ */
+static
+char	*
+path_to(src)
+char	*src;
+{
+	auto	char	dst[BUFSIZ];
+	return (!strcmp(relpath(dst,Source,src), ".") ? "." : txtalloc(dst+2));
+}
+
+static
+char	*
+path_from(src)
+char	*src;
+{
+#ifdef	apollo
+	auto	char	tmp[BUFSIZ];
+	if (env_path != 0) {
+		FORMAT(tmp, "$(%s)%s", env_path, src + env_size);
+		src = tmp;
+	}
+#endif
+	return (txtalloc(src));
 }
 
 /*
@@ -115,33 +208,27 @@ char	*path;
 char	*name;
 struct	stat	*sp;
 {
-	auto	LIST	*p, *q;
+	auto	LIST	*p;
+	auto	char	tmp[BUFSIZ],
+			*s = pathcat(tmp, path, name);
 
 	if (sp == 0)
 		;
 	else if ((sp->st_mode & S_IFMT) == S_IFDIR) {
-		auto	char	tmp[BUFSIZ],
-				dst[BUFSIZ],
-				*s = pathcat(tmp, path, name),
-				*t;
-		abspath(s);		/* get rid of "." and ".." names */
-		t = pathleaf(s);	/* obtain leaf-name for "-a" option */
-		if (*t == '.' && !allnames)	return (-1);
+		if (suppress_dots(s))	return (-1);
+		p = new_LIST();
 		/* patch: test for link-to-link */
-		p = ALLOC(LIST,1);
-		if (q = list) {
-			while (q->link)
-				q = q->link;
-			q->link = p;
-		} else
-			list = p;
-		p->link = 0;
-		p->path = !strcmp(relpath(dst, Source, tmp), ".")
-				? "."
-				: txtalloc(dst+2);
-		p->from = sameleaf(s, rcs_dir()) ? txtalloc(tmp) : 0;
+		p->path = path_to(tmp);
+		p->from = sameleaf(s, rcs_dir()) ? path_from(tmp) : 0;
+		p->what = fmt_link;
 		if (p->from != 0)
 			readable = -1;
+	} else if (files_too && ((sp->st_mode & S_IFMT) == S_IFREG)) {
+		if (suppress_dots(s))	return (-1);
+		p = new_LIST();
+		p->path = path_to(tmp);
+		p->from = path_from(tmp);
+		p->what = fmt_file;
 	}
 	return(readable);
 }
@@ -156,7 +243,7 @@ char	*name;
 	auto	char	tmp[BUFSIZ];
 	(void)getwd(tmp);
 	abspath(name = pathcat(tmp, tmp, name));
-	TELL "** src-path = %s\n", name);
+	TELL "** src-path = %s\n", path_from(name));
 	(void)walktree((char *)0, name, src_stat, "r", 0);
 }
 
@@ -249,17 +336,116 @@ char	*path;
  * Create a symbolic link
  */
 static
-make_lnk(src, dst)
-char	*src, *dst;
+make_lnk(src, dst, what)
+char	*src, *dst, *what;
 {
 	if (!conflict(dst, S_IFLNK, src)) {
-		tell_it("link-to-RCS:", dst);
+		tell_it(what, dst);
 		VERBOSE "%% ln -s %s %s\n", src, dst);
 		if (!no_op) {
 			if (symlink(src, dst) < 0)
 				failed(src);
 		}
 	}
+}
+
+/* filter slashes in pathnames to newlines so directories sort in proper order*/
+static
+char	*
+deslash(dst, p)
+char	*dst;
+LIST	*p;
+{
+	auto	 char	*base = dst;
+	register char	*src = p->path;
+	do {
+		register char	c = *src++;
+		*dst = (c == '/') ? '\n' : c;
+	} while (*dst++);
+	return (base);
+}
+
+static
+compar_LIST(a,b)
+LIST	*a, *b;
+{
+	char	x[BUFSIZ], y[BUFSIZ];
+	return (strcmp(deslash(x,a), deslash(y,b)));
+}
+
+/* compress duplicate items out of the LIST-vector, returns the resulting len */
+static
+unique_LIST(vec, count)
+LIST	*vec;
+unsigned count;
+{
+	register int	j, k;
+	for (j = k = 0; k < count; j++, k++) {
+		if (j != k)
+			vec[j] = vec[k];
+		while ((k < count) && (vec[k+1].path == vec[j].path))
+			k++;
+	}
+	return (j);
+}
+
+/* given a directory-entry, find if a subordinate RCS-directory exists */
+static
+has_children(vec,count,old)
+LIST	*vec;
+unsigned count;
+{
+	register int	new;
+	auto	 size_t	len = strlen(vec[old].path);
+
+	if (vec[old].what == fmt_file)		/* preserve files */
+		return (TRUE);
+	if (vec[old].from != 0)
+		/* patch: check baseline-version here */
+		return (TRUE);
+
+	for (new = old+1; new < count; new++) {
+		if (vec[new].what == fmt_file)	/* skip files */
+			continue;
+		if (vec[new].from == 0)		/* skip non-RCS entries */
+			continue;
+		if (is_PREFIX(vec[new].path,vec[old].path,len))
+			/* patch: check baseline-version here */
+			return (TRUE);
+	}
+	return (FALSE);
+}
+
+/* skip past the specified directory-entry and all of its children */
+static
+skip_children(vec,count,old)
+LIST	*vec;
+unsigned count;
+{
+	register int	new;
+	auto	 size_t	len = strlen(vec[old].path);
+
+	for (new = old+1; new < count; new++) {
+		if (!is_PREFIX(vec[new].path,vec[old].path,len))
+			break;
+	}
+	return (new);
+}
+
+/* purge entries which do not have an underlying RCS-directory */
+static
+purge_LIST(vec,count)
+LIST	*vec;
+unsigned count;
+{
+	register int	j, k;
+	for (j = k = 0; k < count; j++, k++) {
+		while (!has_children(vec,count,k))
+			k = skip_children(vec,count,k);
+		if (k < count)
+			vec[j] = vec[k];
+	}
+	return (j);
 }
 
 /*
@@ -270,11 +456,39 @@ static
 make_dst(path)
 char	*path;
 {
-	auto	LIST	*p;
+	auto	LIST	*p, *q;
 	auto	char	dst[BUFSIZ];
 	auto	char	tmp[BUFSIZ];
+	auto	unsigned count;
+	register int	j;
 
 	TELL "** dst-path = %s\n", path);
+
+	/* sort/purge the linked list */
+	for (p = list, count = 0; p; p = p->link)
+		count++;
+	if (count == 0)
+		return;
+	else if (count > 1) {
+		auto	LIST	*vec = ALLOC(LIST,count);
+		for (p = list, count = 0; p; p = q) {
+			vec[count++] = *p;
+			q = p->link;
+			dofree((char *)p);
+		}
+		qsort(vec, (LEN_QSORT)count, sizeof(LIST), compar_LIST);
+		count = unique_LIST(vec,count);
+		if (baseline >= 0)
+			count = purge_LIST(vec,count);
+		if (count == 0)
+			return;
+		list = &vec[0];
+		for (j = 1; j < count; j++)
+			vec[j-1].link = &vec[j];
+		vec[count-1].link = 0;
+	}
+
+	/* process the linked-list */
 	(void)strcpy(dst, path);
 	for (p = list; p; p = p->link) {
 		if (p->from == 0) {	/* directory */
@@ -287,7 +501,8 @@ char	*path;
 				*s = EOS;
 			make_lnk(relative ? relpath(tmp, dst, p->from)
 					  : p->from,
-				p->path);
+				p->path,
+				p->what);
 		}
 	}
 }
@@ -322,7 +537,13 @@ usage()
 	,""
 	,"Options:"
 	,"  -a      process all directory names (else \".\"-names ignored)"
+	,"  -b num  purge entries without the specified baseline version"
+	,"          use \"-b0\" to purge directories which have no RCS beneath"
+#ifdef	apollo
+	,"  -e env  specify environment-variable to use in symbolic links"
+#endif
 	,"  -d dir  specify destination-directory (distinct from -s, default .)"
+	,"  -f      link to files also"
 	,"  -m      merge against destination"
 	,"  -n      no-op"
 	,"  -r      construct relative symbolic links"
@@ -346,12 +567,21 @@ char	*argv[];
 {
 	auto	char	*src_dir = Source,
 			*dst_dir = Target;
+	auto	char	*p;
 	register int j;
 
 	(void)getwd(Current);
-	while ((j = getopt(argc, argv, "ad:mnrqs:v")) != EOF)
+	while ((j = getopt(argc, argv, "ab:d:e:fmnrqs:v")) != EOF)
 		switch (j) {
 		case 'a':	allnames++;			break;
+		case 'b':	baseline = strtol(optarg, &p, 0);
+				if (*p != EOS)
+					usage();
+				break;
+#ifdef	apollo
+		case 'e':	env_path = optarg;		break;
+#endif
+		case 'f':	files_too++;			break;
 		case 'm':	merge++;			break;
 		case 'n':	no_op++;			break;
 		case 'r':	relative++;			break;
@@ -373,6 +603,31 @@ char	*argv[];
 	abspath(Target);
 	if (!strcmp(Source,Target))
 		usage();
+
+	/*
+	 * If environment-variable is specified in src-path, verify that it is
+	 * defined properly.
+	 */
+#ifdef	apollo
+	if (env_path != 0) {
+		extern	char	*getenv();
+		auto	size_t	len;
+		auto	char	tmp[BUFSIZ];
+
+		if ((p = getenv(env_path)) == 0) {
+			WARN "?? variable \"%s\" is not defined\n", env_path);
+			exit(FAIL);
+		}
+		abspath(p = strcpy(tmp, p));
+		len = strlen(p);
+		if (!is_PREFIX(Source,p,len)) {
+			WARN "?? value of \"%s\" is not a prefix of \"%s\"\n",
+				env_path, Source);
+			exit(FAIL);
+		}
+		env_size = len;
+	}
+#endif
 
 	/*
 	 * Process the list of source-directory specifications:
