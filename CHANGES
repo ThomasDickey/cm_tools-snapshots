@@ -1,3 +1,10 @@
+1988-05-31  dickey@software.org
+
+	* user/ded.doc:
+	documented extensions to ''-substitutions, '". sort, and rcs-scanning.
+
+	* user/ded.doc: New file.
+
 1988-05-27  dickey@software.org
 
 	* user/checkout.doc, user/checkin.doc, user/rcsget.doc, user/rcsput.doc:

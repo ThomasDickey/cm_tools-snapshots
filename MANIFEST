@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19880527
+MANIFEST for cm_tools, version t19880531
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 src/checkin/src                 subdirectory
@@ -12,5 +12,6 @@ src/checkout/src/rcsget.sh
 user                            subdirectory
 user/checkin.doc                
 user/checkout.doc               
+user/ded.doc                    
 user/rcsget.doc                 
 user/rcsput.doc                 
