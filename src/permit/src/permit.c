@@ -46,7 +46,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: permit.c,v 11.7 1997/05/10 12:41:51 tom Exp $")
+MODULE_ID("$Id: permit.c,v 11.8 2001/12/11 14:57:01 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -564,7 +564,7 @@ int	WALK_FUNC(do_tree)
 		auto	int	flag	= FALSE;
 
 		abspath(s);		/* get rid of "." and ".." names */
-		if (sameleaf(s, rcs_dir())) {
+		if (sameleaf(s, rcs_dir(NULL, NULL))) {
 			indent(level);
 			TELL "%s/\n", name);
 
@@ -654,7 +654,7 @@ void	usage(_AR0)
 	"  -uUSER  report specified user(s) in access list",
 	"  -v      verbose",
 	};
-	register int	j;
+	unsigned j;
 	setbuf(stderr,buffer);
 	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
 		WARN "%s\n", tbl[j]);

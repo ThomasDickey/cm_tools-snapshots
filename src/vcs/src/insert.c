@@ -10,7 +10,7 @@
 
 #include <vcs.h>
 
-MODULE_ID("$Id: insert.c,v 11.3 1993/09/22 14:50:24 tom Exp $")
+MODULE_ID("$Id: insert.c,v 11.4 2001/12/11 14:57:31 tom Exp $")
 
 /******************************************************************************/
 /* we have to change directories to keep fooling rcs about the vcs-file */
@@ -62,7 +62,7 @@ void	MakePermit(
 
 	ChangeWd(dst);
 
-	(void)pathcat(src, prefix, rcs_dir());
+	(void)pathcat(src, prefix, rcs_dir(NULL, NULL));
 
 	set_command();
 	set_option('A', vcs_file(src, buffer, FALSE));
@@ -125,7 +125,7 @@ int	InsertDir(
 	/* see if the head contains an RCS directory in which the real user has
 	 * permissions
 	 */
-	(void)pathcat(ref_path, head, rcs_dir());
+	(void)pathcat(ref_path, head, rcs_dir(NULL, NULL));
 	/* patch (void)pathcat(ref_path, "..", ref_path); */
 	if (!Access(vcs_file(ref_path, temp, FALSE), no_op))
 		return FALSE;
@@ -140,7 +140,7 @@ int	InsertDir(
 	}
 
 	MakeDirectory(Name);
-	MakeDirectory(pathcat(temp, Name, rcs_dir()));
+	MakeDirectory(pathcat(temp, Name, rcs_dir(NULL, NULL)));
 	MakePermit(temp, base);
 
 	return TRUE;

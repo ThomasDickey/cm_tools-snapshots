@@ -132,7 +132,7 @@
 #include	<errno.h>
 extern	char	*mktemp(_ar1(char *,name));
 
-MODULE_ID("$Id: checkin.c,v 11.26 1999/06/27 18:38:02 tom Exp $")
+MODULE_ID("$Id: checkin.c,v 11.27 2001/12/11 14:54:17 tom Exp $")
 
 /* local declarations: */
 #define	CI_TOOL		"ci"
@@ -271,9 +271,9 @@ void	HackMode(
 		;
 	} else if (save) {
 		if ((RCSdir[0] != EOS)
-		&&  (getuid()  != RCS_uid)) {
+		&&  ((int)getuid()  != RCS_uid)) {
 			/* patch: check if group is compatible */
-			int	need = (getgid() == RCS_gid) ? 0775 : 0777;
+			int	need = ((int)getgid() == RCS_gid) ? 0775 : 0777;
 			DEBUG(("...need mode %04o for %s, was %04o\n",
 				need, RCSdir, RCSprot))
 			if (need != RCSprot) {
@@ -914,7 +914,7 @@ int	RcsInitialize(_AR0)
 			else
 				GiveUp("owner of RCS directory for", Working);
 
-			if (getuid() != HIS_uid) {
+			if ((int)getuid() != HIS_uid) {
 				if ((p = getpwuid(HIS_uid)) != 0)
 					FORMAT(list + strlen(list), ",%s", p->pw_name);
 				else
@@ -955,7 +955,7 @@ void	MakeDirectory(_AR0)
 	 && Archive[len] == '/'
 	 && !strncmp(RCSdir, Archive, len-1)) {
 
-		DEBUG(("...same %s-directory\n", rcs_dir()))
+		DEBUG(("...same %s-directory\n", rcs_dir(NULL, NULL)))
 		return;
 
 	} else if (rcs_located(RCSdir, &sb) < 0) {

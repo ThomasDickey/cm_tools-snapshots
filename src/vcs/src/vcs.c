@@ -13,7 +13,7 @@
 #define	MAIN
 #include <vcs.h>
 
-MODULE_ID("$Id: vcs.c,v 11.2 1993/09/22 14:50:11 tom Exp $")
+MODULE_ID("$Id: vcs.c,v 11.3 2001/12/11 14:57:09 tom Exp $")
 
 /************************************************************************
  *	utility procedures						*
@@ -200,7 +200,7 @@ void	usage(_AR0)
 "  -x       assume archive and working file are in path2/RCS and path2",
 "           (normally assumes ./RCS and .)"
 	};
-	register int j;
+	unsigned j;
 	for (j = 0; j < sizeof(msg)/sizeof(msg[0]); j++)
 		WARN "%s\n", msg[j]);
 	exit(FAIL);

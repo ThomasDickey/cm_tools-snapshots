@@ -1,3 +1,8 @@
+2001-12-11  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/vcs/src/insert.c, src/vcs/src/vcs.c, src/permit/src/permit.c, src/link2rcs/src/link2rcs.c, src/checkup/src/checkup.c, src/checkout/src/rcsget.c, src/checkin/src/rcsput.c, src/checkin/src/checkin.c, src/baseline/src/baseline.c:
+	change interface to rcs_dir()
+
 2001-08-28  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* aclocal.m4: small fixes for newer autoconf alpha's

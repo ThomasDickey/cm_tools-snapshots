@@ -44,7 +44,7 @@
 #include	<dyn_str.h>
 extern	char	*tmpnam(_ar1(char *,name));
 
-MODULE_ID("$Id: rcsput.c,v 11.7 1999/06/27 18:38:12 tom Exp $")
+MODULE_ID("$Id: rcsput.c,v 11.8 2001/12/11 14:54:32 tom Exp $")
 
 #define	VERBOSE		if (!quiet) PRINTF
 
@@ -211,7 +211,7 @@ _AR1(char *,	path))
 _DCL(char *,	path)
 {
 	if (sameleaf(path, sccs_dir((char *)0, path))
-	||  sameleaf(path, rcs_dir())) {
+	||  sameleaf(path, rcs_dir((char *)0, path))) {
 		if (!quiet) PRINTF("...skip %s\n", path);
 		return TRUE;
 	}
