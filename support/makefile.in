@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.1 1997/09/13 16:37:33 tom Exp $
+# $Id: makefile.in,v 11.2 1997/09/28 20:15:39 tom Exp $
 # support scripts & utilities
 
 
@@ -26,9 +26,8 @@ all:	$(SOURCES) $(ALL)
 clean:			; -$(RM) $(CLEAN)
 distclean:	clean	; -$(RM) $(ALL)
 run_test:
-sources:	$(SOURCES)
 install:
-deinstall:
+uninstall:
 
 ####### (Details of Productions) ###############################################
 Z	= $(CC) $(CFLAGS) $(CPP_OPTS) -o $@ $@.c $(LIB_ARGS)

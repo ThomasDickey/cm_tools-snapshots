@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.2 1997/09/13 17:26:15 tom Exp $
+# $Id: makefile.in,v 11.3 1997/09/28 20:14:16 tom Exp $
 # MAKE-file for RCS directory-permissions utility
 
 THIS	= permit
@@ -18,7 +18,6 @@ install:	$(SOURCES) $B $(ALL)
 clean:				; -$(RM) $(CLEAN)
 distclean:	clean		; -$(RM) $(ALL)
 run_test:
-sources:	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
 $B:				; mkdir $@

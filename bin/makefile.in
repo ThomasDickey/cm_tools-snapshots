@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.3 1997/09/14 20:50:23 tom Exp $
+# $Id: makefile.in,v 11.4 1997/09/28 20:15:39 tom Exp $
 
 THIS	= cm_tools
 
@@ -30,9 +30,8 @@ all:
 clean:				; -$(RM) $(CLEAN)
 distclean:	clean		; -$(RM) $(ALL) [a-ln-z]*
 run_test:
-sources:
 install:	$B $(IT)
-deinstall:			; -$(RM) $(IT)
+uninstall:			; -$(RM) $(IT)
 
 ####### (Details of Productions) ###############################################
 USER	= $(INSTALL) -m  755 $? $@

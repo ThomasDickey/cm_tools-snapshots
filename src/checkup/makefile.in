@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.3 1997/09/14 19:18:43 tom Exp $
+# $Id: makefile.in,v 11.4 1997/09/28 20:15:39 tom Exp $
 # Top-level makefile for RCS/sccs checkup utility
 
 THIS	= checkup
@@ -14,9 +14,6 @@ B	= $(top)/bin
 THIS	= checkup
 ALL	=\
 	$B/$(THIS)
-MFILES	=\
-	src/makefile.in\
-	test/makefile.in
 
 ####### (Standard Productions) #################################################
 all\
@@ -25,9 +22,8 @@ run_test::	$(LIB_DEPS) bin
 all\
 clean\
 distclean\
-sources\
 run_test\
-lint.out::	$(MFILES)
+lint.out::
 	cd src &&	$(MAKE) $(MAKE_OPTS) $@
 	cd test &&	$(MAKE) $(MAKE_OPTS) $@
 
@@ -37,7 +33,7 @@ distclean::			; -$(RM) -r bin
 distclean::			; -$(RM) */makefile
 
 install:	all $(ALL)
-deinstall:			; -$(RM) $(ALL)
+uninstall:			; -$(RM) $(ALL)
 
 ####### (Details of Productions) ###############################################
 bin:				; mkdir $@

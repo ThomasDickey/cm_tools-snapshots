@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.2 1997/09/13 17:34:54 tom Exp $
+# $Id: makefile.in,v 11.3 1997/09/28 20:15:45 tom Exp $
 # Top-level make-file for CM_TOOLS
 
 THIS	= cm_tools
@@ -17,8 +17,7 @@ clean\
 distclean\
 run_test\
 install\
-deinstall\
-sources::
+uninstall::
 	cd certify &&	$(MAKE) $(MAKE_OPTS) $@
 	cd support &&	$(MAKE) $(MAKE_OPTS) $@
 	cd src &&	$(MAKE) $(MAKE_OPTS) $@
