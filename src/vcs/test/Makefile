@@ -1,9 +1,8 @@
-# $Id: Makefile,v 11.0 1991/10/17 17:11:06 ste_cm Rel $
+# $Id: Makefile,v 11.1 1992/08/07 14:46:41 dickey Exp $
 # make-file for testing RCS permission utility
-#
 
 ####### (Development) ##########################################################
-GET	= checkout
+include ../../common.mk
 
 ####### (Standard Lists) #######################################################
 REF_FILES = \
@@ -17,11 +16,10 @@ SCRIPTS	=\
 SOURCES	= $(SCRIPTS) $(REF_FILES)
 
 ####### (Standard Productions) #################################################
-all:		sources
-clean:				; rm -rf *.bak *.log *.out core foo* FOO
+all:		$(SOURCES)
+clean:				; rm -rf $(CLEAN) foo* FOO
 clobber:	clean
-destroy:
-	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
+destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
 lincnt.out:

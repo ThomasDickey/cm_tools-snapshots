@@ -1,44 +1,31 @@
-# $Id: Makefile,v 11.0 1991/10/18 11:21:26 ste_cm Rel $
+# $Id: Makefile,v 11.1 1992/08/05 14:31:12 dickey Exp $
 # MAKE-file for RCS skeleton tree utility
 
 ####### (Environment) ##########################################################
-B	= ../bin
-I	= ../../common/interface
-L	= ../../common/lib
-GET	= checkout
-
-####### (Command-line Options) #################################################
-INCLUDES= -I$I
-CPP_OPTS= $(DEFINES) $(INCLUDES)
-
-LIBS	= $L/lib.a
-DATE	= echo '****'`date` >> $@
-LINTOPT	= $(CPP_OPTS) -ltd -lapollo
+THIS	= link2rcs
+include ../../common.mk
 
 ####### (Standard Lists) #######################################################
-ALL	= $B/link2rcs
-CSRC	= link2rcs.c
+ALL	= $B/$(THIS)
+CSRC	= $(THIS).c
 SOURCES	= Makefile $(CSRC)
-MAIN_O	= link2rcs.o $(LIBS)
+MAIN_O	= $(THIS).o $(LIBS)
 
 ####### (Standard Productions) #################################################
-all:		sources	$(ALL)
+all\
+install:	$(SOURCES) $(ALL)
 
-clean:				; rm -f *.o *.out *.bak core
+clean:				; rm -f $(CLEAN)
 clobber: 	clean		; rm -f $(ALL)
-destroy:
-	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
+destroy:			; $(DESTROY)
 run_tests:
 sources: 	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
-$B/link2rcs:	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
-link2rcs.o:	$I/ptypes.h	$I/rcsdefs.h
+$B/$(THIS):	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
+$(THIS).o:	$(RCSDEFS_H)
 
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
 lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
 lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@
-
-.c.o:
-	$(CC) $(CFLAGS) $(CPP_OPTS) -c $<

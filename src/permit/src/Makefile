@@ -1,44 +1,31 @@
-# $Id: Makefile,v 11.0 1991/10/18 11:40:44 ste_cm Rel $
+# $Id: Makefile,v 11.1 1992/08/05 14:31:17 dickey Exp $
 # MAKE-file for RCS directory-permissions utility
 
 ####### (Environment) ##########################################################
-B	= ../bin
-I	= ../../common/interface
-L	= ../../common/lib
-GET	= checkout
-
-####### (Command-line Options) #################################################
-INCLUDES= -I$I
-CPP_OPTS= $(DEFINES) $(INCLUDES)
-
-LIBS	= $L/lib.a
-DATE	= echo '****'`date` >> $@
-LINTOPT	= $(CPP_OPTS) -ltd
+THIS	= permit
+include ../../common.mk
 
 ####### (Standard Lists) #######################################################
-ALL	= $B/permit
-CSRC	= permit.c
-SRCS	= $(CSRC)
-MAIN_O	= permit.o $(LIBS)
+ALL	= $B/$(THIS)
+CSRC	= $(THIS).c
+SOURCES	= $(CSRC)
+MAIN_O	= $(THIS).o $(LIBS)
 
 ####### (Standard Productions) #################################################
-all:		$(ALL)
+all\
+install:	$(SOURCES) $(ALL)
 
-clean:				; rm -f *.o *.out *.bak core
+clean:				; rm -f $(CLEAN)
 clobber:	clean		; rm -f $(ALL)
-destroy:
-	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
+destroy:			; $(DESTROY)
 run_tests:
-sources:	$(SRCS)
+sources:	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
-$B/permit:	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
-permit.o:	$I/ptypes.h	$I/rcsdefs.h
+$B/$(THIS):	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
+$(THIS).o:	$(RCSDEFS_H)
 
 ####### (Development) ##########################################################
-$(SRCS):			; $(GET) $@
+$(SOURCES):			; $(GET) $@
 lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
 lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@
-
-.c.o:
-	$(CC) $(CFLAGS) $(CPP_OPTS) -c $<
