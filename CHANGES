@@ -1,3 +1,8 @@
+2002-07-05  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/checkin/src/checkin.c, src/checkup/src/checkup.c, src/copy/src/copy.c, src/link2rcs/src/link2rcs.c:
+	change ifdef convention to work with "gcc -Wundef"
+
 2002-07-03  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* src/copy/src/copy.c:

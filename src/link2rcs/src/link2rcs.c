@@ -66,7 +66,7 @@
 #include	<td_qsort.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: link2rcs.c,v 11.9 2002/07/03 12:54:14 tom Exp $")
+MODULE_ID("$Id: link2rcs.c,v 11.10 2002/07/05 13:55:00 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -243,7 +243,7 @@ _DCL(int,	level)
 		} else {
 			p->from = 0;
 		}
-#if HAVE_READLINK
+#if defined(HAVE_READLINK)
 		if (p->from == 0
 		 && lstat(tmp, sp) == 0
 		 && MODE(sp->st_mode) == S_IFLNK) {

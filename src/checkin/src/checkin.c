@@ -132,7 +132,7 @@
 #include	<errno.h>
 extern	char	*mktemp(_ar1(char *,name));
 
-MODULE_ID("$Id: checkin.c,v 11.28 2002/07/03 12:54:14 tom Exp $")
+MODULE_ID("$Id: checkin.c,v 11.30 2002/07/05 13:55:00 tom Exp $")
 
 /* local declarations: */
 #define	CI_TOOL		"ci"
@@ -498,7 +498,7 @@ int	DoIt (
 	_DCL(char *,	args)
 {
 	int	code;
-#if HAVE_SETRUID
+#if defined(HAVE_SETRUID)
 	int	fix_id;
 
 	if ((fix_id = (!geteuid() && getuid())) != 0) {
@@ -513,7 +513,7 @@ int	DoIt (
 	if (!silent || debug) shoarg(stdout, verb, args);
 	code = no_op ? 0 : execute(rcspath(verb), args);
 
-#if HAVE_SETRUID
+#if defined(HAVE_SETRUID)
 	if (!no_op && fix_id) {
 		(void)setruid(HIS_uid);
 		(void)setrgid(HIS_gid);
@@ -983,7 +983,7 @@ void	MakeDirectory(_AR0)
 
 	} else {
 
-#if HAVE_GETEUID && HAVE_SETEGID
+#if defined(HAVE_GETEUID) && defined(HAVE_SETEGID)
 		if (getegid() != sb.st_gid) {
 			(void)setegid((int)sb.st_gid);
 			WhoAmI();
