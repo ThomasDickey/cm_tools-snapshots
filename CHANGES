@@ -1,3 +1,18 @@
+1989-01-24  dickey@software.org
+
+	* user/copy.doc, user/ded.doc: updated for new release
+
+	* src/copy/src/copy.c:
+	added directory-copy, and "-m" option to control it with
+
+	* src/copy/src/copy.c:
+	corrected a case of src/dst name translation by stripping directory name
+
+	* src/checkout/src/checkout.c:
+	fix bug which caused working file to be deleted after overwrite-prompt
+	corrected check for archive-ownership.
+	force exit after receiving signal & cleanup.
+
 1988-12-14  dickey@software.org
 
 	* src/checkout/src/checkout.c:
