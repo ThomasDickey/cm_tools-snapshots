@@ -16,11 +16,14 @@
 <!Page,
 	Starting Page # = 	Inherit>
 
-<!Autonumber Stream, List, 1>
+<!Autonumber Stream, List, 2>
 
-<!Autonumber Stream, Outline, 3,
-	Level 1 Symbol Type =	UPPER ROMAN,
-	Level 2 Symbol Type =	UPPER ALPHA>
+<!Autonumber Stream, Outline, 3>
+
+<!Autonumber Stream, section, 2,
+	Level 1 Suffix =	,
+	Level 2 Prefix =	.,
+	Level 2 Suffix =	>
 
 <!Class, bullet,
 	Top Margin =		0.083 inches,
@@ -174,11 +177,11 @@ V4,
 <Page Header, Frame =
 V4,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,March\ 13\,\ 1989)
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,April\ 3\,\ 1989)
  (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ Directory-Level\ Permissions)
  (t8,3,4,0,0.438782,0,17,@nnclas12b,permit)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <Page Footer, Frame =
 V4,
@@ -191,7 +194,7 @@ V4,
 
 <header>
 
-<|,1>NAME
+<|,27>NAME
 
 <paragraph>
 
@@ -250,20 +253,26 @@ OPTIONS
 -<F31>a<F0> <F32>userlist<F0><Tab>adds the list of specified users 
 to each RCS archive access list.
 
+<F30@R>-<F31@R>b<F30@R> <F32@R>number<F30@R><Tab>specifies the baseline version 
+for the directory.  This must be an integer greater than one.  <F31@R>Permit
+<F30@R> verifies that no version in the directory is higher than this 
+value.  Thereafter, this sets the initial version for new files which 
+are archived using <F31@R>checkin<F30@R> in the directory.
+
 -<F31>e<F0> <F32>userlist<F0><Tab>expunges the list of specified 
 users to each RCS archive access list.
 
 -<F31>n<F0><Tab>no-op mode causes <F31>permit<F0> to run, showing 
 what it would try to do.
 
--<F31>p<F0><Tab>purges all usernames from each RCS archive access 
-list.
+<|,28>-<F31>p<F0><Tab>purges all usernames from each RCS archive 
+access list.
 
 -<F31>q<F0><Tab>makes the listing less verbose (i.e., suppresses 
 display of the <F31>rcs<F0> and <F31>ci<F0> commands, and of the 
 directory tree).
 
-<|,2>-<F31>s<F0><Tab>same as <#7f>-<F31>q<F0>".
+-<F31>s<F0><Tab>same as <#7f>-<F31>q<F0>".
 
 -<F31>u<F0> <F32>userlist<F0><Tab>generates a report showing which 
 archives have the specified users in their access lists.
@@ -329,14 +338,14 @@ FILES
 
 <F31>Permit<F0> is a single binary file, <#7f>permit".  Within each 
 RCS directory, <F31>permit<F0> maintains an archive <#7f><F31>RCS,v<F0>", 
-which records the directory-access list, as well as the beginning 
-revision number for new files.  The directory-access archive file 
-is named so that the set-uid applications <F31>checkin<F0> and <F31>checkout
-<F0> are unable to modify it.
+which records the directory-access list, as 
+<|,29>well as the beginning revision number for new files.  The directory-acces
+s archive file is named so that the set-uid applications <F31>checkin<F0> 
+and <F31>checkout<F0> are unable to modify it.
 
 <header>
 
-<|,3>ANTICIPATED CHANGES
+ANTICIPATED CHANGES
 
 <paragraph>
 

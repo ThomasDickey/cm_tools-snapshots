@@ -13,17 +13,20 @@
 	F32 = Classic 12 Italic,
 	F6 = Symbols 12,
 	F22 = Typewriter 12,
-	F49 = Modern 12,
-	F50 = Modern 12 Bold>
+	F50 = Modern 12 Bold,
+	F49 = Modern 12>
 
 <!Page,
 	Starting Page # = 	Inherit>
 
-<!Autonumber Stream, List, 1>
+<!Autonumber Stream, List, 2>
 
-<!Autonumber Stream, Outline, 3,
-	Level 1 Symbol Type =	UPPER ROMAN,
-	Level 2 Symbol Type =	UPPER ALPHA>
+<!Autonumber Stream, Outline, 3>
+
+<!Autonumber Stream, section, 2,
+	Level 1 Suffix =	,
+	Level 2 Prefix =	.,
+	Level 2 Suffix =	>
 
 <!Class, bullet,
 	Top Margin =		0.083 inches,
@@ -177,11 +180,11 @@ V4,
 <Page Header, Frame =
 V4,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,March\ 16\,\ 1989)
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,April\ 3\,\ 1989)
  (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,Directory\ Editor)
  (t8,3,4,0,0.438782,0,17,@nnclas12b,ded)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <Page Footer, Frame =
 V4,
@@ -194,7 +197,7 @@ V4,
 
 <header>
 
-<|,1>NAME
+<|,25>NAME
 
 <paragraph>
 
@@ -268,7 +271,7 @@ include:
 
 <options>
 
-<|,2>-<F31>G<F0><Tab>toggle user/group display field (initially 
+<|,26>-<F31>G<F0><Tab>toggle user/group display field (initially 
 displays user-identifiers).
 
 -<F31>I<F0><Tab>toggle inode/links display field (initially displays 
@@ -280,8 +283,13 @@ file protection in <F31>ls<F0>-style).
 -<F31>S<F0><Tab>toggle file size (in blocks) display field (normally 
 displays only the size in bytes).
 
-<F30@R>-<F31@R>l<F30@R> <F32@R>filename<F30@R><Tab>log user commands (and <F31@R>ded<F30@R> 
-messages) to the specified file.  <F31@R>Ded<F30@R> subprocesses invoked 
+<F30@R>-<F31@R>c<F30@R> <F32@R>filename<F30@R><Tab>read user commands from the 
+specified file.  The commands are assumed to be in the same format 
+as the logfile generated with the <#7f>-<F31@R>l<F30@R>" option.  Subprocesses 
+do not (currently) inherit this option.
+
+-<F31>l<F0> <F32>filename<F0><Tab>log user commands (and <F31>ded<F0> 
+messages) to the specified file.  <F31>Ded<F0> subprocesses invoked 
 with the <#7f>e" command inherit this option.
 
 -<F31>t<F0> <F32>path<F0><Tab>read the directory tree file <#7f>.ftree" 
@@ -326,15 +334,16 @@ working directory, <#7f>.".
 
 If more than one file specification argument is given, <F31>ded<F0> 
 changes its working directory to the most common pathname among the 
-arguments.  Note that if you give <F31>ded<F0> a wildcard argument 
-such as <#7f>d*", then the <F30@U>shell<F0> performs wildcard expansion, 
+arguments.  
+<|,27>Note that if you give <F31>ded<F0> a wildcard argument such 
+as <#7f>d*", then the <F30@U>shell<F0> performs wildcard expansion, 
 not <F31>ded<F0>.
 
 Items from the argument list which are not found are not displayed 
 (though they are retained in the argument list for subsequent rescans 
-with the <#7f><F31>R<F0>" 
-<|,3>command).  Arguments may be given in absolute or path-relative 
-names (i.e., beginning with <#7f>/" or some sort of <#7f>.." construct).
+with the <#7f><F31>R<F0>" command).  Arguments may be given in absolute 
+or path-relative names (i.e., beginning with <#7f>/" or some sort 
+of <#7f>.." construct).
 
 <subheader>
 
@@ -401,16 +410,17 @@ and <F32>right-arrow<F0> keys scroll the screen left and right, respectively.
 
 <F6>S<F0><Tab>Movement in the directory tree is two-dimensional.  
 You may move the cursor left or right (up or down levels of the directory 
-tree) or up or down (to different directory names).  The screen display 
-of the directory tree has markers (vertical bars or dashes) showing 
-where you are allowed to put the cursor.  Vertical movement is normally 
+tree) or up or 
+<|,28>down (to different directory names).  The screen display of 
+the directory tree has markers (vertical bars or dashes) showing where 
+you are allowed to put the cursor.  Vertical movement is normally 
 within items at the same directory level.  You may move from one line 
 to another irregardless of level by the <#7f><F31>J<F0>" and <#7f><F31>K<F0>" 
 commands.
 
 <paragraph>
 
-<|,4>Single-character cursor movement commands are:
+Single-character cursor movement commands are:
 
 <options>
 
@@ -478,15 +488,14 @@ following search commands are provided a la <F31>vi<F0>:
 
 <options>
 
-<F31>/<F0><Tab><F31>Ded<F0> will prompt you for a regular expression.  
-If you give it one, it will search forward (with wrap-around) for 
-it.  A return without text will cancel the search.
+<|,29><F31>/<F0><Tab><F31>Ded<F0> will prompt you for a regular 
+expression.  If you give it one, it will search forward (with wrap-around) 
+for it.  A return without text will cancel the search.
 
 <F31>?<F0><Tab><F31>Ded<F0> prompts you for a target and searches 
 backwards (with wrap-around) for it.
 
-<|,5><F31>n<F0><Tab>continue previous search (in the prevailing 
-direction).
+<F31>n<F0><Tab>continue previous search (in the prevailing direction).
 
 <F31>N<F0><Tab>continue the previous search, but in the reverse direction.
 
@@ -540,12 +549,12 @@ scrolling sense, but have an independent notion of the current file.
 
 <F32>tab<F0><Tab>moves the cursor to the other viewport.
 
-<F31>A<F0><Tab>move workspace marker up <F32>count<F0> line(s).
+<|,30><F31>A<F0><Tab>move workspace marker up <F32>count<F0> line(s).
 
 <F31>a<F0><Tab>move workspace marker down <F32>count<F0> line(s).
 
-<|,6><F31>R<F0><Tab>re-scan argument list (refresh).  This clears 
-file grouping, re-reads all of the directories specified in the argument 
+<F31>R<F0><Tab>re-scan argument list (refresh).  This clears file 
+grouping, re-reads all of the directories specified in the argument 
 list, re-sorts and repaints the screen.  The cursor is moved to the 
 first file in the list.  (If nothing is found, <F31>ded<F0> will 
 exit).
@@ -600,10 +609,10 @@ are always a single character:
 
 <F31>c<F0><Tab>last-change date
 
-<F31>d<F0><Tab>directory-order (i.e., order in which items were read 
-from the directory)
+<|,31><F31>d<F0><Tab>directory-order (i.e., order in which items 
+were read from the directory)
 
-<|,7><F31>g<F0><Tab>group-identifier (lexically)
+<F31>g<F0><Tab>group-identifier (lexically)
 
 <F31>G<F0><Tab>group-identifier (numerically)
 
@@ -670,7 +679,7 @@ Grouped items are highlighted in the display.
 
 <F31>_<F0><Tab>Remove all entries from the <F32>group<F0>.
 
-<|,8><F31>#<F0><Tab>Tags all files which are currently sorted adjacent 
+<|,32><F31>#<F0><Tab>Tags all files which are currently sorted adjacent 
 in the file list, which have the same sort-key.  For instance, if 
 the list is sorted by modification date, the <#7f><F31>#<F0>" command 
 tags all files which have the same modification date as any neighbor.
@@ -741,7 +750,7 @@ for all selected entries.  Editing is done with single characters:
 
 <suboption>
 
-<|,9><F31>p<F0><Tab>complete command
+<|,33><F31>p<F0><Tab>complete command
 
 <F31>q<F0><Tab>abort command
 
@@ -782,10 +791,10 @@ by your command.  For example, you might edit links beginning with
 <#7f>/local/bin" to begin with <#7f>/usr/local/bin" by typing  <#7f><F31>=
 <F0><SP><F32>CTL/I<F0> <F31>/usr<F0>".
 
-<F31@R><<<F30@R><Tab>Like <#7f><F31@R>><F30@R>", except that the special substrings 
-<#7f><F31@R>%F<F30@R>" and <#7f><F31@R>%B<F30@R>" are translated into the 
+<F31><<<F0><Tab>Like <#7f><F31>><F0>", except that the special substrings 
+<#7f><F31>%F<F0>" and <#7f><F31>%B<F0>" are translated into the 
 forward and backward directory paths in the ring of file lists, and 
-<#7f><F31@R>#<F30@R>" is translated into the current entry's name.
+<#7f><F31>#<F0>" is translated into the current entry's name.
 
 <F31>"<F0><Tab>Repeats the last <#7f><F31>p<F0>", <#7f><F31>u<F0>", 
 <#7f><F31>g<F0>" or <#7f><F31>=<F0>" command.  This uses the actual 
@@ -795,7 +804,7 @@ for inline editors).
 
 <subheader>
 
-<|,10>Creating New Entries
+<|,34>Creating New Entries
 
 <paragraph>
 
@@ -867,7 +876,7 @@ text with highlighting.  (<F31>Ded<F0> interprets <F32>backspaces<F0>
 and <F32>returns<F0> in text files).  You may scroll left or right 
 in the pager to see very long lines.
 
-<|,11><F6>S<F0><Tab>When displaying binary files, <F31>ded<F0> 
+<|,35><F6>S<F0><Tab>When displaying binary files, <F31>ded<F0> 
 shows control characters as <#7f>.".  Non-ASCII characters (i.e., 
 having the high-order bit set) are converted to ASCII (by stripping 
 this bit) and shown highlighted.
@@ -945,7 +954,7 @@ command.
 
 <subheader>
 
-<|,12>Command Substitution
+<|,36>Command Substitution
 
 <paragraph>
 
@@ -979,7 +988,7 @@ file
 	Same Page =		yes,
 	Width =			5.70 inches,
 	Height =		0.65 inches,
-	Page # =		12,
+	Page # =		36,
 	Diagram =
 V4,
 (g9,1,0
@@ -1038,7 +1047,7 @@ in cursor mode.
 wraparound) as long as space remains in the workspace to enter new 
 command text.
 
-<|,13><F6>S<F0><Tab>A <F32>kill<F0> character in <F31>insert<F0> 
+<|,37><F6>S<F0><Tab>A <F32>kill<F0> character in <F31>insert<F0> 
 mode aborts the command.  In <F31>cursor<F0> mode, it deletes the <F32>count
 <F0> characters at the cursor position.
 
@@ -1112,7 +1121,7 @@ always attempts to resolve symbolic links to directories.
 
 <F31>+<F0><Tab>Mark directory name for removal from database.
 
-<|,14><F31>-<F0><Tab>Unmark directory name.
+<|,38><F31>-<F0><Tab>Unmark directory name.
 
 <F31>_<F0><Tab>Clear list of marked names.
 
@@ -1187,7 +1196,7 @@ The following file list commands are used for archive display:
 
 <F31>V<F0><Tab>toggle version display.
 
-<|,15><F31>Y<F0><Tab>toggle display showing the owner of the current 
+<|,39><F31>Y<F0><Tab>toggle display showing the owner of the current 
 lock on the file.  <F31>Ded<F0> examines the <F32>rcs<F0> archive 
 file to see if there are any locks on it.  If so, it displays the 
 name of the first lock-owner
@@ -1198,7 +1207,7 @@ name of the first lock-owner
 	Same Page =		yes,
 	Width =			5.70 inches,
 	Height =		0.417 inches,
-	Page # =		15,
+	Page # =		39,
 	Diagram =
 V4,
 (g9,1,0
@@ -1241,29 +1250,28 @@ checked-out file.
 
 <subheader>
 
-<F31@R>Logfile Format
+Logfile Format
 
 <paragraph>
 
-<F30@R>The log file created with the <#7f>-<F31@R>l<F30@R>" option logs 
-all <F31@R>ded<F30@R> commands.  Logged commands begin with the repeat 
-count in column one.  Multi-character commands are logged on a single 
-line, e.g.,
+The log file created with the <#7f>-<F31>l<F0>" option logs all <F31>ded<F0> 
+commands.  Logged commands begin with the repeat count in column one.  
+Multi-character commands are logged on a single line, e.g.,
 
 <fixed>
 
-<F21@R>1st<HR>
+1st<HR>
 1%ls -l #
 
 <paragraph>
 
-<F30@R>Comments are inserted with a tab followed by a <#7f>#" character.  <F31@R>De
-d<F30@R>'s log comments indicate the names of files affected by commands, 
+Comments are inserted with a tab followed by a <#7f>#" character.  <F31>Ded
+<F0>'s log comments indicate the names of files affected by commands, 
 current working directory, etc., e.g.,
 
 <fixed>
 
-<|,16><F21@R><Tab># process 1417 begun at Thu Mar 16 09:51:11 1989<HR>
+<|,40><Tab># process 1417 begun at Thu Mar 16 09:51:11 1989<HR>
 <Tab># argv[0] = 'ded'<HR>
 <Tab># argv[1] = '-lz'<HR>
 1D<Tab># path: //dickey/local/dickey<HR>
@@ -1289,26 +1297,26 @@ current working directory, etc., e.g.,
 
 <paragraph>
 
-<F31@R>Ded<F30@R> commands which are read in <#7f>raw" (single-character) 
+<F31>Ded<F0> commands which are read in <#7f>raw" (single-character) 
 mode are logged as backslash-codes, if necessary, to make them readable 
-(e.g., <#7f><F50@R>\t<F30@R>" for tab).  In addition to the standard backslash 
-codes defined for the C language, <F31@R>ded<F30@R> also uses
+(e.g., <#7f><F50>\t<F0>" for tab).  In addition to the standard backslash 
+codes defined for the C language, <F31>ded<F0> also uses
 
 <options>
 
-<F50@R>\s<F30@R><Tab>for space (to make it visible in the log)
+<F50>\s<F0><Tab>for space (to make it visible in the log)
 
-<F50@R>\U<F30@R><Tab>up arrow
+<F50>\U<F0><Tab>up arrow
 
-<F50@R>\D<F30@R><Tab>down arrow
+<F50>\D<F0><Tab>down arrow
 
-<F50@R>\L<F30@R><Tab>left arrow
+<F50>\L<F0><Tab>left arrow
 
-<F50@R>\R<F30@R><Tab>right arrow
+<F50>\R<F0><Tab>right arrow
 
 <paragraph>
 
-<F30@R>Other text (which is buffered) contains no nonprinting characters.
+Other text (which is buffered) contains no nonprinting characters.
 
 <subheader>
 
@@ -1328,7 +1336,7 @@ Under Apollo SR9, there are two serious unix incompatibilities which <F31>ded
 <F0> addresses: file modification dates and case-sensitivity in file 
 names.  When you use <F31>ded<F0>'s built-in commands (e.g., <#7f><F31>p<F0>"
 , <#7f><F31>u<F0>" and <#7f><F31>g<F0>"), <F31>ded<F0> replaces 
-<|,17>the original file modification date since the Apollo <F32>chmod<F0> 
+<|,41>the original file modification date since the Apollo <F32>chmod<F0> 
 and <F32>chown<F0> system calls merge the change- and modification-dates.
 
 Case-sensitivity in file names is a more interesting problem.  DOMAIN/IX 
@@ -1355,7 +1363,7 @@ waits until you have closed the pad before continuing
 	Same Page =		yes,
 	Width =			5.70 inches,
 	Height =		0.667 inches,
-	Page # =		17,
+	Page # =		41,
 	Diagram =
 V4,
 (g9,1,0
@@ -1417,7 +1425,7 @@ so that the help file can be found.
 <F49>EDITOR<F0><Tab>overrides default editor invoked by <#7f><F31>e<F0>" 
 command (<F31>vi<F0>)
 
-<|,18><F49>BROWSE<F0><Tab>overrides default browser invoked by <#7f><F31>v
+<|,42><F49>BROWSE<F0><Tab>overrides default browser invoked by <#7f><F31>v
 <F0>" command (view).
 
 <F49>PAGER<F0><Tab>overrides default pager invoked by <#7f><F31>m<F0>" 
@@ -1481,7 +1489,7 @@ so that shell commands need not use the Bourne shell.
 
 <header>
 
-<|,19>SEE ALSO
+<|,43>SEE ALSO
 
 <paragraph>
 

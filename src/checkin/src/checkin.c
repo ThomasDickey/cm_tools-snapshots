@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 1.32 1989/03/31 14:55:22 dickey Exp $";
+static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 4.0 1989/04/04 10:44:41 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,22 @@ static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checki
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * $Log: checkin.c,v $
- * Revision 1.32  1989/03/31 14:55:22  dickey
- * only close temp-file if we have opened it!
+ * Revision 4.0  1989/04/04 10:44:41  ste_cm
+ * BASELINE Thu Aug 24 09:23:45 EDT 1989 -- support:navi_011(rel2)
  *
+ *		Revision 3.0  89/04/04  10:44:41  ste_cm
+ *		BASELINE Mon Jun 19 13:07:30 EDT 1989
+ *		
+ *		Revision 2.0  89/04/04  10:44:41  ste_cm
+ *		BASELINE Fri Apr  7 16:39:42 EDT 1989
+ *		
+ *		Revision 1.33  89/04/04  10:44:41  dickey
+ *		ensure that we call 'rcspermit()' not only to check permissions,
+ *		but also to obtain value for RCSbase variable.
+ *		
+ *		Revision 1.32  89/03/31  14:55:22  dickey
+ *		only close temp-file if we have opened it!
+ *		
  *		Revision 1.31  89/03/29  14:43:06  dickey
  *		if working file cannot be found, this may be because checkin is
  *		running in set-uid mode.  revert to normal rights and try again.
@@ -533,8 +546,9 @@ MakeDirectory()
 			if (sb.st_uid != geteuid()
 			||  sb.st_gid != getegid())
 				revert(debug ? "non-CM use" : (char *)0);
-			else if (!rcspermit(RCSdir,RCSbase))
+			if (!rcspermit(RCSdir,RCSbase))
 				revert("not listed in permit-file");
+			DEBUG((".. RCSbase='%s'\n", RCSbase))
 			RCS_uid = sb.st_uid;
 			RCS_gid = sb.st_gid;
 			RCSprot = sb.st_mode & 0777;
