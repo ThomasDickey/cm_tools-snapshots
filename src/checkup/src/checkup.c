@@ -66,7 +66,7 @@
 #include	<sccsdefs.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: checkup.c,v 11.15 2002/05/10 10:17:14 tom Exp $")
+MODULE_ID("$Id: checkup.c,v 11.16 2002/07/03 12:54:14 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -441,7 +441,7 @@ int	WALK_FUNC(do_stat)
 		} else if (debug) {
 			indent(level);
 			TELL "%s (%s)\n", name, ok_text ? vers : "binary");
-			if (ok_text && config_rev && isdigit(*vers))
+			if (ok_text && config_rev && isdigit(UCH(*vers)))
 				pipes(path, name, vers);
 		}
 	}

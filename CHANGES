@@ -1,3 +1,23 @@
+2002-07-03  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/copy/src/copy.c:
+	oops - had typed sizeof(char*) rather than sizeof(char).
+
+	* src/copy/src/copy.c:
+	noticed that I didn't check if input stream was nonzero before trying to close it (fix)
+
+	* src/copy/src/copy.c:
+	workaround for a bug I noticed in mirroring across NFS - root's permissions
+	let it open a file for input but not read from it.  So I check if I can
+	read from the input before trying to open the output.
+
+	* src/checkout/src/checkout.c: gcc warnings ('tell' was a variable)
+
+	* src/link2rcs/src/link2rcs.c, src/permit/src/permit.c: gcc warnings
+
+	* src/baseline/src/baseline.c, src/checkin/src/checkin.c, src/checkup/src/checkup.c:
+	use UCH() to fix char-subscript warnings in gcc.
+
 2002-06-29  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* mkdirs.sh: resync with my-autoconf

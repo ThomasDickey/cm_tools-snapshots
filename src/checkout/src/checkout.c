@@ -90,7 +90,7 @@
 #include	<signal.h>
 #include	<time.h>
 
-MODULE_ID("$Id: checkout.c,v 11.11 2000/12/28 15:19:40 tom Exp $")
+MODULE_ID("$Id: checkout.c,v 11.12 2002/07/03 13:14:21 tom Exp $")
 
 /* local definitions */
 #define	WARN	FPRINTF(stderr,
@@ -216,13 +216,13 @@ _DCL(char *,	src)
 static
 void
 GiveBack(
-_ARX(int,	tell)
+_ARX(int,	tell_why)
 _AR1(char *,	why)
 	)
-_DCL(int,	tell)
+_DCL(int,	tell_why)
 _DCL(char *,	why)
 {
-	if (revert((tell || debug) ? why : (char *)0)) {
+	if (revert((tell_why || debug) ? why : (char *)0)) {
 		Effect = geteuid();
 		WhoAmI();
 	}

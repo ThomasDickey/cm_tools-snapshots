@@ -66,7 +66,7 @@
 #include	<td_qsort.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: link2rcs.c,v 11.8 2001/12/11 14:56:04 tom Exp $")
+MODULE_ID("$Id: link2rcs.c,v 11.9 2002/07/03 12:54:14 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -428,7 +428,7 @@ conflict(
 	if (lstat(path, &sb) >= 0) {
 		if (!merge)
 			exists(path);
-		if (MODE(sb.st_mode) == mode) {	/* compatible! */
+		if ((int) MODE(sb.st_mode) == mode) {	/* compatible! */
 			if (mode == S_IFLNK) {
 				if (!hard_links && samelink(path,from))
 					return (tell_merged(path));
