@@ -1,4 +1,4 @@
-$Header: /users/source/archives/cm_tools.vcs/certify/RCS/config.txt,v 2.0 1989/04/03 08:40:09 ste_cm Exp $
+$Header: /users/source/archives/cm_tools.vcs/certify/RCS/config.txt,v 4.0 1989/05/11 13:00:53 ste_cm Rel $
 
 --------------------------------------------------------------------------------
 
@@ -11,6 +11,10 @@ sources).
 
 These tools have been tested on the Apollo, Gould and Sun systems at the SPC
 using RCS release 3 (1983).
+
+The subtree "src/common" is designed to be portable among not only unix systems,
+but also (largely) to VAX/VMS.  On that system, the common-library tree is
+installed as CM_TOOLS (there it requires the PORTUNIX tree).
 
 --------------------------------------------------------------------------------
 
