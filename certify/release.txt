@@ -1,6 +1,16 @@
-$Header: /users/source/archives/cm_tools.vcs/certify/RCS/release.txt,v 3.0 1989/05/11 12:58:49 ste_cm Rel $
+$Id: release.txt,v 4.0 1989/08/22 09:48:31 ste_cm Rel $
 
 --------------------------------------------------------------------------------
+
+Version 4.0:
+-----------
+Corrected "make destroy" in case RCS is a symbolic link.
+
+Minor mods/enhancements to common-library for use in other prototypes.
+
+Added options to checkup: "-o", "-d"; added "+" interpretation to "-r".
+
+Added CTL/R command to ded.  Corrected/enhanced "<" command.
 
 Version 3.0:
 -----------

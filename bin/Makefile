@@ -1,20 +1,14 @@
-# $Header: /users/source/archives/cm_tools.vcs/bin/RCS/Makefile,v 3.0 1989/03/28 14:48:49 ste_cm Rel $
+# $Header: /users/source/archives/cm_tools.vcs/bin/RCS/Makefile,v 4.0 1989/08/22 08:23:21 ste_cm Rel $
 #
 # $Log: Makefile,v $
-# Revision 3.0  1989/03/28 14:48:49  ste_cm
-# BASELINE Mon Jun 19 12:55:50 EDT 1989
+# Revision 4.0  1989/08/22 08:23:21  ste_cm
+# BASELINE Thu Aug 24 09:14:19 EDT 1989 -- support:navi_011(rel2)
 #
-#	Revision 2.0  89/03/28  14:48:49  ste_cm
-#	BASELINE Tue Apr  4 16:02:47 EDT 1989
+#	Revision 3.1  89/08/22  08:23:21  dickey
+#	corrected 'destroy' rule
 #	
-#	Revision 1.3  89/03/28  14:48:49  dickey
-#	added 'rdiff' to install-list
-#	
-#	Revision 1.2  89/03/28  09:12:31  dickey
-#	corrected 'clobber' rule
-#	
-#	Revision 1.1  89/03/27  13:34:18  dickey
-#	RCS_BASE
+#	Revision 3.0  89/03/28  14:48:49  ste_cm
+#	BASELINE Mon Jun 19 12:55:50 EDT 1989
 #	
 
 ####### (Development) ##########################################################
@@ -40,7 +34,8 @@ ALL	=\
 all:		; @echo '** use "make install"'
 clean:
 clobber:	clean	; rm -f [a-z]*
-destroy:	; rm -f *
+destroy:
+	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 run_tests:
 sources:
 install:	$(ALL)

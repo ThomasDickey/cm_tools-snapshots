@@ -1,37 +1,23 @@
-# $Header: /users/source/archives/cm_tools.vcs/RCS/Makefile,v 3.0 1989/03/29 07:35:54 ste_cm Rel $
+# $Header: /users/source/archives/cm_tools.vcs/RCS/Makefile,v 4.0 1989/08/22 08:24:46 ste_cm Rel $
 # Top-level make-file for CM_TOOLS
 #
 # $Log: Makefile,v $
-# Revision 3.0  1989/03/29 07:35:54  ste_cm
-# BASELINE Mon Jun 19 12:54:05 EDT 1989
+# Revision 4.0  1989/08/22 08:24:46  ste_cm
+# BASELINE Thu Aug 24 09:12:03 EDT 1989 -- support:navi_011(rel2)
 #
-#	Revision 2.0  89/03/29  07:35:54  ste_cm
-#	BASELINE Tue Apr  4 15:54:07 EDT 1989
+#	Revision 3.2  89/08/22  08:24:46  dickey
+#	'destroy' rule should be error-free
 #	
-#	Revision 1.7  89/03/29  07:35:54  dickey
-#	added missing Makefile-dependencies
+#	Revision 3.1  89/08/22  08:16:43  dickey
+#	corrected/revised 'clean', 'clobber' & 'destroy' rules
 #	
-#	Revision 1.6  89/03/28  16:36:33  dickey
-#	added 'make' rules for user-documentation directory
-#	
-#	Revision 1.5  89/03/28  16:13:41  dickey
-#	source-arg of 'copy.sh' must be a simple file...
-#	
-#	Revision 1.4  89/03/28  14:39:17  dickey
-#	corrected INSTALL_PATH default value
-#	
-#	Revision 1.3  89/03/28  10:47:02  dickey
-#	use MAKE-variable to encapsulate recursive-make info.
-#	
-#	Revision 1.2  89/03/27  16:26:41  dickey
-#	cleanup of top-level, prepare for build on sun/gould
-#	
-#	Revision 1.1  89/03/27  14:24:40  dickey
-#	RCS_BASE
+#	Revision 3.0  89/03/29  07:35:54  ste_cm
+#	BASELINE Mon Jun 19 12:54:05 EDT 1989
 #	
 #	Revision 7.0  89/10/05  09:45:39  ste_cm
 #	BASELINE Mon Apr 30 12:49:21 1990 -- (CPROTO)
 #	
+
 ####### (Development) ##########################################################
 INSTALL_PATH = /ste_site/ste/bin
 INSTALL_DOCS = /ste_site/ste/doc
@@ -45,24 +31,27 @@ SOURCES	=\
 	COPYRIGHT\
 	README
 
-	bin/makefile\
 MFILES	=\
 	support/Makefile\
 	bin/Makefile\
+	certificate/Makefile\
+	src/Makefile\
+	user/Makefile
 MKFILE	=\
 	bin/makefile\
 	user/makefile
 
 DIRS	=\
 	interface\
-	bin/copy
+	lib
+
 HACKS	=\
 	bin/copy\
 	interface/rcspath.h
 
+FIRST	=\
 	$(SOURCES)\
-	$(HACKS)\
-	interface/rcspath.h
+	$(MFILES)\
 	$(MKFILE)\
 	$(DIRS)\
 	$(HACKS)
@@ -72,8 +61,21 @@ all:		$(FIRST)
 	cd certificate;	$(MAKE) $@
 	cd support;	$(MAKE) $@
 	cd src;		$(MAKE) install
+clean:		$(MFILES)
 clean\
 clobber\
+destroy::	$(MFILES)
+	cd certificate;	$(MAKE) $@
+	cd support;	$(MAKE) $@
+	cd src;		$(MAKE) $@
+clobber:	$(MFILES)
+	cd certificate;	$(MAKE) $@
+	cd support;	$(MAKE) $@
+	cd src;		$(MAKE) $@
+	cd user;	$(MAKE) $@
+	cd bin;		$(MAKE) $@
+	rm -f $(HACKS) $(MKFILE)
+lint.out\
 lincnt.out:	$(FIRST)
 	cd src;		$(MAKE) $@
 
@@ -90,9 +92,8 @@ destroy:	$(MFILES)
 	cd src;		$(MAKE) $@
 	cd user;	$(MAKE) $@
 	cd bin;		$(MAKE) $@
-	rm -f lib/* interface/*
-	rmdir $(DIRS)
-	rm -f *
+	cd bin;		$(MAKE) $@ INSTALL_PATH=$(INSTALL_PATH)
+
 destroy::
 	rm -rf $(DIRS)
 	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
@@ -111,6 +112,10 @@ user/Makefile:			; $(GET) -x $@
 
 # Embed default installation path in places where we want it compiled-in.
 # Note that we exploit the use of lower-case makefile for this purpose.
+bin/makefile:	bin/Makefile	$(THIS)
+	rm -f $@
+	sed -e s+INSTALL_PATH=.*+INSTALL_PATH=$(INSTALL_PATH)+ bin/Makefile >$@
+
 user/makefile:	user/Makefile	$(THIS)
 	rm -f $@
 	sed -e s+INSTALL_PATH=.*+INSTALL_PATH=$(INSTALL_DOCS)+ user/Makefile >$@

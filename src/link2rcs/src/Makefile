@@ -1,18 +1,18 @@
-# $Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/Makefile,v 3.0 1989/03/28 13:16:22 ste_cm Rel $
+# $Id: Makefile,v 5.0 1989/08/22 09:11:34 ste_cm Rel $
 # MAKE-file for RCS skeleton tree utility
 #
 # $Log: Makefile,v $
-# Revision 3.0  1989/03/28 13:16:22  ste_cm
-# BASELINE Mon Jun 19 14:44:56 EDT 1989
+# Revision 5.0  1989/08/22 09:11:34  ste_cm
+# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
 #
-#	Revision 2.0  89/03/28  13:16:22  ste_cm
-#	BASELINE Thu Apr  6 13:37:00 EDT 1989
+#	Revision 4.0  89/08/22  09:11:34  ste_cm
+#	BASELINE Thu Aug 24 10:36:51 EDT 1989 -- support:navi_011(rel2)
 #	
-#	Revision 1.2  89/03/28  13:16:22  dickey
-#	add 'run_tests' rule
+#	Revision 3.1  89/08/22  09:11:34  dickey
+#	corrected 'destroy' rule; patched out 'lint.out' & 'lincnt.out'
 #	
-#	Revision 1.1  89/03/27  09:06:46  dickey
-#	Initial revision
+#	Revision 3.0  89/03/28  13:16:22  ste_cm
+#	BASELINE Mon Jun 19 14:44:56 EDT 1989
 #	
 
 ####### (Environment) ##########################################################
@@ -31,14 +31,15 @@ LINTOPT	= $(DEFINES) $(INCLUDES) -ltd -lapollo
 ####### (Standard Lists) #######################################################
 ALL	= $B/link2rcs
 SCRIPTS	= link2rcs.sh
-SRCS	= $(SCRIPTS)
+SRCS	= Makefile $(SCRIPTS)
 #
 ####### (Standard Productions) #################################################
-all:		$(ALL)
+all:		sources	$(ALL)
 #
 clean:				; rm -f *.o *.out
 clobber: 	clean		; rm -f $(ALL)
-destroy:			; rm -f *
+destroy:
+	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 run_tests:
 sources: 	$(SRCS)
 #
@@ -47,5 +48,5 @@ $B/link2rcs:	link2rcs.sh	; copy link2rcs.sh $@
 #
 ####### (Development) ##########################################################
 $(SRCS):			; $(GET) $@
-lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
-lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@
+lint.out: #	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
+lincnt.out: #	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

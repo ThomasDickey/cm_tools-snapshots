@@ -1,18 +1,18 @@
-# $Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/Makefile,v 3.0 1989/03/28 13:59:42 ste_cm Rel $
+# $Id: Makefile,v 5.0 1989/08/22 09:03:11 ste_cm Rel $
 # MAKE-file for RCS directory-permissions utility
 #
 # $Log: Makefile,v $
-# Revision 3.0  1989/03/28 13:59:42  ste_cm
-# BASELINE Mon Jun 19 14:49:13 EDT 1989
+# Revision 5.0  1989/08/22 09:03:11  ste_cm
+# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
 #
-# Revision 2.0  89/03/28  13:59:42  ste_cm
-# BASELINE Thu Apr  6 13:54:53 EDT 1989
+# Revision 4.0  89/08/22  09:03:11  ste_cm
+# BASELINE Thu Aug 24 10:40:29 EDT 1989 -- support:navi_011(rel2)
 # 
-# Revision 1.4  89/03/28  13:59:42  dickey
-# added 'run_tests' rule
+# Revision 3.1  89/08/22  09:03:11  dickey
+# corrected 'destroy' rule
 # 
-# Revision 1.3  89/03/23  10:25:31  dickey
-# revised to standard CM-format
+# Revision 3.0  89/03/28  13:59:42  ste_cm
+# BASELINE Mon Jun 19 14:49:13 EDT 1989
 # 
 ####### (Environment) ##########################################################
 B	= ../bin
@@ -38,7 +38,8 @@ all:		$(ALL)
 #
 clean:				; rm -f *.o *.out
 clobber:	clean		; rm -f $(ALL)
-destroy:			; rm -f *
+destroy:
+	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 run_tests:
 sources:	$(SRCS)
 #

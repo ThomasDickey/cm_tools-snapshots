@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 3.0 1988/09/26 07:56:39 ste_cm Rel $";
+static	char	what[] = "$Id: checkup.c,v 4.0 1989/08/17 13:59:45 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,26 @@ static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checku
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * $Log: checkup.c,v $
- * Revision 3.0  1988/09/26 07:56:39  ste_cm
- * BASELINE Mon Jun 19 13:17:34 EDT 1989
+ * Revision 4.0  1989/08/17 13:59:45  ste_cm
+ * BASELINE Thu Aug 24 09:31:25 EDT 1989 -- support:navi_011(rel2)
  *
+ *		Revision 3.3  89/08/17  13:59:45  dickey
+ *		if "-r" and "-o" are both set, use "-r" to limit the set of
+ *		files shown as obsolete, rather than to select working files
+ *		for date-comparison.
+ *		
+ *		Revision 3.2  89/08/17  13:18:03  dickey
+ *		expanded usage-message to multi-line display.  corrected a
+ *		place where "?" constant was overwritten.  added "-d" and
+ *		"-o" options.
+ *		
+ *		Revision 3.1  89/08/17  09:02:42  dickey
+ *		modified "-r" option to support reverse comparison (if user
+ *		suffixes a "+" to option-value).
+ *		
+ *		Revision 3.0  88/09/26  07:56:39  ste_cm
+ *		BASELINE Mon Jun 19 13:17:34 EDT 1989
+ *		
  *		Revision 2.0  88/09/26  07:56:39  ste_cm
  *		BASELINE Thu Apr  6 09:32:39 EDT 1989
  *		
@@ -33,8 +50,12 @@ static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checku
  *
  * Options:	-a	scans directory-names beginning with '.' (normally
  *			ignored).
+ *		-d	debug, shows all names and dates
+ *		-o	reports "obsolete" files, i.e., those archives for
+ *			which there is no corresponding working-file.
  *		-r REV	reports all working files whose highest checked-in
- *			version is below REV.
+ *			version is below REV.  (A "+" suffixed causes the
+ *			report to reverse, showing files above REV).
  *		-q (-s)	suppress report, used when only a list of names is
  *			wanted.
  *		-t	sets up a default list of extensions to be ignored.
@@ -58,6 +79,8 @@ static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checku
  *			cannot be 'stat'ed.
  */
 
+#define	DIR_PTYPES
+#define	STR_PTYPES
 #include	"ptypes.h"
 #include	"rcsdefs.h"
 #include	<ctype.h>
@@ -65,8 +88,6 @@ extern	char	*pathcat();
 extern	char	*pathleaf();
 extern	char	*rcs_dir();
 extern	char	*sccs_dir();
-extern	char	*strcpy();
-extern	char	*strrchr();
 extern	char	*txtalloc();
 
 extern	int	optind;		/* 'getopt()' index to argv */
@@ -92,9 +113,12 @@ typedef	struct	_exts	{
 
 static	EXTS	*exts;			/* "-x" and "-t" extension list */
 static	int	allnames;		/* "-a" option */
+static	int	debug;			/* "-d" option */
+static	int	obsolete;		/* "-o" option */
 static	int	verbose;		/* "-v" option */
 static	int	lines;			/* line-number, for report */
 static	char	*revision = "0";	/* required revision level */
+static	int	reverse;		/* true if we reverse revision-test */
 
 /*
  * Define a new extension-to-ignore
@@ -198,6 +222,14 @@ indent(level)
 	}
 }
 
+static
+pipes(path, name)
+char	*path, *name;
+{
+	if ((verbose < 0) || !isatty(fileno(stdout)))
+		PRINTF("%s/%s\n", path, name);
+}
+
 /*
  * This procedure is invoked from 'walktree()' for each file/directory which
  * is found in the specified tree.  Analyze the files to see if anything should
@@ -223,8 +255,12 @@ struct	stat	*sp;
 		abspath(s);		/* get rid of "." and ".." names */
 		t = pathleaf(s);	/* obtain leaf-name for "-a" option */
 		if (*t == '.' && !allnames)	return (-1);
-		if (sameleaf(s, sccs_dir()))	return (-1);
-		if (sameleaf(s, rcs_dir()))	return (-1);
+		if (sameleaf(s, sccs_dir())
+		||  sameleaf(s, rcs_dir())) {
+			if (obsolete)
+				do_obs(path, name, level);
+			return (-1);
+		}
 	}
 
 	if (readable < 0 || sp == 0) {
@@ -242,12 +278,19 @@ struct	stat	*sp;
 		TELL "%s%s\n", name, change);
 	} else if (mode == S_IFREG && !suppress(name)) {
 		rcslast(path, name, &vers, &cdate, &owner);
-		if (cdate == 0)
+		if ((cdate == 0) && (*vers == '?'))
 			sccslast(path, name, &vers, &cdate, &owner);
 		if (cdate != 0) {
 			if (cdate == sp->st_mtime) {
-				if (dotcmp(vers, revision) < 0)
-					change = vers;
+				if (obsolete)
+					;	/* interpret as obsolete-rev */
+				else if (reverse) {
+					if (dotcmp(vers, revision) > 0)
+						change = vers;
+				} else {
+					if (dotcmp(vers, revision) < 0)
+						change = vers;
+				}
 			} else if (cdate > sp->st_mtime) {
 				change	= "older";
 			} else if (cdate < sp->st_mtime) {
@@ -256,20 +299,93 @@ struct	stat	*sp;
 		} else if (!isbinary(name)) {
 			change	= "not archived";
 		}
-		if (change || (*owner != EOS && *owner != '?')) {
+		if ((change != 0) || (*owner != EOS && *owner != '?')) {
 			if (change == 0)	change	= "no change";
-			if (*owner == '?')	*owner	= EOS;
+			if (*owner == '?')	owner	= "";
 			indent(level);
 			TELL "%s (%s%s%s)\n",
 				name,
 				change,
 				*owner ? ", locked by " : "",
 				owner);
-			if ((verbose < 0) || !isatty(fileno(stdout)))
-				PRINTF("%s/%s\n", path, name);
+			pipes(path, name);
+		} else if (debug) {
+			indent(level);
+			TELL "%s (ok)\n", name);
 		}
 	}
 	return(readable);
+}
+
+/*
+ * Scan a directory looking for obsolete archives.  This requires special
+ * handling, since the directory-name may be a symbolic link; thus we have to
+ * be careful where we look for the working file!
+ */
+static
+do_obs(path, name, level)
+char	*path;		/* current working directory, from 'do_stat()' */
+char	*name;		/* name of directory (may be symbolic link) */
+int	level;
+{
+	auto	DIR		*dp;
+	auto	struct	direct	*de;
+	auto	char		tpath[BUFSIZ],
+				tname[BUFSIZ];
+	auto	struct	stat	sb;
+	auto	char	*vers,
+			*owner;
+	auto	time_t	cdate;
+
+	if (dp = opendir(pathcat(tpath, path, name))) {
+		while (de = readdir(dp)) {
+			if (dotname(de->d_name))	continue;
+			if (stat(pathcat(tname, name, de->d_name), &sb) >= 0) {
+				auto	int	show	= FALSE;
+
+				if ((sb.st_mode & S_IFMT) != S_IFREG) {
+					indent(level);
+					TELL "%s (non-file)\n", tname);
+					continue;
+				}
+				rcslast(path, tname, &vers, &cdate, &owner);
+				if ((cdate == 0) && (*vers == '?'))
+					sccslast(path, tname, &vers, &cdate, &owner);
+
+				/*
+				 * If 'cdate' is zero, then we could not (for
+				 * whatever reason) find a working file.  If
+				 * 'vers' is "?", then the file was not an
+				 * archive, so we report this always.  Filter
+				 * the remaining files according to revision
+				 * codes.
+				 */
+				if (cdate == 0) {
+					if (*vers == '?')
+						show = TRUE;
+					else if (reverse) {
+						if (dotcmp(vers, revision) > 0)
+							show = TRUE;
+					} else {
+						if (dotcmp(vers, revision) < 0)
+							show = TRUE;
+					}
+				}
+
+				if (show) {
+					indent(level);
+					TELL "%s (obsolete:%s)\n", tname, vers);
+					pipes(path, name);
+				} else if (debug) {
+					indent(level);
+					TELL "%s (ok) %s\n",
+						tname,
+						(cdate == 0) ? vers : "");
+				}
+			}
+		}
+		(void)closedir(dp);
+	}
 }
 
 /*
@@ -286,7 +402,24 @@ char	*name;
 
 usage()
 {
-	WARN "usage: checkup [-r rev] [-aqstv] [-x extension] [directory [...]]\n");
+	static	char	*msg[] = {
+	"usage: checkup [options] [directory [...]]",
+	"",
+	"options:",
+	"  -a      report files and directories beginning with \".\"",
+	"  -d      debug (show all names)",
+	"  -o      reports obsolete files (no working file exists)",
+	"  -q      quiet",
+	"  -r REV  specifies revision-level to check against, REV+ to reverse",
+	"  -s      (same as -q)",
+	"  -t      suppresses standard extensions: .bak .i .log .out .tmp",
+	"  -v      verbose",
+	"  -x EXT  extension rules: .EXT to suppress, .IF.THEN conditionally"
+	};
+	register int	j;
+	for (j = 0; j < sizeof(msg)/sizeof(msg[0]); j++)
+		WARN "%s\n", msg[j]);
+	(void)fflush(stderr);
 	(void)exit(FAIL);
 }
 
@@ -308,10 +441,16 @@ char	*argv[];
 	(void)setlinebuf(stderr);
 #endif
 
-	while ((j = getopt(argc, argv, "aqr:stvx:")) != EOF)
+	while ((j = getopt(argc, argv, "adoqr:stvx:")) != EOF)
 		switch (j) {
 		case 'a':
 			allnames++;
+			break;
+		case 'd':
+			debug++;
+			break;
+		case 'o':
+			obsolete++;
 			break;
 		case 'r':
 			revision = optarg;
@@ -337,19 +476,36 @@ char	*argv[];
 			usage();
 			/*NOTREACHED*/
 		}
+
+	/*
+	 * If we are asked to do a reverse-comparison, we must juggle the
+	 * revision-level so that 'dotcmp()' can give us a useful return value.
+	 */
+	if (revision[j = strlen(revision)-1] == '+') {
+		auto	char	tmp[BUFSIZ];
+		register char	*s;
+
+		revision = strcpy(tmp, revision);
+		revision[j] = EOS;
+		if (s = strrchr(revision, '.')) {
+			if (s[1] == EOS)
+				(void)strcat(revision, "0");
+		} else
+			(void)strcat(revision, ".0");
+		revision = txtalloc(revision);
+		reverse  = TRUE;
+	}
+
+	/*
+	 * Process the list of file-specifications:
+	 */
 	if (optind < argc) {
 		for (j = optind; j < argc; j++)
 			do_arg(argv[j]);
 	} else
 		do_arg(".");
 
+	(void)fflush(stderr);
 	(void)exit(SUCCESS);
 	/*NOTREACHED*/
-}
-
-failed(s)
-char	*s;
-{
-	perror(s);
-	(void)exit(FAIL);
 }

@@ -1,21 +1,15 @@
-# $Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/Makefile,v 3.0 1989/03/28 12:00:50 ste_cm Rel $
+# $Id: Makefile,v 4.0 1989/08/22 09:51:55 ste_cm Rel $
 # Make-file for RCS checkout utilities
 #
 # $Log: Makefile,v $
-# Revision 3.0  1989/03/28 12:00:50  ste_cm
-# BASELINE Mon Jun 19 13:12:40 EDT 1989
+# Revision 4.0  1989/08/22 09:51:55  ste_cm
+# BASELINE Thu Aug 24 09:27:38 EDT 1989 -- support:navi_011(rel2)
 #
-# Revision 2.0  89/03/28  12:00:50  ste_cm
-# BASELINE Thu Apr  6 09:22:38 EDT 1989
+# Revision 3.1  89/08/22  09:51:55  dickey
+# corrected 'destroy' rule
 # 
-# Revision 1.11  89/03/28  12:00:50  dickey
-# added 'run_tests' rule.
-# 
-# Revision 1.10  89/03/27  11:33:57  dickey
-# maintain 'rcsget' script in same directory as 'checkout' module.
-# 
-# Revision 1.9  89/03/24  15:39:52  dickey
-# revised to CM-standard format
+# Revision 3.0  89/03/28  12:00:50  ste_cm
+# BASELINE Mon Jun 19 13:12:40 EDT 1989
 # 
 ####### (Environment) ##########################################################
 B	= ../bin
@@ -34,17 +28,18 @@ LINTOPT	= $(DEFINES) $(INCLUDES) -ltd
 ALL	= $B/checkout $B/rcsget
 CSRC	= checkout.c
 SCRIPTS	= rcsget.sh
-SRCS	= $(CSRC) $(SCRIPTS)
+SOURCES	= Makefile $(CSRC) $(SCRIPTS)
 MAIN_O	= checkout.o $(LIBS)
 #
 ####### (Standard Productions) #################################################
-all:		$(ALL)
+all:		sources $(ALL)
 #
 clean:				; rm -f *.o *.out
 clobber: 	clean		; rm -f $(ALL)
-destroy:			; rm -f *
+destroy:
+	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 run_tests:
-sources: 	$(SRCS)
+sources: 	$(SOURCES)
 #
 install:	$B/checkout
 #
@@ -55,6 +50,6 @@ $B/rcsget:	rcsget.sh	; copy rcsget.sh $@
 checkout.o:	$I/ptypes.h	$I/rcsdefs.h
 #
 ####### (Development) ##########################################################
-$(SRCS):			; $(GET) $@
+$(SOURCES):			; $(GET) $@
 lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
 lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@
