@@ -132,7 +132,7 @@
 #include	<errno.h>
 extern	char	*mktemp(_ar1(char *,name));
 
-MODULE_ID("$Id: checkin.c,v 11.24 1995/01/28 20:15:05 tom Exp $")
+MODULE_ID("$Id: checkin.c,v 11.25 1998/04/22 16:00:37 tom Exp $")
 
 /* local declarations: */
 #define	CI_TOOL		"ci"
@@ -983,6 +983,7 @@ void	MakeDirectory(_AR0)
 
 	} else {
 
+#if HAVE_GETEUID && HAVE_SETEGID
 		if (getegid() != sb.st_gid) {
 			(void)setegid((int)sb.st_gid);
 			WhoAmI();
@@ -991,6 +992,7 @@ void	MakeDirectory(_AR0)
 		if (geteuid() != 0
 		&&  sb.st_uid != geteuid())
 			GiveBack("non-CM use");
+#endif
 
 	}
 
