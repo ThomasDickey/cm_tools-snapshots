@@ -1,3 +1,15 @@
+1988-12-06  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	oops: was not setting RCSprot is the RCS directory did not exist;
+	this caused HackMode to reset protection to 0!
+
+	* src/checkin/src/checkin.c:
+	corrected handling of group-protected archives.
+	Added some DEBUG-traces.
+
+	* src/checkout/src/checkout.c: added some DEBUG-traces
+
 1988-11-10  dickey@software.org
 
 	* src/link2rcs/src/link2rcs.sh:
