@@ -1,3 +1,22 @@
+1994-06-18  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/copy/src/copy.c: corrected a couple of minus-signs
+
+	* src/copy/src/copy.c:
+	have (now) a workable date translation between Linux and MS-DOS.
+
+	* src/copy/src/copy.c:
+	added logic to ensure that we adjust timestamps properly when copying
+	to/from MSDOS from Linux.  Also, make the trace messages go to stdout.
+
+	* src/copy/src/Makefile: ensure that we have bin directory when making!
+
+	* src/copy/src/copy.c:
+	fixes for copy-overwrite test, and to make this compile with my first-drafyt
+	of the autoconf script.
+
+	added notes for MSDOS conversion.
+
 1994-05-12  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/copy/src/copy.c:
