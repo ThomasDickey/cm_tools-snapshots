@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t20030430
+MANIFEST for cm_tools, version t20040307
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -10,11 +10,6 @@ makefile.in                     cm_tools makefile template
 mkdirs.sh                       mkdirs-script
 bin                             subdirectory
 bin/makefile.in                 cm_tools/bin makefile template
-certify                         subdirectory
-certify/README                  certificate-README for CM_TOOLS
-certify/config.txt              configuration-sheet for CM_TOOLS
-certify/makefile.in             cm_tools/certify makefile
-certify/release.txt             release-notes for CM_TOOLS
 src/baseline                    subdirectory
 src/baseline/makefile.in        cm_tools/src/baseline makefile template
 src/baseline/src                subdirectory

@@ -1,4 +1,4 @@
-/* $Id: vcs.h,v 11.0 1991/10/17 13:51:35 ste_cm Rel $ */
+/* $Id: vcs.h,v 11.1 2004/03/08 01:06:27 tom Exp $ */
 
 #ifndef	_vcs_h
 #define	_vcs_h
@@ -16,7 +16,6 @@
 #define	RCS	"rcs"
 #define	PERMIT	"permit"
 
-#define	WARN	FPRINTF(stderr,
 #define	VERBOSE	if (verbose) PRINTF
 
 typedef	enum	{ Unknown, Insert, Delete, Unlock } OPS;
@@ -39,44 +38,44 @@ MAIN	char	*RCS_verb,	/* command-verb we show in trace */
 MAIN	char	original[MAXPATHLEN];
 
 	/* utilities */
-extern	void	set_command(_ar0);
+extern	void	set_command(void);
 
 extern	void	set_option(
-		_arx(int,	option)
-		_ar1(char *,	value));
+		int		option,
+		char *		value);
 
-extern	int	do_command(_ar0);
+extern	int	do_command(void);
 
 extern	void	invoke_command(
-		_arx(char *,	verb)
-		_ar1(char *,	path));
+		char *		verb,
+		char *		path);
 
 extern	void	ShowPath(
-		_arx(char *,	command)
-		_ar1(char *,	name));
+		char *		command,
+		char *		name);
 
 extern	int	DirExists(
-		_ar1(char *,	path));
+		char *		path);
 
 extern	int	IsDirectory(
-		_ar1(char *,	path));
+		char *		path);
 
 extern	int	Access(
-		_arx(char *,	archive)
-		_ar1(int,	ok_if_noop));
+		char *		archive,
+		int		ok_if_noop);
 
 extern	time_t	DateOf(
-		_ar1(char *,	name));
+		char *		name);
 
 	/* modules */
 extern	void	DeleteDir(
-		_ar1(char *,	name));
+		char *		name);
 
 extern	int	InsertDir(
-		_arx(char *,	name)
-		_ar1(char *,	base));
+		char *		name,
+		char *		base);
 
 extern	void	UnLockFile(
-		_ar1(char *,	name));
+		char *		name);
 
 #endif	/* _vcs_h */

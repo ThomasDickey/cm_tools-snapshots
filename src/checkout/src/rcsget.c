@@ -43,252 +43,244 @@
 #include	<sccsdefs.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: rcsget.c,v 11.6 2001/12/11 14:55:23 tom Exp $")
+MODULE_ID("$Id: rcsget.c,v 11.7 2004/03/08 00:14:19 tom Exp $")
 
 #define	VERBOSE	if (!quiet) PRINTF
 
-static	char	user_wd[BUFSIZ];/* working-directory for scan_archive */
-static	char	co_opts[BUFSIZ];
-static	char	*verb	= "checkout";
-static	int	a_opt;		/* all-directory scan */
-static	int	R_opt;		/* recur/directory-mode */
-static	int	L_opt;		/* follow links */
-static	int	n_opt;		/* no-op mode */
-static	int	quiet;		/* "-q" option */
+static char user_wd[BUFSIZ];	/* working-directory for scan_archive */
+static char co_opts[BUFSIZ];
+static char *verb = "checkout";
+static int a_opt;		/* all-directory scan */
+static int R_opt;		/* recur/directory-mode */
+static int L_opt;		/* follow links */
+static int n_opt;		/* no-op mode */
+static int quiet;		/* "-q" option */
 
-static
-void	set_wd(
-	_AR1(char *,	path))
-	_DCL(char *,	path)
+static void
+set_wd(char *path)
 {
-	if (!n_opt)
-		if (chdir(path) < 0)
-			failed(path);
+    if (!n_opt)
+	if (chdir(path) < 0)
+	    failed(path);
 }
 
-static
-void	Checkout(
-	_ARX(char *,	working)
-	_AR1(char *,	archive)
-		)
-	_DCL(char *,	working)
-	_DCL(char *,	archive)
+static void
+Checkout(char *working, char *archive)
 {
-	auto	char	args[BUFSIZ];
+    char args[BUFSIZ];
 
-	(void)strcpy(args, co_opts);
-	catarg(args, working);
-	catarg(args, archive);
+    (void) strcpy(args, co_opts);
+    catarg(args, working);
+    catarg(args, archive);
 
-	if (!quiet || n_opt) shoarg(stdout, verb, args);
-	if (!n_opt) {
-		if (execute(verb, args) < 0)
-			failed(working);
-	}
+    if (!quiet || n_opt)
+	shoarg(stdout, verb, args);
+    if (!n_opt) {
+	if (execute(verb, args) < 0)
+	    failed(working);
+    }
 }
 
-static
-int	an_archive(
-	_AR1(char *,	name))
-	_DCL(char *,	name)
+static int
+an_archive(char *name)
 {
-	register int	len_name = strlen(name),
-			len_type = strlen(RCS_SUFFIX);
-	return (len_name > len_type
-	&&  !strcmp(name + len_name - len_type, RCS_SUFFIX));
+    int len_name = strlen(name), len_type = strlen(RCS_SUFFIX);
+    return (len_name > len_type
+	    && !strcmp(name + len_name - len_type, RCS_SUFFIX));
 }
 
 /*
  * Test for directories that we don't try to scan
  */
-static
-int	ignore_dir(
-	_AR1(char *,	path))
-	_DCL(char *,	path)
+static int
+ignore_dir(char *path)
 {
-	if (!a_opt && *pathleaf(path) == '.'
-	 && sameleaf(path, sccs_dir((char *)0, path))) {
-		if (!quiet) PRINTF("...skip %s\n", path);
-		return TRUE;
-	}
-	return FALSE;
+    if (!a_opt && *pathleaf(path) == '.'
+	&& sameleaf(path, sccs_dir((char *) 0, path))) {
+	if (!quiet)
+	    PRINTF("...skip %s\n", path);
+	return TRUE;
+    }
+    return FALSE;
 }
 
-static
-void
-Ignore(
-_ARX(char *,	name)
-_AR1(char *,	why)
-	)
-_DCL(char *,	name)
-_DCL(char *,	why)
+static void
+Ignore(char *name, char *why)
 {
-	VERBOSE("?? ignored: %s%s\n", name, why);
+    VERBOSE("?? ignored: %s%s\n", name, why);
 }
 
-static
 /*ARGSUSED*/
-int	WALK_FUNC(scan_archive)
+static int
+WALK_FUNC(scan_archive)
 {
-	auto	char	tmp[BUFSIZ];
+    char tmp[BUFSIZ];
 
-	if (!strcmp(user_wd,path))	/* account for initial argument */
-		return (readable);
-	if (!isFILE(sp->st_mode)
-	||  !an_archive(name)) {
-		Ignore(name, " (not an archive)");
-		return (-1);
-	}
-	if (!strcmp(vcs_file((char *)0, strcpy(tmp,name),FALSE), name))
-		return (readable);
+    if (!strcmp(user_wd, path))	/* account for initial argument */
+	return (readable);
+    if (!isFILE(sp->st_mode)
+	|| !an_archive(name)) {
+	Ignore(name, " (not an archive)");
+	return (-1);
+    }
+    if (!strcmp(vcs_file((char *) 0, strcpy(tmp, name), FALSE), name))
+	return (readable);
 
-	set_wd(user_wd);
-	Checkout(rcs2name(name, FALSE), pathcat(tmp, rcs_dir(NULL, NULL), name));
-	set_wd(path);
-	return(readable);
+    set_wd(user_wd);
+    Checkout(rcs2name(name, FALSE), pathcat(tmp, rcs_dir(NULL, NULL), name));
+    set_wd(path);
+    return (readable);
 }
 
-static
-int	WALK_FUNC(scan_tree)
+static int
+WALK_FUNC(scan_tree)
 {
-	auto	char	tmp[BUFSIZ],
-			*s = pathcat(tmp, path, name);
-	auto	Stat_t	sb;
+    char tmp[BUFSIZ];
+    char *s = pathcat(tmp, path, name);
+    Stat_t sb;
 
-	if (RCS_DEBUG)
-		PRINTF("++ %s%sscan (%s, %s, %s%d)\n",
-			R_opt ? "R " : "",
-			L_opt ? "L " : "",
-			path, name, (sp == 0) ? "no-stat, " : "", level);
+    if (RCS_DEBUG)
+	PRINTF("++ %s%sscan (%s, %s, %s%d)\n",
+	       R_opt ? "R " : "",
+	       L_opt ? "L " : "",
+	       path, name, (sp == 0) ? "no-stat, " : "", level);
 
-	if (!quiet || n_opt)
-		track_wd(path);
+    if (!quiet || n_opt)
+	track_wd(path);
 
-	if (sp == 0) {
-		if (R_opt && (level > 0)) {
-			Ignore(name, " (no such file)");
-		}
-	} else if (isDIR(sp->st_mode)) {
-		abspath(s);		/* get rid of "." and ".." names */
-		if (ignore_dir(s))
-			readable = -1;
-		else if (sameleaf(s, rcs_dir(NULL, NULL))) {
-			if (R_opt) {
-				(void)walktree(strcpy(user_wd,path),
-					name, scan_archive, "r", level);
-			}
-			readable = -1;
-		} else {
+    if (sp == 0) {
+	if (R_opt && (level > 0)) {
+	    Ignore(name, " (no such file)");
+	}
+    } else if (isDIR(sp->st_mode)) {
+	abspath(s);		/* get rid of "." and ".." names */
+	if (ignore_dir(s))
+	    readable = -1;
+	else if (sameleaf(s, rcs_dir(NULL, NULL))) {
+	    if (R_opt) {
+		(void) walktree(strcpy(user_wd, path),
+				name, scan_archive, "r", level);
+	    }
+	    readable = -1;
+	} else {
 #ifdef	S_IFLNK
-			if (!L_opt
-			&&  (lstat(s, &sb) < 0 || isLINK(sb.st_mode))) {
-				Ignore(name, " (is a link)");
-				readable = -1;
-			}
-#endif
-		}
-	} else if (!isFILE(sp->st_mode)) {
-		Ignore(name, RCS_DEBUG ? " (not a file)" : "");
+	    if (!L_opt
+		&& (lstat(s, &sb) < 0 || isLINK(sb.st_mode))) {
+		Ignore(name, " (is a link)");
 		readable = -1;
+	    }
+#endif
 	}
-	return(readable);
+    } else if (!isFILE(sp->st_mode)) {
+	Ignore(name, RCS_DEBUG ? " (not a file)" : "");
+	readable = -1;
+    }
+    return (readable);
 }
 
-static
-void
-do_arg(
-_AR1(char *,	name))
-_DCL(char *,	name)
+static void
+do_arg(char *name)
 {
 #ifdef	S_IFLNK
-	if (!L_opt) {
-		Stat_t	sb;
-		if (lstat(name, &sb) >= 0 && isLINK(sb.st_mode)) {
-			Ignore(name, " (is a link)");
-			return;
-		}
+    if (!L_opt) {
+	Stat_t sb;
+	if (lstat(name, &sb) >= 0 && isLINK(sb.st_mode)) {
+	    Ignore(name, " (is a link)");
+	    return;
 	}
+    }
 #endif
-	(void)walktree((char *)0, name, scan_tree, "r", 0);
+    (void) walktree((char *) 0, name, scan_tree, "r", 0);
 }
 
-static
-void
-usage(
-_AR1(int,	option))
-_DCL(int,	option)
+static void
+usage(int option)
 {
-	static	char	*tbl[] = {
- "usage: rcsget [options] files"
-,""
-,"Options include all CHECKOUT options, plus:"
-,"  -a       process all directories, including those beginning with \".\""
-,"  -d       directory-mode (scan based on archives, rather than working files"
-,"  -L       follow symbolic-links to subdirectories when -R is set"
-,"  -n       no-op (show what would be checked-out, but don't do it"
-,"  -q       quiet (also passed to \"checkout\")"
-,"  -R       recur (same as -d)"
-,"  -T TOOL  specify alternate tool to \"checkout\" to invoke per-file"
-	};
-	unsigned j;
-	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
-		FPRINTF(stderr, "%s\n", tbl[j]);
-	if (option == '?')
-		(void)execute(verb, "-?");
-	exit(FAIL);
+    static char *tbl[] =
+    {
+	"usage: rcsget [options] files"
+	,""
+	,"Options include all CHECKOUT options, plus:"
+	,"  -a       process all directories, including those beginning with \".\""
+	,"  -d       directory-mode (scan based on archives, rather than working files"
+	,"  -L       follow symbolic-links to subdirectories when -R is set"
+	,"  -n       no-op (show what would be checked-out, but don't do it"
+	,"  -q       quiet (also passed to \"checkout\")"
+	,"  -R       recur (same as -d)"
+	,"  -T TOOL  specify alternate tool to \"checkout\" to invoke per-file"
+    };
+    unsigned j;
+    for (j = 0; j < sizeof(tbl) / sizeof(tbl[0]); j++)
+	FPRINTF(stderr, "%s\n", tbl[j]);
+    if (option == '?')
+	(void) execute(verb, "-?");
+    exit(FAIL);
 }
 
 /*ARGSUSED*/
 _MAIN
 {
-	register int	j;
-	register char	*s, *t;
+    int j;
+    char *s, *t;
 
-	track_wd((char *)0);
+    track_wd((char *) 0);
 
-	/* process options */
-	for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
-		t = s + strlen(s);
-		if (strchr("fklpqrcswj", s[1]) != 0) {
-			catarg(co_opts, s);
-			if (s[1] == 'q')
-				quiet = TRUE;
-		} else while (s[1]) {
-			switch (s[1]) {
-			case 'a':	a_opt = TRUE;		break;
-			case 'R':
-			case 'd':	R_opt = TRUE;		break;
-			case 'L':	L_opt = TRUE;		break;
-			case 'n':	n_opt = TRUE;		break;
-			case 'T':	verb  = s+2;	s = t;	break;
-			default:	usage(s[1]);
-			}
-			s++;
-		}
-	}
-
-	/* process filenames */
-	if (j < argc) {
-		while (j < argc) {
-			char	working[MAXPATHLEN];
-			char	archive[MAXPATHLEN];
-			Stat_t	sb;
-
-			j = rcsargpair(j, argc, argv);
-			if (rcs_working(working, &sb) < 0 && errno != EISDIR)
-				failed(working);
-
-			if (isDIR(sb.st_mode)) {
-				if (!ignore_dir(working))
-					do_arg(working);
-			} else {
-				(void)rcs_archive(archive, (Stat_t *)0);
-				Checkout(working, archive);
-			}
-		}
+    /* process options */
+    for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
+	t = s + strlen(s);
+	if (strchr("fklpqrcswj", s[1]) != 0) {
+	    catarg(co_opts, s);
+	    if (s[1] == 'q')
+		quiet = TRUE;
 	} else
-		do_arg(".");
+	    while (s[1]) {
+		switch (s[1]) {
+		case 'a':
+		    a_opt = TRUE;
+		    break;
+		case 'R':
+		case 'd':
+		    R_opt = TRUE;
+		    break;
+		case 'L':
+		    L_opt = TRUE;
+		    break;
+		case 'n':
+		    n_opt = TRUE;
+		    break;
+		case 'T':
+		    verb = s + 2;
+		    s = t;
+		    break;
+		default:
+		    usage(s[1]);
+		}
+		s++;
+	    }
+    }
 
-	exit(SUCCESS);
-	/*NOTREACHED*/
+    /* process filenames */
+    if (j < argc) {
+	while (j < argc) {
+	    char working[MAXPATHLEN];
+	    char archive[MAXPATHLEN];
+	    Stat_t sb;
+
+	    j = rcsargpair(j, argc, argv);
+	    if (rcs_working(working, &sb) < 0 && errno != EISDIR)
+		failed(working);
+
+	    if (isDIR(sb.st_mode)) {
+		if (!ignore_dir(working))
+		    do_arg(working);
+	    } else {
+		(void) rcs_archive(archive, (Stat_t *) 0);
+		Checkout(working, archive);
+	    }
+	}
+    } else
+	do_arg(".");
+
+    exit(SUCCESS);
+    /*NOTREACHED */
 }

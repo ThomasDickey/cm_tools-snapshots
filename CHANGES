@@ -1,3 +1,14 @@
+2004-03-07  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/checkin/src/rcsput.c, src/checkin/src/checkin.c, src/vcs/src/delete.c, src/vcs/src/insert.c, src/vcs/src/unlock.c, src/vcs/src/vcs.c, src/vcs/src/vcs.h, src/permit/src/permit.c, src/link2rcs/src/link2rcs.c, src/copy/src/copy.c, src/checkup/src/checkup.c, src/checkout/src/rcsget.c, src/checkout/src/checkout.c, src/baseline/src/baseline.c:
+	remove K&R support, indent'd
+
+	* makefile.in: remove certify
+
+2003-11-29  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* install-sh: resync with my-autoconf
+
 2003-04-30  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* configure: RCS_BASE
