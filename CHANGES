@@ -1,3 +1,9 @@
+2001-01-09  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/copy/src/copy.c: add -a option
+
+	* user/copy.man: add -a optio
+
 2000-12-28  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/checkout/src/checkout.c:
