@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkin.c	1.25 88/12/06 09:53:26";
+static	char	sccs_id[] = "@(#)checkin.c	1.26 89/02/27 10:41:28";
 #endif	lint
 
 /*
@@ -7,6 +7,9 @@ static	char	sccs_id[] = "@(#)checkin.c	1.25 88/12/06 09:53:26";
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		27 Feb 1989, Set comment for VMS filetypes .COM, .MMS, as well
+ *			     as unix+VMS types ".mk" and ".e".  Also, test for
+ *			     the special case of Makefile/makefile.
  *		06 Dec 1988, corrected handling of group-restricted archives.
  *			     corrected setting of RCSprot -- used in HackMode().
  *		28 Sep 1988, use $RCS_DEBUG to control debug-trace.
@@ -70,6 +73,7 @@ extern	long	packdate();
 extern	int	errno;
 extern	char	*ftype();
 extern	char	*getuser();
+extern	char	*pathleaf();
 extern	char	*strcat();
 extern	char	*strchr(), *strrchr();
 extern	char	*strcpy();
@@ -447,7 +451,7 @@ SetAccess()
 {
 	static	char	list[BUFSIZ];	/* static so we do list once */
 	auto	char	cmds[BUFSIZ],
-			*s;
+			*s, *t;
 
 	if ((oldtime = PreProcess(Archive)) != 0)
 		return (FALSE);
@@ -469,9 +473,18 @@ SetAccess()
 	}
 	catarg(cmds, list);
 
-	s = ftype(Working);
+	s = ftype(t = pathleaf(Working));
 	if (!strcmp(s, ".a") || !strcmp(s, ".ada"))
 		catarg(cmds, "-c--  ");
+	else if (!strcmp(s, ".com"))
+		catarg(cmds, "-c!\t");
+	else if (!strcmp(s, ".e"))
+		catarg(cmds, "-c * ");	/* Interbase, like .c */
+	else if (!strcmp(s, ".mms")
+	||	 !strcmp(s, ".mk")
+	||	 !*s && (	!strcmp(t, "Makefile")
+			||	!strcmp(t, "makefile")) )
+		catarg(cmds, "-c#\t");
 
 	if (silent) catarg(cmds, "-q");
 	catarg(cmds, Archive);
