@@ -1,4 +1,4 @@
-$Id: release.txt,v 10.10 1992/04/08 13:23:07 dickey Exp $
+$Id: release.txt,v 11.0 1992/05/27 17:04:10 ste_cm Rel $
 
 --------------------------------------------------------------------------------
 
@@ -33,6 +33,7 @@ New features in 'ded':
 	  showing ellipsis for long "#" substitutions.
 	* make viewports created with 'X' command treat commands that change
 	  the current filelist (e.g., 'F', 'B', 'E') independent of each other.
+	* make '<' command recognize substitutions for "%D" and "%d".
 
 Version 10.0:
 ------------

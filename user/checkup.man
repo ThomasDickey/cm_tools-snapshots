@@ -1,4 +1,4 @@
-.\" $Id: checkup.man,v 10.0 1991/09/25 08:58:33 ste_cm Rel $
+.\" $Id: checkup.man,v 11.0 1992/05/01 12:05:02 ste_cm Rel $
 .de DS
 .RS
 .nf
@@ -10,6 +10,8 @@
 .sp .5
 ..
 .TH CHECKUP 1
+.hy 0
+.
 .SH NAME
 .PP
 \fBcheckup\fR \- RCS/SCCS check-in status
@@ -66,13 +68,17 @@ found.
 The forced-names are marked "\fB(ok)\fR" in the tree
 listing.
 .TP
-.BI \-i string
+.BI \-i " string"
 directs \fBcheckup\fR to ignore all files matching the pattern in \fIstring\fR.
 The wildcard characters "*" and "?" are interpreted as in the UNIX shell.
 .TP
-.BI \-l file
+.BI \-l " file"
 reroutes the directory-tree display
 (normally written to standard error) to the specified file.
+.TP
+.BI \-L
+causes \fBcheckup\fR to process symbolic-link targets.
+Ordinarily these are ignored.
 .TP
 .B \-o
 directs \fBcheckup\fR to report obsolete files
@@ -98,7 +104,7 @@ If standard output is not piped to
 a file, the list of absolute filenames will be shown on your terminal
 instead.
 .TP
-.BI \-r REV
+.BI \-r " REV"
 reports all working files whose highest version is below \fIREV\fR.
 For example, "\-\fBr\fR2"
 will report all files which are checked in, but having version numbers
@@ -123,7 +129,7 @@ extension ends in a default list: ".bak", ".i", ".log",
 makes the display more verbose; the names of files
 which cannot be opened are reported.
 .TP
-.BI \-x string
+.BI \-x " string"
 specifies an extension (filename suffix).
 All filenames ending in this extension are ignored.
 The first character of the string doubles as a delimiter (e.g., ".").

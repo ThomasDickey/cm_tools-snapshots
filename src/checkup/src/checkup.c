@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 10.0 1991/10/18 08:07:34 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 11.0 1992/05/01 11:55:19 ste_cm Rel $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * Modified:
+ *		01 May 1992, added "-L" option.
  *		11 Oct 1991, converted to ANSI
  *		15 Jul 1991, distinguish between non-archive/obsolete files.
  *			     Corrected the code which prints the names of these
@@ -82,6 +83,9 @@ static	int	config_rev;		/* "-c" option */
 static	int	debug;			/* "-d" option */
 static	int	obsolete;		/* "-o" option */
 static	int	verbose;		/* "-v" option */
+#ifdef	S_IFLNK
+static	int	show_links;		/* "-L" option */
+#endif
 static	int	lines;			/* line-number, for report */
 static	char	*revision = "0";	/* required revision level */
 static	int	reverse;		/* true if we reverse revision-test */
@@ -93,9 +97,9 @@ static	char	*original;		/* original directory, for "-p" */
  * defining the ".no_ext" member to null.
  */
 static
-ignore(
-_AR1(char *,	string))
-_DCL(char *,	string)
+void	ignore(
+	_AR1(char *,	string))
+	_DCL(char *,	string)
 {
 	EXTS	*savep = exts;
 	exts = ALLOC(EXTS,1);
@@ -109,9 +113,9 @@ _DCL(char *,	string)
  * Define a new extension-to-ignore
  */
 static
-extension(
-_AR1(char *,	string))
-_DCL(char *,	string)
+void	extension(
+	_AR1(char *,	string))
+	_DCL(char *,	string)
 {
 	EXTS	*savep = exts;
 	char	*s = strrchr(string, *string);
@@ -135,9 +139,9 @@ _DCL(char *,	string)
  * wishes to ignore.  If so, return TRUE.
  */
 static
-suppress(
-_AR1(char *,	name))
-_DCL(char *,	name)
+int	suppress(
+	_AR1(char *,	name))
+	_DCL(char *,	name)
 {
 	register EXTS	*p;
 	register int	len,
@@ -170,9 +174,9 @@ _DCL(char *,	name)
  * Indent the report for the given number of directory-levels.
  */
 static
-indent(
-_AR1(int,	level))
-_DCL(int,	level)
+void	indent(
+	_AR1(int,	level))
+	_DCL(int,	level)
 {
 	++lines;
 	if (verbose >= 0) {
@@ -183,14 +187,14 @@ _DCL(int,	level)
 }
 
 static
-pipes(
-_ARX(char *,	path)
-_ARX(char *,	name)
-_AR1(char *,	vers)
-	)
-_DCL(char *,	path)
-_DCL(char *,	name)
-_DCL(char *,	vers)
+void	pipes(
+	_ARX(char *,	path)
+	_ARX(char *,	name)
+	_AR1(char *,	vers)
+		)
+	_DCL(char *,	path)
+	_DCL(char *,	name)
+	_DCL(char *,	vers)
 {
 	auto	char	tmp[BUFSIZ];
 
@@ -209,110 +213,16 @@ _DCL(char *,	vers)
 }
 
 static
-char	*
-compared(
-_ARX(char *,	what)
-_AR1(char *,	rev)
-	)
-_DCL(char *,	what)
-_DCL(char *,	rev)
+char *	compared(
+	_ARX(char *,	what)
+	_AR1(char *,	rev)
+		)
+	_DCL(char *,	what)
+	_DCL(char *,	rev)
 {
 	static	char	buffer[80];
 	FORMAT(buffer, "%s than %s", what, rev);
 	return (buffer);
-}
-
-/*
- * This procedure is invoked from 'walktree()' for each file/directory which
- * is found in the specified tree.  Analyze the files to see if anything should
- * be reported.  Report all directory names, so we can see the context of each
- * filename.
- */
-static
-WALK_FUNC(do_stat)
-{
-	char	*change	= 0,
-		*vers,
-		*owner,
-		*locked_by = 0;
-	time_t	cdate;
-	int	mode	= (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
-	int	ok_text;
-
-	if (mode == S_IFDIR) {
-		auto	char	tmp[BUFSIZ],
-				*s = pathcat(tmp, path, name),
-				*t;
-		abspath(s);		/* get rid of "." and ".." names */
-		t = pathleaf(s);	/* obtain leaf-name for "-a" option */
-		if (*t == '.' && !allnames)	return (-1);
-		if (sameleaf(s, sccs_dir())
-		||  sameleaf(s, rcs_dir())) {
-			if (obsolete)
-				do_obs(path, name, level);
-			return (-1);
-		}
-	}
-
-	if (readable < 0 || sp == 0) {
-		VERBOSE "?? %s/%s\n", path, name);
-	} else if (mode == S_IFDIR) {
-		change = (name[strlen(name)-1] == '/') ? "" : "/";
-#ifdef	S_IFLNK
-		if ((lstat(name, sp) >= 0)
-		&&  (sp->st_mode & S_IFMT) == S_IFLNK) {
-			change = " (link)";
-			readable = -1;
-		}
-#endif
-		indent(level);
-		TELL "%s%s\n", name, change);
-	} else if (mode == S_IFREG && !suppress(name)) {
-		rcslast(path, name, &vers, &cdate, &owner);
-		if ((cdate == 0) && (*vers == '?'))
-			sccslast(path, name, &vers, &cdate, &owner);
-		if (*owner != EOS && *owner != '?')
-			locked_by = owner;
-		else
-			owner = "";
-
-		if (cdate != 0) {
-			ok_text = TRUE;	/* assume this anyway */
-			if (cdate == sp->st_mtime) {
-				if (obsolete)
-					;	/* interpret as obsolete-rev */
-				else if (reverse) {
-					if (dotcmp(vers, revision) > 0)
-						change = vers;
-				} else {
-					if (dotcmp(vers, revision) < 0)
-						change = vers;
-				}
-			} else if (cdate > sp->st_mtime) {
-				change	= compared("older", vers);
-			} else if (cdate < sp->st_mtime) {
-				change	= compared("newer", vers);
-			}
-		} else if (ok_text = istextfile(name)) {
-			change	= "not archived";
-		}
-		if ((change != 0) || locked_by != 0) {
-			if (change == 0)	change	= "no change";
-			indent(level);
-			TELL "%s (%s%s%s)\n",
-				name,
-				change,
-				(locked_by != 0) ? ", locked by " : "",
-				owner);
-			pipes(path, name, vers);
-		} else if (debug) {
-			indent(level);
-			TELL "%s (%s)\n", name, ok_text ? vers : "binary");
-			if (ok_text && config_rev)
-				pipes(path, name, vers);
-		}
-	}
-	return(readable);
 }
 
 /*
@@ -321,14 +231,14 @@ WALK_FUNC(do_stat)
  * be careful where we look for the working file!
  */
 static
-do_obs(
-_ARX(char *,	path)	/* current working directory, from 'do_stat()' */
-_ARX(char *,	name)	/* name of directory (may be symbolic link) */
-_AR1(int,	level)
-	)
-_DCL(char *,	path)
-_DCL(char *,	name)
-_DCL(int,	level)
+void	do_obs(
+	_ARX(char *,	path)	/* current working directory, from 'do_stat()'*/
+	_ARX(char *,	name)	/* name of directory (may be symbolic link) */
+	_AR1(int,	level)
+		)
+	_DCL(char *,	path)
+	_DCL(char *,	name)
+	_DCL(int,	level)
 {
 	auto	DIR		*dp;
 	auto	struct	direct	*de;
@@ -394,19 +304,124 @@ _DCL(int,	level)
 }
 
 /*
+ * This procedure is invoked from 'walktree()' for each file/directory which
+ * is found in the specified tree.  Analyze the files to see if anything should
+ * be reported.  Report all directory names, so we can see the context of each
+ * filename.
+ */
+static
+WALK_FUNC(do_stat)
+{
+	char	*change	= 0,
+		*vers,
+		*owner,
+		*locked_by = 0;
+	time_t	cdate;
+	int	mode	= (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
+	int	ok_text;
+
+	if (mode == S_IFDIR) {
+		auto	char	tmp[BUFSIZ],
+				*s = pathcat(tmp, path, name),
+				*t;
+		abspath(s);		/* get rid of "." and ".." names */
+		t = pathleaf(s);	/* obtain leaf-name for "-a" option */
+		if (*t == '.' && !allnames)	return (-1);
+		if (sameleaf(s, sccs_dir())
+		||  sameleaf(s, rcs_dir())) {
+			if (obsolete)
+				do_obs(path, name, level);
+			return (-1);
+		}
+	}
+
+	if (readable < 0 || sp == 0) {
+		VERBOSE "?? %s/%s\n", path, name);
+	} else if (mode == S_IFDIR) {
+		change = (name[strlen(name)-1] == '/') ? "" : "/";
+#ifdef	S_IFLNK
+		if ((lstat(name, sp) >= 0)
+		&&  (sp->st_mode & S_IFMT) == S_IFLNK) {
+			change = " (link)";
+			readable = -1;
+		}
+#endif
+		indent(level);
+		TELL "%s%s\n", name, change);
+	} else if (mode == S_IFREG && !suppress(name)) {
+#ifdef	S_IFLNK
+		if (!show_links
+		&&  (lstat(name, sp) >= 0)
+		&&  (sp->st_mode & S_IFMT) == S_IFLNK) {
+			change = 0;
+			vers   = "link";
+			readable = -1;
+		} else {
+#endif
+		rcslast(path, name, &vers, &cdate, &owner);
+		if ((cdate == 0) && (*vers == '?'))
+			sccslast(path, name, &vers, &cdate, &owner);
+		if (*owner != EOS && *owner != '?')
+			locked_by = owner;
+		else
+			owner = "";
+
+		if (cdate != 0) {
+			ok_text = TRUE;	/* assume this anyway */
+			if (cdate == sp->st_mtime) {
+				if (obsolete)
+					;	/* interpret as obsolete-rev */
+				else if (reverse) {
+					if (dotcmp(vers, revision) > 0)
+						change = vers;
+				} else {
+					if (dotcmp(vers, revision) < 0)
+						change = vers;
+				}
+			} else if (cdate > sp->st_mtime) {
+				change	= compared("older", vers);
+			} else if (cdate < sp->st_mtime) {
+				change	= compared("newer", vers);
+			}
+		} else if (ok_text = istextfile(name)) {
+			change	= "not archived";
+		}
+#ifdef	S_IFLNK
+		}
+#endif
+		if ((change != 0) || locked_by != 0) {
+			if (change == 0)	change	= "no change";
+			indent(level);
+			TELL "%s (%s%s%s)\n",
+				name,
+				change,
+				(locked_by != 0) ? ", locked by " : "",
+				owner);
+			pipes(path, name, vers);
+		} else if (debug) {
+			indent(level);
+			TELL "%s (%s)\n", name, ok_text ? vers : "binary");
+			if (ok_text && config_rev && isdigit(*vers))
+				pipes(path, name, vers);
+		}
+	}
+	return(readable);
+}
+
+/*
  * Process a single argument: a directory name.
  */
 static
-do_arg(
-_AR1(char *,	name))
-_DCL(char *,	name)
+void	do_arg(
+	_AR1(char *,	name))
+	_DCL(char *,	name)
 {
 	WARN "** path = %s\n", name);
 	lines	= 0;
 	(void)walktree((char *)0, name, do_stat, "r", 0);
 }
 
-usage(_AR0)
+void	usage(_AR0)
 {
 	static	char	*msg[] = {
 "Usage: checkup [options] [directory [...]]",
@@ -424,6 +439,9 @@ usage(_AR0)
 "  -d      debug (show all names)",
 "  -i TEXT suppress leaves matching \"TEXT\"",
 "  -l FILE write logfile of tree-of-files",
+#ifdef	S_IFLNK
+"  -L      process symbolic-link targets",
+#endif
 "  -o      reports obsolete files (no working file exists)",
 "  -p      generate pathnames relative to current directory",
 "  -q      quiet: suppresses directory-tree report",
@@ -469,7 +487,7 @@ _MAIN
 	(void)setlinebuf(stderr);
 #endif
 
-	while ((j = getopt(argc, argv, "acdi:l:opqr:stvx:")) != EOF)
+	while ((j = getopt(argc, argv, "acdi:l:Lopqr:stvx:")) != EOF)
 		switch (j) {
 		case 'a':
 			allnames++;
@@ -488,6 +506,11 @@ _MAIN
 				failed(optarg);
 			(void)freopen(optarg, "a+", stderr);
 			break;
+#ifdef	S_IFLNK
+		case 'L':
+			show_links++;
+			break;
+#endif
 		case 'o':
 			obsolete++;
 			break;
