@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkin.c	1.1 88/05/19 16:17:35";
+static	char	sccs_id[] = "@(#)checkin.c	1.2 88/05/20 07:02:36";
 #endif	lint
 
 /*
@@ -14,9 +14,6 @@ static	char	sccs_id[] = "@(#)checkin.c	1.1 88/05/19 16:17:35";
  *		to be in the standard location:
  *
  *			name => RCS/name,v
- *
- *		This module is invoked from a shell-script which sets TZ to
- *		GMT!
  *
  * Options:	those recognized by 'ci', as well as '-d' for debugging.
  */
@@ -388,6 +385,8 @@ char	*argv[];
 int	j;
 time_t	mtime;
 
+	putenv("TZ=GST0GDT");
+	putenv("TZNAME=GST,GDT");
 #ifdef	SYSTEM5
 	tzset();	/* make sure we use existing TZ! */
 #endif	SYSTEM5
