@@ -1,3 +1,93 @@
+1989-12-12  dickey@software.org
+
+	* src/checkout/src/checkout.c: lint (SunOs 4.0.3)
+
+1989-12-12  ste_cm@software.org
+
+	* src/checkout/src/checkout.c:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-12-12  dickey@software.org
+
+	* src/checkin/src/checkin.c: lint (SunOs 4.0.3)
+
+1989-12-08  dickey@software.org
+
+	* src/link2rcs/test/run_test.sh:
+	"ls -dF" produces inconsistent results (edited to cover up)
+
+1989-12-08  ste_cm@software.org
+
+	* src/link2rcs/test/run_test.sh:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/link2rcs/test/run_test.sh:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/link2rcs/test/run_test.sh:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/link2rcs/test/run_test.sh:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-12-07  dickey@software.org
+
+	* src/link2rcs/src/link2rcs.c: lint (SunOs 3.4)
+
+	* user/link2rcs.doc: rewrote this from a shell script to C-language
+
+1989-12-07  ste_cm@software.org
+
+	* user/link2rcs.doc: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* user/link2rcs.doc:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-12-06  dickey@software.org
+
+	* src/link2rcs/test/run_test.sh:
+	sort result of 'find', since we cannot rely on directory-order
+
+	* src/link2rcs/test/run_test.sh:
+	template (test-directory) may contain symbolic links to RCS-directories.
+	edit junk.old to account for this.
+
+	* src/link2rcs/src/link2rcs.c:
+	corrected 'getdir()' procedure (did 'abspath()' in wrong
+	place), and fixed a couple of places where a "." leaf could
+	mess up handling of regression-tests.
+
+	* src/checkin/src/rcsput.c:
+	added interpretation of "-f" (force) option to override
+	test-for-diffs, test-for-textfile, and test-for-existence
+	of arguments.  also, interpret "-?" argument to show not
+	only usage message from this utility, but from checkin too.
+
+1989-12-06  ste_cm@software.org
+
+	* src/checkin/src/rcsput.c:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-12-06  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	if option "-?" given, don't print warning before usage, so
+	we can invoke checkin from rcsput for combined-usage.
+
+1989-12-01  dickey@software.org
+
+	* src/link2rcs/src/link2rcs.c:
+	prevent 'walktree()' from scanning directories to which we
+	will make a link
+
+	* src/link2rcs/src/link2rcs.c:
+	don't remake links if they have the same link-text.
+	make the merge-listing less verbose than the script.
+
+	* certify/release.txt: began notes for baseline-6
+
+	* certify/config.txt: documented the versions under which this runs
+
 1989-11-30  dickey@software.org
 
 	* src/link2rcs/src/link2rcs.c: added -q option

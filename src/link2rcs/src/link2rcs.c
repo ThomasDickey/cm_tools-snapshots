@@ -1,17 +1,41 @@
 #ifndef	lint
-static	char	Id[] = "$Id: link2rcs.c,v 5.5 1989/11/30 12:00:36 dickey Exp $";
+static	char	Id[] = "$Id: link2rcs.c,v 5.9 1989/12/07 14:56:38 dickey Exp $";
 #endif	lint
 
 /*
  * Title:	link2rcs.c (link/directory tree)
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
+ * $Log: link2rcs.c,v $
+ * Revision 5.9  1989/12/07 14:56:38  dickey
+ * lint (SunOs 3.4)
+ *
+ *		Revision 5.8  89/12/06  13:41:51  dickey
+ *		corrected 'getdir()' procedure (did 'abspath()' in wrong
+ *		place), and fixed a couple of places where a "." leaf could
+ *		mess up handling of regression-tests.
+ *		
+ *		Revision 5.7  89/12/01  08:47:15  dickey
+ *		prevent 'walktree()' from scanning directories to which we
+ *		will make a link
+ *		
+ *		Revision 5.6  89/12/01  08:31:25  dickey
+ *		don't remake links if they have the same link-text.
+ *		make the merge-listing less verbose than the script.
+ *		
  *
  * Function:	Scan the given list of source-directories, building a matching
  *		tree under the destination directory, with symbolic links to
  *		the RCS-directories.
  *
  * Options:	(see usage)
+ *
+ * To do:	add options for the following
+ *		-e	edit apollo-style environment variable in src-path
+ *		-b	specify baseline version which must appear in tree
+ *		-p	create working directories only for those which the
+ *			user has permissions (link to src for the rest)
+ *		test src-RCS to see if it is a symbolic link (resolve link)
  */
 
 #define	STR_PTYPES
@@ -56,6 +80,16 @@ static	char	Target[BUFSIZ] = ".";
 static	char	Current[BUFSIZ];
 
 /*
+ * Print normal-trace using a common format
+ */
+static
+tell_it(tag,path)
+char	*tag,*path;
+{
+	TELL "** %-16s%s\n", tag, path);
+}
+
+/*
  * This procedure is invoked from 'walktree()' for each file/directory which
  * is found in the specified tree.  Note that 'walktree()' walks the tree in
  * sorted-order.
@@ -88,8 +122,12 @@ struct	stat	*sp;
 		} else
 			list = p;
 		p->link = 0;
-		p->path = txtalloc(relpath(dst, Source, tmp) + 2);
+		p->path = !strcmp(relpath(dst, Source, tmp), ".")
+				? "."
+				: txtalloc(dst+2);
 		p->from = sameleaf(s, rcs_dir()) ? txtalloc(tmp) : 0;
+		if (p->from != 0)
+			readable = -1;
 	}
 	return(readable);
 }
@@ -103,7 +141,7 @@ char	*name;
 {
 	auto	char	tmp[BUFSIZ];
 	(void)getwd(tmp);
-	name = pathcat(tmp, tmp, name);
+	abspath(name = pathcat(tmp, tmp, name));
 	TELL "** src-path = %s\n", name);
 	(void)walktree((char *)0, name, src_stat, "r", 0);
 }
@@ -112,9 +150,31 @@ static
 exists(name)
 char	*name;
 {
-	FPRINTF(stderr, "?? %-16s%s\n", "exists:", name);
+	FPRINTF(stderr, "?? %s: already exists\n", name);
 	(void)fflush(stderr);
 	exit(FAIL);
+}
+
+static
+tell_merged(path)
+char	*path;
+{
+	tell_it("(no change)",path);
+	return (TRUE);
+}
+
+static
+samelink(dst,src)
+char	*dst,*src;
+{
+	auto	int	len;
+	auto	char	bfr[BUFSIZ];
+	len = readlink(dst, bfr, sizeof(bfr));
+	if (len > 0) {
+		bfr[len] = EOS;
+		return (!strcmp(bfr, src));
+	}
+	return (FALSE);
 }
 
 /*
@@ -122,8 +182,9 @@ char	*name;
  * a link with a link, but directories should not be modified!
  */
 static
-conflict(path,mode)
+conflict(path,mode,from)
 char	*path;
+char	*from;
 {
 	auto	struct	stat	sb;
 
@@ -132,21 +193,21 @@ char	*path;
 			exists(path);
 		if ((sb.st_mode & S_IFMT) == mode) {	/* compatible! */
 			if (mode == S_IFLNK) {
+				if (samelink(path,from))
+					return (tell_merged(path));
 				VERBOSE "%% rm -f %s\n", path);
 				if (!no_op) {
 					if (unlink(path) < 0)
 						failed(path);
 				}
 			} else {
-				TELL "** merged:         %s\n", path);
-				return (TRUE);
+				return (tell_merged(path));
 			}
 			return (FALSE);
 		} else {
 			exists(path);
 		}
-		TELL "** merged:         %s\n", path);
-		return (TRUE);
+		return (tell_merged(path));
 	}
 	return (FALSE);
 }
@@ -158,7 +219,9 @@ static
 make_dir(path)
 char	*path;
 {
-	if (!conflict(path, S_IFDIR)) {
+	if (strcmp(path,".")
+	&&  !conflict(path, S_IFDIR, ".")) {
+		tell_it("make directory:", path);
 		VERBOSE "%% mkdir %s\n", path);
 		if (!no_op) {
 			if (mkdir(path, 0777) < 0)
@@ -174,7 +237,8 @@ static
 make_lnk(src, dst)
 char	*src, *dst;
 {
-	if (!conflict(dst, S_IFLNK)) {
+	if (!conflict(dst, S_IFLNK, src)) {
+		tell_it("link-to-RCS:", dst);
 		VERBOSE "%% ln -s %s %s\n", src, dst);
 		if (!no_op) {
 			if (symlink(src, dst) < 0)
@@ -199,10 +263,9 @@ char	*path;
 	(void)strcpy(dst, path);
 	for (p = list; p; p = p->link) {
 		if (p->from == 0) {	/* directory */
-			TELL "** make directory: %s\n", p->path);
-			make_dir(pathcat(dst, path, p->path));
+			(void)pathcat(dst, path, p->path);
+			make_dir(p->path);
 		} else {		/* symbolic-link */
-			TELL "** link-to-RCS:    %s\n", p->path);
 			make_lnk(relative ? relpath(tmp, dst, p->from)
 					  : p->from,
 				p->path);
@@ -219,9 +282,9 @@ char	*
 getdir(buffer)
 char	*buffer;
 {
+	abspath(strcpy(buffer, optarg));
 	if (chdir(optarg) < 0)
 		failed(optarg);
-	abspath(strcpy(buffer, optarg));
 	(void)chdir(Current);
 	return (optarg);
 }

@@ -1,30 +1,35 @@
-: '$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/test/RCS/run_test.sh,v 5.0 1989/03/28 13:57:09 ste_cm Rel $'
+#!/bin/sh
+# $Id: run_test.sh,v 9.0 1989/12/08 09:18:05 ste_cm Rel $
 # test-script for link2rcs (RCS skeleton tree utility)
 #
 # $Log: run_test.sh,v $
-# Revision 5.0  1989/03/28 13:57:09  ste_cm
-# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+# Revision 9.0  1989/12/08 09:18:05  ste_cm
+# BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
 #
-# Revision 4.0  89/03/28  13:57:09  ste_cm
-# BASELINE Thu Aug 24 10:38:03 EDT 1989 -- support:navi_011(rel2)
+# Revision 8.0  89/12/08  09:18:05  ste_cm
+# BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
 # 
-# Revision 3.0  89/03/28  13:57:09  ste_cm
-# BASELINE Mon Jun 19 14:46:26 EDT 1989
+# Revision 7.0  89/12/08  09:18:05  ste_cm
+# BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
 # 
-# Revision 2.0  89/03/28  13:57:09  ste_cm
-# BASELINE Thu Apr  6 13:50:00 EDT 1989
+# Revision 6.0  89/12/08  09:18:05  ste_cm
+# BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
 # 
-# Revision 1.3  89/03/28  13:57:09  dickey
-# corrected test-cleanup
+# Revision 5.3  89/12/08  09:18:05  dickey
+# "ls -dF" produces inconsistent results (edited to cover up)
 # 
-# Revision 1.2  89/03/28  13:53:53  dickey
-# rewrote, making this check for plausible errors
+# Revision 5.2  89/12/06  14:08:41  dickey
+# sort result of 'find', since we cannot rely on directory-order
 # 
-# Revision 1.1  89/03/27  09:01:10  dickey
-# Initial revision
+# Revision 5.1  89/12/06  13:39:25  dickey
+# template (test-directory) may contain symbolic links to RCS-directories.
+# edit junk.old to account for this.
+# 
+# Revision 5.0  89/03/28  13:57:09  ste_cm
+# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
 # 
 date
-P=./bin/link2rcs
+PROG=./bin/link2rcs
 
 # initialize
 rm -rf subdir other
@@ -32,7 +37,8 @@ mkdir subdir subdir/first subdir/RCS other
 cd ..
 rm -rf junk junk.*
 
-find test -type d -exec ls -dF {} \; >junk.old
+find test \( -type d -o -type l -a -name RCS \) -exec ls -dF {} \; | sort |\
+	sed -e s+/RCS@\$+/RCS/+ >junk.old
 
 cat <<eof/
 **
@@ -40,15 +46,15 @@ cat <<eof/
 **
 eof/
 mkdir junk
-$P -d junk test
+$PROG -d junk test
 
 cat <<eof/
 **	
 **		resulting tree:
 eof/
 find junk -print
-find junk \( -type d -o -type l \) -exec ls -dF {} \; |\
-	sed -e s+junk/++ -e /\^\$/d >junk.new
+find junk \( -type d -o -type l \) -exec ls -dF {} \; | sort |\
+	sed -e s+RCS@\$+RCS/+ -e s+junk/++ -e /\^\$/d >junk.new
 
 cat <<eof/
 **
@@ -62,14 +68,14 @@ cat <<eof/
 **		rerunning link2rcs.
 eof/
 rm -rf junk/test/subdir
-$P -m -d junk test
+$PROG -m -d junk test
 cat <<eof/
 **	
 **		resulting tree:
 eof/
 find junk -print
-find junk \( -type d -o -type l \) -exec ls -dF {} \; |\
-	sed -e s+junk/++ -e /\^\$/d >junk.new
+find junk \( -type d -o -type l \) -exec ls -dF {} \; | sort |\
+	sed -e s+RCS@\$+RCS/+ -e s+junk/++ -e /\^\$/d >junk.new
 
 cat <<eof/
 **
