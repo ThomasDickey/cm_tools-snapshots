@@ -1,15 +1,12 @@
-# $Id: Makefile,v 11.1 1992/08/05 13:52:47 dickey Exp $
+# $Id: Makefile,v 11.3 1992/10/16 09:32:37 dickey Exp $
 # Top-level makefile for CM_TOOLS src-directory
 
 ####### (Development) ##########################################################
-GET	= checkout
-COPY	= cp -p
-MAKE	= make $(MFLAGS) -k$(MAKEFLAGS)	CFLAGS="$(CFLAGS)" COPY="$(COPY)"
+TOP	= ../..
+include $(TOP)/cm_library/support/cm_library.mk
 
 ####### (Standard Lists) #######################################################
 MFILES	=\
-	common.mk\
-	common/Makefile\
 	baseline/Makefile\
 	checkin/Makefile\
 	checkout/Makefile\
@@ -20,7 +17,12 @@ MFILES	=\
 	permit/Makefile\
 	vcs/Makefile
 
+SOURCES	=\
+	Makefile
+
 ####### (Standard Productions) #################################################
+all::		$(SOURCES)
+
 all\
 clean\
 clobber\
@@ -31,7 +33,6 @@ lincnt.out\
 run_tests\
 install\
 deinstall::	$(MFILES)
-	cd common;	$(MAKE) $@
 	cd baseline;	$(MAKE) $@
 	cd checkin;	$(MAKE) $@
 	cd checkout;	$(MAKE) $@
@@ -43,14 +44,9 @@ deinstall::	$(MFILES)
 	cd vcs;		$(MAKE) $@
 
 clean\
-clobber::
-	rm -f *.bak *.log *.out core
+clobber::		; rm -f $(CLEAN)
 
-destroy::
-	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
-
-lintlib::	$(MFILES)
-	cd common;	$(MAKE) $@
+destroy::		; $(DESTROY)
 
 ####### (Details of Productions) ###############################################
 $(MFILES):		; $(GET) $@

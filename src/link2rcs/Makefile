@@ -1,11 +1,12 @@
-# $Id: Makefile,v 11.1 1992/08/07 14:35:49 dickey Exp $
+# $Id: Makefile,v 11.2 1992/10/09 13:03:36 dickey Exp $
 # Top-level makefile for RCS skeleton tree utility
 
 ####### (Development) ##########################################################
-include ../common.mk
+top	= ../..
+TOP	= $(top)/..
+include $(TOP)/cm_library/support/cm_library.mk
 
-B	= $(TOP)/bin
-L	= ../$(THAT)/lib
+B	= $(top)/bin
 
 ####### (Standard Lists) #######################################################
 THIS	= link2rcs
@@ -17,7 +18,7 @@ MFILES	=\
 
 ####### (Standard Productions) #################################################
 all\
-run_tests::	$L/$(THAT).a bin
+run_tests::	$L/$(CM_LIB).a bin
 
 all\
 clean\

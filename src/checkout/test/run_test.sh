@@ -1,10 +1,12 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.0 1991/10/18 08:01:44 ste_cm Rel $
+# $Id: run_test.sh,v 11.1 1992/10/28 12:08:18 dickey Exp $
 # test-script for RCS checkout utility
 #
 # run from test-versions:
-logtool=`which rlog`
-PATH=:`pwd`:`cd ../bin;pwd`:`cd ../../../bin;pwd`:/bin:/usr/bin:/usr/ucb
+for n in .. ../../.. ../../checkin
+do	PATH=`cd $n/bin;pwd`:$PATH
+done
+PATH=`pwd`:$PATH
 export PATH
 #
 date
@@ -32,7 +34,7 @@ cat <<eof/
 **	The resulting RCS log:
 eof/
 checkout dummy
-$logtool dummy
+run_tool rlog dummy
 
 cat <<eof/
 **

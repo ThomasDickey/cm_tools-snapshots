@@ -1,8 +1,10 @@
-# $Id: Makefile,v 11.0 1992/02/04 10:01:51 ste_cm Rel $
+# $Id: Makefile,v 11.2 1992/10/16 09:31:36 dickey Exp $
 
 ####### (Development) ##########################################################
-INSTALL_PATH=../../install_bin
-B	= $(INSTALL_PATH)
+TOP	= ../..
+include $(TOP)/cm_library/support/cm_library.mk
+
+B	= $(INSTALL_BIN)
 
 ####### (Standard Lists) #######################################################
 IT	=\
@@ -19,16 +21,18 @@ IT	=\
 	$B/rcsput\
 	$B/vcs
 
+SOURCES	=\
+	Makefile
+
 ####### (Standard Productions) #################################################
-all:
-clean:			; rm -f *.bak *.log *.out core
-clobber:	clean	; rm -f [a-z]*
-destroy:
-	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
+all:		$(SOURCES)
+clean:				; rm -f $(CLEAN)
+clobber:	clean		; rm -f $(ALL) [a-z]*
+destroy:			; $(DESTROY)
 run_tests:
 sources:
 install:	$(IT)
-deinstall:	; rm -f $(IT)
+deinstall:			; rm -f $(IT)
 
 ####### (Details of Productions) ###############################################
 USER	= ./copy -d $@

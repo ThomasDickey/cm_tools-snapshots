@@ -1,9 +1,9 @@
-# $Id: Makefile,v 11.1 1992/08/05 14:31:26 dickey Exp $
+# $Id: Makefile,v 11.3 1992/10/16 09:28:11 dickey Exp $
 # Make-file for RCS/vcs utility
 
-####### (Environment) ##########################################################
 THIS	= vcs
-include ../../common.mk
+TOP	= ../../../..
+include $(TOP)/cm_library/support/cm_library.mk
 
 ####### (Standard Lists) #######################################################
 ALL	= $B/$(THIS)
@@ -42,5 +42,5 @@ $(OBJS):	$(H_SRC) $(RCSDEFS_H)
 
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
-lint.out:	$(C_SRC)	; $(DATE); tdlint $(LINTOPT) $(C_SRC) >>$@
+lint.out:	$(C_SRC)	; $(DATE); tdlint $(LINTOPTS) $(C_SRC) >>$@
 lincnt.out:	$(C_SRC)	; $(DATE); lincnt $(C_SRC) >>$@

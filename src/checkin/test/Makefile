@@ -1,12 +1,9 @@
-# $Id: Makefile,v 11.1 1992/08/07 14:42:17 dickey Exp $
+# $Id: Makefile,v 11.3 1992/10/27 09:33:46 dickey Exp $
 # make-file for testing RCS checkin utility
 
 ####### (Development) ##########################################################
-include ../../common.mk
-
-INCLUDES= -I$I
-CPP_OPTS= $(DEFINES) $(INCLUDES)
-LIBS	= $L/common.a
+TOP	= ../../../..
+include $(TOP)/cm_library/support/cm_library.mk
 
 ####### (Standard Lists) #######################################################
 REF_FILES=\
@@ -41,19 +38,28 @@ SCRIPTS	=\
 	case3_f.sh\
 	run_tests.sh
 
-SOURCES	= Makefile $(SCRIPTS) $(REF_FILES) README set_date.c
-ALL	= set_date
+C_SRC	=\
+	run_tool.c \
+	set_date.c
+
+PROGS	=\
+	run_tool \
+	set_date
+
+SOURCES	= Makefile $(SCRIPTS) $(REF_FILES) README $(C_SRC)
+ALL	= $(PROGS)
 
 ####### (Standard Productions) #################################################
 all:		$(SOURCES) $(ALL)
-clean:				; rm -f $(CLEAN)
+clean:				; rm -f $(CLEAN); rm -rf junk
 clobber:	clean		; rm -f $(ALL)
 destroy:			; $(DESTROY)
 sources:	$(SOURCES)
 lint.out:
 lincnt.out:
-run_tests:	$(SOURCES) $(ALL) ; sh -c '$@.sh 2>&1 | tee -a $@.out'
+run_tests:	$(SOURCES) $(ALL) ; $(RUN_TESTS)
 
 ####### (Details of Productions) ###############################################
 set_date:	set_date.c	; $(CC) -o $@ $(CPP_OPTS) $@.c $(LIBS)
+run_tool:	run_tool.c	; $(CC) -o $@ $(CPP_OPTS) $@.c $(LIBS)
 $(SOURCES):			; $(GET) $@
