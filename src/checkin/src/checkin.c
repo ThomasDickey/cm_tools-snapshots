@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: checkin.c,v 5.2 1989/12/12 10:30:18 dickey Exp $";
+static	char	Id[] = "$Id: checkin.c,v 6.0 1990/03/05 13:48:49 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,19 @@ static	char	Id[] = "$Id: checkin.c,v 5.2 1989/12/12 10:30:18 dickey Exp $";
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * $Log: checkin.c,v $
- * Revision 5.2  1989/12/12 10:30:18  dickey
- * lint (SunOs 4.0.3)
+ * Revision 6.0  1990/03/05 13:48:49  ste_cm
+ * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
  *
+ *		Revision 5.4  90/03/05  13:48:49  dickey
+ *		corrected length of 'tmp_name[]'
+ *		
+ *		Revision 5.3  90/03/05  13:47:24  dickey
+ *		port to sun3 (os3.4) which has bug in tmpfile & mktemp.
+ *		cleanup error-exits.
+ *		
+ *		Revision 5.2  89/12/12  10:31:40  dickey
+ *		lint (SunOs 4.0.3)
+ *		
  *		Revision 5.1  89/12/06  07:42:59  dickey
  *		if option "-?" given, don't print warning before usage, so
  *		we can invoke checkin from rcsput for combined-usage.
@@ -103,11 +113,11 @@ static	char	Id[] = "$Id: checkin.c,v 5.2 1989/12/12 10:30:18 dickey Exp $";
 #include	<signal.h>
 #include	<time.h>
 extern	struct	tm *localtime();
-extern	FILE	*tmpfile();
 extern	long	packdate();
 extern	int	errno;
 extern	char	*ftype();
 extern	char	*getuser();
+extern	char	*mktemp();
 extern	char	*pathleaf();
 
 /* local declarations: */
@@ -182,6 +192,7 @@ cleanup(sig)
 static
 ReProcess ()
 {
+	auto	char	tmp_name[L_tmpnam];
 	auto	FILE	*fpS, *fpT = 0;
 	auto	struct	stat	sb;
 	auto	int	len	= strlen(old_date),
@@ -204,8 +215,10 @@ ReProcess ()
 
 		if (!(fpS = fopen(Working, "r")))
 			return;
-		if (!(fpT = tmpfile()))
-			failed("(tmpfile)");
+		FORMAT(tmp_name, "%s/pci%d", P_tmpdir, getpid());
+		(void)unlink(tmp_name);
+		if (!(fpT = fopen(tmp_name, "w+")))
+			GiveUp("Could not create tmp-file", tmp_name);
 
 		while (fgets(bfr, sizeof(bfr), fpS)) {
 		char	*last = bfr + strlen(bfr) - len;
@@ -238,17 +251,19 @@ ReProcess ()
 			(void)copyback(fpT, TMP_file, mode, lines);
 			if (strcmp(TMP_file,Working)) {
 				if (usercopy(TMP_file, Working) < 0)
-					GiveUp("recopy \"%s\"");
+					GiveUp("recopy", Working);
 			}
 			clean_file();
 		}
 		if (!locked)		/* cover up bugs on Apollo acls */
 			mode &= ~0222;
 		if (userprot(Working, mode, modtime) < 0)
-			GiveUp("touch \"%s\" failed");
+			GiveUp("touch failed", Working);
 	}
-	if (fpT != 0)
+	if (fpT != 0) {
 		FCLOSE(fpT);
+		(void)unlink(tmp_name);
+	}
 }
 
 /*
@@ -342,7 +357,7 @@ HackMode(save)
 			if (need != RCSprot) {
 				TMP_mode = RCSprot | 01000;
 				if (chmod(RCSdir, need) < 0)
-					failed(RCSdir);
+					GiveUp("Could not change mode",RCSdir);
 			}
 		}
 	} else if (TMP_mode) {
@@ -377,7 +392,7 @@ Execute()
 			if (strcmp(TMP_file,Working)) {
 				if (sb.st_mtime != modtime) {
 					if (usercopy(TMP_file,Working) < 0)
-						failed(Working);
+						GiveUp("Copy to userfile",Working);
 				}
 			}
 			clean_file();
@@ -387,7 +402,7 @@ Execute()
 			}
 		} else if (strcmp(TMP_file, Working)
 		&&	   for_user(rm_work) < 0)
-			failed(Working);
+			GiveUp("Deletion of working-file",Working);
 		clean_file();
 		return (TRUE);
 	}
@@ -478,7 +493,7 @@ char	*name;
 			DEBUG(("=> date = %s", ctime(&sb.st_mtime)))
 			return (sb.st_mtime);
 		}
-		GiveUp("not a file: %s");
+		GiveUp("not a file:", Working);
 	}
 	DEBUG(("=> not found, errno=%d\n", errno))
 	return (0);
@@ -511,7 +526,7 @@ SetAccess()
 			if (p = getpwuid(RCS_uid))
 				FORMAT(list + strlen(list), ",%s", p->pw_name);
 			else
-				GiveUp("owner of RCS directory for %s");
+				GiveUp("owner of RCS directory for", Working);
 		}
 	}
 	catarg(cmds, list);
@@ -535,7 +550,7 @@ SetAccess()
 	catarg(cmds, Archive);
 	TELL("** rcs %s\n", cmds);
 	if (execute(rcspath("rcs"), cmds) < 0)
-		GiveUp("rcs initialization for %s");
+		GiveUp("rcs initialization for", Working);
 	HackMode(FALSE);		/* ...restore protection */
 	return (TRUE);
 }
@@ -571,8 +586,7 @@ MakeDirectory()
 			RCSprot = sb.st_mode & 0777;
 			if ((sb.st_mode & S_IFMT) == S_IFDIR)
 				return (TRUE);
-			TELL("?? not a directory: %s\n", RCSdir);
-			(void)exit(FAIL);
+			GiveUp("not a directory:", RCSdir);
 		} else {
 			revert(debug ? "new user directory" : (char *)0);
 			RCS_uid = getuid();
@@ -580,7 +594,7 @@ MakeDirectory()
 			RCSprot = 0755;
 			TELL("** make directory %s\n", RCSdir);
 			if (mkdir(RCSdir, RCSprot) < 0)
-				failed(RCSdir);
+				GiveUp("directory-create",RCSdir);
 		}
 	} else		/* ...else... user is putting files in "." */
 		RCSdir[0] = EOS;
@@ -665,32 +679,36 @@ char	*argv[];
 }
 
 static
-GiveUp(fmt)
-char	*fmt;
+GiveUp(msg,arg)
+char	*msg, *arg;
 {
-	char	msg[BUFSIZ];
-	FORMAT(msg, fmt, Working);
-	TELL("?? %s\n", msg);
+	TELL("?? %s \"%s\"\n", msg, arg);
 	(void)exit(FAIL);
 }
 
 static
 usage()
 {
+	static	char	*tbl[] = {
+"Usage: checkin [-options] [working_or_archive [...]]",
+"",
+"Options (from \"ci\"):",
+"\t-r[rev]\tassigns the revision number \"rev\" to the checked-in revision",
+"\t-f[rev]\tforces a deposit",
+"\t-k[rev]\tobtains keywords from working file (rev overrides)",
+"\t-l[rev]\tlike \"-r\", but follows with \"co -l\"",
+"\t-u[rev]\tlike \"-l\", but no lock is made",
+"\t-q[rev]\tquiet mode",
+"\t-mmsg\tspecifies log-message \"msg\"",
+"\t-nname\tassigns symbolic name to the checked-in revision",
+"\t-Nname\tlike \"-n\", but overrides previous assignment",
+"\t-sstate\tsets the revision-state (default: \"Exp\")",
+"\t-t[txtfile] writes descriptive text into the RCS file"
+	};
+	register int	j;
 	setbuf(stderr, opt_all);
-	WARN "Usage: checkin [-options] [working_or_archive [...]]\n\
-Options (from \"ci\"):\n\
-\t-r[rev]\tassigns the revision number \"rev\" to the checked-in revision\n\
-\t-f[rev]\tforces a deposit\n\
-\t-k[rev]\tobtains keywords from working file (rev overrides)\n\
-\t-l[rev]\tlike \"-r\", but follows with \"co -l\"\n\
-\t-u[rev]\tlike \"-l\", but no lock is made\n\
-\t-q[rev]\tquiet mode\n\
-\t-mmsg\tspecifies log-message \"msg\"\n\
-\t-nname\tassigns symbolic name to the checked-in revision\n\
-\t-Nname\tlike \"-n\", but overrides previous assignment\n\
-\t-sstate\tsets the revision-state (default: \"Exp\")\n\
-\t-t[txtfile] writes descriptive text into the RCS file\n");
+	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
+		FPRINTF(stderr, "%s\n", tbl[j]);
 	(void)exit(FAIL);
 }
 
@@ -738,7 +756,7 @@ char	*argv[];
 			if (!(modtime = PreProcess (Working))) {
 				revert(debug ? "directory access" : (char *)0);
 				if (!(modtime = PreProcess (Working))) {
-					GiveUp("file not found: %s");
+					GiveUp("file not found:", Working);
 				}
 			}
 
@@ -760,11 +778,4 @@ char	*argv[];
 	}
 	(void)exit(SUCCESS);
 	/*NOTREACHED*/
-}
-
-failed(s)
-char	*s;
-{
-	perror(s);
-	(void)exit(FAIL);
 }

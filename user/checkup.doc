@@ -177,7 +177,7 @@ V6,
 <Page Header, Frame =
 V6,
 (g9,1,0
- (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,August\ 18\,\ 1989)
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,March\ 28\,\ 1990)
  (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS/SCCS\ check-in\ status)
  (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,checkup)
  (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
@@ -258,9 +258,23 @@ OPTIONS
 (and their subdirectories) whose leafnames begin with <#7f>.".  These 
 are otherwise ignored.
 
+-<F31>c<F0><Tab>overrides the convention that filenames written to 
+standard output are those for which <F31>checkup<F0> finds something 
+to report.  Instead, the filenames are the complete set of archived 
+files selected by the other options.  Each line contains the revison 
+code for the file, followed by its name.  This option is used to generate 
+configuration lists from a set of working files.
+
 -<F31>d<F0><Tab>debug option forces <F31>checkup<F0> to show all filenames 
 found.  The forced-names are marked <#7f><F23>(ok)<F0>" in the tree 
 listing.
+
+-<F31>i<F0> <F32>string<F0><Tab>directs <F31>checkup<F0> to ignore 
+all files matching the pattern in <F32>string<F0>.  The wildcard characters 
+<#7f>*" and <#7f>?" are interpreted as in the UNIX shell.
+
+-<F31>l<F0> <F32>file<F0><Tab>reroutes the directory-tree display 
+(normally written to standard error) to the specified file.
 
 -<F31>o<F0><Tab>directs <F31>checkup<F0> to report obsolete files 
 (i.e., those archives for which no corresponding working-file was 
@@ -270,6 +284,10 @@ the <#7f>-<F31>r<F0>" option is interpreted as selecting obsolete-files.
 <Tab>If the <#7f>-<F31>o<F0>" option is selected, <F31>checkup<F0> 
 will report also on directories which are found in archive directories.  
 Otherwise, it does not scan the contents of archive directories.
+
+-<F31>p<F0><Tab>directs <F31>checkup<F0> to express the filenames 
+written to standard output as relative pathnames.  Otherwise they 
+are written as absolute pathnames (i.e., beginning with <#7f>/").
 
 -<F31>q<F0><Tab>makes the listing less verbose (i.e., suppresses 
 display of the directory tree).  If standard output is not piped to 
@@ -301,7 +319,14 @@ first character of the string doubles as a delimiter (e.g., <#7f>.").
 If it is repeated in the string, <F31>checkup<F0> parses two extensions.  
 The first extension, if any, is used to conditionally ignore the second.  
 That is, if a file with the first extension exists, the file with 
-the second is ignored.
+the second is ignored.  In either case, wildcards are permitted in 
+the target extension as in the <#7f>-<F31>i<F0>" option.
+
+<paragraph>
+
+Multiple instances of the <#7f>-<F31>i<F0>" and <#7f>-<F31>x<F0>" 
+options may be used.  <F31>Checkup<F0> tests files against the exclusion 
+options from right-to-left.
 
 <header>
 

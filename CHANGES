@@ -1,3 +1,239 @@
+1990-03-30  dickey@software.org
+
+	* src/checkup/src/checkup.c:
+	corrected code which checks for suppressed extensions (if a
+	wildcard is given, we don't really know the exact length that
+	would be matched).
+
+1990-03-30  ste_cm@software.org
+
+	* src/checkup/src/checkup.c:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkup/src/checkup.c:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+1990-03-28  dickey@software.org
+
+	* user/ded.doc: documented changes to ded since last baseline
+
+1990-03-28  ste_cm@software.org
+
+	* user/ded.doc: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* user/ded.doc:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-28  dickey@software.org
+
+	* user/checkup.doc: added -c, -i, -l and -p options to checkup
+
+1990-03-28  ste_cm@software.org
+
+	* user/checkup.doc: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* user/checkup.doc:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-28  dickey@software.org
+
+	* user/baseline.doc: added "-f" and "-l" options to baseline
+
+1990-03-28  ste_cm@software.org
+
+	* user/baseline.doc: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* user/baseline.doc:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* user/baseline.doc: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* user/baseline.doc:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-28  dickey@software.org
+
+	* certify/config.txt: we don't have a Gould-system to test on anymore.
+	also, I don't want to test against SunOs 3.4
+
+1990-03-28  ste_cm@software.org
+
+	* certify/config.txt:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-28  dickey@software.org
+
+	* src/checkup/src/checkup.c:
+	display the version-number in "-d" listing where I was only
+	showing "ok".
+
+1990-03-28  ste_cm@software.org
+
+	* src/checkup/src/checkup.c:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-28  dickey@software.org
+
+	* certify/release.txt: documented mods to ded and checkup
+
+1990-03-28  ste_cm@software.org
+
+	* certify/release.txt:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-28  dickey@software.org
+
+	* src/checkup/src/checkup.c:
+	added "-c" (configuration-list) option so user can obtain a
+	list of the working files in a tree together with their
+	revision codes.
+
+	* src/checkup/src/checkup.c:
+	added "-i" option.  made both "-i" and "-x" options permit
+	wildcards.  enhanced usage-message.
+
+1990-03-14  dickey@software.org
+
+	* src/link2rcs/src/link2rcs.c:
+	corrected reference path for 'relpath()' computation.
+	force mkdir-mode to 755.
+
+1990-03-14  ste_cm@software.org
+
+	* src/link2rcs/src/link2rcs.c:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-05  dickey@software.org
+
+	* src/checkin/src/checkin.c: corrected length of 'tmp_name[]'
+
+1990-03-05  ste_cm@software.org
+
+	* src/checkin/src/checkin.c:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-05  dickey@software.org
+
+	* src/permit/src/Makefile: split CFLAGS from INCLUDES
+
+1990-03-05  ste_cm@software.org
+
+	* src/permit/src/Makefile:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/permit/src/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/permit/src/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/permit/src/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-05  dickey@software.org
+
+	* src/link2rcs/src/Makefile: split CFLAGS from INCLUDES
+
+1990-03-05  ste_cm@software.org
+
+	* src/link2rcs/src/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-05  dickey@software.org
+
+	* src/copy/src/Makefile: split CFLAGS from INCLUDES
+
+1990-03-05  ste_cm@software.org
+
+	* src/copy/src/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/copy/src/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/copy/src/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/copy/src/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-05  dickey@software.org
+
+	* src/checkup/src/Makefile: split CFLAGS from INCLUDES
+
+1990-03-05  ste_cm@software.org
+
+	* src/checkup/src/Makefile:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkup/src/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/checkup/src/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/checkup/src/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-05  dickey@software.org
+
+	* src/checkin/src/Makefile: split CFLAGS from INCLUDES
+
+1990-03-05  ste_cm@software.org
+
+	* src/checkin/src/Makefile:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkin/src/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/checkin/src/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/checkin/src/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-05  dickey@software.org
+
+	* src/checkout/src/Makefile: split CFLAGS from INCLUDES
+
+1990-03-05  ste_cm@software.org
+
+	* src/checkout/src/Makefile:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkout/src/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/checkout/src/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/checkout/src/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-05  dickey@software.org
+
+	* src/baseline/src/Makefile: split CFLAGS from INCLUDES
+
+1990-03-05  ste_cm@software.org
+
+	* src/baseline/src/Makefile:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/baseline/src/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/baseline/src/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/baseline/src/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1990-03-05  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	port to sun3 (os3.4) which has bug in tmpfile & mktemp.
+	cleanup error-exits.
+
 1990-02-07  dickey@software.org
 
 	* src/checkup/src/checkup.c:

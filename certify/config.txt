@@ -1,4 +1,4 @@
-$Id: config.txt,v 5.1 1989/12/01 07:57:06 dickey Exp $
+$Id: config.txt,v 6.0 1990/03/28 11:57:10 ste_cm Rel $
 
 --------------------------------------------------------------------------------
 
@@ -9,10 +9,10 @@ The tools are written in C.  The make-procedure assumes that 'make', 'tar' and
 To run (or test) the tools, you must have RCS (available from public domain
 sources).
 
-These tools have been tested on the Apollo, Gould and Sun systems at the SPC
-using RCS release 3 (1983), and RCS release 4.2 (GNU):
+These tools have been tested on the Apollo and Sun systems at the SPC
+using RCS release 4.2 (GNU):
 	Apollo SR9.7, SR10.1
-	SunOs 3.4, 3.5 and 4.0.3
+	SunOs 3.5 and 4.0.3
 
 The subtree "src/common" is designed to be portable among not only unix systems,
 but also (largely) to VAX/VMS.  On that system, the common-library tree is

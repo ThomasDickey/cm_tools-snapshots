@@ -1,24 +1,24 @@
-# $Id: Makefile,v 5.0 1989/10/19 11:52:50 ste_cm Rel $
+# $Id: Makefile,v 9.0 1990/03/05 11:11:45 ste_cm Rel $
 # Make-file for RCS checkout utilities
 #
 # $Log: Makefile,v $
-# Revision 5.0  1989/10/19 11:52:50  ste_cm
-# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+# Revision 9.0  1990/03/05 11:11:45  ste_cm
+# BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
 #
-# Revision 4.2  89/10/19  11:52:50  dickey
-# updated lint-rule (now two programs)
+# Revision 8.0  90/03/05  11:11:45  ste_cm
+# BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
 # 
-# Revision 4.1  89/10/19  08:35:22  dickey
-# recoded 'rcsget' from Bourne-shell to C-language
+# Revision 7.0  90/03/05  11:11:45  ste_cm
+# BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
 # 
-# Revision 4.0  89/08/22  09:51:55  ste_cm
-# BASELINE Thu Aug 24 09:27:38 EDT 1989 -- support:navi_011(rel2)
+# Revision 6.0  90/03/05  11:11:45  ste_cm
+# BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
 # 
-# Revision 3.1  89/08/22  09:51:55  dickey
-# corrected 'destroy' rule
+# Revision 5.1  90/03/05  11:11:45  dickey
+# split CFLAGS from INCLUDES
 # 
-# Revision 3.0  89/03/28  12:00:50  ste_cm
-# BASELINE Mon Jun 19 13:12:40 EDT 1989
+# Revision 5.0  89/10/19  11:52:50  ste_cm
+# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
 # 
 ####### (Environment) ##########################################################
 B	= ../bin
@@ -28,7 +28,7 @@ GET	= checkout
 #
 ####### (Command-line Options) #################################################
 INCLUDES= -I$I
-CFLAGS  = $(DEFINES) $(INCLUDES) -O
+CFLAGS  =
 LIBS	= $L/lib.a
 DATE	= echo '****'`date` >> $@
 LINTOPT	= $(DEFINES) $(INCLUDES) -ltd
@@ -68,3 +68,6 @@ lint.out:	$(CSRC)
 	$(DATE)
 	sh -c 'for i in $?;do tdlint $(LINTOPT) $$i >>$@;done'
 lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@
+
+.c.o:
+	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINES) -c $<

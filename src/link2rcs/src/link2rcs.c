@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: link2rcs.c,v 5.9 1989/12/07 14:56:38 dickey Exp $";
+static	char	Id[] = "$Id: link2rcs.c,v 6.0 1990/03/14 16:33:57 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,16 @@ static	char	Id[] = "$Id: link2rcs.c,v 5.9 1989/12/07 14:56:38 dickey Exp $";
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * $Log: link2rcs.c,v $
- * Revision 5.9  1989/12/07 14:56:38  dickey
- * lint (SunOs 3.4)
+ * Revision 6.0  1990/03/14 16:33:57  ste_cm
+ * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
  *
+ *		Revision 5.10  90/03/14  16:33:57  dickey
+ *		corrected reference path for 'relpath()' computation.
+ *		force mkdir-mode to 755.
+ *		
+ *		Revision 5.9  89/12/07  14:56:38  dickey
+ *		lint (SunOs 3.4)
+ *		
  *		Revision 5.8  89/12/06  13:41:51  dickey
  *		corrected 'getdir()' procedure (did 'abspath()' in wrong
  *		place), and fixed a couple of places where a "." leaf could
@@ -224,7 +231,7 @@ char	*path;
 		tell_it("make directory:", path);
 		VERBOSE "%% mkdir %s\n", path);
 		if (!no_op) {
-			if (mkdir(path, 0777) < 0)
+			if (mkdir(path, 0755) < 0)
 				failed(path);
 		}
 	}
@@ -266,6 +273,10 @@ char	*path;
 			(void)pathcat(dst, path, p->path);
 			make_dir(p->path);
 		} else {		/* symbolic-link */
+			register char *s;
+			(void)pathcat(dst, path, p->path);
+			if (s = strrchr(dst, '/'))
+				*s = EOS;
 			make_lnk(relative ? relpath(tmp, dst, p->from)
 					  : p->from,
 				p->path);

@@ -94,7 +94,7 @@ V6,
 <Page Header, Frame =
 V6,
 (g9,1,0
- (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,October\ 26\,\ 1989)
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,March\ 28\,\ 1990)
  (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS\ baseline\ version\ script)
 
  (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,baseline)
@@ -236,8 +236,21 @@ number after a hyphen, e.g.,
 
 <options>
 
--<F31>a<F0><Tab>permits baseline to process files in directories beginning 
-with <#7f>.".
+<Tab>If no baseline version is specified, the most recent baseline 
+version (as recorded in the <F49>RCS,v<F0> <F31>permit<F0>-file) is 
+assumed.  This is done to permit additional files to be added to an 
+existing baseline.
+
+-<F31>a<F0><Tab>permits <F31>baseline<F0> to process files in directories 
+beginning with <#7f>.".
+
+-<F31>f<F0><Tab>the <#7f>fast" option preserves existing access 
+lists in the archives.  Normally <F31>permit<F0> is invoked to purge 
+the access lists to prevent locks while the baselining process is 
+proceeding.
+
+-<F31>l<F0><Tab>leaves files locked after baselining.  Also, if files 
+are locked but not modified, no error is reported.
 
 -<F31>m<F32>msg<F0><Tab>adds the string <#7f>--<SP><F32>msg<F0>" to 
 the default baseline revision message <#7f><F49>BASELINE<F0> <F32>date<F0>".
