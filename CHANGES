@@ -1,3 +1,11 @@
+2003-04-30  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* configure: RCS_BASE
+
+	* aclocal.m4:
+	resync with my-autoconf (adds version number and timestamp to each macro,
+	some restructuring split-out CF_SUBDIR_PATH)
+
 2002-07-05  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* src/checkin/src/checkin.c, src/checkup/src/checkup.c, src/copy/src/copy.c, src/link2rcs/src/link2rcs.c:
