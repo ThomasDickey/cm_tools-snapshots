@@ -63,7 +63,7 @@
 #include	<sccsdefs.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: checkup.c,v 11.12 2000/07/21 23:06:18 tom Exp $")
+MODULE_ID("$Id: checkup.c,v 11.13 2001/12/11 14:55:44 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -343,7 +343,7 @@ int	WALK_FUNC(do_stat)
 		if (*t == '.' && !allnames)
 			return (-1);
 		if (sameleaf(s, sccs_dir(path, name))
-		||  sameleaf(s, rcs_dir())) {
+		||  sameleaf(s, rcs_dir(path, name))) {
 			if (obsolete)
 				do_obs(path, name, level);
 			return (-1);

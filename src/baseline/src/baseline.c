@@ -39,7 +39,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: baseline.c,v 11.4 1999/06/27 18:37:38 tom Exp $")
+MODULE_ID("$Id: baseline.c,v 11.5 2001/12/11 14:53:24 tom Exp $")
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
@@ -125,7 +125,7 @@ _DCL(char *,	path)
 	if (no_op)	catarg(args, "-n");
 	if (purge_opt)	catarg(args, "-p");
 	catarg(args, m_option);
-	catarg(args, rcs_dir());
+	catarg(args, rcs_dir(NULL, NULL));
 	doit("permit", args, no_op < 2);
 }
 
@@ -204,7 +204,7 @@ int	WALK_FUNC(scan_tree)
 		if (!a_opt && *pathleaf(s) == '.')
 			readable = -1;
 		else if (sameleaf(s, sccs_dir(path, name))
-		    ||   sameleaf(s, rcs_dir())) {
+		    ||   sameleaf(s, rcs_dir(path, name))) {
 			readable = -1;
 		} else {
 			if (level > recur) {
@@ -256,7 +256,7 @@ _DCL(char *,	name)
 		auto	time_t	date;
 		auto	char	*locker, *version;
 		rcslast (".",
-			vcs_file(rcs_dir(), vname, FALSE),
+			vcs_file(rcs_dir(NULL, NULL), vname, FALSE),
 			&version, &date, &locker);
 		if (*version == '?'
 		||  sscanf(version, "%d.", &revision) <= 0)

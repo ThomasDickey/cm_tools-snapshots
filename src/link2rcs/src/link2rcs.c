@@ -66,7 +66,7 @@
 #include	<td_qsort.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: link2rcs.c,v 11.7 1999/06/27 18:45:18 tom Exp $")
+MODULE_ID("$Id: link2rcs.c,v 11.8 2001/12/11 14:56:04 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -235,7 +235,7 @@ _DCL(int,	level)
 		/* patch: test for link-to-link */
 		p->path = path_to(tmp);
 		p->what = fmt_link;
-		if (sameleaf(s, rcs_dir())) {
+		if (sameleaf(s, rcs_dir(path, name))) {
 			p->from = path_from(tmp);
 		} else if (sameleaf(s, sccs_dir(path, name))) {
 			p->from = path_from(tmp);

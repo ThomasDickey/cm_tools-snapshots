@@ -43,7 +43,7 @@
 #include	<sccsdefs.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: rcsget.c,v 11.5 1999/06/27 18:38:31 tom Exp $")
+MODULE_ID("$Id: rcsget.c,v 11.6 2001/12/11 14:55:23 tom Exp $")
 
 #define	VERBOSE	if (!quiet) PRINTF
 
@@ -143,7 +143,7 @@ int	WALK_FUNC(scan_archive)
 		return (readable);
 
 	set_wd(user_wd);
-	Checkout(rcs2name(name, FALSE), pathcat(tmp, rcs_dir(), name));
+	Checkout(rcs2name(name, FALSE), pathcat(tmp, rcs_dir(NULL, NULL), name));
 	set_wd(path);
 	return(readable);
 }
@@ -172,7 +172,7 @@ int	WALK_FUNC(scan_tree)
 		abspath(s);		/* get rid of "." and ".." names */
 		if (ignore_dir(s))
 			readable = -1;
-		else if (sameleaf(s, rcs_dir())) {
+		else if (sameleaf(s, rcs_dir(NULL, NULL))) {
 			if (R_opt) {
 				(void)walktree(strcpy(user_wd,path),
 					name, scan_archive, "r", level);
