@@ -1,4 +1,4 @@
-: '@(#) $Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/link2rcs.sh,v 1.1 1988/06/10 13:38:52 dickey Exp $'
+: '@(#) $Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/link2rcs.sh,v 1.2 1988/11/10 15:59:12 dickey Exp $'
 # Make a template of an existing tree, with symbolic links to the original
 # tree's RCS directories (T.Dickey).
 #
@@ -39,6 +39,7 @@ then	echo '?? Argument given as destination is not a directory: "'$DST'"'
 	exit 1
 fi
 #
+RCS=${RCS_DIR-RCS}
 TMP=/tmp/link2rcs$$
 cd $SRC;SRC=`pwd`
 cd $WD
@@ -58,17 +59,25 @@ do
 		if [ -r $j -o -s $j ]
 		then	echo '?? exists:         '$j
 			break
-		elif [ $k = RCS ]
-		then	echo '** link-to-RCS:    '$j
-			if ( ln -s $SRC/$j $j )
-			then	continue
-			else	break
-			fi
-		else	echo '** make directory: '$j
-			if ( mkdir $j )
-			then	continue
-			else	break
-			fi
+		else
+			case $k in
+			.*|\$.*.\$)
+				echo '?? ignored:        '$j
+				;;
+			$RCS)
+				echo '** link-to-RCS:    '$j
+				if ( ln -s $SRC/$j $j )
+				then	continue
+				else	break
+				fi
+				;;
+			*)
+				echo '** make directory: '$j
+				if ( mkdir $j )
+				then	continue
+				else	break
+				fi
+			esac
 		fi
 	done
 done
