@@ -10,8 +10,7 @@
 	F21 = Typewriter 10,
 	F34 = Classic 14 Bold,
 	F31 = Classic 12 Bold,
-	F32 = Classic 12 Italic,
-	F49 = Modern 12>
+	F32 = Classic 12 Italic>
 
 <!Page>
 
@@ -173,11 +172,11 @@ V4,
 <Page Header, Frame =
 V4,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,August\ 4\,\ 1988)
- (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ \177ci"\ Package)
- (t8,3,4,0,0.438782,0,17,@nnclas12b,checkin)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,August\ 25\,\ 1988)
+ (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,unix\ copy\ utility)
+ (t8,3,4,0,0.438782,0,17,@nnclas12b,copy)
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <Page Footer, Frame =
 V4,
@@ -194,7 +193,7 @@ V4,
 
 <paragraph>
 
-<F31>checkin<F0> <#1f> rcs check-in utility
+<F31>copy<F0> <#1f> unix copy utility
 
 <header>
 
@@ -202,7 +201,9 @@ USAGE
 
 <paragraph>
 
-<F31>checkin<F32> [options] [file-specifications]
+<F31>copy<F0> [-i] [-v] file1 file2
+
+<F31>copy<F0> [-i] [-v] file ... directory
 
 <header>
 
@@ -210,9 +211,8 @@ SYNOPSIS
 
 <paragraph>
 
-<F31>Checkin<F0> is an extension of the RCS utility <F31>ci<F0>.  
-It uses the file's modification date rather than the current date 
-as the RCS delta-date.
+<F31>Copy<F0> is an extension of the basic unix <F31>cp<F0> utility.  
+It copies files, preserving their modification date.
 
 <header>
 
@@ -220,24 +220,19 @@ DESCRIPTION
 
 <paragraph>
 
-<F31>Checkin<F0> uses the <F32>rcs<F0> utility <F31>ci<F0>.  It 
-is normally invoked from the <F31>rcsput<F0> script, but may be invoked 
-in a standalone manner.  <F31>Checkin<F0> differs from <F31>ci<F0> 
-primarily in its treatment of the delta date: after invoking <F31>ci<F0>, 
-<F31>checkin<F0> modifies the delta-date in the archive to reflect 
-the file's modification date.
+<F31>Copy<F0> copies <F32>file1<F0> onto <F32>file2<F0>.  It preserves 
+the existing mode of <F32>file2<F0>.  If <F32>file2<F0> did not 
+exist, <F31>copy<F0> uses the mode of the source file.
 
-This is the fundamental advantage offered by <F31>checkin<F0>.  The 
-ordinary <F32>rcs<F0> methodology uses the current date as the check-in 
-date.  This works well only for large projects in which a central 
-project administrator is responsible for controlling the versions 
-of source files.  It does not work well for small projects, for which <F32>rcs
-<F0>'s primary advantage is its compact storage of multiple versions 
-of a file.
+<F31>Copy<F0> can also be used to copy one or more files into <F32>directory
+<F0>, without changing their original filenames.  It refuses to copy 
+a file onto itself.
 
-By using the file's modification date as a reference, you can more 
-easily back up to a meaningful version <#1f> by date, rather than 
-version number.
+In all cases, <F32>file2<F0> will be set to the same modification 
+date as <F32>file1<F0>.  The owner of the file will be the same as 
+the owner of the process which invokes <F31>copy<F0>.  Unless the 
+<#7f>-<F31>i<F0>" option is used, <F31>copy<F0> ignores permissions 
+of the (previous) destination file.
 
 <header>
 
@@ -245,7 +240,25 @@ OPTIONS
 
 <paragraph>
 
-<F31>Checkin<F0> recognizes all of the <#7f><F31>ci<F0>" options.
+<F31>Copy<F0> recognizes options similar to those of <F31>cp<F0>, 
+but with extensions:
+
+<options>
+
+-<F31>d<F0><Tab>all names given are treated as the destination; the 
+source names are obtained by taking the leaves and looking for them 
+in the current working directory.  This is provided to simplify installation 
+of files in a directory.
+
+-<F31>i<F0><Tab>prompt with the name of the file whenever the copy 
+will cause an old file to be overwritten.  A <#7f>y" answer causes 
+copy to continue.  Any other answer prevents it from overwriting the 
+file.
+
+-<F31>v<F0><Tab>verbose mode directs <F31>copy<F0> to print the 
+names (to standard error) of the files which it copies.  On Apollo, 
+repeating this option causes <F31>copy<F0> to show the underlying 
+<#7f><F31>cpf<F0>" command as well.
 
 <header>
 
@@ -253,40 +266,15 @@ OPERATIONS
 
 <paragraph>
 
-<F31>Checkin<F0> is used exactly as one would use <F31>ci<F0>.  
-Place a lock on the file using the <#7f>-<F31>l<F0>" option with <F31>ci<F0> 
-(or with <F31>co<F0>) when you wish to edit a file.  Check the file 
-in using the <#7f>-<F31>u<F0>" option to retain a working copy after 
-modification.
+<F31>Copy<F0> is used exactly as one would use <F31>cp<F0>.
 
 <header>
 
-ENVIRONMENT
+<|,2>ENVIRONMENT
 
 <paragraph>
 
-<F31>Checkin<F0> is a C-language program.  It invokes <F31>ci<F0> 
-via an <F32>execlp<F0> call (so that <F31>ci<F0> must be in your 
-path), and performs pre- and postprocessing of the archive and working 
-file to determine the version to which the file's modification date 
-applies.
-
-<|,2><F31>Checkin<F0> uses the following environment variables:
-
-<options,
-	Left Tab =		0/0.25 inches>
-
-<F49@R>RCS_BASE<F30@R><Tab>is used to specify a default value for initial 
-revision numbers.  If the user does not specify the initial version 
-number of a file, <F31@R>ci<F30@R> assigns the value <#7f>1.1".  This 
-is used to support the use of module-level version numbers, while 
-preserving the relationship between changes and revisions: a new version 
-is made only if the file is changed.  See <F32@R>baseline<F30@R> for more 
-details.
-
-<F49>TZ<F0><Tab>is the unix time zone, which is overridden internally 
-so that file modification dates are independent of the local time 
-zone.
+<F31>Copy<F0> is a C-language program which runs in a unix environment.
 
 <header>
 
@@ -294,11 +282,9 @@ FILES
 
 <paragraph>
 
-<F31>Checkin<F0> uses the following files
-
-<options>
-
-<F49>ci<F0><Tab>the RCS check-in program
+<F31>Copy<F0> is a single binary file, <#7f>copy".  On the Apollo 
+DOMAIN/IX system it invokes the native <#7f>cpf" command to copy files 
+while preserving their object types (see OBTY).
 
 <header>
 
@@ -306,10 +292,9 @@ ANTICIPATED CHANGES
 
 <paragraph>
 
-<F31>Checkin<F0> does not currently handle branch deltas.
-
-<F31>Checkin<F0> assumes that the archive file resides in the directory 
-<#7f>./RCS".
+<F31>Copy<F0> does not currently know how to handle symbolic links 
+and special files.  It does not support the <#7f>-<F31>r<F0>" option 
+provided by some unix <#7f><F31>cp<F0>" utilities.
 
 <header>
 
@@ -317,7 +302,7 @@ SEE ALSO
 
 <paragraph>
 
-baseline, rcsput, ded, ci<SP>(1), co<SP>(1)
+cp<SP>(1)
 
 <header>
 

@@ -11,7 +11,8 @@
 	F34 = Classic 14 Bold,
 	F31 = Classic 12 Bold,
 	F32 = Classic 12 Italic,
-	F49 = Modern 12>
+	F49 = Modern 12,
+	F6 = Symbols 12>
 
 <!Page>
 
@@ -52,7 +53,8 @@
 	Left Margin =		0.25 inches,
 	First Indent =		-0.25 inches,
 	Line Spacing =		1.100 lines,
-	Font =			F30>
+	Font =			F30,
+	Hyphenation =		off>
 
 <!Class, header,
 	Top Margin =		0.193 inches,
@@ -173,11 +175,11 @@ V4,
 <Page Header, Frame =
 V4,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,August\ 4\,\ 1988)
- (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ \177ci"\ Package)
- (t8,3,4,0,0.438782,0,17,@nnclas12b,checkin)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
-  0,0.066667,6))>
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,August\ 24\,\ 1988)
+ (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ baseline\ version\ script)
+ (t8,3,4,0,0.438782,0,17,@nnclas12b,baseline)
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
 
 <Page Footer, Frame =
 V4,
@@ -194,7 +196,7 @@ V4,
 
 <paragraph>
 
-<F31>checkin<F0> <#1f> rcs check-in utility
+<F31>baseline<F0> <#1f> rcs utility
 
 <header>
 
@@ -202,7 +204,7 @@ USAGE
 
 <paragraph>
 
-<F31>checkin<F32> [options] [file-specifications]
+<F31>baseline<F32> [options] [file-specifications]
 
 <header>
 
@@ -210,9 +212,8 @@ SYNOPSIS
 
 <paragraph>
 
-<F31>Checkin<F0> is an extension of the RCS utility <F31>ci<F0>.  
-It uses the file's modification date rather than the current date 
-as the RCS delta-date.
+<F31>Baseline<F0> permits you to set a baseline version in one or 
+more RCS files.
 
 <header>
 
@@ -220,24 +221,75 @@ DESCRIPTION
 
 <paragraph>
 
-<F31>Checkin<F0> uses the <F32>rcs<F0> utility <F31>ci<F0>.  It 
-is normally invoked from the <F31>rcsput<F0> script, but may be invoked 
-in a standalone manner.  <F31>Checkin<F0> differs from <F31>ci<F0> 
-primarily in its treatment of the delta date: after invoking <F31>ci<F0>, 
-<F31>checkin<F0> modifies the delta-date in the archive to reflect 
-the file's modification date.
+<F31>Baseline<F0> adds a baseline (placeholder) version to one or 
+more RCS archives.  The effective check-in time for the file is the 
+file's last check-in date (before <F31>baseline<F0> is invoked)
+<Frame,
+	Name =			Footnote,
+	Placement =		Bottom of Page,
+	Horizontal Alignment =	Left,
+	Same Page =		yes,
+	Width =			5.70 inches,
+	Height =		0.50 inches,
+	Page # =		1,
+	Diagram =
+V4,
+(g9,1,0
+ (T8,1,12,0.04,0.066667,5.6,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048,512,102,
+  1101,3,
+<footnote>
 
-This is the fundamental advantage offered by <F31>checkin<F0>.  The 
-ordinary <F32>rcs<F0> methodology uses the current date as the check-in 
-date.  This works well only for large projects in which a central 
-project administrator is responsible for controlling the versions 
-of source files.  It does not work well for small projects, for which <F32>rcs
-<F0>'s primary advantage is its compact storage of multiple versions 
-of a file.
+<F6>!<F0><Tab>Assuming that the file was originally checked in using <F31>che
+ckin<F0>, then the check-in, modification and baseline dates all 
+are the same.
 
-By using the file's modification date as a reference, you can more 
-easily back up to a meaningful version <#1f> by date, rather than 
-version number.
+<End Text>)
+ (v4,2,0,-0.1,0,0.9,0,17,1,0)
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
+<F6>!<F0>.  A baseline version consists of a group of files which 
+can be referenced by a common version number.  The baseline program 
+uses for this purpose 2.0, 3.0, etc
+<Frame,
+	Name =			Footnote,
+	Placement =		Bottom of Page,
+	Horizontal Alignment =	Left,
+	Same Page =		yes,
+	Width =			5.70 inches,
+	Height =		0.433 inches,
+	Page # =		1,
+	Diagram =
+V4,
+(g9,1,0
+ (T8,1,12,0.066667,0.066667,5.546667,1,0.333333,0,516,0,17,0,0,0,0,0,0,1,1,2048
+  ,512,102,1101,3,
+<footnote>
+
+<F6>@<F0><Tab>Version 1.0 is never used, since the first development 
+version is, by convention, 1.1.
+
+<End Text>)
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
+<F6>@<F0>.  After baselining, you may use <F31>checkout<F0> to 
+obtain a particular set of files.  For example,
+
+<fixed>
+
+checkout -r2.0 file
+
+<paragraph>
+
+obtain the baseline <#7f>2.0" version, while
+
+<fixed>
+
+checkout -r2 file1 file2 file3
+
+<paragraph>
+
+obtains the last development version beginning with <#7f>2.0", but 
+before <#7f>3.0".
 
 <header>
 
@@ -245,7 +297,12 @@ OPTIONS
 
 <paragraph>
 
-<F31>Checkin<F0> recognizes all of the <#7f><F31>ci<F0>" options.
+<F31>Baseline<F0> recognizes a single option: the new baseline version, 
+specified as a whole number after a hyphen, e.g.,
+
+<fixed>
+
+baseline -2 file1 file2 file3
 
 <header>
 
@@ -253,40 +310,24 @@ OPERATIONS
 
 <paragraph>
 
-<F31>Checkin<F0> is used exactly as one would use <F31>ci<F0>.  
-Place a lock on the file using the <#7f>-<F31>l<F0>" option with <F31>ci<F0> 
-(or with <F31>co<F0>) when you wish to edit a file.  Check the file 
-in using the <#7f>-<F31>u<F0>" option to retain a working copy after 
-modification.
+Before invoking <F31>baseline<F0>, ensure that all of the files to 
+be baselined have been checked into <F32>rcs<F0> (e.g., with <#7f><F31>checkin
+<F0> -u").  This is easily done using the directory editor <F31>ded<F0>.
+
+<F31>Baseline<F0> operates only upon files which have been checked 
+into <F32>rcs<F0> (i.e., a corresponding archive file exists in the 
+subdirectory <#7f>RCS").
 
 <header>
 
-ENVIRONMENT
+<|,2>ENVIRONMENT
 
 <paragraph>
 
-<F31>Checkin<F0> is a C-language program.  It invokes <F31>ci<F0> 
-via an <F32>execlp<F0> call (so that <F31>ci<F0> must be in your 
-path), and performs pre- and postprocessing of the archive and working 
-file to determine the version to which the file's modification date 
-applies.
-
-<|,2><F31>Checkin<F0> uses the following environment variables:
-
-<options,
-	Left Tab =		0/0.25 inches>
-
-<F49@R>RCS_BASE<F30@R><Tab>is used to specify a default value for initial 
-revision numbers.  If the user does not specify the initial version 
-number of a file, <F31@R>ci<F30@R> assigns the value <#7f>1.1".  This 
-is used to support the use of module-level version numbers, while 
-preserving the relationship between changes and revisions: a new version 
-is made only if the file is changed.  See <F32@R>baseline<F30@R> for more 
-details.
-
-<F49>TZ<F0><Tab>is the unix time zone, which is overridden internally 
-so that file modification dates are independent of the local time 
-zone.
+<F31>Baseline<F0> is a Bourne-shell script.  It invokes <F31>checkin<F0> 
+and <F31>checkout<F0> (which must be in your path) to first place 
+a lock on the specified files, and then to check-in the file with 
+the new, baseline version.
 
 <header>
 
@@ -294,11 +335,13 @@ FILES
 
 <paragraph>
 
-<F31>Checkin<F0> uses the following files
+<F31>Baseline<F0> uses the following files
 
 <options>
 
-<F49>ci<F0><Tab>the RCS check-in program
+<F49>checkin<F0><Tab>the RCS check-in package
+
+<F49>checkout<F0><Tab>the RCS check-out package
 
 <header>
 
@@ -306,10 +349,18 @@ ANTICIPATED CHANGES
 
 <paragraph>
 
-<F31>Checkin<F0> does not currently handle branch deltas.
+<F31>Baseline<F0> does not check in a tree of files; it operates 
+only upon files in the current working directory (with the implied 
+subdirectory <#7f>./RCS").
 
-<F31>Checkin<F0> assumes that the archive file resides in the directory 
-<#7f>./RCS".
+<F31>Baseline<F0> does not currently handle branch deltas.
+
+<F31>Baseline<F0> assumes that all of the working files have been 
+checked in (i.e., with the <#7f>-u" option so that they are retained 
+as working files).
+
+<F31>Baseline<F0> assumes that the baseline version is higher than 
+any version in the  archive.
 
 <header>
 
@@ -317,7 +368,7 @@ SEE ALSO
 
 <paragraph>
 
-baseline, rcsput, ded, ci<SP>(1), co<SP>(1)
+checkin, checkout, ded
 
 <header>
 

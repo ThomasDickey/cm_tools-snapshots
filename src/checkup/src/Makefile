@@ -1,6 +1,5 @@
-# @(#)Makefile	1.6 88/08/17 09:28:14
-# Make-file for RCS checkout utilities
-#
+# @(#)Makefile	1.1 88/08/31 07:24:21
+# MAKE-file for RCS/SCCS tree display
 ####### (Environment) ##########################################################
 B	= ../../bin
 I	= ../lib
@@ -14,29 +13,28 @@ DATE	= echo '****'`date` >> $@
 LINTOPT	= $(DEFINES) $(INCLUDES) -ltd
 #
 ####### (Standard Lists) #######################################################
-ALL	= checkout
-SCRIPTS	= rcsget.sh
-CSRC	= checkout.c
+ALL	= checkup
+CSRC	= checkup.c
+SCRIPTS	= test.sh
 SRCS	= $(CSRC) $(SCRIPTS)
-MAIN_O	= checkout.o $(LIBS)
+MAIN_O	= checkup.o $(LIBS)
 #
 ####### (Standard Productions) #################################################
 all:		$(ALL)
 #
 clean:				; rm -f *.o *.out
-clobber: 	clean		; rm -f $(ALL)
+clobber:	clean		; rm -f $(ALL)
 destroy:			; rm -f *
-sources: 	$(SRCS)
+sources:	$(SRCS)
 #
-install:	$B/checkout\
-		$B/rcsget
+install:	$B/checkup
 #
 ####### (Details of Productions) ###############################################
-checkout:	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
-checkout.o:	$I/ptypes.h
+checkup:	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
 #
-$B/checkout:	checkout	; copy -d $@
-$B/rcsget:	rcsget.sh	; copy $? $@
+checkup.o:	$I/ptypes.h
+#
+$B/checkup:	checkup		; copy -d $@
 #
 ####### (Development) ##########################################################
 $(SRCS):			; $(GET) -s sccs/s.$@

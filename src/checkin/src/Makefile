@@ -1,49 +1,44 @@
-# @(#)Makefile	1.5 88/07/29 09:39:26
-# Make-file for SCCS/RCS checkin utilities
+# @(#)Makefile	1.7 88/08/17 09:31:35
+# Make-file for RCS checkin utilities
+#
+####### (Environment) ##########################################################
 B	= ../../bin
 I	= ../lib
 GET	= getdelta
 #
+####### (Command-line Options) #################################################
 INCLUDES= -I$I
 CFLAGS  = $(DEFINES) $(INCLUDES) -O
-LIBS	=\
-	../lib/lib.a
+LIBS	= ../lib/lib.a
+DATE	= echo '****'`date` >> $@
+LINTOPT	= $(DEFINES) $(INCLUDES) -ltd
 #
-ALL	=\
-	checkin
+####### (Standard Lists) #######################################################
+ALL	= checkin
+CSRC	= checkin.c
+SCRIPTS	= rcsput.sh
+SRCS	= $(CSRC) $(SCRIPTS)
+MAIN_O	= checkin.o $(LIBS)
 #
-all:	$(ALL)
+####### (Standard Productions) #################################################
+all:		$(ALL)
 #
-clean:
-	rm -f *.out *.o
-clobber: clean
-	rm -f $(ALL)
-destroy:
-	rm -f *
+clean:				; rm -f *.o *.out
+clobber:	clean		; rm -f $(ALL)
+destroy:			; rm -f *
+sources:	$(SRCS)
 #
-SRCS	=\
-	checkin.c
+install:	$B/checkin\
+		$B/rcsput
 #
-checkin:	checkin.o $(LIBS)
-	$(CC) -o $@ checkin.o $(LIBS)
+####### (Details of Productions) ###############################################
+checkin:	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
+checkin.o:	$I/ptypes.h
 #
-checkin.o:	$I/ptypes.h	checkin.c
+$B/checkin:	checkin		; copy -d $@
+$B/rcsput:	rcsput.sh	; copy $? $@
 #
-# Install this stuff in public bin:
-install:\
-	$B/checkin\
-	$B/rcsput
-#
-$B/checkin:	checkin		; rm -f $@; cp $? $@; chmod +x $@
-$B/rcsput:	rcsput.sh	; rm -f $@; cp $? $@; chmod +x $@
-#
-$(SRCS):
-	$(GET) -s $@
-#
-# Development stuff:
-lint.out:	$(SRCS)
-	echo '****'`date` | tee -a $@
-	lintit.sh $? | tee -a $@
-lincnt.out:	$(SRCS)
-	echo '**** '`date` | tee -a $@
-	lincnt $(SRCS) | tee -a $@
+####### (Development) ##########################################################
+$(SRCS):			; $(GET) -s sccs/s.$@
+lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
+lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

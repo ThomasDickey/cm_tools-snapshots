@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkout.c	1.10 88/06/13 06:48:32";
+static	char	sccs_id[] = "@(#)checkout.c	1.19 88/08/30 15:38:03";
 #endif	lint
 
 /*
@@ -7,6 +7,12 @@ static	char	sccs_id[] = "@(#)checkout.c	1.10 88/06/13 06:48:32";
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		30 Aug 1988, broke out 'userprot()'.
+ *		25 Aug 1988, check for and accommodate 'setuid()' usage.
+ *		24 Aug 1988, added 'usage()' message.  Implemented '-c' cutoff,
+ *			     and '-w', '-s' options.  If user has locked RCS
+ *			     file, make the checked-out file writeable.
+ *		15 Aug 1988, use CO_PATH to control where we install 'co'.
  *		13 Jun 1988, use 'newzone()'.
  *		08 Jun 1988, more adjustments to 'chmod()'.
  *		07 Jun 1988, make this set the checked-out file's mode to
@@ -14,33 +20,34 @@ static	char	sccs_id[] = "@(#)checkout.c	1.10 88/06/13 06:48:32";
  *			     neglects to do this & is needed on apollo).
  *		27 May 1988, recoded using 'rcsedit' module.
  *
- * Function:	Display the date of a specified SCCS-sid of a given file,
- *		optionally altering the modification date to correspond with
- *		the delta-date.
+ * Function:	Make a package around the RCS utility 'co', added the ability
+ *		to manipulate the checkin date, and file ownership.
  *
  * Options:	This passes through to 'co' all options except the '-d' (date)
  *		option -- we interpret a '-c' in SCCS-style to simplify the
  *		implementation.
  *
- * patch:	This interprets now by version number only, with a default for
- *		the most-recent version.  Must make it work ok for cutoff.
+ * patch:	This does not interpret branches.
  *
- *		Must translate '-c' option to RCS's '-d' option.
- *
- *		My 'chmod()' works ok, except that if the extracted version is
- *		locked, should override to make "+w".
+ *		If the user has locked a version other than the tip, and then
+ *		does a 'co' without the version, 'co' will still give the
+ *		tip-version.  Should provide the revision-option to 'co' myself.
+ *		For now, simply assume that locks are on the tip version.
  */
 
 #include	"ptypes.h"
 #include	"rcsdefs.h"
 
-#include	<stdio.h>
 #include	<ctype.h>
 #include	<time.h>
 extern	long	packdate();
 extern	char	*ctime();
-extern	char	*doalloc();
+extern	char	*getuser();
+extern	char	*pathhead();
+extern	char	*rcslocks();
 extern	char	*rcsread(), *rcsparse_id(), *rcsparse_num(), *rcsparse_str();
+extern	char	*rcs2name(), *name2rcs();
+extern	char	*rcstemp();
 extern	char	*strcat();
 extern	char	*strcpy();
 extern	char	*strchr();
@@ -50,20 +57,20 @@ extern	char	*optarg;
 extern	int	optind;
 
 /* local definitions */
-#define	EOS	'\0'
-#define	TRUE	1
-#define	FALSE	0
-#define	CHECKOUT	"co"
-
-#define	PRINTF	(void) printf
+#define	WARN	FPRINTF(stderr,
 #define	TELL	if (!silent) PRINTF
 
 static	time_t	opt_c	= 0;
 static	int	silent;
 static	int	locked;			/* TRUE if user is locking file */
 static	int	mode;			/* mode with which 'co' sets file */
+static	int	Effect, Caller;		/* effective/real uid's	*/
+static	char	*Working, *Archive;	/* current names we are using */
+static	char	*UidHack;		/* intermediate file for setuid	*/
 static	char	options[BUFSIZ];	/* options to pass to 'co' */
 static	char	opt_rev[BUFSIZ];	/* revision to find */
+static	char	opt_who[BUFSIZ];	/* "-w[login] value	*/
+static	char	opt_sta[BUFSIZ];	/* "-s[state] value	*/
 
 /************************************************************************
  *	local procedures						*
@@ -75,18 +82,19 @@ static	char	opt_rev[BUFSIZ];	/* revision to find */
  * file to make it correspond.
  */
 static
-PostProcess(name)
-char	*name;
+PostProcess()
 {
-time_t	ok	= 0;		/* must set this to touch file */
-char	key[BUFSIZ],
-	tmp[BUFSIZ],
-	*s	= 0;
-int	header	= TRUE;
-time_t	tt;
-int	yd, md, dd, ht, mt, st;
+	time_t	ok	= 0;		/* must set this to touch file */
+	char	key[BUFSIZ],
+		tmp[BUFSIZ],
+		dft_rev[BUFSIZ],
+		tmp_rev[BUFSIZ],
+		*s	= 0;
+	int	header	= TRUE;
+	time_t	tt	= 0;
+	int	yd, md, dd, ht, mt, st;
 
-	if (!rcsopen(name, !silent))
+	if (!rcsopen(Archive, !silent))
 		return;
 
 	while (header && (s = rcsread(s))) {
@@ -95,15 +103,25 @@ int	yd, md, dd, ht, mt, st;
 		switch (rcskeys(key)) {
 		case S_HEAD:
 			s = rcsparse_num(tmp, s);
-			if (!*opt_rev)
-				(void)strcpy(opt_rev, tmp);
+			(void)strcpy(dft_rev, tmp);
+			break;
+		case S_LOCKS:
+			/* see if this was locked by the user */
+			(void)strcpy(tmp, getuser());
+			*tmp_rev = EOS;
+			s = rcslocks(s, tmp, tmp_rev);
+			if (*tmp_rev) {
+				TELL("** revision %s is locked\n", tmp_rev);
+				mode |= S_IWRITE;
+			}
 			break;
 		case S_COMMENT:
-			s = rcsparse_str(s);
+			s = rcsparse_str(s, NULL_FUNC);
 			break;
+			/* begin a delta description */
 		case S_VERS:
-			if (dotcmp(key, opt_rev) < 0)
-				header = FALSE;
+			tt = 0;
+			(void)strcpy(tmp_rev, key);
 			break;
 		case S_DATE:
 			s = rcsparse_num(tmp, s);
@@ -111,10 +129,29 @@ int	yd, md, dd, ht, mt, st;
 				&yd, &md, &dd, &ht, &mt, &st) == 6) {
 				newzone(5,0,FALSE);
 				tt = packdate(1900+yd, md,dd, ht,mt,st);
-				ok = tt;	/* patch: cutoff? */
 				oldzone();
+				if (opt_c != 0 && tt > opt_c)
+					tt = 0;
 			} else
 				header = FALSE;
+			break;
+		case S_AUTHOR:
+			s = rcsparse_id(key, s);
+			if (*opt_who && strcmp(opt_who,key))	tt = 0;
+			break;
+		case S_STATE:
+			s = rcsparse_id(key, s);
+			if (*opt_sta && strcmp(opt_sta,key))	tt = 0;
+			break;
+			/* 'next' is the last keyword in a delta description */
+		case S_NEXT:
+			if (tt != 0) {
+				char	*rev = *opt_rev ? opt_rev : dft_rev;
+				if (dotcmp(tmp_rev, rev) <=0) {
+					ok = tt;
+					header = FALSE;	/* force an exit */
+				}
+			}
 			break;
 		case S_DESC:
 			header = FALSE;
@@ -124,9 +161,8 @@ int	yd, md, dd, ht, mt, st;
 	rcsclose();
 
 	if (ok) {
-		(void)chmod(name, mode);
-		if (setmtime(name, ok) < 0)
-			PRINTF("?? touch \"%s\" failed\n", name);
+		if (userprot(Working, mode, ok) < 0)
+			noPERM(Working);
 	}
 }
 
@@ -136,15 +172,22 @@ int	yd, md, dd, ht, mt, st;
  * is taken, return false.
  */
 static
-Execute(name, mtime)
-char	*name;
+Execute(mtime)
 time_t	mtime;
 {
-char	cmds[BUFSIZ];
-struct	stat	sb;
+	char	cmds[BUFSIZ];
+	struct	stat	sb;
 
-	if (execute(CHECKOUT, strcat(strcpy(cmds, options), name)) >= 0) {
-		if (stat(name, &sb) >= 0) {
+	UidHack = rcstemp(Working, FALSE);
+	FORMAT(cmds, "%s%s %s", options, UidHack, Archive);
+	TELL("** co %s\n", cmds);
+	if (execute(CO_PATH, cmds) >= 0) {
+		if (stat(UidHack, &sb) >= 0) {
+			if (strcmp(UidHack,Working)) {
+				if (usercopy(UidHack, Working) < 0)
+					return (FALSE);
+				(void)unlink(UidHack);
+			}
 			if (sb.st_mtime == mtime) {
 				TELL("** checkout was not performed\n");
 				return (FALSE);
@@ -162,22 +205,103 @@ struct	stat	sb;
 
 /*
  * Before checkout, verify that the file exists, and obtain its modification
- * time/date.
+ * time/date.  Also (since this looks at the working/archive files before
+ * invoking 'co'), see if we have nominal permissions to work upon the files:
+ *	a) If the working file exists, we need rights to recreate it with the
+ *	   same ownership.  If it does not exist, we assume that we create it
+ *	   with the ownership implied from the directory.
+ *	b) We need rights to recreate the archive file with its current
+ *	   ownership -- this implies that our effective uid must be the same
+ *	   as that of the archive.
+ *
+ * patch: this does not address the need to down-adjust privilege if we start
+ *	out with root-uid.
  */
 static
 time_t
-PreProcess(name)
+PreProcess(name,owner)
 char	*name;
+int	owner;			/* TRUE if euid, FALSE if uid */
 {
-struct	stat	sb;
+	struct	stat	sb;
 
 	if (stat(name, &sb) >= 0) {
-		if ((S_IFMT & sb.st_mode) == S_IFREG)
+		if ((S_IFMT & sb.st_mode) == S_IFREG) {
+			if (owner) {	/* setup for archive: effective */
+				if (Effect != sb.st_uid)
+					noPERM(name);
+			} else {	/* setup for working: real */
+				if (Caller != sb.st_uid)
+					noPERM(name);
+			}
 			return (sb.st_mtime);
+		}
 		TELL ("** ignored (not a file)\n");
 		return (FALSE);
 	}
+	if (!owner) {
+		name = pathhead(name, &sb);
+		if (Caller != sb.st_uid)
+			noPERM(name);
+	}
 	return (TRUE);	/* file was not already checked out */
+}
+
+#include <errno.h>
+static
+noPERM(name)
+char	*name;
+{
+	extern	int	errno;
+	errno	= EPERM;
+	failed(name);
+}
+
+/*
+ * Process a single file.
+ */
+static
+do_file(name)
+char	*name;
+{
+	time_t		mtime;
+
+	Working = rcs2name(name);
+	Archive = name2rcs(name);
+
+	if (PreProcess(Archive,TRUE) == TRUE) {
+		WARN "?? can't find archive \"%s\"\n", Archive);
+		(void)exit(FAIL);
+	}
+
+	if (mtime = PreProcess (Working,FALSE)) {
+		if (Execute(mtime))
+			PostProcess ();
+	}
+}
+
+static
+usage()
+{
+	setbuf(stderr, options);
+	WARN "Usage: checkout [options] [working_or_archive [...]]\n\
+Options (from \"co\"):\n\
+\t-l[rev]\tlocks the checked-out revision for the caller.\n\
+\t-q[rev]\tquiet mode\n\
+\t-r[rev]\tretrieves the latest revision whose number is\n\
+\t\tless than or equal to \"rev\".\n\
+\t-cdate\tretrieves the latest revision on the selected\n\
+\t\tbranch whose checkin date/time is less than or\n\
+\t\tequal to \"date\", in the format\n\
+\t\t\tyy/mm/dd hh:mm:ss\n\
+\t-sstate\tretrieves the latest revision on the selected\n\
+\t\tbranch whose state is set to state.\n\
+\t-w[login] retrieves the latest revision on the selected\n\
+\t\tbranch which was checked in by user \"login\".\n\
+Unimplemented \"co\" options:\n\
+\t-jjoinlist generates a new revision which is the join of\n\
+\t\tthe revisions on joinlist\n");
+	(void)exit(FAIL);
 }
 
 /************************************************************************
@@ -186,20 +310,27 @@ struct	stat	sb;
 main (argc, argv)
 char	*argv[];
 {
-int	j;
-time_t	mtime;
+	register int	j;
+	char		tmp[BUFSIZ];
+	register char	*s, *d;
 
-	(void)strcpy(options, " ");
+	*options = EOS;
+	Caller = getuid();
+	Effect = geteuid();
 
 	for (j = 1; j < argc; j++) {
-	char	*s = argv[j];
+		s = argv[j];
+		d = 0;
 		if (*s == '-') {
 			if (*(++s) == 'c') {
 				optind = j;
 				optarg = ++s;
 				opt_c = cutoff(argc, argv);
-				j = optind - 1;
-				TELL("cutoff: %s", ctime(&opt_c));
+				j = optind;
+				FORMAT(tmp, "-d%s", ctime(&opt_c));
+				tmp[strlen(tmp)-1] = EOS;
+				TELL("++ cutoff: %s", ctime(&opt_c));
+				catarg(options, tmp);
 			} else {
 				catarg(options, argv[j]);
 				if (*s == 'q')
@@ -207,27 +338,23 @@ time_t	mtime;
 				if (strchr("lqr", *s)) {
 					if (*s == 'l')
 						locked++;
-					if (*++s)
-						(void)strcpy(opt_rev, s);
-				} else if (strchr("swj", *s)) {
-					PRINTF("Option not implemented: %s\n",
-						argv[j]);
-					break;
+					d = opt_rev;
+				} else if (*s == 's') {
+					d = opt_sta;
+				} else if (*s == 'w') {
+					d = opt_who;
 				} else {
-					PRINTF("Illegal option: %s\n", argv[j]);
-					break;
+					WARN "?? Unknown option: %s\n", s-1);
+					usage();
 				}
+				if (d)
+					(void)strcpy(d,++s);
 			}
-		} else if (mtime = PreProcess (s)) {
-		char	save_rev[BUFSIZ];
-			(void)strcpy(save_rev, opt_rev);
-			if (Execute(s, mtime))
-				if (PreProcess (s))
-					PostProcess (s);
-			(void)strcpy(opt_rev, save_rev);
+		} else {
+			do_file(s);
 		}
 	}
-	(void)exit(0);
+	(void)exit(SUCCESS);
 	/*NOTREACHED*/
 }
 
@@ -235,5 +362,5 @@ failed(s)
 char	*s;
 {
 	perror(s);
-	(void)exit(1);
+	(void)exit(FAIL);
 }
