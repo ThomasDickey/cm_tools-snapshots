@@ -1,18 +1,12 @@
-# $Id: Makefile,v 5.0 1989/08/22 09:11:34 ste_cm Rel $
+# $Id: Makefile,v 5.1 1989/11/29 12:46:20 dickey Exp $
 # MAKE-file for RCS skeleton tree utility
 #
 # $Log: Makefile,v $
-# Revision 5.0  1989/08/22 09:11:34  ste_cm
-# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+# Revision 5.1  1989/11/29 12:46:20  dickey
+# rewrote link2rcs as a C-language program
 #
-#	Revision 4.0  89/08/22  09:11:34  ste_cm
-#	BASELINE Thu Aug 24 10:36:51 EDT 1989 -- support:navi_011(rel2)
-#	
-#	Revision 3.1  89/08/22  09:11:34  dickey
-#	corrected 'destroy' rule; patched out 'lint.out' & 'lincnt.out'
-#	
-#	Revision 3.0  89/03/28  13:16:22  ste_cm
-#	BASELINE Mon Jun 19 14:44:56 EDT 1989
+#	Revision 5.0  89/08/22  09:11:34  ste_cm
+#	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
 #	
 
 ####### (Environment) ##########################################################
@@ -30,8 +24,9 @@ LINTOPT	= $(DEFINES) $(INCLUDES) -ltd -lapollo
 #
 ####### (Standard Lists) #######################################################
 ALL	= $B/link2rcs
-SCRIPTS	= link2rcs.sh
-SRCS	= Makefile $(SCRIPTS)
+CSRC	= link2rcs.c
+SOURCES	= Makefile $(CSRC)
+MAIN_O	= link2rcs.o $(LIBS)
 #
 ####### (Standard Productions) #################################################
 all:		sources	$(ALL)
@@ -44,9 +39,10 @@ run_tests:
 sources: 	$(SRCS)
 #
 ####### (Details of Productions) ###############################################
-$B/link2rcs:	link2rcs.sh	; copy link2rcs.sh $@
+$B/link2rcs:	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
+link2rcs.o:	$I/ptypes.h	$I/rcsdefs.h
 #
 ####### (Development) ##########################################################
-$(SRCS):			; $(GET) $@
-lint.out: #	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
-lincnt.out: #	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@
+$(SOURCES):			; $(GET) $@
+lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
+lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

@@ -1,11 +1,25 @@
 #ifndef	lint
-static	char	Id[] = "$Id: baseline.c,v 5.0 1989/10/26 12:06:05 ste_cm Rel $";
+static	char	Id[] = "$Id: baseline.c,v 5.4 1989/11/07 08:19:19 dickey Exp $";
 #endif	lint
 
 /*
  * Title:	baseline.c (rcs baseline)
  * Author:	T.E.Dickey
  * Created:	24 Oct 1989
+ * $Log: baseline.c,v $
+ * Revision 5.4  1989/11/07 08:19:19  dickey
+ * corrected code which infers current-baseline
+ *
+ *		Revision 5.3  89/11/07  08:08:50  dickey
+ *		corrected treatment of "-r" option (recur only when asked)
+ *		
+ *		Revision 5.2  89/11/07  07:53:52  dickey
+ *		added "-f" option, tuned some verboseness.
+ *		
+ *		Revision 5.1  89/11/01  15:00:30  dickey
+ *		walktree passes null-pointer to stat-block if no-access.
+ *		
+ *
  * Function:	Use checkin/checkout to force a tree of files to have a common
  *		baseline-version number.
  *
@@ -23,6 +37,7 @@ extern	time_t	time();
 extern	long	strtol();
 extern	char	*pathcat();
 extern	char	*pathleaf();
+extern	char	*sccs_dir();
 extern	char	*txtalloc();
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
@@ -44,6 +59,7 @@ static	char	r_option[80];
 
 				/* options */
 static	int	a_opt;		/* all-directory scan */
+static	int	fast_opt;
 static	char	*m_text;	/* message-text */
 static	int	no_op;		/* no-op mode */
 static	int	recur;
@@ -78,6 +94,8 @@ char	*path;
 	static	LIST	*purged;
 	register LIST	*p;
 
+	if (fast_opt)
+		return;
 	for (p = purged; p; p = p->link) {
 		if (!strcmp(p->text, path))
 			return;
@@ -153,30 +171,29 @@ char	*name;
 struct	stat	*sp;
 {
 	auto	char	tmp[BUFSIZ],
-			*s = pathcat(tmp, path, name),
-			*t;
+			*s = pathcat(tmp, path, name);
 
-	if (isDIR(sp->st_mode)) {
+	if (sp == 0 || level > recur)
+		ok_acc = -1;
+	else if (isDIR(sp->st_mode)) {
 		abspath(s);		/* get rid of "." and ".." names */
-		if (!a_opt) {
-			t = pathleaf(s);
-			if (*t == '.')
-				return (-1);
-		}
-		if (sameleaf(s, sccs_dir())
-		||  sameleaf(s, rcs_dir())) {
-			return (-1);
-		}
-		if (!recur && level > 0) {
+		if (!a_opt && *pathleaf(s) == '.')
+			ok_acc = -1;
+		else if (sameleaf(s, sccs_dir())
+		    ||   sameleaf(s, rcs_dir())) {
+			ok_acc = -1;
+		} else if (level > recur) {
 			PRINTF("** %s (ignored)\n", name);
-			return (-1);
-		}
-		track_wd(path);
+			ok_acc = -1;
+		} else if (recur > level)
+			track_wd(s);
 	} else if (isFILE(sp->st_mode)) {
-		track_wd(path);
+		if (level > 0)
+			track_wd(path);
 		baseline(path,name);
 	} else
-		return (-1);
+		ok_acc = -1;
+
 	return(ok_acc);
 }
 
@@ -192,13 +209,16 @@ char	*name;
 		(void)strcat(strcat(m_option, " -- "), m_text);
 
 	/*
-	 * If no revision was given, infer it, assuming that we are only
-	 * going to bump up by one level.
+	 * If no revision was given, infer it, assuming that we are going to
+	 * add forgotten stuff to the current baseline.
 	 */
 	if (revision < 0) {
+		auto	char	vname[BUFSIZ];
 		auto	time_t	date;
 		auto	char	*locker, *version;
-		rcslast (".", rcs_dir(), &version, &date, &locker);
+		rcslast (".",
+			vcs_file(rcs_dir(), vname, FALSE),
+			&version, &date, &locker);
 		if (*version != '?'
 		&&  sscanf(version, "%d.", &revision) > 0)
 			infer_rev = TRUE;
@@ -219,6 +239,7 @@ usage()
 ,"Options are:"
 ,"  -{integer}  baseline version (must be higher than last baseline)"
 ,"  -m{text}    append reason for baseline to date-message"
+,"  -f          fast (don't run \"permit\" first)"
 ,"  -n          no-op (show what would be done, but don't do it)"
 ,"  -r          recur when lower-level directories are found"
 ,"  -v          verbose (shows details)"
@@ -257,8 +278,9 @@ char	*argv[];
 				} else {
 					switch (*s) {
 					case 'a':	a_opt++;	break;
+					case 'f':	fast_opt++;	break;
 					case 'n':	no_op++;	break;
-					case 'r':	recur++;	break;
+					case 'r':	recur = 999;	break;
 					case 'v':	verbose++;	break;
 					default:	usage();
 					}
@@ -271,6 +293,7 @@ char	*argv[];
 	}
 
 	if (!had_args) {
+		recur++;
 		do_arg(".");
 	}
 	exit(SUCCESS);

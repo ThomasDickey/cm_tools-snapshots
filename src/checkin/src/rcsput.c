@@ -1,11 +1,16 @@
 #ifndef	lint
-static	char	Id[] = "$Id: rcsput.c,v 5.0 1989/10/26 12:07:55 ste_cm Rel $";
+static	char	Id[] = "$Id: rcsput.c,v 5.1 1989/11/01 15:18:40 dickey Exp $";
 #endif	lint
 
 /*
  * Title:	rcsput.c (rcs put-tree)
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
+ * $Log: rcsput.c,v $
+ * Revision 5.1  1989/11/01 15:18:40  dickey
+ * walktree passes null pointer to stat-block if no-access.
+ *
+ *
  * Function:	Use 'checkin' to checkin one or more files from the
  *		RCS-directory which is located in the current working
  *		directory, and then, to set the delta date of the  checked-in
@@ -29,6 +34,7 @@ extern	FILE	*popen();
 extern	char	*dftenv();
 extern	char	*pathcat();
 extern	char	*pathleaf();
+extern	char	*sccs_dir();
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
@@ -173,25 +179,25 @@ char	*name;
 struct	stat	*sp;
 {
 	auto	char	tmp[BUFSIZ],
-			*s = pathcat(tmp, path, name),
-			*t;
+			*s = pathcat(tmp, path, name);
 
-	if (isDIR(sp->st_mode)) {
+	if (sp == 0)
+		ok_acc = -1;
+	else if (isDIR(sp->st_mode)) {
 		abspath(s);		/* get rid of "." and ".." names */
-		if (!a_opt) {
-			t = pathleaf(s);
-			if (*t == '.')
-				return (-1);
-		}
-		if (sameleaf(s, sccs_dir())
-		||  sameleaf(s, rcs_dir()))
-			return (-1);
-		track_wd(path);
+		if (!a_opt && *pathleaf(s) == '.')
+			ok_acc = -1;
+		else if (sameleaf(s, sccs_dir())
+		    ||	 sameleaf(s, rcs_dir()))
+			ok_acc = -1;
+		else
+			track_wd(path);
 	} else if (isFILE(sp->st_mode)) {
 		track_wd(path);
 		checkin(path,name);
 	} else
-		return (-1);
+		ok_acc = -1;
+
 	return(ok_acc);
 }
 

@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19891027
+MANIFEST for cm_tools, version t19891130
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -61,7 +61,7 @@ src/link2rcs                    subdirectory
 src/link2rcs/Makefile           top-level makefile for link2rcs utility
 src/link2rcs/src                subdirectory
 src/link2rcs/src/Makefile       make-file for RCS skeleton-tree utility (link2rcs)
-src/link2rcs/src/link2rcs.sh    makes a template-tree, in which all of the RCS-directories are replaced by
+src/link2rcs/src/link2rcs.c     create symbolic- or hard-link tree
 src/link2rcs/test               subdirectory
 src/link2rcs/test/Makefile      make-file for link2rcs test
 src/link2rcs/test/run_test.sh   test-script for link2rcs
