@@ -1,4 +1,4 @@
-$Id: config.txt,v 6.0 1990/03/28 11:57:10 ste_cm Rel $
+$Id: config.txt,v 7.0 1990/04/30 08:48:31 ste_cm Rel $
 
 --------------------------------------------------------------------------------
 
@@ -11,8 +11,8 @@ sources).
 
 These tools have been tested on the Apollo and Sun systems at the SPC
 using RCS release 4.2 (GNU):
-	Apollo SR9.7, SR10.1
-	SunOs 3.5 and 4.0.3
+	Apollo SR9.7, SR10.2 (DN3500 hardware)
+	SunOs 3.5 and 4.0.3 (Sun3 and Sun4 hardware)
 
 The subtree "src/common" is designed to be portable among not only unix systems,
 but also (largely) to VAX/VMS.  On that system, the common-library tree is

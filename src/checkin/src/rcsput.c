@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: rcsput.c,v 6.0 1989/12/06 08:56:08 ste_cm Rel $";
+static	char	Id[] = "$Id: rcsput.c,v 7.0 1990/04/19 08:32:49 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,19 @@ static	char	Id[] = "$Id: rcsput.c,v 6.0 1989/12/06 08:56:08 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * $Log: rcsput.c,v $
- * Revision 6.0  1989/12/06 08:56:08  ste_cm
- * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ * Revision 7.0  1990/04/19 08:32:49  ste_cm
+ * BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
  *
+ *		Revision 6.2  90/04/19  08:32:49  dickey
+ *		added "-T" option (to permit non-checkin tool use)
+ *		
+ *		Revision 6.1  90/04/18  14:58:54  dickey
+ *		modified call on rcs2name/name2rcs to support "-x" option
+ *		in checkin/checkout
+ *		
+ *		Revision 6.0  89/12/06  08:56:08  ste_cm
+ *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ *		
  *		Revision 5.2  89/12/06  08:56:08  dickey
  *		added interpretation of "-f" (force) option to override
  *		test-for-diffs, test-for-textfile, and test-for-existence
@@ -26,14 +36,7 @@ static	char	Id[] = "$Id: rcsput.c,v 6.0 1989/12/06 08:56:08 ste_cm Rel $";
  *		files according to the last modification date (rather than the
  *		current date, as RCS assumes).
  *
- * Options:	all of the rcs 'ci' options, plus:
- *
- *		-a (process all  directories, including those beginning with .)
- *		-b (passed to 'diff' in display of differences)
- *		-c (use 'cat' for paging diffs)
- *		-d (suppress check-in process, do differences only)
- *		-h (passed to 'diff' in display of differences)
- *		-L (specify logfile for differences)
+ * Options:	see 'usage()'
  */
 
 #define	STR_PTYPES
@@ -51,6 +54,7 @@ extern	char	*sccs_dir();
 
 static	char	ci_opts[BUFSIZ];
 static	char	diff_opts[BUFSIZ];
+static	char	*verb = "checkin";
 static	FILE	*log_fp;
 static	int	a_opt;		/* all-directory scan */
 static	int	no_op;		/* no-op mode */
@@ -137,8 +141,8 @@ char	*path;
 char	*name;
 {
 	auto	char	args[BUFSIZ];
-	auto	char	*working = rcs2name(name);
-	auto	char	*archive = name2rcs(name);
+	auto	char	*working = rcs2name(name,FALSE);
+	auto	char	*archive = name2rcs(name,FALSE);
 	auto	int	first;
 
 	if (first = (filesize(archive) < 0)) {
@@ -170,8 +174,8 @@ char	*name;
 			first	? "Initial RCS insertion of"
 				: "Applying RCS delta to",
 			name);
-		VERBOSE("%% checkin %s\n", args);
-		if (execute("checkin", args) < 0)
+		VERBOSE("%% %s %s\n", verb, args);
+		if (execute(verb, args) < 0)
 			failed(working);
 	} else {
 		PRINTF("--- %s \"%s\"\n",
@@ -233,6 +237,7 @@ usage(option)
 ,"  -c       send differences to terminal without $PAGER filtering"
 ,"  -d       compute differences only, don't try to CHECKIN"
 ,"  -L file  write all differences to logfile"
+,"  -T TOOL  specify alternate tool to \"checkin\" to invoke per-file"
 ,""
 	};
 	register int	j;
@@ -254,7 +259,7 @@ char	*argv[];
 	pager = dftenv("more -l", "PAGER");
 	for (j = 1; j < argc; j++) {
 		if (*(s = argv[j]) == '-') {
-			if (strchr("qrfklumnNst", s[1]) != 0) {
+			if (strchr("qrfklumnNst", (long)s[1]) != 0) {
 				catarg(ci_opts, s);
 				if (s[1] == 'q') {
 					quiet = TRUE;
@@ -275,6 +280,7 @@ char	*argv[];
 						if (!(log_fp = fopen(s, "a+")))
 							usage(0);
 						break;
+				case 'T':	verb = s+2;		break;
 				default:	usage(s[1]);
 				}
 			}

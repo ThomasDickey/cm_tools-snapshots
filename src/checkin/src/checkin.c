@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: checkin.c,v 6.0 1990/03/05 13:48:49 ste_cm Rel $";
+static	char	Id[] = "$Id: checkin.c,v 7.0 1990/04/19 12:06:04 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,32 @@ static	char	Id[] = "$Id: checkin.c,v 6.0 1990/03/05 13:48:49 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * $Log: checkin.c,v $
- * Revision 6.0  1990/03/05 13:48:49  ste_cm
- * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ * Revision 7.0  1990/04/19 12:06:04  ste_cm
+ * BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
  *
+ *		Revision 6.3  90/04/19  12:06:04  dickey
+ *		corrected missing braces which broke 'chmod()' in last change
+ *		
+ *		Revision 6.2  90/04/19  10:31:55  dickey
+ *		added "-d" option (for want of a better code for no-op).
+ *		Used this option to suppress invocation of ci/rcs/mkdir/chmod
+ *		and unlink (also changed "TELL" for these calls) so user can
+ *		preview the actions which would be attempted.  Note that the
+ *		no-op mode cannot (as yet) do anything interesting for the
+ *		set-uid mode.
+ *		Used the no-op mode to find that GetLock was not returning
+ *		the proper code (since 'strict' was set after 'locks'!).
+ *		Fixed this.
+ *		Finally, recoded the "rcs -c" stuff so that user can add to
+ *		the default list of comment-prefixes by setting the environment
+ *		variable RCS_COMMENT appropriately.
+ *		
+ *		Revision 6.1  90/04/18  15:01:50  dickey
+ *		added "-x" option (to assist in makefiles, etc).
+ *		
+ *		Revision 6.0  90/03/05  13:48:49  ste_cm
+ *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ *		
  *		Revision 5.4  90/03/05  13:48:49  dickey
  *		corrected length of 'tmp_name[]'
  *		
@@ -130,6 +153,8 @@ extern	char	*pathleaf();
 
 static	int	silent	= FALSE,
 		debug,			/* set by RCS_DEBUG environment */
+		no_op,			/* show, but don't do */
+		x_opt,			/* extended pathnames */
 		locked	= FALSE,	/* set if file is re-locked */
 		from_keys = FALSE,	/* set if we get date from RCS file */
 		new_file,		/* per-file, true if no archive */
@@ -166,6 +191,8 @@ clean_file()
 	if ((Working  != 0)
 	&&  (TMP_file != 0)
 	&&  strcmp(Working,TMP_file)) {
+		if (no_op)
+			TELL("%% rm -f %s\n", TMP_file);
 		(void)unlink(TMP_file);
 	}
 	TMP_file = 0;
@@ -195,8 +222,8 @@ ReProcess ()
 	auto	char	tmp_name[L_tmpnam];
 	auto	FILE	*fpS, *fpT = 0;
 	auto	struct	stat	sb;
-	auto	int	len	= strlen(old_date),
-			mode,
+	auto	size_t	len	= strlen(old_date);
+	auto	int	mode,
 			lines	= 0,
 			changed	= 0;	/* number of substitutions done */
 	register char	*s, *d;
@@ -356,12 +383,17 @@ HackMode(save)
 				need, RCSdir, RCSprot))
 			if (need != RCSprot) {
 				TMP_mode = RCSprot | 01000;
-				if (chmod(RCSdir, need) < 0)
+				if (no_op) {
+					TELL("%% chmod %#o %s\n", need, RCSdir);
+				} else if (chmod(RCSdir, need) < 0)
 					GiveUp("Could not change mode",RCSdir);
 			}
 		}
 	} else if (TMP_mode) {
 		TMP_mode &= 0777;
+		if (no_op)
+			TELL("%% chmod %#o %s\n", TMP_mode, RCSdir);
+		DEBUG(("...chmod %04o %s, to restore\n", TMP_mode, RCSdir))
 		(void)chmod(RCSdir, TMP_mode);
 		TMP_mode = 0;
 	}
@@ -383,8 +415,11 @@ Execute()
 	TMP_file = rcstemp(Working, TRUE);
 
 	FORMAT(cmds, "%s%s %s", opt_all, Archive, TMP_file);
-	TELL("** ci %s\n", cmds);
-	code = execute(rcspath("ci"), cmds);
+	TELL("%% ci %s\n", cmds);
+	if (no_op)
+		code = -1;
+	else
+		code = execute(rcspath("ci"), cmds);
 	HackMode(FALSE);		/* ...restore protection */
 
 	if (code >= 0) {			/* ... check-in file ok */
@@ -421,9 +456,13 @@ GetLock()
 	int	header	= TRUE,
 		strict	= FALSE;
 	char	*s	= 0,
+		lock_rev[80],
+		lock_by[80],
 		tip[BUFSIZ],
-		key[BUFSIZ],
-		tmp[BUFSIZ];
+		key[BUFSIZ];
+
+	(void)strcpy(lock_by, getuser());
+	*lock_rev = EOS;
 
 	if (*opt_rev == EOS) {
 
@@ -444,24 +483,21 @@ GetLock()
 				strict = TRUE;
 				break;
 			case S_LOCKS:
-				*tmp = EOS;
-				s = rcslocks(s, strcpy(key, getuser()), tmp);
-				if (*tmp) {
-					TELL("** revision %s was locked\n",tmp);
-					if (!strcmp(tip, tmp)) {
-					char	*t = strrchr(tmp, '.');
+				s = rcslocks(s, lock_by, lock_rev);
+				if (*lock_rev) {
+					TELL("** revision %s was locked\n",lock_rev);
+					if (!strcmp(tip, lock_rev)) {
+					char	*t = strrchr(lock_rev, '.');
 					int	last;
 						(void)sscanf(t, ".%d", &last);
 						FORMAT(t, ".%d", last+1);
-						(void)strcpy(opt_rev, tmp);
+						(void)strcpy(opt_rev, lock_rev);
 					} else {
 						TELL("?? branching not supported\n");
 						/* patch:finish this later... */
 					}
-				} else if (strict) {
-					TELL("?? no lock set by %s\n", key);
 				}
-				/* fall-thru to force exit */
+				break;
 			case S_VERS:
 				header = FALSE;
 				break;
@@ -472,6 +508,8 @@ GetLock()
 		}
 		rcsclose();
 	}
+	if (strict && !*lock_rev)
+		TELL("?? no lock set by %s\n", lock_by);
 	return (!strict || (*opt_rev != EOS));
 }
 
@@ -500,6 +538,70 @@ char	*name;
 }
 
 /*
+ * For "rcs -i" command, define/override 'ci' table for comment-prefix for the
+ * Log-keyword.  Use the environment variable RCS_COMMENT to permit user-
+ * defined conversions (note that RCS_COMMENT is used in our local mod to 'ci'
+ * as well, for prefixing the prompt-lines).  We expect an auto-delimited list
+ * such as
+ *	"/.c/ * -- /,/.d/>>/"
+ * in which the delimiter can change for each item in the list.
+ */
+typedef	struct	_prefix	{
+	struct	_prefix	*link;
+	char	*suffix,
+		*prefix;
+	} PREFIX;
+
+static	PREFIX	*clist;
+
+	/*ARGSUSED*/
+	def_ALLOC(PREFIX)
+
+static
+define_prefix(suffix, prefix)
+char	*suffix, *prefix;
+{
+	extern	char	*stralloc();
+	auto	char	tmp[BUFSIZ];
+	register PREFIX	*new = ALLOC(PREFIX,1);
+	new->link = clist;
+	new->suffix = stralloc(suffix);
+	new->prefix = stralloc(strcat(strcpy(tmp, "-c"), prefix));
+	clist = new;
+}
+
+static
+char	*
+copy_to(dst, src)
+char	*dst, *src;
+{
+	char	delim;
+	if (delim = *src) {
+		src++;
+		while (*src != delim) {
+			if (!(*dst++ = *src))	/* look out for EOS ! */
+				break;
+			src++;
+		}
+	}
+	*dst = EOS;
+	return (src);
+}
+
+static
+char	*
+get_prefix(suffix)
+char	*suffix;
+{
+	PREFIX	*new;
+	for (new = clist; new != 0; new = new->link) {
+		if (!strcmp(new->suffix, suffix))
+			return (new->prefix);
+	}
+	return (0);
+}
+
+/*
  * If the RCS archive does not already exist, make one, with an access list
  * properly initialized (i.e., including the current user and the owner of the
  * RCS directory.  Returns FALSE if the archive already exists.
@@ -510,6 +612,27 @@ SetAccess()
 	static	char	list[BUFSIZ];	/* static so we do list once */
 	auto	char	cmds[BUFSIZ],
 			*s, *t;
+
+	if (clist == 0) {
+		define_prefix(".a",	"--  ");
+		define_prefix(".ada",	"--  ");
+		define_prefix(".com",	"$!\t");
+		define_prefix(".e",	" * ");
+		define_prefix(".mms",	"#\t");
+		define_prefix(".mk",	"#\t");
+		if (s = getenv("RCS_COMMENT")) {
+			char	suffix[BUFSIZ], prefix[BUFSIZ];
+			while (*s) {
+				s = copy_to(suffix, s);
+				s = copy_to(prefix, s);
+				if (*s)
+					s++;
+				define_prefix(suffix, prefix);
+				while (*s == ',' || isspace(*s))
+					s++;
+			}
+		}
+	}
 
 	if ((oldtime = PreProcess(Archive)) != 0)
 		return (FALSE);
@@ -532,25 +655,21 @@ SetAccess()
 	catarg(cmds, list);
 
 	s = ftype(t = pathleaf(Working));
-	if (!strcmp(s, ".a") || !strcmp(s, ".ada"))
-		catarg(cmds, "-c--  ");
-	else if (!strcmp(s, ".com"))
-		catarg(cmds, "-c$!\t");
-	else if (!strcmp(s, ".e"))
-		catarg(cmds, "-c * ");	/* Interbase, like .c */
-	else if (!strcmp(s, ".mms")
-	||	 !strcmp(s, ".mk")
-	||	 !*s && (	!strcmp(t, "Makefile")
-			||	!strcmp(t, "IMakefile")
-			||	!strcmp(t, "AMakefile")
-			||	!strcmp(t, "makefile")) )
+	if (!*s && (	!strcmp(t, "Makefile")
+		||	!strcmp(t, "IMakefile")
+		||	!strcmp(t, "AMakefile")
+		||	!strcmp(t, "makefile")) )
 		catarg(cmds, "-c#\t");
+	else if (s = get_prefix(s))
+		catarg(cmds, s);
 
 	if (silent) catarg(cmds, "-q");
 	catarg(cmds, Archive);
-	TELL("** rcs %s\n", cmds);
-	if (execute(rcspath("rcs"), cmds) < 0)
-		GiveUp("rcs initialization for", Working);
+	TELL("%% rcs %s\n", cmds);
+	if (!no_op) {
+		if (execute(rcspath("rcs"), cmds) < 0)
+			GiveUp("rcs initialization for", Working);
+	}
 	HackMode(FALSE);		/* ...restore protection */
 	return (TRUE);
 }
@@ -564,7 +683,7 @@ MakeDirectory()
 {
 	struct	stat	sb;
 	char	*s;
-	int	len;
+	size_t	len;
 
 	if (s = strrchr(Archive, '/')) {
 		len = s - Archive;
@@ -592,9 +711,11 @@ MakeDirectory()
 			RCS_uid = getuid();
 			RCS_gid = getgid();
 			RCSprot = 0755;
-			TELL("** make directory %s\n", RCSdir);
-			if (mkdir(RCSdir, RCSprot) < 0)
-				GiveUp("directory-create",RCSdir);
+			TELL("%% mkdir %s\n", RCSdir);
+			if (!no_op) {
+				if (mkdir(RCSdir, RCSprot) < 0)
+					GiveUp("directory-create",RCSdir);
+			}
 		}
 	} else		/* ...else... user is putting files in "." */
 		RCSdir[0] = EOS;
@@ -625,12 +746,14 @@ char	*argv[];
 	for (j = 1; j < argc; j++) {
 		s = argv[j];
 		if (*s == '-') {
+			if (s[1] == 'x' || s[1] == 'd')
+				continue;
 			if (is_t_opt(s) && !new_file)
 				continue;
 			catarg(opt_all, s);
 			if (*++s == 'q')
 				silent++;
-			if (strchr(REV_OPT, *s)) {
+			if (strchr(REV_OPT, (long)*s)) {
 				if (*s == 'l')	locked = TRUE;
 				if (*(++s)) {
 					s = strcpy(opt_rev, s);
@@ -693,17 +816,22 @@ usage()
 "Usage: checkin [-options] [working_or_archive [...]]",
 "",
 "Options (from \"ci\"):",
-"\t-r[rev]\tassigns the revision number \"rev\" to the checked-in revision",
-"\t-f[rev]\tforces a deposit",
-"\t-k[rev]\tobtains keywords from working file (rev overrides)",
-"\t-l[rev]\tlike \"-r\", but follows with \"co -l\"",
-"\t-u[rev]\tlike \"-l\", but no lock is made",
-"\t-q[rev]\tquiet mode",
-"\t-mmsg\tspecifies log-message \"msg\"",
-"\t-nname\tassigns symbolic name to the checked-in revision",
-"\t-Nname\tlike \"-n\", but overrides previous assignment",
-"\t-sstate\tsets the revision-state (default: \"Exp\")",
-"\t-t[txtfile] writes descriptive text into the RCS file"
+"  -r[rev]  assigns the revision number \"rev\" to the checked-in revision",
+"  -f[rev]  forces a deposit",
+"  -k[rev]  obtains keywords from working file (rev overrides)",
+"  -l[rev]  like \"-r\", but follows with \"co -l\"",
+"  -u[rev]  like \"-l\", but no lock is made",
+"  -q[rev]  quiet mode",
+"  -mmsg    specifies log-message \"msg\"",
+"  -nname   assigns symbolic name to the checked-in revision",
+"  -Nname   like \"-n\", but overrides previous assignment",
+"  -sstate  sets the revision-state (default: \"Exp\")",
+"  -t[txtfile] writes descriptive text into the RCS file",
+"",
+"Non-\"ci\" options:",
+"  -d       debug/no-op (show actions, but don't do)",
+"  -x       assume archive and working file are in path2/RCS and path2",
+"           (normally assumes ./RCS and .)"
 	};
 	register int	j;
 	setbuf(stderr, opt_all);
@@ -742,15 +870,21 @@ char	*argv[];
 				from_keys++;
 			if (is_t_opt(argv[j]))
 				t_option = argv[j];
-			if (strchr("rfkluqmnNst", *s) == 0) {
-				if (*s != '?')
+			if (strchr("rfkluqmnNst", (long)*s) == 0) {
+				if (*s == 'd') {
+					no_op++;
+					continue;
+				} else if (*s == 'x') {
+					x_opt++;
+					continue;
+				} else if (*s != '?')
 					WARN "unknown option: %s\n", s-1);
 				usage();
 			}
 		} else {
 
-			Working = rcs2name(s),
-			Archive = name2rcs(s);
+			Working = rcs2name(s,x_opt),
+			Archive = name2rcs(s,x_opt);
 			code = -1;
 
 			if (!(modtime = PreProcess (Working))) {

@@ -1,10 +1,22 @@
-# $Id: Makefile,v 6.0 1990/03/05 11:15:49 ste_cm Rel $
+# $Id: Makefile,v 9.0 1990/04/30 09:43:40 ste_cm Rel $
 # MAKE-file for RCS skeleton tree utility
 #
 # $Log: Makefile,v $
-# Revision 6.0  1990/03/05 11:15:49  ste_cm
-# BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+# Revision 9.0  1990/04/30 09:43:40  ste_cm
+# BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
 #
+#	Revision 8.0  90/04/30  09:43:40  ste_cm
+#	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+#	
+#	Revision 7.0  90/04/30  09:43:40  ste_cm
+#	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+#	
+#	Revision 6.1  90/04/30  09:43:40  dickey
+#	corrected typo in 'sources' rule
+#	
+#	Revision 6.0  90/03/05  11:15:49  ste_cm
+#	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+#	
 #	Revision 5.2  90/03/05  11:15:49  dickey
 #	split CFLAGS from INCLUDES
 #	
@@ -42,7 +54,7 @@ clobber: 	clean		; rm -f $(ALL)
 destroy:
 	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 run_tests:
-sources: 	$(SRCS)
+sources: 	$(SOURCES)
 #
 ####### (Details of Productions) ###############################################
 $B/link2rcs:	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)

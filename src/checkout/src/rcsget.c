@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: rcsget.c,v 6.0 1989/11/03 08:09:33 ste_cm Rel $";
+static	char	Id[] = "$Id: rcsget.c,v 7.0 1990/04/19 08:25:01 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,22 @@ static	char	Id[] = "$Id: rcsget.c,v 6.0 1989/11/03 08:09:33 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * $Log: rcsget.c,v $
- * Revision 6.0  1989/11/03 08:09:33  ste_cm
- * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ * Revision 7.0  1990/04/19 08:25:01  ste_cm
+ * BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
  *
+ *		Revision 6.3  90/04/19  08:25:01  dickey
+ *		added "-T" option so that 'checkout' isn't hard-coded.
+ *		
+ *		Revision 6.2  90/04/18  16:36:24  dickey
+ *		changed call on rcs2name/name2rcs to support "-x" option in
+ *		checkin/checkout
+ *		
+ *		Revision 6.1  90/04/16  13:07:17  dickey
+ *		interpret "-q" (quiet) option in this program
+ *		
+ *		Revision 6.0  89/11/03  08:09:33  ste_cm
+ *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ *		
  *		Revision 5.3  89/11/03  08:09:33  dickey
  *		additional correction: if file does not exist, it is ok to
  *		ask 'checkout' to get it!  Added a hack ("-?" option) to
@@ -41,11 +54,15 @@ extern	char	*sccs_dir();
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
 
+#define	VERBOSE	if (!quiet) PRINTF
+
 static	char	working[BUFSIZ];	/* working-directory for scan_archive */
 static	char	co_opts[BUFSIZ];
+static	char	*verb	= "checkout";
 static	int	a_opt;		/* all-directory scan */
 static	int	d_opt;		/* directory-mode */
 static	int	n_opt;		/* no-op mode */
+static	int	quiet;		/* "-q" option */
 
 static
 set_wd(path)
@@ -60,12 +77,11 @@ static
 checkout(name)
 char	*name;
 {
-	static	char	*verb	= "checkout";
 	auto	char	args[BUFSIZ];
 
 	catarg(strcpy(args, co_opts), name);
 
-	PRINTF("%% %s %s\n", verb, args);
+	VERBOSE("%% %s %s\n", verb, args);
 	if (!n_opt) {
 		if (execute(verb, args) < 0)
 			failed(name);
@@ -95,14 +111,14 @@ struct	stat	*sp;
 		return (ok_acc);
 	if (!isFILE(sp->st_mode)
 	||  !an_archive(name)) {
-		PRINTF("?? ignored: %s\n", name);
+		VERBOSE("?? ignored: %s\n", name);
 		return (-1);
 	}
 	if (!strcmp(vcs_file((char *)0, strcpy(tmp,name),FALSE), name))
 		return (ok_acc);
 
 	set_wd(working);
-	checkout(rcs2name(strcpy(tmp, name)));
+	checkout(rcs2name(strcpy(tmp, name),FALSE));
 	set_wd(path);
 	return(ok_acc);
 }
@@ -131,17 +147,18 @@ struct	stat	*sp;
 					name, scan_archive, "r", level);
 			}
 			ok_acc = -1;
-		} else
+		} else if (!quiet)
 			track_wd(path);
 	} else if (isFILE(sp->st_mode)) {
-		track_wd(path);
+		if (!quiet)
+			track_wd(path);
 		if (d_opt && (level > 0)) {
 			;
-		} else if (stat(name2rcs(name), &sb) >= 0
+		} else if (stat(name2rcs(name,FALSE), &sb) >= 0
 		    &&	isFILE(sb.st_mode))
 			checkout(name);
 		else
-			PRINTF("?? ignored: %s\n", name);
+			VERBOSE("?? ignored: %s\n", name);
 	} else
 		ok_acc = -1;
 	return(ok_acc);
@@ -161,9 +178,11 @@ usage(option)
  "usage: rcsget [options] files"
 ,""
 ,"Options include all CHECKOUT options, plus:"
-," -a    process all directories, including those beginning with \".\""
-," -d    directory-mode (scan based on archives, rather than working files"
-," -n    no-op (show what would be checked-out, but don't do it"
+,"  -a       process all directories, including those beginning with \".\""
+,"  -d       directory-mode (scan based on archives, rather than working files"
+,"  -n       no-op (show what would be checked-out, but don't do it"
+,"  -q       quiet (also passed to CHECKOUT)"
+,"  -T TOOL  specify alternate tool to \"checkout\" to invoke per-file"
 	};
 	register int	j;
 	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
@@ -183,12 +202,15 @@ char	*argv[];
 	track_wd((char *)0);
 	for (j = 1; j < argc; j++) {
 		if (*(s = argv[j]) == '-') {
-			if (strchr("lpqrcswj", s[1]) != 0)
+			if (strchr("lpqrcswj", (long)s[1]) != 0) {
 				catarg(co_opts, s);
-			else switch (s[1]) {
+				if (s[1] == 'q')
+					quiet = TRUE;
+			} else switch (s[1]) {
 			case 'a':	a_opt = TRUE;	break;
 			case 'd':	d_opt = TRUE;	break;
 			case 'n':	n_opt = TRUE;	break;
+			case 'T':	verb  = s+2;	break;
 			default:	usage(s[1]);
 			}
 		} else {

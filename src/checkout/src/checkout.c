@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	what[] = "$Id: checkout.c,v 6.0 1989/12/12 10:31:39 ste_cm Rel $";
+static	char	what[] = "$Id: checkout.c,v 7.0 1990/04/19 08:03:33 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,18 @@ static	char	what[] = "$Id: checkout.c,v 6.0 1989/12/12 10:31:39 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * $Log: checkout.c,v $
- * Revision 6.0  1989/12/12 10:31:39  ste_cm
- * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ * Revision 7.0  1990/04/19 08:03:33  ste_cm
+ * BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
  *
+ *		Revision 6.2  90/04/19  08:03:33  dickey
+ *		corrected so we don't pass "-x" to 'co'
+ *		
+ *		Revision 6.1  90/04/19  07:39:36  dickey
+ *		added "-x" option (to help with makefiles, etc)
+ *		
+ *		Revision 6.0  89/12/12  10:31:39  ste_cm
+ *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ *		
  *		Revision 5.1  89/12/12  10:31:39  dickey
  *		lint (SunOs 4.0.3)
  *		
@@ -115,6 +124,7 @@ extern	int	optind;
 static	time_t	opt_c	= 0;
 static	int	silent;
 static	int	debug;			/* set from environment RCS_DEBUG */
+static	int	x_opt;			/* extended pathnames */
 static	int	locked;			/* TRUE if user is locking file */
 static	int	mode;			/* mode with which 'co' sets file */
 static	int	Effect, Caller;		/* effective/real uid's	*/
@@ -382,8 +392,8 @@ char	*name;
 	char		*s, dirname[BUFSIZ];
 	time_t		mtime;
 
-	Working = rcs2name(name);
-	Archive = name2rcs(name);
+	Working = rcs2name(name,x_opt);
+	Archive = name2rcs(name,x_opt);
 
 	if (s = strrchr(strcpy(dirname, Working),'/'))
 		s[1] = EOS;
@@ -411,24 +421,36 @@ char	*name;
 static
 usage()
 {
+	static	char	*tbl[] = {
+ "Usage: checkout [options] [working_or_archive [...]]"
+,""
+,"Options (from \"co\"):"
+,"  -l[rev]  locks the checked-out revision for the caller."
+,"  -q[rev]  quiet mode"
+,"  -r[rev]  retrieves the latest revision whose number is less than or equal"
+,"           to \"rev\"."
+,"  -cdate   retrieves the latest revision on the selected branch whose checkin"
+,"           date/time is less than or equal to \"date\", in the format"
+,"                   yy/mm/dd hh:mm:ss"
+,"  -sstate  retrieves the latest revision on the selected branch whose state"
+,"           is set to state."
+,"  -w[login] retrieves the latest revision on the selected branch which was"
+,"           checked in by user \"login\"."
+,""
+,"Unimplemented \"co\" options:"
+,"  -jjoinlist generates a new revision which is the join of the revisions on"
+,"           joinlist"
+,"  -p[rev]  prints the revision on standout-output"
+,""
+,"Non-\"co\" options:"
+,"  -x       assume archive and working file are in path2/RCS and path2"
+,"           (normally assumes ./RCS and .)"
+	};
+	register int	j;
 	setbuf(stderr, options);
-	WARN "Usage: checkout [options] [working_or_archive [...]]\n\
-Options (from \"co\"):\n\
-\t-l[rev]\tlocks the checked-out revision for the caller.\n\
-\t-q[rev]\tquiet mode\n\
-\t-r[rev]\tretrieves the latest revision whose number is\n\
-\t\tless than or equal to \"rev\".\n\
-\t-cdate\tretrieves the latest revision on the selected\n\
-\t\tbranch whose checkin date/time is less than or\n\
-\t\tequal to \"date\", in the format\n\
-\t\t\tyy/mm/dd hh:mm:ss\n\
-\t-sstate\tretrieves the latest revision on the selected\n\
-\t\tbranch whose state is set to state.\n\
-\t-w[login] retrieves the latest revision on the selected\n\
-\t\tbranch which was checked in by user \"login\".\n\
-Unimplemented \"co\" options:\n\
-\t-jjoinlist generates a new revision which is the join of\n\
-\t\tthe revisions on joinlist\n");
+	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
+		FPRINTF(stderr, "%s\n", tbl[j]);
+	(void)fflush(stderr);
 	(void)exit(FAIL);
 }
 
@@ -463,10 +485,9 @@ char	*argv[];
 				TELL("++ cutoff: %s", ctime(&opt_c));
 				catarg(options, tmp);
 			} else {
-				catarg(options, argv[j]);
 				if (*s == 'q')
 					silent++;
-				if (strchr("lqr", *s)) {
+				if (strchr("lqr", (long)*s)) {
 					if (*s == 'l')
 						locked++;
 					d = opt_rev;
@@ -474,10 +495,14 @@ char	*argv[];
 					d = opt_sta;
 				} else if (*s == 'w') {
 					d = opt_who;
+				} else if (*s == 'x') {
+					x_opt++;
+					continue;
 				} else {
 					WARN "?? Unknown option: %s\n", s-1);
 					usage();
 				}
+				catarg(options, argv[j]);
 				if (d)
 					(void)strcpy(d,++s);
 			}

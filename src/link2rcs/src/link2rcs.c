@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: link2rcs.c,v 6.0 1990/03/14 16:33:57 ste_cm Rel $";
+static	char	Id[] = "$Id: link2rcs.c,v 7.0 1990/04/27 16:42:49 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,16 @@ static	char	Id[] = "$Id: link2rcs.c,v 6.0 1990/03/14 16:33:57 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * $Log: link2rcs.c,v $
- * Revision 6.0  1990/03/14 16:33:57  ste_cm
- * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ * Revision 7.0  1990/04/27 16:42:49  ste_cm
+ * BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
  *
+ *		Revision 6.1  90/04/27  16:42:49  dickey
+ *		use 'chmod()' to ensure path-mode to cover up apollo sr10/sr9
+ *		bug.
+ *		
+ *		Revision 6.0  90/03/14  16:33:57  ste_cm
+ *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ *		
  *		Revision 5.10  90/03/14  16:33:57  dickey
  *		corrected reference path for 'relpath()' computation.
  *		force mkdir-mode to 755.
@@ -233,6 +240,7 @@ char	*path;
 		if (!no_op) {
 			if (mkdir(path, 0755) < 0)
 				failed(path);
+			(void)chmod(path, 0755);
 		}
 	}
 }
