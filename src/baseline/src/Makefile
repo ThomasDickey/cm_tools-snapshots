@@ -1,18 +1,15 @@
-# $Header: /users/source/archives/cm_tools.vcs/src/baseline/src/RCS/Makefile,v 3.0 1989/03/28 11:46:23 ste_cm Rel $
+# $Id: Makefile,v 4.0 1989/08/22 10:28:11 ste_cm Rel $
 # MAKE-file for RCS baseline utility
 #
 # $Log: Makefile,v $
-# Revision 3.0  1989/03/28 11:46:23  ste_cm
-# BASELINE Mon Jun 19 13:02:34 EDT 1989
+# Revision 4.0  1989/08/22 10:28:11  ste_cm
+# BASELINE Thu Aug 24 09:20:00 EDT 1989 -- support:navi_011(rel2)
 #
-#	Revision 2.0  89/03/28  11:46:23  ste_cm
-#	BASELINE Tue Apr  4 16:06:13 EDT 1989
+#	Revision 3.1  89/08/22  10:28:11  dickey
+#	corrected 'destroy' rule; patched out 'lint.out' & 'lincnt.out'
 #	
-#	Revision 1.2  89/03/28  11:46:23  dickey
-#	added rule for 'run_tests'
-#	
-#	Revision 1.1  89/03/27  09:05:42  dickey
-#	Initial revision
+#	Revision 3.0  89/03/28  11:46:23  ste_cm
+#	BASELINE Mon Jun 19 13:02:34 EDT 1989
 #	
 
 ####### (Environment) ##########################################################
@@ -31,21 +28,22 @@ LINTOPT	= $(DEFINES) $(INCLUDES) -ltd -lapollo
 ####### (Standard Lists) #######################################################
 ALL	= $B/baseline
 SCRIPTS	= baseline.sh
-SRCS	= $(SCRIPTS)
+SOURCES	= $(SCRIPTS)
 #
 ####### (Standard Productions) #################################################
-all:		$(ALL)
+all:		sources $(ALL)
 #
 clean:				; rm -f *.o *.out
 clobber: 	clean		; rm -f $(ALL)
-destroy:			; rm -f *
+destroy:
+	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 run_tests:
-sources: 	$(SRCS)
+sources: 	$(SOURCES)
 #
 ####### (Details of Productions) ###############################################
 $B/baseline:	baseline.sh	; copy baseline.sh $@
 #
 ####### (Development) ##########################################################
-$(SRCS):			; $(GET) $@
-lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
-lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@
+$(SOURCES):			; $(GET) $@
+lint.out: #	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
+lincnt.out: #	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

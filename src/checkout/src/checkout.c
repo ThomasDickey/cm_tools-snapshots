@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 3.0 1989/03/29 14:48:40 ste_cm Rel $";
+static	char	what[] = "$Id: checkout.c,v 4.2 1989/08/24 16:10:36 dickey Exp $";
 #endif	lint
 
 /*
@@ -7,9 +7,23 @@ static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checko
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * $Log: checkout.c,v $
- * Revision 3.0  1989/03/29 14:48:40  ste_cm
- * BASELINE Mon Jun 19 13:12:40 EDT 1989
+ * Revision 4.2  1989/08/24 16:10:36  dickey
+ * exit with error if 'usercopy()' fails
  *
+ *		Revision 4.1  89/08/24  15:32:37  dickey
+ *		suppress 'revert()' message if user does not want to lock the
+ *		file.  also, verify that working file's directory exists
+ *		(otherwise 'usercopy()' silently fails...)
+ *		
+ *		Revision 4.0  89/08/22  09:54:46  ste_cm
+ *		BASELINE Thu Aug 24 09:27:38 EDT 1989 -- support:navi_011(rel2)
+ *		
+ *		Revision 3.1  89/08/22  09:54:46  dickey
+ *		corrected format of debug-message
+ *		
+ *		Revision 3.0  89/03/29  14:48:40  ste_cm
+ *		BASELINE Mon Jun 19 13:12:40 EDT 1989
+ *		
  *		Revision 2.0  89/03/29  14:48:40  ste_cm
  *		BASELINE Thu Apr  6 09:22:38 EDT 1989
  *		
@@ -245,7 +259,7 @@ time_t	mtime;
 			}
 			if (strcmp(UidHack,Working)) {
 				if (usercopy(UidHack, Working) < 0)
-					return (FALSE);
+					failed(Working);
 				clean_file();
 			}
 			mode = (sb.st_mode & 0777);
@@ -299,7 +313,9 @@ int	owner;			/* TRUE if euid, FALSE if uid */
 					revert(debug ? "non-CM use":(char *)0);
 					Effect = geteuid();
 				} else if (!rcspermit(RCSdir,(char *)0))
-					revert("not listed in permit-file");
+					revert((locked || debug) ?
+						"not listed in permit-file" :
+						(char *)0);
 				if (locked) {
 					permit(name, &sb, uid = Effect);
 				}
@@ -326,7 +342,7 @@ char		*name;
 struct	stat	*sb_;
 {
 	if (uid != sb_->st_uid) {
-		DEBUG(("=> uid  = %o, file = %o\n", uid, sb_->st_uid))
+		DEBUG(("=> uid  = %d, file = %d\n", uid, sb_->st_uid))
 		noPERM(name);
 	}
 }
@@ -348,10 +364,16 @@ static
 do_file(name)
 char	*name;
 {
+	char		*s, dirname[BUFSIZ];
 	time_t		mtime;
 
 	Working = rcs2name(name);
 	Archive = name2rcs(name);
+
+	if (s = strrchr(strcpy(dirname, Working),'/'))
+		s[1] = EOS;
+	if (access(dirname, W_OK) < 0)
+		failed(dirname);
 
 	DEBUG(("...do_file(%s) => %s %s\n", name, Working, Archive))
 
@@ -448,11 +470,4 @@ char	*argv[];
 	}
 	(void)exit(SUCCESS);
 	/*NOTREACHED*/
-}
-
-failed(s)
-char	*s;
-{
-	perror(s);
-	(void)exit(FAIL);
 }

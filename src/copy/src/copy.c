@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 4.0 1989/03/30 15:13:05 ste_cm Rel $";
+static	char	Id[] = "$Id: copy.c,v 4.1 1989/08/29 08:43:41 dickey Exp $";
 #endif	lint
 
 /*
@@ -7,9 +7,12 @@ static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/s
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * $Log: copy.c,v $
- * Revision 4.0  1989/03/30 15:13:05  ste_cm
- * BASELINE Thu Aug 24 10:16:23 EDT 1989 -- support:navi_011(rel2)
+ * Revision 4.1  1989/08/29 08:43:41  dickey
+ * corrected error-check after 'mkdir()' (if merging directories)
  *
+ *		Revision 4.0  89/03/30  15:13:05  ste_cm
+ *		BASELINE Thu Aug 24 10:16:23 EDT 1989 -- support:navi_011(rel2)
+ *		
  *		Revision 3.0  89/03/30  15:13:05  ste_cm
  *		BASELINE Mon Jun 19 14:17:23 EDT 1989
  *		
@@ -17,8 +20,9 @@ static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/s
  *		BASELINE Thu Apr  6 13:08:58 EDT 1989
  *		
  *		Revision 1.14  89/03/30  15:13:05  dickey
- *		modified normal unix file-copy code so that if the destination file
- *		could not be opened for output, then we restore its protection.
+ *		modified normal unix file-copy code so that if the destination
+ *		file could not be opened for output, then we restore its
+ *		protection.
  *		
  *		Revision 1.13  89/03/27  08:30:46  dickey
  *		added logic to test for success of Aegis 'cpf' (must rely on
@@ -62,6 +66,8 @@ static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/s
 #define		DIR_PTYPES	/* include directory-definitions */
 #define		STR_PTYPES	/* include string-definitions */
 #include	"ptypes.h"
+#include	<errno.h>
+extern	int	errno;
 extern	int	optind;		/* index in 'argv[]' of first argument */
 extern	char	*pathcat(),
 		*pathleaf();
@@ -262,8 +268,13 @@ char	*src, *dst;
 		VERBOSE "** make directory \"%s\"\n", dst);
 		if (!n_opt) {
 			if (mkdir(bfr1, 0755) < 0) {
-				perror(dst);
-				return (-1);
+				auto	int		save = errno;
+				auto	struct	stat	sb;
+				if ((stat(bfr1, &sb) < 0) || !isDIR(sb)) {
+					errno = save;
+					perror(dst);
+					return (-1);
+				}
 			}
 		}
 		no_dir_yet = n_opt;
@@ -359,6 +370,7 @@ char	*src, *dst;
 	/* Unless disabled, copy the file */
 	if (isDIR(src_sb) && copydir(src,dst,num) < 0)
 		return;
+
 	if (!n_opt) {
 #ifdef	S_IFLNK
 		if (num && !isDIR(src_sb) && isLINK(dst_sb)) {
@@ -412,6 +424,7 @@ Options:\n\
   -s  enable set-uid/gid in target\n\
   -u  reset effective uid before executing\n\
   -v  verbose\n");
+	(void)fflush(stderr);
 	(void)exit(FAIL);
 }
 
@@ -550,11 +563,4 @@ char	*argv[];
 
 	(void)exit(SUCCESS);
 	/*NOTREACHED*/
-}
-
-failed(s)
-char	*s;
-{
-	perror(s);
-	exit(FAIL);
 }

@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19890725
+MANIFEST for cm_tools, version t19890829
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -11,6 +11,7 @@ certify/Makefile                certificate-makefile for CM_TOOLS
 certify/README                  certificate-README for CM_TOOLS
 certify/config.txt              configuration-sheet for CM_TOOLS
 certify/release.txt             release-notes for CM_TOOLS
+certify/reusable.txt            notes about reusable parts versus CM_TOOLS
 src                             subdirectory
 src/Makefile                    make-file for CM_TOOLS src-directory
 src/baseline                    subdirectory

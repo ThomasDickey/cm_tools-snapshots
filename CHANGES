@@ -1,3 +1,589 @@
+1989-08-29  dickey@software.org
+
+	* src/copy/src/copy.c:
+	corrected error-check after 'mkdir()' (if merging directories)
+
+1989-08-24  dickey@software.org
+
+	* src/checkout/src/checkout.c: exit with error if 'usercopy()' fails
+
+	* src/checkout/src/checkout.c:
+	suppress 'revert()' message if user does not want to lock the
+	file.  also, verify that working file's directory exists
+	(otherwise 'usercopy()' silently fails...)
+
+1989-08-22  dickey@software.org
+
+	* src/baseline/src/Makefile:
+	corrected 'destroy' rule; patched out 'lint.out' & 'lincnt.out'
+
+1989-08-22  ste_cm@software.org
+
+	* src/baseline/src/Makefile:
+	BASELINE Thu Aug 24 09:20:00 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-22  dickey@software.org
+
+	* src/baseline/test/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/baseline/test/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/baseline/test/Makefile:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/baseline/test/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/baseline/test/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/baseline/test/Makefile:
+	BASELINE Thu Aug 24 09:21:12 EDT 1989 -- support:navi_011(rel2)
+
+	* src/baseline/test/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/baseline/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/baseline/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/baseline/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/baseline/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/baseline/Makefile:
+	BASELINE Thu Aug 24 09:18:57 EDT 1989 -- support:navi_011(rel2)
+
+	* src/baseline/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/checkin/src/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/checkin/src/Makefile:
+	BASELINE Thu Aug 24 09:23:45 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-22  dickey@software.org
+
+	* src/checkin/test/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/checkin/test/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/checkin/test/Makefile:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkin/test/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/checkin/test/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/checkin/test/Makefile:
+	BASELINE Thu Aug 24 09:25:26 EDT 1989 -- support:navi_011(rel2)
+
+	* src/checkin/test/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/checkin/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/checkin/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/checkin/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkin/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/checkin/Makefile:
+	BASELINE Thu Aug 24 09:22:43 EDT 1989 -- support:navi_011(rel2)
+
+	* src/checkin/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/checkout/src/checkout.c: corrected format of debug-message
+
+1989-08-22  ste_cm@software.org
+
+	* src/checkout/src/checkout.c:
+	BASELINE Thu Aug 24 09:27:38 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-22  dickey@software.org
+
+	* src/checkout/src/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/checkout/src/Makefile:
+	BASELINE Thu Aug 24 09:27:38 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-22  dickey@software.org
+
+	* src/checkout/test/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/checkout/test/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/checkout/test/Makefile:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkout/test/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/checkout/test/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/checkout/test/Makefile:
+	BASELINE Thu Aug 24 09:29:10 EDT 1989 -- support:navi_011(rel2)
+
+	* src/checkout/test/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* certify/release.txt: added first set of notes for baseline-4
+
+1989-08-22  ste_cm@software.org
+
+	* certify/release.txt:
+	BASELINE Thu Aug 24 09:15:10 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-22  dickey@software.org
+
+	* src/checkout/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/checkout/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/checkout/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkout/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/checkout/Makefile:
+	BASELINE Thu Aug 24 09:26:34 EDT 1989 -- support:navi_011(rel2)
+
+	* src/checkout/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/checkup/src/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/checkup/src/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/checkup/src/Makefile:
+	BASELINE Thu Aug 24 09:31:25 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-22  dickey@software.org
+
+	* src/checkup/test/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/checkup/test/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/checkup/test/Makefile:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkup/test/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/checkup/test/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/checkup/test/Makefile:
+	BASELINE Thu Aug 24 09:32:43 EDT 1989 -- support:navi_011(rel2)
+
+	* src/checkup/test/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/checkup/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/checkup/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/checkup/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/checkup/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/checkup/Makefile:
+	BASELINE Thu Aug 24 09:30:21 EDT 1989 -- support:navi_011(rel2)
+
+	* src/checkup/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/copy/src/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/copy/src/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/copy/src/Makefile:
+	BASELINE Thu Aug 24 10:16:23 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-22  dickey@software.org
+
+	* src/copy/test/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/copy/test/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/copy/test/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/copy/test/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/copy/test/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/copy/test/Makefile:
+	BASELINE Thu Aug 24 10:17:44 EDT 1989 -- support:navi_011(rel2)
+
+	* src/copy/test/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/copy/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/copy/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/copy/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/copy/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/copy/Makefile:
+	BASELINE Thu Aug 24 10:15:20 EDT 1989 -- support:navi_011(rel2)
+
+	* src/copy/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/link2rcs/src/Makefile:
+	corrected 'destroy' rule; patched out 'lint.out' & 'lincnt.out'
+
+1989-08-22  ste_cm@software.org
+
+	* src/link2rcs/src/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/link2rcs/src/Makefile:
+	BASELINE Thu Aug 24 10:36:51 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-22  dickey@software.org
+
+	* src/link2rcs/test/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/link2rcs/test/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/link2rcs/test/Makefile:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/link2rcs/test/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/link2rcs/test/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/link2rcs/test/Makefile:
+	BASELINE Thu Aug 24 10:38:03 EDT 1989 -- support:navi_011(rel2)
+
+	* src/link2rcs/test/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/link2rcs/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/link2rcs/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/link2rcs/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/link2rcs/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/link2rcs/Makefile:
+	BASELINE Thu Aug 24 10:35:46 EDT 1989 -- support:navi_011(rel2)
+
+	* src/link2rcs/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/permit/src/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/permit/src/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/permit/src/Makefile:
+	BASELINE Thu Aug 24 10:40:29 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-22  dickey@software.org
+
+	* src/permit/test/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/permit/test/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/permit/test/Makefile:
+	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/permit/test/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/permit/test/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/permit/test/Makefile:
+	BASELINE Thu Aug 24 10:41:43 EDT 1989 -- support:navi_011(rel2)
+
+	* src/permit/test/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/permit/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/permit/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/permit/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/permit/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* src/permit/Makefile:
+	BASELINE Thu Aug 24 10:39:23 EDT 1989 -- support:navi_011(rel2)
+
+	* src/permit/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* src/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* src/Makefile:
+	BASELINE Thu Aug 24 09:17:54 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-22  dickey@software.org
+
+	* support/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* support/Makefile:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* support/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* support/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* support/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* support/Makefile: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* support/Makefile:
+	BASELINE Thu Aug 24 11:12:20 EDT 1989 -- support:navi_011(rel2)
+
+	* support/Makefile: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+	* support/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* user/Makefile: added 'sources' dependency to 'all'
+
+1989-08-22  ste_cm@software.org
+
+	* user/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* user/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* user/Makefile: BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* user/Makefile: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* user/Makefile:
+	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
+
+	* user/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* certify/Makefile:
+	corrected 'destroy' rule; added 'reusable_parts.txt'
+
+1989-08-22  ste_cm@software.org
+
+	* certify/Makefile:
+	BASELINE Fri Oct 18 16:49:43 1991 -- ANSI conversion; vcs
+
+	* certify/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* certify/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* certify/Makefile:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* certify/Makefile: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* certify/Makefile:
+	BASELINE Thu Aug 24 09:15:10 EDT 1989 -- support:navi_011(rel2)
+
+	* certify/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* certify/reusable.txt: RCS_BASE
+
+1989-08-22  ste_cm@software.org
+
+	* certify/reusable.txt:
+	BASELINE Fri Oct 18 16:49:43 1991 -- ANSI conversion; vcs
+
+	* certify/reusable.txt:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* certify/reusable.txt: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* certify/reusable.txt:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* certify/reusable.txt:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* certify/reusable.txt:
+	BASELINE Thu Aug 24 09:15:10 EDT 1989 -- support:navi_011(rel2)
+
+	* certify/reusable.txt:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+	* certify/reusable.txt:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-08-22  dickey@software.org
+
+	* Makefile: 'destroy' rule should be error-free
+
+1989-08-22  ste_cm@software.org
+
+	* Makefile:
+	BASELINE Thu Aug 24 09:12:03 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-22  dickey@software.org
+
+	* bin/Makefile: corrected 'destroy' rule
+
+1989-08-22  ste_cm@software.org
+
+	* bin/Makefile:
+	BASELINE Thu Aug 24 09:14:19 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-22  dickey@software.org
+
+	* Makefile: corrected/revised 'clean', 'clobber' & 'destroy' rules
+
+1989-08-18  dickey@software.org
+
+	* user/checkup.doc:
+	added "-d" and "-o" options; added trailing "+" to "-r" option.
+
+1989-08-18  ste_cm@software.org
+
+	* user/checkup.doc:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* user/checkup.doc:
+	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-17  dickey@software.org
+
+	* src/checkup/src/checkup.c:
+	if "-r" and "-o" are both set, use "-r" to limit the set of
+	files shown as obsolete, rather than to select working files
+	for date-comparison.
+
+1989-08-17  ste_cm@software.org
+
+	* src/checkup/src/checkup.c:
+	BASELINE Thu Aug 24 09:31:25 EDT 1989 -- support:navi_011(rel2)
+
+1989-08-17  dickey@software.org
+
+	* src/checkup/src/checkup.c:
+	expanded usage-message to multi-line display.  corrected a
+	place where "?" constant was overwritten.  added "-d" and
+	"-o" options.
+
+	* src/checkup/src/checkup.c:
+	modified "-r" option to support reverse comparison (if user
+	suffixes a "+" to option-value).
+
 1989-07-25  dickey@software.org
 
 	* src/permit/src/permit.c:

@@ -1,14 +1,29 @@
-# $Header: /users/source/archives/cm_tools.vcs/user/RCS/Makefile,v 3.0 1989/06/14 07:39:45 ste_cm Rel $
+# $Id: Makefile,v 9.0 1989/08/22 08:38:29 ste_cm Rel $
 #
 # $Log: Makefile,v $
-# Revision 3.0  1989/06/14 07:39:45  ste_cm
-# BASELINE Mon Jun 19 15:30:29 EDT 1989
+# Revision 9.0  1989/08/22 08:38:29  ste_cm
+# BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
 #
-#	Revision 2.1  89/06/14  07:39:45  dickey
-#	corrected destroy/clobber/clean rules
+#	Revision 8.0  89/08/22  08:38:29  ste_cm
+#	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
 #	
-#	Revision 2.0  89/03/29  08:25:03  ste_cm
-#	BASELINE Thu Apr  6 14:48:29 EDT 1989
+#	Revision 7.0  89/08/22  08:38:29  ste_cm
+#	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+#	
+#	Revision 6.0  89/08/22  08:38:29  ste_cm
+#	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+#	
+#	Revision 5.0  89/08/22  08:38:29  ste_cm
+#	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+#	
+#	Revision 4.0  89/08/22  08:38:29  ste_cm
+#	BASELINE Thu Aug 24 11:13:33 EDT 1989 -- support:navi_011(rel2)
+#	
+#	Revision 3.1  89/08/22  08:38:29  dickey
+#	added 'sources' dependency to 'all'
+#	
+#	Revision 3.0  89/06/14  07:39:45  ste_cm
+#	BASELINE Mon Jun 19 15:30:29 EDT 1989
 #	
 
 ####### (Development) ##########################################################
@@ -42,7 +57,7 @@ SOURCES	=\
 	rcsput.doc
 
 ####### (Standard Productions) #################################################
-all:		; @echo '** use "make install"'
+all:		sources	; @echo '** use "make install"'
 clean:			; rm -f *.doc_*
 clobber:	clean	; rm -f \$$*.doc_*
 destroy:

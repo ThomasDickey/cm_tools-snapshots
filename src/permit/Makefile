@@ -1,24 +1,27 @@
-# $Header: /users/source/archives/cm_tools.vcs/src/permit/RCS/Makefile,v 3.0 1989/03/28 14:44:01 ste_cm Rel $
+# $Id: Makefile,v 8.0 1989/08/22 08:59:31 ste_cm Rel $
 # Top-level makefile for CM_TOOLS directory-level permissions utility
 #
 # $Log: Makefile,v $
-# Revision 3.0  1989/03/28 14:44:01  ste_cm
-# BASELINE Mon Jun 19 14:47:51 EDT 1989
+# Revision 8.0  1989/08/22 08:59:31  ste_cm
+# BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
 #
-#	Revision 2.0  89/03/28  14:44:01  ste_cm
-#	BASELINE Thu Apr  6 13:51:54 EDT 1989
+#	Revision 7.0  89/08/22  08:59:31  ste_cm
+#	BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
 #	
-#	Revision 1.4  89/03/28  14:44:01  dickey
-#	added 'all' dependency to 'install'
+#	Revision 6.0  89/08/22  08:59:31  ste_cm
+#	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
 #	
-#	Revision 1.3  89/03/28  10:15:49  dickey
-#	use MAKE-variable to encapsulate recursive-build info.
+#	Revision 5.0  89/08/22  08:59:31  ste_cm
+#	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
 #	
-#	Revision 1.2  89/03/27  14:03:22  dickey
-#	integration/cleanup for recursive make
+#	Revision 4.0  89/08/22  08:59:31  ste_cm
+#	BASELINE Thu Aug 24 10:39:23 EDT 1989 -- support:navi_011(rel2)
 #	
-#	Revision 1.1  89/03/23  10:53:57  dickey
-#	Initial revision
+#	Revision 3.1  89/08/22  08:59:31  dickey
+#	corrected 'destroy' rule
+#	
+#	Revision 3.0  89/03/28  14:44:01  ste_cm
+#	BASELINE Mon Jun 19 14:47:51 EDT 1989
 #	
 ####### (Development) ##########################################################
 B	= ../../bin
@@ -50,11 +53,11 @@ lint.out:	$(FIRST)
 	cd test;	$(MAKE) $@
 
 rdestroy\
-destroy:	$(FIRST) clobber
+destroy:	$(FIRST)
 	cd src;		$(MAKE) destroy
 	cd test;	$(MAKE) destroy
-	rmdir bin
-	rm -f *
+	rm -rf bin
+	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 
 install:	all $(ALL)
 deinstall:		; rm -f $(ALL)
