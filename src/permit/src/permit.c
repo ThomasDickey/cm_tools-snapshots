@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 3.0 1989/06/16 09:38:50 ste_cm Rel $";
+static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 8.0 1989/07/25 14:28:33 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,27 @@ static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit
  * Author:	T.E.Dickey
  * Created:	09 Mar 1989
  * $Log: permit.c,v $
- * Revision 3.0  1989/06/16 09:38:50  ste_cm
- * BASELINE Mon Jun 19 14:49:13 EDT 1989
+ * Revision 8.0  1989/07/25 14:28:33  ste_cm
+ * BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
  *
+ *		Revision 7.0  89/07/25  14:28:33  ste_cm
+ *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+ *		
+ *		Revision 6.0  89/07/25  14:28:33  ste_cm
+ *		BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ *		
+ *		Revision 5.0  89/07/25  14:28:33  ste_cm
+ *		BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+ *		
+ *		Revision 4.0  89/07/25  14:28:33  ste_cm
+ *		BASELINE Thu Aug 24 10:40:29 EDT 1989 -- support:navi_011(rel2)
+ *		
+ *		Revision 3.1  89/07/25  14:28:33  dickey
+ *		L_cuserid is not defined in apollo SR10 (bsd4.3)
+ *		
+ *		Revision 3.0  89/06/16  09:38:50  ste_cm
+ *		BASELINE Mon Jun 19 14:49:13 EDT 1989
+ *		
  *		Revision 2.2  89/06/16  09:38:50  dickey
  *		corrected copy to 'm_buffer[]'; removed redundant 'failed()'.
  *		
@@ -239,7 +257,7 @@ char	*s;
 {
 	auto	char	tmp[BUFSIZ];
 	auto	char	bfr[BUFSIZ];
-	auto	char	owner[L_cuserid+1];
+	auto	char	owner[BUFSIZ];
 	auto	FILE	*fp;
 	auto	struct stat sb;
 	auto	char	acc_file[BUFSIZ],
@@ -364,7 +382,7 @@ struct	stat	*sp;
 		list	[BUFSIZ],	/* users to add/expunge */
 		to_find	[BUFSIZ],	/* check-off list of users */
 		found	[BUFSIZ],	/* users found (for report) */
-		owner	[L_cuserid+1],
+		owner	[BUFSIZ],
 		tip	[80],		/* tip (top) version number */
 		key	[80],		/* current keyword */
 		tmp	[BUFSIZ];
