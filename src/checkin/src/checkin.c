@@ -1,7 +1,3 @@
-#ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.22 1994/11/08 23:49:52 tom Exp $";
-#endif
-
 /*
  * Title:	checkin.c (RCS checkin front-end)
  * Author:	T.E.Dickey
@@ -135,6 +131,8 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
 #include	<time.h>
 #include	<errno.h>
 extern	char	*mktemp(_ar1(char *,name));
+
+MODULE_ID("$Id: checkin.c,v 11.24 1995/01/28 20:15:05 tom Exp $")
 
 /* local declarations: */
 #define	CI_TOOL		"ci"
@@ -500,7 +498,7 @@ int	DoIt (
 	_DCL(char *,	args)
 {
 	int	code;
-#ifndef linux
+#if HAVE_SETRUID
 	int	fix_id;
 
 	if ((fix_id = (!geteuid() && getuid())) != 0) {
@@ -515,7 +513,7 @@ int	DoIt (
 	if (!silent || debug) shoarg(stdout, verb, args);
 	code = no_op ? 0 : execute(rcspath(verb), args);
 
-#ifndef linux
+#if HAVE_SETRUID
 	if (!no_op && fix_id) {
 		(void)setruid(HIS_uid);
 		(void)setrgid(HIS_gid);

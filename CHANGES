@@ -1,3 +1,22 @@
+1995-01-28  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/vcs/src/Makefile, src/vcs/Makefile, src/permit/src/Makefile, src/permit/Makefile, support/Makefile:
+	renamed-test-rule
+
+	* src/copy/src/copy.c:
+	if the target's already got an s-bit set (i.e., as a side-effect of mkdir),
+	keep it also.
+
+	* src/copy/src/copy.c: retain s-bits in destination directory
+
+	* src/checkup/src/checkup.c: I guess I _need_ IOBF definition!
+
+	* src/checkup/src/checkup.c, src/checkin/src/checkin.c: module-id
+
+	* src/checkin/src/checkin.c: portability-ifdef
+
+	* src/checkup/src/checkup.c: fixed ifdef's for setbuf
+
 1994-11-12  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/checkout/src/checkout.c: module-id

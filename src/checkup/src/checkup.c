@@ -1,7 +1,3 @@
-#ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src/RCS/checkup.c,v 11.5 1994/11/09 01:07:56 tom Exp $";
-#endif
-
 /*
  * Title:	checkup.c (link/directory tree)
  * Author:	T.E.Dickey
@@ -63,6 +59,8 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkup/src
 #include	<rcsdefs.h>
 #include	<sccsdefs.h>
 #include	<ctype.h>
+
+MODULE_ID("$Id: checkup.c,v 11.8 1995/01/28 20:28:58 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -489,12 +487,14 @@ _MAIN
 	register int j;
 
 	/* make stderr line-buffered, since we send our report that way */
-#ifdef	IOLBF
+#if defined(_IOLBF) && defined(IOLBF) && HAVE_SETVBUF
 	char	bfr[BUFSIZ];
 	if (!(stderr->_flag & _IOLBF))
 		(void)setvbuf(stderr, bfr, _IOLBF, sizeof(bfr));
 #else
+#  if HAVE_SETLINEBUF
 	(void)setlinebuf(stderr);
+#  endif
 #endif
 
 	redir_out = !isatty(fileno(stdout));
