@@ -1,3 +1,11 @@
+2001-08-28  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* aclocal.m4: small fixes for newer autoconf alpha's
+
+	* src/copy/src/copy.c:
+	for copying HUGE files (such as cdrom iso's), modified the -v behavior so
+	it will show ongoing percentage complete
+
 2001-06-22  Thomas E. Dickey  <dickey@clark.net>
 
 	* install-sh: resync with my-autoconf
