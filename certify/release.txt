@@ -1,8 +1,35 @@
-$Id: release.txt,v 4.0 1989/08/22 09:48:31 ste_cm Rel $
+$Id: release.txt,v 5.0 1989/10/24 16:55:36 ste_cm Rel $
 
 --------------------------------------------------------------------------------
 
-Version 4.0:
+Version 5.0:
+-----------
+Deleted utility 'rdiff', since we are now using GNU release of RCS, and need
+not work around source-licensing for that tool.
+
+Conversion to run with Apollo SR10.1:
+
+	* the 'copy' utility is not as essential, since the new 'cp' can
+	  preserve dates, but is retained because it 'cp' does not properly
+	  maintain file protection.
+
+	* the 'ded' utility has been modified to show extended ACLs and
+	  apollo object (file) types.
+
+	* some shell scripts were modified because the apollo sys5 'dirname'
+	  utility broke.
+
+Recoded from Bourne-shell into C-language (partly for better error checking,
+partly to bypass bugs in apollo SR10.1 Bourne shell):
+
+	baseline
+	rcsget
+	rcsput
+
+(As part of the rewrite, added option "-a" to each utility to handle directory
+names beginning with ".").
+
+Version 4.0:							89/08/22
 -----------
 Corrected "make destroy" in case RCS is a symbolic link.
 
@@ -12,7 +39,7 @@ Added options to checkup: "-o", "-d"; added "+" interpretation to "-r".
 
 Added CTL/R command to ded.  Corrected/enhanced "<" command.
 
-Version 3.0:
+Version 3.0:							89/05/11
 -----------
 Absorbed procedures from PORTUNIX and MDIFF into common-library.
 Ported (a subset of) common-library to VMS as CM_TOOLS.

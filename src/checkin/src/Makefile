@@ -1,15 +1,15 @@
-# $Id: Makefile,v 4.0 1989/08/22 10:20:45 ste_cm Rel $
+# $Id: Makefile,v 5.0 1989/10/23 15:18:43 ste_cm Rel $
 # Make-file for RCS checkin utilities
 #
 # $Log: Makefile,v $
-# Revision 4.0  1989/08/22 10:20:45  ste_cm
-# BASELINE Thu Aug 24 09:23:45 EDT 1989 -- support:navi_011(rel2)
+# Revision 5.0  1989/10/23 15:18:43  ste_cm
+# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
 #
-# Revision 3.1  89/08/22  10:20:45  dickey
-# corrected 'destroy' rule
+# Revision 4.1  89/10/23  15:18:43  dickey
+# rewrote 'rcsput' from Bourne-shell to C-language
 # 
-# Revision 3.0  89/03/28  11:57:11  ste_cm
-# BASELINE Mon Jun 19 13:07:30 EDT 1989
+# Revision 4.0  89/08/22  10:20:45  ste_cm
+# BASELINE Thu Aug 24 09:23:45 EDT 1989 -- support:navi_011(rel2)
 # 
 ####### (Environment) ##########################################################
 B	= ../bin
@@ -26,10 +26,8 @@ LINTOPT	= $(DEFINES) $(INCLUDES) -ltd
 #
 ####### (Standard Lists) #######################################################
 ALL	= $B/checkin $B/rcsput
-CSRC	= checkin.c
-SCRIPTS	= rcsput.sh
-SOURCES	= $(CSRC) $(SCRIPTS)
-MAIN_O	= checkin.o $(LIBS)
+CSRC	= checkin.c rcsput.c
+SOURCES	= $(CSRC)
 #
 ####### (Standard Productions) #################################################
 all:		sources $(ALL)
@@ -42,12 +40,15 @@ run_tests:
 sources:	$(SOURCES)
 #
 ####### (Details of Productions) ###############################################
-$B/checkin:	$(MAIN_O)	; $(CC) -o $@ $(MAIN_O)
-$B/rcsput:	rcsput.sh	; copy rcsput.sh $@
+$B/checkin:	checkin.o $(LIBS)	; $(CC) -o $@ checkin.o $(LIBS)
+$B/rcsput:	rcsput.o  $(LIBS)	; $(CC) -o $@ rcsput.o  $(LIBS)
 #
-checkin.o:	$I/ptypes.h $I/rcsdefs.h
+checkin.o \
+rcsput.o:	$I/ptypes.h $I/rcsdefs.h
 #
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
-lint.out:	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
+lint.out:	$(CSRC)
+	$(DATE)
+	sh -c 'for i in $?;do tdlint $(LINTOPT) $$i >>$@;done'
 lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

@@ -1,17 +1,16 @@
-# $Id: Makefile,v 4.0 1989/08/22 10:28:11 ste_cm Rel $
-# MAKE-file for RCS baseline utility
+# $Id: Makefile,v 5.0 1989/10/24 12:53:18 ste_cm Rel $
+# Make-file for RCS baseline utility
 #
 # $Log: Makefile,v $
-# Revision 4.0  1989/08/22 10:28:11  ste_cm
-# BASELINE Thu Aug 24 09:20:00 EDT 1989 -- support:navi_011(rel2)
+# Revision 5.0  1989/10/24 12:53:18  ste_cm
+# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
 #
-#	Revision 3.1  89/08/22  10:28:11  dickey
-#	corrected 'destroy' rule; patched out 'lint.out' & 'lincnt.out'
+#	Revision 4.1  89/10/24  12:53:18  dickey
+#	rewrote 'baseline' into C-language
 #	
-#	Revision 3.0  89/03/28  11:46:23  ste_cm
-#	BASELINE Mon Jun 19 13:02:34 EDT 1989
-#	
-
+# Revision 4.0  89/08/22  10:20:45  ste_cm
+# BASELINE Thu Aug 24 09:23:45 EDT 1989 -- support:navi_011(rel2)
+# 
 ####### (Environment) ##########################################################
 B	= ../bin
 I	= ../../common/interface
@@ -23,27 +22,31 @@ INCLUDES= -I$I
 CFLAGS  = $(DEFINES) $(INCLUDES) -O
 LIBS	= $L/lib.a
 DATE	= echo '****'`date` >> $@
-LINTOPT	= $(DEFINES) $(INCLUDES) -ltd -lapollo
+LINTOPT	= $(DEFINES) $(INCLUDES) -ltd
 #
 ####### (Standard Lists) #######################################################
 ALL	= $B/baseline
-SCRIPTS	= baseline.sh
-SOURCES	= $(SCRIPTS)
+CSRC	= baseline.c
+SOURCES	= $(CSRC)
 #
 ####### (Standard Productions) #################################################
 all:		sources $(ALL)
 #
 clean:				; rm -f *.o *.out
-clobber: 	clean		; rm -f $(ALL)
+clobber:	clean		; rm -f $(ALL)
 destroy:
 	sh -c 'for i in *;do case $$i in RCS);; *) rm -f $$i;;esac;done;exit 0'
 run_tests:
-sources: 	$(SOURCES)
+sources:	$(SOURCES)
 #
 ####### (Details of Productions) ###############################################
-$B/baseline:	baseline.sh	; copy baseline.sh $@
+$B/baseline:	baseline.o $(LIBS)	; $(CC) -o $@ baseline.o $(LIBS)
+#
+baseline.o:	$I/ptypes.h $I/rcsdefs.h
 #
 ####### (Development) ##########################################################
 $(SOURCES):			; $(GET) $@
-lint.out: #	$(CSRC)		; $(DATE); tdlint $(LINTOPT) $? >>$@
-lincnt.out: #	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@
+lint.out:	$(CSRC)
+	$(DATE)
+	sh -c 'for i in $?;do tdlint $(LINTOPT) $$i >>$@;done'
+lincnt.out:	$(CSRC)		; $(DATE); lincnt $(CSRC) >>$@

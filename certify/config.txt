@@ -1,4 +1,4 @@
-$Header: /users/source/archives/cm_tools.vcs/certify/RCS/config.txt,v 4.0 1989/05/11 13:00:53 ste_cm Rel $
+$Id: config.txt,v 5.0 1989/10/05 11:15:14 ste_cm Rel $
 
 --------------------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ To run (or test) the tools, you must have RCS (available from public domain
 sources).
 
 These tools have been tested on the Apollo, Gould and Sun systems at the SPC
-using RCS release 3 (1983).
+using RCS release 3 (1983), and RCS release 4.2 (GNU).
 
 The subtree "src/common" is designed to be portable among not only unix systems,
 but also (largely) to VAX/VMS.  On that system, the common-library tree is
@@ -21,8 +21,8 @@ installed as CM_TOOLS (there it requires the PORTUNIX tree).
 	Miscellaneous tools not included here, which are used in non-critical
 	make-rules:
 
-	Lint tools for the above systems:
+	Lint tools for the above systems (LINT_TOOLS):
 		tdlint
 		makellib
 
-	lincnt - C-language line counter
+	lincnt - C-language line counter (LINCNT)

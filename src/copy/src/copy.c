@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: copy.c,v 4.2 1989/09/06 15:53:55 dickey Exp $";
+static	char	Id[] = "$Id: copy.c,v 5.0 1989/10/10 16:06:35 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,17 @@ static	char	Id[] = "$Id: copy.c,v 4.2 1989/09/06 15:53:55 dickey Exp $";
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * $Log: copy.c,v $
- * Revision 4.2  1989/09/06 15:53:55  dickey
- * use access-defs in "ptypes.h"
+ * Revision 5.0  1989/10/10 16:06:35  ste_cm
+ * BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
  *
+ *		Revision 4.3  89/10/10  16:06:35  dickey
+ *		added code for apollo SR10.1 (ifdef'd to permit SR9 version)
+ *		which uses the new 'cp' utility to copy files (and their
+ *		types, as in SR9.7).
+ *		
+ *		Revision 4.2  89/09/06  15:53:55  dickey
+ *		use access-defs in "ptypes.h"
+ *		
  *		Revision 4.1  89/08/29  08:43:41  dickey
  *		corrected error-check after 'mkdir()' (if merging directories)
  *		
@@ -106,6 +114,7 @@ static	int	no_dir_yet;	/* disables access-test on destination-dir */
  ************************************************************************/
 
 #ifdef	apollo
+#ifndef	__STDC__
 #include	</sys/ins/base.ins.c>
 #include	</sys/ins/name.ins.c>
 
@@ -153,11 +162,12 @@ char	*dst, *src;
 	DEBUG "++ \"%s\" => \"%s\"\n", src, dst);
 	return (dst);
 }
-#endif	apollo
+#endif		/* __STDC__	*/
+#endif		/* apollo	*/
 
 /*
  * On apollo machines, each file has an object type, which is not necessarily
- * mapped into the unix system properly.  Invoke the native AEGIS 'cpf' program
+ * mapped into the unix system properly.  Invoke the native APOLLO program
  * to do the copy.
  */
 static
@@ -168,19 +178,34 @@ struct	stat	*new_sb;
 	int	retval	= -1;
 	char	bfr1[BUFSIZ];
 #ifdef	apollo
+#ifndef	__STDC__
 	char	bfr2[BUFSIZ];
+#endif	/* __STDC__ */
+
 	if (access(src,R_OK) < 0) {
 		perror(src);
 		return(-1);
 	}
 	*bfr1 = EOS;
+#ifdef	__STDC__
+	catarg(bfr1, "-p");	/* ...so we can test for success of copy */
+	catarg(bfr1, "-o");	/* ...to copy "real" apollo objects */
+	if (previous)
+		catarg(bfr1, "-f");
+	catarg(bfr1, src);
+	catarg(bfr1, dst);
+	DEBUG "++ cp %s\n", bfr1);
+	if (execute("/bin/cp", bfr1) < 0)
+#else	/* apollo sr9 */
 	catarg(bfr1, convert(bfr2,src));
 	catarg(bfr1, convert(bfr2,dst));
 	catarg(bfr1, "-pdt");	/* ...so we can test for success of copy */
 	if (previous)
 		catarg(bfr1, "-r");
 	DEBUG "++ cpf %s\n", bfr1);
-	if (execute("/com/cpf", bfr1) < 0) {
+	if (execute("/com/cpf", bfr1) < 0)
+#endif	/* apollo sr10/sr9 */
+	{
 		TELL "?? copy to %s failed\n", dst);
 		return (-1);
 	}
@@ -193,7 +218,7 @@ struct	stat	*new_sb;
 			return (-1);	/* copy was not successful */
 	}
 	retval = 0;
-#else	apollo
+#else	/* unix	*/
 	FILE	*ifp, *ofp;
 	int	num;
 	int	old_mode = new_sb->st_mode & 0777,
@@ -219,7 +244,7 @@ struct	stat	*new_sb;
 	FCLOSE(ifp);
 	if (retval < 0)		/* restore old-mode in case of err */
 		(void)chmod(dst, old_mode);
-#endif	apollo
+#endif	/* apollo/unix */
 	return (retval);
 }
 

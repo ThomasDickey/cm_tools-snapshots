@@ -6,7 +6,6 @@
 
 <!Font Definitions,
 	F21	=Typewriter 10,
-	F23	=Typewriter 12,
 	F27	=Classic 10,
 	F30	=Classic 12,
 	F31	=Classic 12 Bold,
@@ -95,7 +94,7 @@ V6,
 <Page Header, Frame =
 V6,
 (g9,1,0
- (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,June\ 15\,\ 1989)
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,October\ 26\,\ 1989)
  (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS\ baseline\ version\ script)
 
  (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,baseline)
@@ -237,6 +236,9 @@ number after a hyphen, e.g.,
 
 <options>
 
+-<F31>a<F0><Tab>permits baseline to process files in directories beginning 
+with <#7f>.".
+
 -<F31>m<F32>msg<F0><Tab>adds the string <#7f>--<SP><F32>msg<F0>" to 
 the default baseline revision message <#7f><F49>BASELINE<F0> <F32>date<F0>".
 
@@ -263,18 +265,30 @@ be baselined have been checked into <F32>rcs<F0> (e.g., with <#7f><F31>checkin
 checked into <F32>rcs<F0> (i.e., a corresponding archive file exists 
 in the subdirectory <#7f>RCS").
 
+<F31>Baseline<F0> requires that all of the working files have been 
+checked in (i.e., with the <#7f>-u" option so that they are retained 
+as working files).
+
+<F31>Baseline<F0> first invokes <F31>permit<F0> (to ensure that you 
+have permission to place locks in the directory, then to purge the 
+archive access lists, and finally to set the baseline-version for 
+the directory).  It then invokes <F31>checkin<F0> and <F31>checkout<F0> 
+(which must be in your path) to first place a lock on the specified 
+files, and then to check-in the file with the new, baseline version.
+
+If any files are found which are locked, <F31>baseline<F0> prints 
+an error message and halts.  Similarly, an attempt made to baseline 
+a file with a lower version than has been archived will result in 
+an error.
+
 <header>
 
 ENVIRONMENT
 
 <paragraph>
 
-<F31>Baseline<F0> is a Bourne-shell script.  It first invokes <F31>permit
-<F0> (to ensure that you have permission to place locks in the directory, 
-then to purge the archive access lists, and finally to set the baseline-version 
-for the directory).  It then invokes <F31>checkin<F0> and <F31>checkout
-<F0> (which must be in your path) to first place a lock on the specified 
-files, and then to check-in the file with the new, baseline version.
+<F31>Baseline<F0> is written in C, and runs under <F30@C>unix<F6@C>T<F0> 
+systems.
 
 <header>
 
@@ -285,6 +299,8 @@ FILES
 <F31>Baseline<F0> uses the following files
 
 <options>
+
+<F49>permit<F0><Tab>the RCS directory-permissions utility
 
 <F49>checkin<F0><Tab>the RCS check-in package
 
@@ -297,13 +313,6 @@ ANTICIPATED CHANGES
 <paragraph>
 
 <F31>Baseline<F0> does not currently handle branch deltas.
-
-<F31>Baseline<F0> assumes that all of the working files have been 
-checked in (i.e., with the <#7f>-u" option so that they are retained 
-as working files).
-
-<F31>Baseline<F0> assumes that the baseline version is higher than 
-any version in the  archive.
 
 <header>
 

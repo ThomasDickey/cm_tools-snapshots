@@ -1,3 +1,244 @@
+1989-10-27  dickey@software.org
+
+	* user/ded.doc: added apollo SR10.1 stuff for object-types, etc.
+
+1989-10-27  ste_cm@software.org
+
+	* user/ded.doc:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-27  dickey@software.org
+
+	* user/rcsput.doc: rewrote from Bourne-shell to C-language
+
+1989-10-27  ste_cm@software.org
+
+	* user/rcsput.doc:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* user/rcsput.doc:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-10-27  dickey@software.org
+
+	* user/rcsget.doc: rewrote from Bourne-shell script to C-language.
+
+1989-10-27  ste_cm@software.org
+
+	* user/rcsget.doc:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* user/rcsget.doc:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-10-27  dickey@software.org
+
+	* user/baseline.doc: rewrote from Bourne-shell into C-language
+
+1989-10-27  ste_cm@software.org
+
+	* user/baseline.doc:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-26  dickey@software.org
+
+	* src/checkout/src/rcsget.c: port to sun3
+
+1989-10-26  ste_cm@software.org
+
+	* src/checkout/src/rcsget.c:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-26  dickey@software.org
+
+	* src/checkin/src/rcsput.c: port to sun3
+
+1989-10-26  ste_cm@software.org
+
+	* src/checkin/src/rcsput.c:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-26  dickey@software.org
+
+	* src/baseline/src/baseline.c: port to sun3
+
+1989-10-26  ste_cm@software.org
+
+	* src/baseline/src/baseline.c:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-26  dickey@software.org
+
+	* src/checkup/src/checkup.c: use new procedure 'istextfile()'
+
+1989-10-26  ste_cm@software.org
+
+	* src/checkup/src/checkup.c:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-26  dickey@software.org
+
+	* src/checkout/src/rcsget.c, src/checkin/src/rcsput.c:
+	broke out 'track_wd()'
+	corrected usage-message
+
+	* src/baseline/src/baseline.c:
+	made the use of 'permit' a bit smarter by keeping track of paths we have
+	purged -- and doing this only when we are about to baseline a file.
+
+	* src/baseline/src/baseline.c: adjusted for correction in 'rcslast()'
+
+	* src/baseline/src/baseline.c: broke out 'track_wd()' module
+
+	* src/baseline/src/baseline.c:
+	altered options so we can merge all but '-m' option a la 'getopt()'.
+	check for locker-of-file to exit-on error.
+	write all error messages to stderr.
+
+1989-10-24  dickey@software.org
+
+	* certify/release.txt: rewrote 'baseline'
+
+1989-10-24  ste_cm@software.org
+
+	* certify/release.txt:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-24  dickey@software.org
+
+	* src/baseline/src/baseline.c: tuned verbosity
+
+	* src/baseline/src/baseline.c: RCS_BASE
+
+	* src/baseline/src/Makefile: rewrote 'baseline' into C-language
+
+1989-10-24  ste_cm@software.org
+
+	* src/baseline/src/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-24  dickey@software.org
+
+	* certify/release.txt: rewrote 'rcsput'
+
+	* src/checkin/src/rcsput.c:
+	adjusted verbosity, added test for binary vs textfile
+
+	* src/checkin/src/rcsput.c:
+	a bit more polishing (still no text-file check!)
+
+	* src/checkin/src/rcsput.c:
+	second cut: still have to check for text-file, tune options
+
+1989-10-23  dickey@software.org
+
+	* src/checkin/src/rcsput.c: RCS_BASE
+
+	* src/checkin/src/Makefile:
+	rewrote 'rcsput' from Bourne-shell to C-language
+
+1989-10-23  ste_cm@software.org
+
+	* src/checkin/src/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-20  dickey@software.org
+
+	* certify/release.txt: recoded rcsget utility
+
+1989-10-19  dickey@software.org
+
+	* src/checkout/src/rcsget.c: lint
+
+	* src/checkout/src/Makefile: updated lint-rule (now two programs)
+
+1989-10-19  ste_cm@software.org
+
+	* src/checkout/src/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-19  dickey@software.org
+
+	* src/checkout/src/rcsget.c:
+	disabled patch for '-n' option, ignore files which have no archive
+
+	* src/checkout/src/rcsget.c: RCS_BASE
+
+	* src/checkout/src/Makefile:
+	recoded 'rcsget' from Bourne-shell to C-language
+
+1989-10-13  dickey@software.org
+
+	* bin/Makefile: removed 'rdiff' from install-list
+
+1989-10-13  ste_cm@software.org
+
+	* bin/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* bin/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* bin/Makefile: BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* bin/Makefile: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* bin/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-10-10  dickey@software.org
+
+	* src/checkin/src/rcsput.sh:
+	made this work properly on apollo SR10.1 (dirname fails, must specify shell)
+
+	* src/checkout/src/rcsget.sh:
+	bypass apollo sr10.1 bug by specifying interpreter
+
+	* src/checkout/src/checkout.c:
+	corrected last change (if no directory name is explicit,
+	use ".")
+
+1989-10-10  ste_cm@software.org
+
+	* src/checkout/src/checkout.c:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-10  dickey@software.org
+
+	* src/copy/src/copy.c:
+	added code for apollo SR10.1 (ifdef'd to permit SR9 version)
+	which uses the new 'cp' utility to copy files (and their
+	types, as in SR9.7).
+
+1989-10-10  ste_cm@software.org
+
+	* src/copy/src/copy.c:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-05  dickey@software.org
+
+	* certify/release.txt: added first set of notes for baseline-5
+
+	* certify/config.txt: added note about RCS 4.2
+
+1989-10-05  ste_cm@software.org
+
+	* certify/config.txt:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-10-05  dickey@software.org
+
+	* Makefile: added 'lint.out', 'lincnt.out' rules
+
+1989-10-05  ste_cm@software.org
+
+	* Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* Makefile: BASELINE Mon Apr 30 12:49:21 1990 -- (CPROTO)
+
+	* Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
 1989-09-28  dickey@software.org
 
 	* src/Makefile: deleted 'rdiff' utility from this tree
