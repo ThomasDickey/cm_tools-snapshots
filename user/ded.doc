@@ -181,7 +181,7 @@ V6,
 <Page Header, Frame =
 V6,
 (g9,1,0
- (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,March\ 28\,\ 1990)
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,June\ 28\,\ 1990)
  (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,Directory\ Editor)
  (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,ded)
  (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,1,5,127,7,0,0,7,1,1,1,0.066667,0.06666
@@ -1182,7 +1182,7 @@ which directs <F31>ded<F0> to suppress subdirectories from the display.
 <F31>w<F0><Tab>Repaint the display.
 
 <F31>Z<F0><Tab>Directs <F31>ded<F0> to suppress from the display 
-all RCS and sccs directories.
+all RCS and SCCS directories.
 
 <paragraph>
 
@@ -1233,7 +1233,7 @@ The <F32>rcs<F0> file names are formed by suffixing the given file
 name with two characters (i.e., <#7f>,v").
 
 <F6>S<F0><Tab>For a given file, the corresponding <F32>sccs<F0> 
-files (by convention) reside in a subdirectory called <#7f>sccs".  
+files (by convention) reside in a subdirectory called <#7f>SCCS".  
 The sccs file names are formed by prefixing the given file name with 
 two characters (e.g., <#7f>p." and <#7f>s.").
 
@@ -1357,13 +1357,13 @@ current working directory, etc., e.g.,
 1D<Tab># path: //dickey/local/dickey<HR>
 1\r<Tab># path: //dickey/local/dickey/bin<HR>
 1E<Tab># chdir //dickey/local/dickey/bin<HR>
-1/sccs<HR>
-<Tab># "sccs"<HR>
-1e<Tab># "sccs"<HR>
+1/SCCS<HR>
+<Tab># "SCCS"<HR>
+1e<Tab># "SCCS"<HR>
 <Tab># process 1631 begun at Thu Mar 16 09:51:43 1989<HR>
 <Tab># argv[0] = '//dickey/local/dickey/bin/ded'<HR>
 <Tab># argv[1] = '-l//dickey/local/dickey/z'<HR>
-<Tab># argv[2] = 'sccs'<HR>
+<Tab># argv[2] = 'SCCS'<HR>
 1+<Tab># "s.Makefile"<HR>
 1+<Tab># "s.args.c"<HR>
 1+<Tab># "s.keycode.c"<HR>
@@ -1526,7 +1526,7 @@ and <#7f><F31>Z<F0>" commands.  If not specified, <F31>ded<F0> assumes
 <F49>SCCS_DIR<F0><Tab>gives the name of the <F32>sccs<F0> directories <F31>de
 d<F0> searches for the file list <#7f><F31>V<F0>", <#7f><F31>Y<F0>" 
 and <#7f><F31>Z<F0>" commands.  If not specified, <F31>ded<F0> assumes 
-<#7f>sccs".
+<#7f>SCCS".
 
 <header>
 

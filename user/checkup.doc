@@ -177,7 +177,7 @@ V6,
 <Page Header, Frame =
 V6,
 (g9,1,0
- (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,March\ 28\,\ 1990)
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,June\ 28\,\ 1990)
  (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS/SCCS\ check-in\ status)
  (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,checkup)
  (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
@@ -386,7 +386,7 @@ assumes <#7f>RCS".
 
 <F49>SCCS_DIR<F0><Tab>specifies the directory in which <F31>checkup<F0> 
 will find the <#7f>s." files.  If not specified, <F31>checkup<F0> 
-assumes <#7f>sccs".
+assumes <#7f>SCCS".
 
 <header>
 

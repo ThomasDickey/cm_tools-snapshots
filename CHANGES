@@ -1,3 +1,52 @@
+1990-06-29  dickey@software.org
+
+	* certify/release.txt:
+	added some notes about 'ded' and 'copy' that I have overlooked
+
+1990-06-29  ste_cm@software.org
+
+	* certify/release.txt:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+1990-06-29  dickey@software.org
+
+	* certify/config.txt: port to SunOs 4.1
+
+1990-06-29  ste_cm@software.org
+
+	* certify/config.txt:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+1990-06-28  dickey@software.org
+
+	* src/copy/src/copy.c:
+	corrected handling of (non-Apollo) user requests to copy to
+	a directory-path beginning with "~".
+
+1990-06-28  ste_cm@software.org
+
+	* src/copy/src/copy.c:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+1990-06-28  dickey@software.org
+
+	* user/checkup.doc: changed default sccs-directory name to "SCCS"
+
+1990-06-28  ste_cm@software.org
+
+	* user/checkup.doc:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* user/checkup.doc: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1990-06-28  dickey@software.org
+
+	* user/ded.doc: changed the default sccs-directory name to "SCCS"
+
+1990-06-22  dickey@software.org
+
+	* certify/release.txt: added note about 'sccs_dir.c'
+
 1990-05-21  dickey@software.org
 
 	* Makefile: corrected 'clobber' rule

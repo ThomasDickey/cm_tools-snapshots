@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: copy.c,v 7.4 1990/05/14 13:46:31 dickey Exp $";
+static	char	Id[] = "$Id: copy.c,v 8.0 1990/06/28 16:02:28 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,10 +7,17 @@ static	char	Id[] = "$Id: copy.c,v 7.4 1990/05/14 13:46:31 dickey Exp $";
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * $Log: copy.c,v $
- * Revision 7.4  1990/05/14 13:46:31  dickey
- * cleaned up last change by permitting user to coerce the copy
- * into a destination-directory by supplying a trailing '/'.
+ * Revision 8.0  1990/06/28 16:02:28  ste_cm
+ * BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
  *
+ *		Revision 7.5  90/06/28  16:02:28  dickey
+ *		corrected handling of (non-Apollo) user requests to copy to
+ *		a directory-path beginning with "~".
+ *		
+ *		Revision 7.4  90/05/14  13:46:31  dickey
+ *		cleaned up last change by permitting user to coerce the copy
+ *		into a destination-directory by supplying a trailing '/'.
+ *		
  *		Revision 7.3  90/05/14  12:28:16  dickey
  *		corrected logic which verifies args in 'copyit()'.
  *		also, added kludge so that copy via symbolic link to directory
@@ -551,17 +558,25 @@ static
 usage()
 {
 	auto	char	bfr[BUFSIZ];
+	static	char	*tbl[] = {
+ "Usage: copy [options] {[-d] | source [...]} destination"
+,""
+,"Options:"
+,"  -d  infer source (leaf) from destination path"
+,"  -i  interactive (prompt before overwriting)"
+#ifdef	S_IFLNK
+,"  -l  copy link-targets"
+#endif
+,"  -m  merge directories"
+,"  -n  no-op (show what would be copied)"
+,"  -s  enable set-uid/gid in target"
+,"  -u  reset effective uid before executing"
+,"  -v  verbose"
+		};
+	register int	j;
 	setbuf(stderr, bfr);
-	TELL "usage: copy [options] {[-d] | source [...]} destination\n\
-Options:\n\
-  -d  infer source (leaf) from destination path\n\
-  -i  interactive (prompt before overwriting)\n\
-  -l  copy link-targets\n\
-  -m  merge directories\n\
-  -n  no-op (show what would be copied)\n\
-  -s  enable set-uid/gid in target\n\
-  -u  reset effective uid before executing\n\
-  -v  verbose\n");
+	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
+		FPRINTF(stderr, "%s\n", tbl[j]);
 	(void)fflush(stderr);
 	(void)exit(FAIL);
 }
@@ -585,13 +600,14 @@ char	*argv[];
 	}
 
 	/* hacks to allow copying to a symbolic-link, or into a directory */
-	(void)strcpy(dst, argv[argc-1]);
+	abshome(strcpy(dst, argv[argc-1]));
 #ifdef	S_IFLNK
 	if (num == 2 && (dst[strlen(dst)-1] != '/'))
-		ok_dst = lstat(dst, &dst_sb) >= 0;
+		ok_dst = (lstat(dst, &dst_sb) >= 0);
 	else
 #endif
-		ok_dst =  stat(dst, &dst_sb) >= 0;
+		ok_dst = ( stat(dst, &dst_sb) >= 0);
+	(void)strcpy(dst, argv[argc-1]);	/* restore for verbose-mode */
 
 	if (ok_dst) {
 
@@ -680,7 +696,9 @@ char	*argv[];
 	while ((j = getopt(argc, argv, "dilmnsuv")) != EOF) switch (j) {
 	case 'd':	d_opt = TRUE;	break;
 	case 'i':	i_opt = TRUE;	break;
+#ifdef	S_IFLNK
 	case 'l':	l_opt = TRUE;	break;
+#endif
 	case 'm':	m_opt = TRUE;	break;
 	case 'n':	n_opt = TRUE;	break;
 	case 's':	s_opt = TRUE;	break;
