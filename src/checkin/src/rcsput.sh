@@ -1,4 +1,4 @@
-: '@(#)rcsput.sh	1.3 88/05/21 10:06:55'
+: '@(#)rcsput.sh	1.5 88/05/27 14:40:19'
 # Check-in one or more modules to RCS (T.E.Dickey).
 # This uses 'checkin' to maintain file modification dates as the checkin times.
 # 
@@ -89,8 +89,8 @@ do
 		echo '*** Ignored "'$i'" (not a file)'
 		continue
 	fi
-	j=$i,v
-	if [ -f RCS/$j ]
+	j=RCS/$i,v
+	if [ -f $j ]
 	then
 		echo '*** Checking differences for "'$i'"'
 		rcsdiff $BLANKS $i >/tmp/diff$$
@@ -98,19 +98,18 @@ do
 		then
 			if [ -z "$SILENT" ]
 			then
-				${PAGER-'more -lu'} /tmp/diff$$
+				${PAGER-'more'} /tmp/diff$$
 			fi
 			if [ -n "$LOG" ]
 			then
 				echo appending to logfile
 				cat /tmp/diff$$ >>$LOG
 			fi
-			rm -f /tmp/diff$$
 			ACT="D"
 		else
 			echo '*** no differences found ***'
 		fi
-		rm -f /tmp/$i
+		rm -f /tmp/diff$$
 	elif [ -f $i ]
 	then
 		if (file $i | fgrep -v packed | grep text$)

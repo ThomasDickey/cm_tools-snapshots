@@ -1,0 +1,344 @@
+<!OPS, Version = 5.2>
+
+<!Document,
+	Final Output Device =	"cx",
+	Default Printer =	"cx">
+
+<!Font Definitions,
+	F30 = Classic 12,
+	F21 = Typewriter 10,
+	F27 = Classic 10,
+	F34 = Classic 14 Bold,
+	F31 = Classic 12 Bold,
+	F32 = Classic 12 Italic,
+	F49 = Modern 12>
+
+<!Page>
+
+<!Autonumber Stream, List, 1>
+
+<!Autonumber Stream, Outline, 3,
+	Level 1 Symbol Type =	UPPER ROMAN,
+	Level 2 Symbol Type =	UPPER ALPHA>
+
+<!Class, bullet,
+	Top Margin =		0.083 inches,
+	Bottom Margin =		0 inches,
+	Left Margin =		0.50 inches,
+	First Indent =		-0.25 inches,
+	Font =			F30>
+
+<!Class, caption,
+	Top Margin =		0.07 inches,
+	Bottom Margin =		0.07 inches,
+	Line Spacing =		1.100 lines,
+	Font =			F30>
+
+<!Class, fixed,
+	Top Margin =		0.083 inches,
+	Bottom Margin =		0.083 inches,
+	Left Margin =		0.25 inches,
+	Right Margin =		-1 inches,
+	Line Spacing =		1.308 lines,
+	Alignment =		Left,
+	Font =			F21,
+	Hyphenation =		off,
+	Allow Page Break Within = no,
+	Left Tab =		0/0.64*10 inches>
+
+<!Class, footnote,
+	Top Margin =		0.07 inches,
+	Bottom Margin =		0.07 inches,
+	Left Margin =		0.25 inches,
+	First Indent =		-0.25 inches,
+	Line Spacing =		1.100 lines,
+	Font =			F30>
+
+<!Class, header,
+	Top Margin =		0.193 inches,
+	Bottom Margin =		0 inches,
+	Alignment =		Left,
+	Font =			F34,
+	Allow Page Break Within = no,
+	Allow Page Break After = no>
+
+<!Class, options,
+	Top Margin =		0.042 inches,
+	Bottom Margin =		0 inches,
+	Left Margin =		1.50 inches,
+	First Indent =		-1 inches,
+	Font =			F30,
+	Hyphenation =		off,
+	Allow Page Break Within = no,
+	Left Tab =		0/0.25 inches>
+
+<!Class, paragraph,
+	Top Margin =		0.083 inches,
+	Bottom Margin =		0 inches,
+	Left Margin =		0.25 inches,
+	Font =			F30>
+
+<!Class, subfixed,
+	Top Margin =		0.083 inches,
+	Bottom Margin =		0 inches,
+	Left Margin =		1.75 inches,
+	Right Margin =		-1 inches,
+	Line Spacing =		1.308 lines,
+	Alignment =		Left,
+	Font =			F21,
+	Hyphenation =		off,
+	Allow Page Break Within = no,
+	Left Tab =		0/0.64*10 inches>
+
+<!Class, subheader,
+	Top Margin =		0.097 inches,
+	Bottom Margin =		0 inches,
+	Left Margin =		0.25 inches,
+	Alignment =		Left,
+	Font =			F31,
+	Allow Page Break Within = no,
+	Allow Page Break After = no>
+
+<!Class, suboption,
+	Top Margin =		0.042 inches,
+	Bottom Margin =		0 inches,
+	Left Margin =		2.50 inches,
+	First Indent =		-1 inches,
+	Font =			F30,
+	Hyphenation =		off,
+	Allow Page Break Within = no,
+	Left Tab =		0/0.75/1.50 inches>
+
+<!Master Frame,
+	Name =			"At Anchor",
+	Placement =		At Anchor,
+	Width =			0.41 inches,
+	Height =		0.137 inches,
+	Vertical Alignment =	0.03 inches,
+	Diagram =
+V4,
+(g9,32767,0
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
+
+<!Master Frame,
+	Name =			Bottom,
+	Placement =		Bottom of Page,
+	Horizontal Alignment =	Center,
+	Width =			5.70 inches,
+	Height =		2.85 inches,
+	Diagram =
+V4,
+(g9,32767,0
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
+
+<!Master Frame,
+	Name =			"Following Anchor",
+	Placement =		Following Anchor,
+	Horizontal Alignment =	Center,
+	Width =			5.70 inches,
+	Height =		2.85 inches,
+	Diagram =
+V4,
+(g9,32767,0
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
+
+<!Master Frame,
+	Name =			"Following Text",
+	Placement =		Following Text,
+	Horizontal Alignment =	Center,
+	Width =			5.70 inches,
+	Height =		2.85 inches,
+	Diagram =
+V4,
+(g9,32767,0
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
+
+<!Master Frame,
+	Name =			Footnote,
+	Placement =		Bottom of Page,
+	Horizontal Alignment =	Left,
+	Same Page =		yes,
+	Width =			5.70 inches,
+	Height =		0.204 inches,
+	Diagram =
+V4,
+(g9,32767,0
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
+
+<!Master Frame,
+	Name =			Top,
+	Placement =		Top of Page,
+	Horizontal Alignment =	Center,
+	Width =			5.70 inches,
+	Height =		2.85 inches,
+	Diagram =
+V4,
+(g9,32767,0
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
+
+<Page Header, Frame =
+V4,
+(g9,1,0
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,May\ 27\,\ 1988)
+ (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ Check-out\ Script)
+ (t8,3,4,0,0.438782,0,17,@nnclas12b,rcsget)
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
+
+<Page Footer, Frame =
+V4,
+(g9,1,0
+ (t8,1,4,5.698608,0.478772,2,17,@nnclas10,)
+ (t8,2,4,2.849304,0.478772,1,17,@nnclas12b,-\ \240\ -)
+ (t8,3,4,0,0.478772,0,17,@nnclas10,)
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
+  667,6))>
+
+<header>
+
+<|,1>NAME
+
+<paragraph>
+
+<F31>rcsget<F0> <#1f> Rcs check-out script
+
+<header>
+
+USAGE
+
+<paragraph>
+
+<F31>rcsget<F32> [options] [file-specifications]
+
+<header>
+
+SYNOPSIS
+
+<paragraph>
+
+<F31>Rcsget<F0> is a simple interface to <F32>rcs<F0> (<F31>r<F0>evision 
+<F31>c<F0>ontrol <F31>s<F0>ystem), which is used to extract files 
+from <F32>rcs<F0> archives.
+
+<header>
+
+DESCRIPTION
+
+<paragraph>
+
+<F31>Rcsget<F0> checks out (extracts) files from an <F32>rcs<F0> 
+archive which have been checked in using <F31>rcsput <F0>or<F31> 
+checkin<F0>.  <F31>Rcsput<F0> checks in files, retaining their modification 
+date as the check-in date. <F31> Rcsget<F0> extracts a given version 
+of one or more files, and sets their modification date to match the 
+check-in date.
+
+<header>
+
+OPTIONS
+
+<paragraph>
+
+<F31>Rcsget<F0> is a directory-recursive interface to the <F31>co<F0> 
+utility which does special things with the file modification date.  
+Most of its options are passed to <F31>co<F0>, and then interpreted 
+to determine the correct modification date.  Options special to <F31>rcsget
+<F0> are:
+
+<options>
+
+-<F31>c<F0> <F32>cutoff<F0><Tab>specifies the <F32>rcs<F0> cutoff 
+date, in SCCS-format
+
+<Tab><Tab>YY[MM[DD[HH[MM[SS]]]]]
+
+<Tab>Punctuation in the date is permitted.  For example,
+
+<subfixed>
+
+-c 77/2/2 9:22:25
+
+<subfixed>
+
+-c 770202092225
+
+<options>
+
+<Tab>represent the same date.  This option is translated to the <F31>co<F0> 
+"-<F31>d<F0>" option.
+
+<header>
+
+OPERATIONS
+
+<paragraph>
+
+To extract files using <F31>rcsget<F0>, you must provide one or more 
+names.  They may be either file or directory names.
+
+<F31>Rcsget<F0> resolves names until it finds one of the form <#7f>RCS/<F32>fi
+le<F0>,v" before invoking <F31>co<F0>.  If it finds a directory 
+(other than <#7f>RCS"), <F31>rcsget<F0> will recur on itself to extract 
+files at lower levels.
+
+<header>
+
+<|,2>ENVIRONMENT
+
+<paragraph>
+
+<F31>Rcsget<F0> is a Bourne shell script.  On Apollo DOMAIN/IX, it 
+uses System<SP>5 features, including <F32>getopt<SP>(1)<F0>.  Environment 
+variables used by <F31>rcsget<F0> include:
+
+<options>
+
+<F49>RUNLIB<F0><Tab>identifies the execution path of this tool, and 
+of subordinate components (e.g., <F31>checkout<F0>).<Tab>
+
+<header>
+
+FILES
+
+<paragraph>
+
+<F31>Rcsget<F0> uses the following files:
+
+<options>
+
+<F49>rcsget<F0><Tab>the Bourne shell script<Tab>
+
+<F49>checkout<F0><Tab>a utility which invokes <F31>co<F0> and then 
+modifies the file's modification date  so that it matches the version-date 
+selected which was extracted via <F31>co<F0>.
+
+<header>
+
+ANTICIPATED CHANGES
+
+<paragraph>
+
+None.
+
+<header>
+
+SEE ALSO
+
+<paragraph>
+
+checkin, checkout, rcsput, ded, co<SP>(1)
+
+<header>
+
+AUTHOR:
+
+<paragraph>
+
+Thomas Dickey (Software Productivity Consortium).
+
