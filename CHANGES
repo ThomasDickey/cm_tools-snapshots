@@ -1,3 +1,8 @@
+1989-02-27  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	set @comment option for .com, .e, .mms and .mk as well as Makefile/makefile
+
 1989-01-24  dickey@software.org
 
 	* user/copy.doc, user/ded.doc: updated for new release
