@@ -1,3 +1,8 @@
+1996-07-05  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/checkup/src/checkup.c:
+	added to "-a" option: show names of non-text files
+
 1995-09-21  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/link2rcs/src/link2rcs.c:
