@@ -1,3 +1,57 @@
+1989-11-30  dickey@software.org
+
+	* src/link2rcs/src/link2rcs.c: added -q option
+
+	* src/link2rcs/src/link2rcs.c:
+	tested this on an example, corrected a couple of bugs
+
+	* src/link2rcs/src/link2rcs.c:
+	completed first draft (ready for testing)
+
+	* src/link2rcs/src/link2rcs.c:
+	got this to the point where we save/retrieve the target-data
+
+1989-11-29  dickey@software.org
+
+	* src/link2rcs/src/link2rcs.c: RCS_BASE
+
+	* src/link2rcs/src/Makefile: rewrote link2rcs as a C-language program
+
+1989-11-07  dickey@software.org
+
+	* src/baseline/src/baseline.c:
+	corrected code which infers current-baseline
+
+	* src/baseline/src/baseline.c:
+	corrected treatment of "-r" option (recur only when asked)
+
+	* src/baseline/src/baseline.c:
+	added "-f" option, tuned some verboseness.
+
+1989-11-03  dickey@software.org
+
+	* src/checkout/src/rcsget.c:
+	additional correction: if file does not exist, it is ok to
+	ask 'checkout' to get it!  Added a hack ("-?" option) to
+	get checkout to show its options in this usage-message.
+
+1989-11-03  ste_cm@software.org
+
+	* src/checkout/src/rcsget.c:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-11-02  dickey@software.org
+
+	* src/checkout/src/rcsget.c: oops: did cleanup, but not bug-fix!
+
+1989-11-01  dickey@software.org
+
+	* src/checkin/src/rcsput.c, src/checkout/src/rcsget.c:
+	walktree passes null pointer to stat-block if no-access.
+
+	* src/baseline/src/baseline.c:
+	walktree passes null-pointer to stat-block if no-access.
+
 1989-10-27  dickey@software.org
 
 	* user/ded.doc: added apollo SR10.1 stuff for object-types, etc.

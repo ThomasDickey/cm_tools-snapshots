@@ -1,11 +1,27 @@
 #ifndef	lint
-static	char	Id[] = "$Id: rcsget.c,v 5.0 1989/10/26 12:08:49 ste_cm Rel $";
+static	char	Id[] = "$Id: rcsget.c,v 6.0 1989/11/03 08:09:33 ste_cm Rel $";
 #endif	lint
 
 /*
  * Title:	rcsget.c (rcs get-tree)
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
+ * $Log: rcsget.c,v $
+ * Revision 6.0  1989/11/03 08:09:33  ste_cm
+ * BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+ *
+ *		Revision 5.3  89/11/03  08:09:33  dickey
+ *		additional correction: if file does not exist, it is ok to
+ *		ask 'checkout' to get it!  Added a hack ("-?" option) to
+ *		get checkout to show its options in this usage-message.
+ *		
+ *		Revision 5.2  89/11/02  15:36:38  dickey
+ *		oops: did cleanup, but not bug-fix!
+ *		
+ *		Revision 5.1  89/11/01  15:09:41  dickey
+ *		walktree passes null pointer to stat-block if no-access.
+ *		
+ *
  * Function:	Use 'checkout' to checkout one or more files from the
  *		RCS-directory which is located in the current working
  *		directory, and then, to set the modification date of the
@@ -20,6 +36,7 @@ static	char	Id[] = "$Id: rcsget.c,v 5.0 1989/10/26 12:08:49 ste_cm Rel $";
 #include	"rcsdefs.h"
 extern	char	*pathcat();
 extern	char	*pathleaf();
+extern	char	*sccs_dir();
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
@@ -97,39 +114,36 @@ char	*name;
 struct	stat	*sp;
 {
 	auto	char	tmp[BUFSIZ],
-			*s = pathcat(tmp, path, name),
-			*t;
+			*s = pathcat(tmp, path, name);
 	auto	struct	stat	sb;
 
-	if (isDIR(sp->st_mode)) {
+	if (sp == 0)
+		checkout(name);
+	else if (isDIR(sp->st_mode)) {
 		abspath(s);		/* get rid of "." and ".." names */
-		if (!a_opt) {
-			t = pathleaf(s);
-			if (*t == '.')
-				return (-1);
-		}
-		if (sameleaf(s, sccs_dir()))
-			return (-1);
-		if (sameleaf(s, rcs_dir())) {
+		if (!a_opt && *pathleaf(s) == '.')
+			ok_acc = -1;
+		else if (sameleaf(s, sccs_dir()))
+			ok_acc = -1;
+		else if (sameleaf(s, rcs_dir())) {
 			if (d_opt) {
 				(void)walktree(strcpy(working,path),
 					name, scan_archive, "r", level);
 			}
-			return (-1);
-		}
-		track_wd(path);
+			ok_acc = -1;
+		} else
+			track_wd(path);
 	} else if (isFILE(sp->st_mode)) {
 		track_wd(path);
 		if (d_opt && (level > 0)) {
-			return (ok_acc);
-		}
-		if (stat(name2rcs(name), &sb) >= 0
-		&&  isFILE(sb.st_mode))
+			;
+		} else if (stat(name2rcs(name), &sb) >= 0
+		    &&	isFILE(sb.st_mode))
 			checkout(name);
 		else
 			PRINTF("?? ignored: %s\n", name);
 	} else
-		return (-1);
+		ok_acc = -1;
 	return(ok_acc);
 }
 
@@ -140,10 +154,11 @@ char	*name;
 	(void)walktree((char *)0, name, scan_tree, "r", 0);
 }
 
-usage()
+static
+usage(option)
 {
 	static	char	*tbl[] = {
- "usage: [options] files"
+ "usage: rcsget [options] files"
 ,""
 ,"Options include all CHECKOUT options, plus:"
 ," -a    process all directories, including those beginning with \".\""
@@ -153,6 +168,8 @@ usage()
 	register int	j;
 	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
 		FPRINTF(stderr, "%s\n", tbl[j]);
+	if (option == '?')
+		checkout("-?");
 	exit(FAIL);
 }
 
@@ -172,7 +189,7 @@ char	*argv[];
 			case 'a':	a_opt = TRUE;	break;
 			case 'd':	d_opt = TRUE;	break;
 			case 'n':	n_opt = TRUE;	break;
-			default:	usage();
+			default:	usage(s[1]);
 			}
 		} else {
 			do_arg(s);
