@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * Modified:
+ *		05 Jul 1995, show names of non-text files for -a option
  *		08 Nov 1994, refined interaction between stdout/stderr.
  *		03 Aug 1994, use 'lastrev()'; related interface changes.
  *		22 Sep 1992, gcc warnings
@@ -60,7 +61,7 @@
 #include	<sccsdefs.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: checkup.c,v 11.8 1995/01/28 20:28:58 tom Exp $")
+MODULE_ID("$Id: checkup.c,v 11.9 1996/07/05 23:28:29 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -392,6 +393,8 @@ int	WALK_FUNC(do_stat)
 			}
 		} else if ((ok_text = istextfile(name)) != 0) {
 			change	= "not archived";
+		} else if (allnames) {
+			change	= "not a text-file";
 		}
 #ifdef	S_IFLNK
 		}
