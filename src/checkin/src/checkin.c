@@ -132,7 +132,7 @@
 #include	<errno.h>
 extern	char	*mktemp(_ar1(char *,name));
 
-MODULE_ID("$Id: checkin.c,v 11.27 2001/12/11 14:54:17 tom Exp $")
+MODULE_ID("$Id: checkin.c,v 11.28 2002/07/03 12:54:14 tom Exp $")
 
 /* local declarations: */
 #define	CI_TOOL		"ci"
@@ -892,7 +892,7 @@ int	RcsInitialize(_AR0)
 				if (*s)
 					s++;
 				define_prefix(suffix, prefix);
-				while (*s == ',' || isspace(*s))
+				while (*s == ',' || isspace(UCH(*s)))
 					s++;
 			}
 		}

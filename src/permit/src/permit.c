@@ -46,7 +46,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: permit.c,v 11.8 2001/12/11 14:57:01 tom Exp $")
+MODULE_ID("$Id: permit.c,v 11.9 2002/07/03 12:54:14 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -140,7 +140,7 @@ void	del_list(
 
 	while (*list) {
 		if ((next = strchr(list, ',')) != NULL) {
-			if ((next++ - list) == len)
+			if ((next++ - list) == (int) len)
 				if (!strncmp(list,key,len)) {
 					char	*save = list;
 					while ((*list++ = *next++) != EOS)

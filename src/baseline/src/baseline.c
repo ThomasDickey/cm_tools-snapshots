@@ -39,7 +39,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: baseline.c,v 11.5 2001/12/11 14:53:24 tom Exp $")
+MODULE_ID("$Id: baseline.c,v 11.6 2002/07/03 12:54:14 tom Exp $")
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
@@ -315,7 +315,7 @@ _MAIN
 	for (j = 1; j < argc; j++) {
 		if (*(s = argv[j]) == '-') {
 			while (*(++s)) {
-				if (isdigit(*s)) {
+				if (isdigit(UCH(*s))) {
 					if ((revision = strtol(s, &d, 10)) < 2)
 						usage();
 					s = d - 1;

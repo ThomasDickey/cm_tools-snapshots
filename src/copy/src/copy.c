@@ -3,6 +3,9 @@
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		03 Jul 2002, workaround for broken NFS implementation, which
+ *			     allows root to open a file for input but not to
+ *			     read data from it.
  *		28 Aug 2001, show percent-progress on very large files.
  *			     Remove apollo code.
  *		09 Jan 2001, add -a option.
@@ -115,7 +118,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.26 2001/08/28 23:20:55 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.29 2002/07/03 18:06:25 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -334,7 +337,7 @@ void	progress(
 				last = time((time_t *)0);
 			} else if ((now = time((time_t *)0)) != last) {
 				last = now;
-				fprintf(stderr, "%.1f%%\r",
+				FPRINTF(stderr, "%.1f%%\r",
 					(numer * 100.0) / denom);
 			}
 		}
@@ -362,8 +365,11 @@ int	copyfile(
 	unsigned long num;
 	unsigned long transferred = 0;
 	int	did_chmod = TRUE;
-	int	old_mode = new_sb->st_mode & S_MODEBITS,
-		tmp_mode = old_mode | S_IWUSR;	/* must be writeable! */
+	int	old_mode = new_sb->st_mode & S_MODEBITS;
+	int	tmp_mode = old_mode | S_IWUSR;	/* must be writeable! */
+	size_t	want	= (((long)new_sb->st_size > (long)sizeof(bfr1))
+				? sizeof(bfr1)
+				: new_sb->st_size);
 
 	VERBOSE("** copy %s to %s\n", src, dst);
 	if (n_opt)
@@ -371,25 +377,30 @@ int	copyfile(
 
 	if ((ifp = fopen(src, "r")) == 0) {
 		problem("fopen(src)", src);
+	} else if ((num = fread(bfr1, sizeof(char), want, ifp)) < want) {
+		VERBOSE("?? cannot read %s\n", src);
+		did_chmod = FALSE;
 	} else if (previous && SetMode(dst, tmp_mode) < 0) {
 		did_chmod = FALSE;
 	} else if ((ofp = fopen(dst, previous ? "w+" : "w")) == 0) {
 		problem("fopen(dst)", dst);
 	} else {
 		retval = 0;		/* probably will go ok now */
-		while ((num = fread(bfr1, 1, sizeof(bfr1), ifp)) > 0) {
+		do {
 			progress(transferred, new_sb->st_size);
-			if (fwrite(bfr1, 1, (size_t)num, ofp) != num) {
+			if (fwrite(bfr1, sizeof(char), (size_t)num, ofp) != num) {
 					/* no, error found anyway */
 				retval = -1;
 				problem("fwrite", dst);
 				break;
 			}
-			transferred += num;
-		}
+			progress(transferred += num, new_sb->st_size);
+		} while ((num = fread(bfr1, sizeof(char), want, ifp)) > 0);
 		FCLOSE(ofp);
+		progress(transferred, new_sb->st_size);
 	}
-	FCLOSE(ifp);
+	if (ifp != 0)
+		FCLOSE(ifp);
 	if (retval < 0		/* restore old-mode in case of err */
 	 && did_chmod)
 		RestoreMode(dst, new_sb);
