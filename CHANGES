@@ -1,3 +1,8 @@
+1988-12-14  dickey@software.org
+
+	* src/checkout/src/checkout.c:
+	use 'vercmp()' to correct a problem with timestamps
+
 1988-12-06  dickey@software.org
 
 	* src/checkin/src/checkin.c:
