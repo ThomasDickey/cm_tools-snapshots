@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: rcsput.c,v 7.0 1990/04/19 08:32:49 ste_cm Rel $";
+static	char	Id[] = "$Id: rcsput.c,v 8.0 1990/08/14 14:16:27 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,15 @@ static	char	Id[] = "$Id: rcsput.c,v 7.0 1990/04/19 08:32:49 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * $Log: rcsput.c,v $
- * Revision 7.0  1990/04/19 08:32:49  ste_cm
- * BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+ * Revision 8.0  1990/08/14 14:16:27  ste_cm
+ * BASELINE Tue Aug 14 14:19:47 1990 -- ADA_TRANS, LINCNT
  *
+ *		Revision 7.1  90/08/14  14:16:27  dickey
+ *		lint
+ *		
+ *		Revision 7.0  90/04/19  08:32:49  ste_cm
+ *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+ *		
  *		Revision 6.2  90/04/19  08:32:49  dickey
  *		added "-T" option (to permit non-checkin tool use)
  *		
@@ -47,6 +53,7 @@ extern	char	*dftenv();
 extern	char	*pathcat();
 extern	char	*pathleaf();
 extern	char	*sccs_dir();
+extern	char	*tmpnam();
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
@@ -259,7 +266,7 @@ char	*argv[];
 	pager = dftenv("more -l", "PAGER");
 	for (j = 1; j < argc; j++) {
 		if (*(s = argv[j]) == '-') {
-			if (strchr("qrfklumnNst", (long)s[1]) != 0) {
+			if (strchr("qrfklumnNst", (size_t)s[1]) != 0) {
 				catarg(ci_opts, s);
 				if (s[1] == 'q') {
 					quiet = TRUE;

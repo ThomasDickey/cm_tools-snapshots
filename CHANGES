@@ -1,3 +1,94 @@
+1990-08-21  dickey@software.org
+
+	* src/link2rcs/src/link2rcs.c:
+	pass the value of the "-s" option down to 'find_src()' so that
+	in case the user combines this with a wildcard on the actual
+	source-paths, we can prune off the beginning portion of the
+	source-path arguments (fixes a problem using 'relpath()').
+
+	* src/link2rcs/src/link2rcs.c:
+	corrected code in 'path_to()', which was not properly testing
+	for leading "./" in its argument.
+
+1990-08-14  dickey@software.org
+
+	* src/checkin/src/rcsput.c: lint
+
+1990-08-14  ste_cm@software.org
+
+	* src/checkin/src/rcsput.c:
+	BASELINE Tue Aug 14 14:19:47 1990 -- ADA_TRANS, LINCNT
+
+1990-08-14  dickey@software.org
+
+	* src/checkin/src/checkin.c: lint
+
+1990-08-14  ste_cm@software.org
+
+	* src/checkin/src/checkin.c:
+	BASELINE Tue Aug 14 14:19:47 1990 -- ADA_TRANS, LINCNT
+
+1990-08-14  dickey@software.org
+
+	* src/checkout/src/rcsget.c: lint
+
+1990-08-14  ste_cm@software.org
+
+	* src/checkout/src/rcsget.c:
+	BASELINE Tue Aug 14 14:11:43 1990 -- ADA_TRANS, LINCNT
+
+1990-08-14  dickey@software.org
+
+	* src/checkout/src/checkout.c: lint
+
+1990-08-14  ste_cm@software.org
+
+	* src/checkout/src/checkout.c:
+	BASELINE Tue Aug 14 14:11:43 1990 -- ADA_TRANS, LINCNT
+
+1990-08-14  dickey@software.org
+
+	* src/baseline/test/run_test.sh: bypass bug in Apollo Bourne-shell
+
+1990-08-14  ste_cm@software.org
+
+	* src/baseline/test/run_test.sh:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* src/baseline/test/run_test.sh:
+	BASELINE Tue Aug 14 09:45:20 1990 -- LINCNT, ADA_TRANS
+
+1990-08-13  dickey@software.org
+
+	* user/copy.doc: bring this up to date for baseline
+
+1990-08-13  ste_cm@software.org
+
+	* user/copy.doc: BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* user/copy.doc: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1990-08-13  dickey@software.org
+
+	* user/ded.doc: bring this up to date for baseline
+
+1990-08-13  ste_cm@software.org
+
+	* user/ded.doc: BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* user/ded.doc: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1990-08-13  dickey@software.org
+
+	* user/link2rcs.doc: described options "-b", "-e" and "-f"
+
+1990-08-13  ste_cm@software.org
+
+	* user/link2rcs.doc:
+	BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+
+	* user/link2rcs.doc: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
 1990-06-29  dickey@software.org
 
 	* certify/release.txt:

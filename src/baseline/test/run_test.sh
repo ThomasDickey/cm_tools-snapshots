@@ -1,10 +1,23 @@
-: '$Header: /users/source/archives/cm_tools.vcs/src/baseline/test/RCS/run_test.sh,v 7.0 1989/06/16 09:50:29 ste_cm Rel $'
+#!/bin/sh
+# $Id: run_test.sh,v 9.0 1990/08/14 08:55:16 ste_cm Rel $
 # test-script for RCS baseline utility
 #
 # $Log: run_test.sh,v $
-# Revision 7.0  1989/06/16 09:50:29  ste_cm
-# BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+# Revision 9.0  1990/08/14 08:55:16  ste_cm
+# BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
 #
+# Revision 8.0  90/08/14  08:55:16  ste_cm
+# BASELINE Tue Aug 14 09:45:20 1990 -- LINCNT, ADA_TRANS
+# 
+# Revision 7.1  90/08/14  08:55:16  dickey
+# bypass bug in Apollo Bourne-shell
+# 
+# Revision 8.0  89/06/16  09:50:29  ste_cm
+# BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+# 
+# Revision 7.0  89/06/16  09:50:29  ste_cm
+# BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+# 
 # Revision 6.0  89/06/16  09:50:29  ste_cm
 # BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
 # 

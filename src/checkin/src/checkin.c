@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: checkin.c,v 7.0 1990/04/19 12:06:04 ste_cm Rel $";
+static	char	Id[] = "$Id: checkin.c,v 8.0 1990/08/14 14:14:56 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,15 @@ static	char	Id[] = "$Id: checkin.c,v 7.0 1990/04/19 12:06:04 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * $Log: checkin.c,v $
- * Revision 7.0  1990/04/19 12:06:04  ste_cm
- * BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+ * Revision 8.0  1990/08/14 14:14:56  ste_cm
+ * BASELINE Tue Aug 14 14:19:47 1990 -- ADA_TRANS, LINCNT
  *
+ *		Revision 7.1  90/08/14  14:14:56  dickey
+ *		lint
+ *		
+ *		Revision 7.0  90/04/19  12:06:04  ste_cm
+ *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+ *		
  *		Revision 6.3  90/04/19  12:06:04  dickey
  *		corrected missing braces which broke 'chmod()' in last change
  *		
@@ -753,7 +759,7 @@ char	*argv[];
 			catarg(opt_all, s);
 			if (*++s == 'q')
 				silent++;
-			if (strchr(REV_OPT, (long)*s)) {
+			if (strchr(REV_OPT, (size_t)*s)) {
 				if (*s == 'l')	locked = TRUE;
 				if (*(++s)) {
 					s = strcpy(opt_rev, s);
@@ -870,7 +876,7 @@ char	*argv[];
 				from_keys++;
 			if (is_t_opt(argv[j]))
 				t_option = argv[j];
-			if (strchr("rfkluqmnNst", (long)*s) == 0) {
+			if (strchr("rfkluqmnNst", (size_t)*s) == 0) {
 				if (*s == 'd') {
 					no_op++;
 					continue;
