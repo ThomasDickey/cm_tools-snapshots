@@ -1,3 +1,39 @@
+1989-09-28  dickey@software.org
+
+	* src/Makefile: deleted 'rdiff' utility from this tree
+
+1989-09-28  ste_cm@software.org
+
+	* src/Makefile:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+	* src/Makefile: BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+
+	* src/Makefile:
+	BASELINE Thu Mar 29 07:37:55 1990 -- maintenance release (SYNTHESIS)
+
+1989-09-21  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	added "rcs -c" decoding for IMakefile, AMakefile, changed
+	the decoding for ".com"
+
+1989-09-21  ste_cm@software.org
+
+	* src/checkin/src/checkin.c:
+	BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+
+1989-09-07  dickey@software.org
+
+	* src/vcs/src/vcs.c: RCS_BASE
+
+1989-09-06  dickey@software.org
+
+	* src/copy/src/copy.c: use access-defs in "ptypes.h"
+
+	* src/vcs/src/Makefile, src/vcs/test/Makefile, src/vcs/Makefile:
+	RCS_BASE
+
 1989-08-29  dickey@software.org
 
 	* src/copy/src/copy.c:

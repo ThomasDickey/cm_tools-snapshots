@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: copy.c,v 4.1 1989/08/29 08:43:41 dickey Exp $";
+static	char	Id[] = "$Id: copy.c,v 4.2 1989/09/06 15:53:55 dickey Exp $";
 #endif	lint
 
 /*
@@ -7,9 +7,12 @@ static	char	Id[] = "$Id: copy.c,v 4.1 1989/08/29 08:43:41 dickey Exp $";
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * $Log: copy.c,v $
- * Revision 4.1  1989/08/29 08:43:41  dickey
- * corrected error-check after 'mkdir()' (if merging directories)
+ * Revision 4.2  1989/09/06 15:53:55  dickey
+ * use access-defs in "ptypes.h"
  *
+ *		Revision 4.1  89/08/29  08:43:41  dickey
+ *		corrected error-check after 'mkdir()' (if merging directories)
+ *		
  *		Revision 4.0  89/03/30  15:13:05  ste_cm
  *		BASELINE Thu Aug 24 10:16:23 EDT 1989 -- support:navi_011(rel2)
  *		
@@ -63,6 +66,7 @@ static	char	Id[] = "$Id: copy.c,v 4.1 1989/08/29 08:43:41 dickey Exp $";
  *		fault in the system?
  */
 
+#define		ACC_PTYPES	/* include access-definitions */
 #define		DIR_PTYPES	/* include directory-definitions */
 #define		STR_PTYPES	/* include string-definitions */
 #include	"ptypes.h"
@@ -71,9 +75,6 @@ extern	int	errno;
 extern	int	optind;		/* index in 'argv[]' of first argument */
 extern	char	*pathcat(),
 		*pathleaf();
-
-#define	R_OK	4
-#define	W_OK	2
 
 #define	TELL	FPRINTF(stderr,
 #define	VERBOSE	if (v_opt) TELL

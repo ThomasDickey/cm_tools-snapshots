@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t19890829
+MANIFEST for cm_tools, version t19890928
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -73,6 +73,13 @@ src/permit/src/permit.c         setuid-style admin utility
 src/permit/test                 subdirectory
 src/permit/test/Makefile        makefile for 'permit' regression tests
 src/permit/test/run_test.sh     test/example script for 'permit' utility (no-op mode only)
+src/vcs                         subdirectory
+src/vcs/Makefile                top-level makefile for CM_TOOLS's VCS utility
+src/vcs/src                     subdirectory
+src/vcs/src/Makefile            makefile for VCS-tool
+src/vcs/src/vcs.c               first sketch of VCS tool (far from complete!)
+src/vcs/test                    subdirectory
+src/vcs/test/Makefile           makefile for VCS's test-directory
 support                         subdirectory
 support/Makefile                make-file for CM_TOOLS support utilities
 support/copy.sh                 copy-script to use til we have a working copy utility
