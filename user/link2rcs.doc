@@ -177,7 +177,7 @@ V6,
 <Page Header, Frame =
 V6,
 (g9,1,0
- (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,December\ 7\,\ 1989)
+ (t14,1,4,5.698608,0.438782,2,7,0,0,,wst:clas12b,August\ 13\,\ 1990)
  (t14,2,4,2.849304,0.438782,1,7,0,0,,wst:clas12b,RCS\ directory\ template)
  (t14,3,4,0,0.438782,0,7,0,0,,wst:clas12b,link2rcs)
  (E15,0,0,5,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,5,127,7,0,0,7,1,1,1,0.066667,
@@ -247,26 +247,57 @@ OPTIONS
 option <#7f>-<F31>a<F0>", this enables the processing of names beginning 
 with <#7f>.".
 
+<options>
+
+-<F31>b<F0> <F32>num<F0><Tab>directs <F31>link2rcs<F0> to avoid generating 
+directories which do not correspond to a source-directory with the 
+given <F32>rcs<F0> baseline.  Use <#7f>-<F31>b<F0>0" to suppress directories 
+which do not correspond to any <F32>rcs<F0> baseline.
+
+<options>
+
 -<F31>d<F0> <F32>path<F0><Tab>specifies the destination directory.  
 You must always specify this if you don't specify the <#7f>-<F31>s<F0>" 
 option.
 
+<options>
+
+-<F31>e<F0> <F32>env<F0><Tab>(Apollo only) specifies the name of an 
+environment variable which can be used to substitute for the beginning 
+of the link-text.
+
+<options>
+
+-<F31>f<F0><Tab>makes links to files as well as directories.
+
+<options>
+
 -<F31>m<F0><Tab>merge against destination, i.e., don't quit if a target 
 directory or link is found.
+
+<options>
 
 -<F31>n<F0><Tab>(no-op) causes <F31>link2rcs<F0> to compute the modifications 
 and to display them (according to the setting of <#7f>-<F31>q<F0>" 
 and <#7f>-<F31>v<F0>"), but not to modify the target directory tree.
 
+<options>
+
 -<F31>r<F0><Tab>directs link2rcs to compute relative pathnames for 
 the symbolic links which it creates.  Normally the links are made 
 with an absolute pathname (e.g., <#7f><F136>/u1/foo/RCS<F0>").
 
+<options>
+
 -<F31>q<F0><Tab>(quiet) undoes <#7f>-<F31>v<F0>", eliminates most 
 messages.
 
+<options>
+
 -<F31>s<F0> <F32>path<F0><Tab>specifies the source directory.  Normally 
 you need not specify this; it defaults to <#7f>.".
+
+<options>
 
 -<F31>v<F0><Tab>(verbose) shows shell-command equivalents to the modifications 
 which are made.
@@ -293,15 +324,21 @@ which you wish to create the template directory, and the <#7f>." specifies
 the current working directory.  If you wish to copy only some of the 
 directories, type their names instead of <#7f>.".
 
+<paragraph>
+
 <F31>Link2rcs<F0> makes a list of all directories under the 
 source directory and attempts to create a corresponding template under 
 the destination directory.  Each time it finds a directory named <#7f>RCS" 
 it makes a symbolic link; otherwise it makes directories to match 
 those in the source tree.
 
+<paragraph>
+
 If any of the names which <F31>link2rcs<F0> plans to create already 
 exists, it halts with an error message (unless <#7f>-<F31>m<F0>" is 
 specified).
+
+<paragraph>
 
 When you have created the template tree, you may use <F31>rcsget<F0> 
 to check-out files into the destination tree.
@@ -328,13 +365,7 @@ ANTICIPATED CHANGES
 
 <paragraph>
 
-For better integration and support of rcs, <F31>link2rcs<F0> should 
-be able to prune directories from the list of those to be created 
-if their RCS directories would have no applicable source files.
-
-Certain systems, such as Apollo, support the use of environment variables 
-in symbolic links.  These are more readable than normal symbolic links.  
-It would be nice to be able to generate these by <F31>link2rcs<F0>.
+None.
 
 <header>
 
@@ -342,7 +373,7 @@ SEE ALSO
 
 <paragraph>
 
-rcsget, checkout, permit, rcs<SP>(1)
+baseline, rcsget, checkout, permit, rcs<SP>(1)
 
 <header>
 

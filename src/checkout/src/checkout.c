@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	what[] = "$Id: checkout.c,v 7.0 1990/04/19 08:03:33 ste_cm Rel $";
+static	char	what[] = "$Id: checkout.c,v 8.0 1990/08/14 14:02:29 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,15 @@ static	char	what[] = "$Id: checkout.c,v 7.0 1990/04/19 08:03:33 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * $Log: checkout.c,v $
- * Revision 7.0  1990/04/19 08:03:33  ste_cm
- * BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+ * Revision 8.0  1990/08/14 14:02:29  ste_cm
+ * BASELINE Tue Aug 14 14:11:43 1990 -- ADA_TRANS, LINCNT
  *
+ *		Revision 7.1  90/08/14  14:02:29  dickey
+ *		lint
+ *		
+ *		Revision 7.0  90/04/19  08:03:33  ste_cm
+ *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+ *		
  *		Revision 6.2  90/04/19  08:03:33  dickey
  *		corrected so we don't pass "-x" to 'co'
  *		
@@ -487,7 +493,7 @@ char	*argv[];
 			} else {
 				if (*s == 'q')
 					silent++;
-				if (strchr("lqr", (long)*s)) {
+				if (strchr("lqr", (size_t)*s)) {
 					if (*s == 'l')
 						locked++;
 					d = opt_rev;

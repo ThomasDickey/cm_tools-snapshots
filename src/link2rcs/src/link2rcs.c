@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: link2rcs.c,v 8.0 1990/05/04 10:21:26 ste_cm Rel $";
+static	char	Id[] = "$Id: link2rcs.c,v 8.2 1990/08/21 14:42:48 dickey Exp $";
 #endif	lint
 
 /*
@@ -7,9 +7,19 @@ static	char	Id[] = "$Id: link2rcs.c,v 8.0 1990/05/04 10:21:26 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * $Log: link2rcs.c,v $
- * Revision 8.0  1990/05/04 10:21:26  ste_cm
- * BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+ * Revision 8.2  1990/08/21 14:42:48  dickey
+ * pass the value of the "-s" option down to 'find_src()' so that
+ * in case the user combines this with a wildcard on the actual
+ * source-paths, we can prune off the beginning portion of the
+ * source-path arguments (fixes a problem using 'relpath()').
  *
+ *		Revision 8.1  90/08/21  08:37:02  dickey
+ *		corrected code in 'path_to()', which was not properly testing
+ *		for leading "./" in its argument.
+ *		
+ *		Revision 8.0  90/05/04  10:21:26  ste_cm
+ *		BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+ *		
  *		Revision 7.3  90/05/04  10:21:26  dickey
  *		sort/purge list of items to remove repeats.  Added "-b" option
  *		(currently only "-b0" value) to purge the tree when no RCS is
@@ -177,8 +187,13 @@ char	*
 path_to(src)
 char	*src;
 {
-	auto	char	dst[BUFSIZ];
-	return (!strcmp(relpath(dst,Source,src), ".") ? "." : txtalloc(dst+2));
+	auto	char	dst[BUFSIZ],
+			*d = relpath(dst,Source,src);
+	if (!strcmp(d, "."))
+		return ".";
+	if (!strncmp(d, "./", 2))
+		d += 2;
+	return txtalloc(d);
 }
 
 static
@@ -237,10 +252,22 @@ struct	stat	*sp;
  * Process a single argument to obtain the list of source-directory names
  */
 static
-find_src(name)
+find_src(path, name)
+char	*path;
 char	*name;
 {
 	auto	char	tmp[BUFSIZ];
+	auto	size_t	len = strlen(path);
+
+	/* prune the source-path from the beginning of 'name[]' in case the
+	 * user got it by a wildcard-expansion
+	 */
+	if (!strncmp(path, name, len)
+	&&  name[len] == '/')
+		name += (len + 1);
+
+	/* process the 'name[]' argument
+	 */
 	(void)getwd(tmp);
 	abspath(name = pathcat(tmp, tmp, name));
 	TELL "** src-path = %s\n", path_from(name));
@@ -476,7 +503,7 @@ char	*path;
 			q = p->link;
 			dofree((char *)p);
 		}
-		qsort(vec, (LEN_QSORT)count, sizeof(LIST), compar_LIST);
+		qsort((char *)vec, (LEN_QSORT)count, sizeof(LIST), compar_LIST);
 		count = unique_LIST(vec,count);
 		if (baseline >= 0)
 			count = purge_LIST(vec,count);
@@ -637,9 +664,9 @@ char	*argv[];
 	(void)getwd(Source);
 	if (optind < argc) {
 		for (j = optind; j < argc; j++)
-			find_src(argv[j]);
+			find_src(src_dir, argv[j]);
 	} else
-		find_src(".");
+		find_src(src_dir, ".");
 
 	/*
 	 * Construct the list of destination-directory names:

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Id: rcsget.c,v 7.0 1990/04/19 08:25:01 ste_cm Rel $";
+static	char	Id[] = "$Id: rcsget.c,v 8.0 1990/08/14 14:08:48 ste_cm Rel $";
 #endif	lint
 
 /*
@@ -7,9 +7,15 @@ static	char	Id[] = "$Id: rcsget.c,v 7.0 1990/04/19 08:25:01 ste_cm Rel $";
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * $Log: rcsget.c,v $
- * Revision 7.0  1990/04/19 08:25:01  ste_cm
- * BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+ * Revision 8.0  1990/08/14 14:08:48  ste_cm
+ * BASELINE Tue Aug 14 14:11:43 1990 -- ADA_TRANS, LINCNT
  *
+ *		Revision 7.1  90/08/14  14:08:48  dickey
+ *		lint
+ *		
+ *		Revision 7.0  90/04/19  08:25:01  ste_cm
+ *		BASELINE Mon Apr 30 09:54:01 1990 -- (CPROTO)
+ *		
  *		Revision 6.3  90/04/19  08:25:01  dickey
  *		added "-T" option so that 'checkout' isn't hard-coded.
  *		
@@ -202,7 +208,7 @@ char	*argv[];
 	track_wd((char *)0);
 	for (j = 1; j < argc; j++) {
 		if (*(s = argv[j]) == '-') {
-			if (strchr("lpqrcswj", (long)s[1]) != 0) {
+			if (strchr("lpqrcswj", (size_t)s[1]) != 0) {
 				catarg(co_opts, s);
 				if (s[1] == 'q')
 					quiet = TRUE;
