@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		09 Jan 2001, add -a option.
  *		26 Dec 2000, add -p, -z options.  Make copy-dir less verbose.
  *			     Resolve conflict between -u and -U options.
  *		15 Jan 1999, use pathcat2 when combining data read from the
@@ -112,7 +113,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.24 2000/12/26 18:06:35 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.25 2001/01/09 21:59:38 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -879,6 +880,7 @@ void	usage(_AR0)
  "Usage: copy [options] {[-d] | source [...]} destination"
 ,""
 ,"Options:"
+,"  -a      include dot-files (this is the default, use to override -z)"
 ,"  -d      infer source (leaf) from destination path"
 ,"  -f      force (write into protected destination"
 ,"  -i      interactive (prompt before overwriting)"
@@ -892,6 +894,7 @@ void	usage(_AR0)
 ,"  -u      update-only (copies only new files or those differing in size or date)"
 ,"  -U      update-only (same as -u, but copies newer files)"
 ,"  -v      verbose"
+,"  -z      suppress dot-files"
 #if	DOS_VISIBLE
 ,"  -S      source is local-time filesystem"
 ,"  -D      destination is local-time filesystem"
@@ -1055,7 +1058,8 @@ _MAIN
 {
 	register int	j;
 
-	while ((j = getopt(argc, argv, "dfilmnpsuUvzSDF:")) != EOF) switch (j) {
+	while ((j = getopt(argc, argv, "adfilmnpsuUvzSDF:")) != EOF) switch (j) {
+	case 'a':	z_opt = FALSE;	break;
 	case 'd':	d_opt = TRUE;	break;
 	case 'f':	f_opt = TRUE;	break;
 	case 'i':	i_opt = TRUE;	break;

@@ -1,4 +1,4 @@
-.\" $Id: copy.man,v 11.7 2000/12/26 18:09:30 tom Exp $
+.\" $Id: copy.man,v 11.8 2001/01/09 21:47:38 tom Exp $
 .de DS
 .RS
 .nf
@@ -45,6 +45,12 @@ permissions of the (previous) destination file.
 .PP
 \fBCopy\fR recognizes options similar to those of \fBcp\fR,
 but with extensions:
+.TP
+.B \-a
+include dot-files (names beginning with '.').
+This is the default.
+Use this option to override \fB\-z\fP,
+e.g., in a script which presets that option.
 .TP
 .B \-d
 all names given are treated as the destination; the
