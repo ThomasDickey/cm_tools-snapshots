@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	31 Aug 1988
  * Modified:
+ *		21 Jul 2000, support checkup -o with $SCCS_VAULT
  *		24 Jan 2000, revised directory macros.
  *		05 Jul 1995, show names of non-text files for -a option
  *		08 Nov 1994, refined interaction between stdout/stderr.
@@ -62,7 +63,7 @@
 #include	<sccsdefs.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: checkup.c,v 11.11 2000/01/24 12:07:59 tom Exp $")
+MODULE_ID("$Id: checkup.c,v 11.12 2000/07/21 23:06:18 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -209,9 +210,12 @@ void	pipes(
 	_DCL(char *,	name)
 	_DCL(char *,	vers)
 {
-	auto	char	tmp[BUFSIZ];
+	char	tmp[BUFSIZ];
+	int	fake_tee = (redir_out && (redir_out != redir_err));
 
-	if ((verbose < 0) || (redir_out && (redir_out != redir_err))) {
+	if ((verbose < 0) || fake_tee) {
+		if (!fake_tee)
+			fflush(stderr);
 		if (config_rev) {
 			if (*vers != '?')
 				PRINTF("%s ", vers);
@@ -222,6 +226,8 @@ void	pipes(
 		if (original != 0)
 			path = relpath(path, original, path);
 		PRINTF("%s\n", path);
+		if (!fake_tee)
+			fflush(stdout);
 	}
 }
 
@@ -245,12 +251,12 @@ char *	compared(
  */
 static
 void	do_obs(
-	_ARX(char *,	path)	/* current working directory, from 'do_stat()'*/
-	_ARX(char *,	name)	/* name of directory (may be symbolic link) */
+	_ARX(char *,	working) /* current working directory, from 'do_stat()'*/
+	_ARX(char *,	archive) /* name of directory (may be symbolic link) */
 	_AR1(int,	level)
 		)
-	_DCL(char *,	path)
-	_DCL(char *,	name)
+	_DCL(char *,	working)
+	_DCL(char *,	archive)
 	_DCL(int,	level)
 {
 	auto	DIR	*dp;
@@ -263,22 +269,17 @@ void	do_obs(
 			*owner;
 	auto	time_t	cdate;
 
-	if (!(dp = opendir(pathcat(tpath, path, name)))) {
+	if (!(dp = opendir(pathcat(tpath, working, archive)))) {
 		perror(tpath);
 		return;
 	}
 
 	while ((de = readdir(dp)) != NULL) {
 		if (dotname(de->d_name))	continue;
-		if (stat(pathcat(tname, name, de->d_name), &sb) >= 0) {
+		if (stat(pathcat(tname, archive, de->d_name), &sb) >= 0) {
 			auto	int	show	= FALSE;
 
-			if (isFILE(sb.st_mode)) {
-				indent(level);
-				TELL "%s (non-file)\n", tname);
-				continue;
-			}
-			lastrev(path, tname, &vers, &cdate, &owner);
+			lastrev(working, tname, &vers, &cdate, &owner);
 
 			/*
 			 * If 'cdate' is zero, then we could not (for whatever
@@ -288,11 +289,13 @@ void	do_obs(
 			 * revision codes.
 			 */
 			if (cdate == 0) {
+				show = TRUE;
 				tag = "obsolete";
 				if (*vers == '?') {
 					tag = "non-archive";
-					show = TRUE;
-				} else if (reverse) {
+				}
+			} else {
+				if (reverse) {
 					if (dotcmp(vers, revision) > 0)
 						show = TRUE;
 				} else {
@@ -304,7 +307,7 @@ void	do_obs(
 			if (show) {
 				indent(level);
 				TELL "%s (%s:%s)\n", tname, tag, vers);
-				pipes(path, tname, vers);
+				pipes(working, tname, vers);
 			} else if (debug) {
 				indent(level);
 				TELL "%s (%s)\n", tname, vers);
@@ -337,13 +340,17 @@ int	WALK_FUNC(do_stat)
 				*t;
 		abspath(s);		/* get rid of "." and ".." names */
 		t = pathleaf(s);	/* obtain leaf-name for "-a" option */
-		if (*t == '.' && !allnames)	return (-1);
+		if (*t == '.' && !allnames)
+			return (-1);
 		if (sameleaf(s, sccs_dir(path, name))
 		||  sameleaf(s, rcs_dir())) {
 			if (obsolete)
 				do_obs(path, name, level);
 			return (-1);
 		}
+		else if (strncmp(s, sccs_dir(path, name), strlen(s))
+			&& obsolete)
+			do_obs(s, sccs_dir(path, name), level);
 	}
 
 	if (readable < 0 || sp == 0) {
