@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 8.1 1991/05/20 12:34:54 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 9.1 1991/06/20 10:55:45 dickey Exp $";
 #endif
 
 /*
@@ -7,9 +7,18 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * $Log: checkin.c,v $
- * Revision 8.1  1991/05/20 12:34:54  dickey
- * mods to compile on apollo sr10.3
+ * Revision 9.1  1991/06/20 10:55:45  dickey
+ * use 'shoarg()'
  *
+ *		Revision 9.0  91/06/11  08:29:32  ste_cm
+ *		BASELINE Tue Jun 11 08:31:06 1991 -- apollo sr10.3
+ *		
+ *		Revision 8.2  91/06/11  08:29:32  dickey
+ *		lint (apollo sr10.2)
+ *		
+ *		Revision 8.1  91/05/20  12:35:33  dickey
+ *		mods to compile on apollo sr10.3
+ *		
  *		Revision 7.1  90/08/14  14:17:01  dickey
  *		lint
  *		
@@ -209,7 +218,7 @@ clean_file()
  * If interrupted, clean up and exit
  */
 static
-void
+SIG_T
 cleanup(sig)
 {
 	(void)signal(sig, SIG_IGN);
@@ -423,7 +432,7 @@ Execute()
 	TMP_file = rcstemp(Working, TRUE);
 
 	FORMAT(cmds, "%s%s %s", opt_all, Archive, TMP_file);
-	TELL("%% ci %s\n", cmds);
+	if (!silent) shoarg(stdout, "ci", cmds);
 	if (no_op)
 		code = -1;
 	else
@@ -673,7 +682,7 @@ SetAccess()
 
 	if (silent) catarg(cmds, "-q");
 	catarg(cmds, Archive);
-	TELL("%% rcs %s\n", cmds);
+	if (!silent) shoarg(stdout, "rcs", cmds);
 	if (!no_op) {
 		if (execute(rcspath("rcs"), cmds) < 0)
 			GiveUp("rcs initialization for", Working);
@@ -761,7 +770,7 @@ char	*argv[];
 			catarg(opt_all, s);
 			if (*++s == 'q')
 				silent++;
-			if (strchr(REV_OPT, (size_t)*s)) {
+			if (strchr(REV_OPT, *s)) {
 				if (*s == 'l')	locked = TRUE;
 				if (*(++s)) {
 					s = strcpy(opt_rev, s);
@@ -878,7 +887,7 @@ char	*argv[];
 				from_keys++;
 			if (is_t_opt(argv[j]))
 				t_option = argv[j];
-			if (strchr("rfkluqmnNst", (size_t)*s) == 0) {
+			if (strchr("rfkluqmnNst", *s) == 0) {
 				if (*s == 'd') {
 					no_op++;
 					continue;

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 9.0 1991/05/31 16:09:56 ste_cm Rel $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 9.1 1991/06/11 17:40:38 dickey Exp $";
 #endif
 
 /*
@@ -7,9 +7,12 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/
  * Author:	T.E.Dickey
  * Created:	09 Mar 1989
  * $Log: permit.c,v $
- * Revision 9.0  1991/05/31 16:09:56  ste_cm
- * BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+ * Revision 9.1  1991/06/11 17:40:38  dickey
+ * lint
  *
+ *		Revision 9.0  91/05/31  16:09:56  ste_cm
+ *		BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+ *		
  *		Revision 8.2  91/05/31  16:09:56  dickey
  *		lint (unused arg of 'do_arcs()')
  *		
@@ -151,7 +154,7 @@ static
 del_list(list, key)
 char	*list, *key;
 {
-	register int	len = strlen(key);
+	register size_t	len = strlen(key);
 	register char	*next;
 	auto	 char	*base = list;
 

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 8.1 1991/05/20 12:38:02 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 9.1 1991/06/20 11:37:36 dickey Exp $";
 #endif
 
 /*
@@ -7,9 +7,18 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * $Log: checkout.c,v $
- * Revision 8.1  1991/05/20 12:38:02  dickey
- * mods to compile on apollo sr10.3
+ * Revision 9.1  1991/06/20 11:37:36  dickey
+ * use 'shoarg()'
  *
+ *		Revision 9.0  91/06/11  08:25:19  ste_cm
+ *		BASELINE Tue Jun 11 08:26:48 1991 -- apollo sr10.3
+ *		
+ *		Revision 8.2  91/06/11  08:25:19  dickey
+ *		lint (apollo sr10.2)
+ *		
+ *		Revision 8.1  91/05/20  12:38:55  dickey
+ *		mods to compile on apollo sr10.3
+ *		
  *		Revision 8.0  90/08/14  14:02:29  ste_cm
  *		BASELINE Tue Aug 14 14:11:43 1990 -- ADA_TRANS, LINCNT
  *		
@@ -164,7 +173,7 @@ clean_file()
 }
 
 static
-void
+SIG_T
 cleanup(sig)
 {
 	(void)signal(sig, SIG_IGN);
@@ -282,7 +291,7 @@ time_t	mtime;
 
 	UidHack = rcstemp(Working, FALSE);
 	FORMAT(cmds, "%s%s %s", options, UidHack, Archive);
-	TELL("** co %s\n", cmds);
+	if (!silent) shoarg(stdout, "co", cmds);
 	if (execute(rcspath("co"), cmds) >= 0) {
 		if (stat(UidHack, &sb) >= 0) {
 			DEBUG(("=> file \"%s\"\n", UidHack))
@@ -497,7 +506,7 @@ char	*argv[];
 			} else {
 				if (*s == 'q')
 					silent++;
-				if (strchr("lqr", (size_t)*s)) {
+				if (strchr("lqr", *s)) {
 					if (*s == 'l')
 						locked++;
 					d = opt_rev;

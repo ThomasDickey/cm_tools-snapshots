@@ -1,4 +1,5 @@
-: '$Header: /users/source/archives/cm_tools.vcs/support/RCS/copy.sh,v 8.0 1989/03/28 09:50:30 ste_cm Rel $'
+#!/bin/sh
+# $Header: /users/source/archives/cm_tools.vcs/support/RCS/copy.sh,v 11.0 1991/06/05 11:20:57 ste_cm Rel $
 # cheap version of 'copy' utility, used for bootstrapping the make only.
 S=
 D=
@@ -21,11 +22,4 @@ fi
 echo '** copy' $S to $D
 #
 # assume that $S is in the current directory...
-P=`pwd`
-tar cf /tmp/copy$$ $S
-cd /tmp
-tar xpf copy$$ $S
-cd $P
-mv /tmp/$S $D
-cd /tmp
-rm -f copy$$ $S
+cp $S $D

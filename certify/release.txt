@@ -1,6 +1,28 @@
-$Id: release.txt,v 8.0 1990/06/29 08:25:35 ste_cm Rel $
+$Id: release.txt,v 9.0 1991/06/04 09:16:00 ste_cm Rel $
 
 --------------------------------------------------------------------------------
+
+Version 9.0:
+-----------
+Upgrade for Apollo SR10.3.4 (ANSI cpp complaints about endif-tags, some mods
+to ptypes.h, etc).
+
+New features in 'ded':
+	':' command in directory-tree,
+	'cL' command in file-list,
+	TAB-command in type-window.
+	"-" argument causes 'ded' to read list of filenames from stdin.
+
+Modified treatment of backslash in ded's shell commands so that only '%' and
+'#' need be escaped.
+
+Better error recovery in 'ded' for cases in which ".ftree" cannot be written,
+'getwd()' fails, etc.
+
+Modified 'rcsput' and 'rcsget' to pass-thru the "-x" option to 'checkin' and
+'checkout' respectively.
+
+Fixes to pathname computations in 'link2rcs'
 
 Version 8.0:
 -----------

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 8.1 1991/05/20 12:33:16 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 9.1 1991/06/20 11:04:46 dickey Exp $";
 #endif
 
 /*
@@ -7,9 +7,21 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * $Log: rcsput.c,v $
- * Revision 8.1  1991/05/20 12:33:16  dickey
- * mods to compile on apollo sr10.3
+ * Revision 9.1  1991/06/20 11:04:46  dickey
+ * use 'shoarg()'
  *
+ *		Revision 9.0  91/06/06  07:25:27  ste_cm
+ *		BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+ *		
+ *		Revision 8.3  91/06/06  07:25:27  dickey
+ *		use "-x" option in local name-checking
+ *		
+ *		Revision 8.2  91/06/03  13:25:48  dickey
+ *		pass-thru "-x" to 'checkin'
+ *		
+ *		Revision 8.1  91/05/20  12:36:03  dickey
+ *		mods to compile on apollo sr10.3
+ *		
  *		Revision 7.1  90/08/14  14:17:25  dickey
  *		lint
  *		
@@ -68,6 +80,7 @@ static	int	no_op;		/* no-op mode */
 static	char	*pager;		/* nonzero if we don't cat diffs */
 static	int	force;
 static	int	quiet;
+static	int	x_opt;
 
 static
 filesize(name)
@@ -85,7 +98,7 @@ char	*name;
 {
 	auto	FILE	*ifp;
 	auto	char	t[BUFSIZ];
-	auto	int	n;
+	auto	size_t	n;
 
 	if (ifp = fopen(name, "r")) {
 		while ((n = fread(t, sizeof(char), sizeof(t), ifp)) > 0)
@@ -102,8 +115,8 @@ char	*working;
 	auto	FILE	*ifp, *ofp;
 	auto	char	buffer[BUFSIZ],
 			out_diff[BUFSIZ];
-	auto	int	changed	= FALSE,
-			n;
+	auto	int	changed	= FALSE;
+	auto	size_t	n;
 
 	FORMAT(buffer, "rcsdiff %s %s", diff_opts, working);
 	VERBOSE("%% %s\n", buffer);
@@ -148,8 +161,8 @@ char	*path;
 char	*name;
 {
 	auto	char	args[BUFSIZ];
-	auto	char	*working = rcs2name(name,FALSE);
-	auto	char	*archive = name2rcs(name,FALSE);
+	auto	char	*working = rcs2name(name,x_opt);
+	auto	char	*archive = name2rcs(name,x_opt);
 	auto	int	first;
 
 	if (first = (filesize(archive) < 0)) {
@@ -181,7 +194,7 @@ char	*name;
 			first	? "Initial RCS insertion of"
 				: "Applying RCS delta to",
 			name);
-		VERBOSE("%% %s %s\n", verb, args);
+		if (!quiet) shoarg(stdout, verb, args);
 		if (execute(verb, args) < 0)
 			failed(working);
 	} else {
@@ -266,14 +279,18 @@ char	*argv[];
 	pager = dftenv("more -l", "PAGER");
 	for (j = 1; j < argc; j++) {
 		if (*(s = argv[j]) == '-') {
-			if (strchr("qrfklumnNst", (size_t)s[1]) != 0) {
+			if (strchr("qrfklumnNstx", s[1]) != 0) {
 				catarg(ci_opts, s);
-				if (s[1] == 'q') {
+				switch (s[1]) {
+				case 'f':
+					force = TRUE;
+					break;
+				case 'q':
 					quiet = TRUE;
 					catarg(diff_opts, s);
-				}
-				if (s[1] == 'f') {
-					force = TRUE;
+					break;
+				case 'x':
+					x_opt = TRUE;
 				}
 			} else {
 				switch (s[1]) {

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/link2rcs.c,v 8.3 1991/05/20 12:54:15 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/link2rcs.c,v 9.0 1991/06/04 09:34:26 ste_cm Rel $";
 #endif
 
 /*
@@ -7,9 +7,16 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/link2rcs/sr
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * $Log: link2rcs.c,v $
- * Revision 8.3  1991/05/20 12:54:15  dickey
- * mods to compile on apollo sr10.3
+ * Revision 9.0  1991/06/04 09:34:26  ste_cm
+ * BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
  *
+ *		Revision 8.4  91/06/04  09:34:26  dickey
+ *		check for the special case in which the environment-variable
+ *		is the current path.
+ *		
+ *		Revision 8.3  91/05/20  12:54:39  dickey
+ *		mods to compile on apollo sr10.3
+ *		
  *		Revision 8.2  90/08/21  14:42:48  dickey
  *		pass the value of the "-s" option down to 'find_src()' so that
  *		in case the user combines this with a wildcard on the actual
@@ -650,7 +657,8 @@ char	*argv[];
 		}
 		abspath(p = strcpy(tmp, p));
 		len = strlen(p);
-		if (!is_PREFIX(Source,p,len)) {
+		if (strcmp(Source,p)
+		 && !is_PREFIX(Source,p,len)) {
 			WARN "?? value of \"%s\" is not a prefix of \"%s\"\n",
 				env_path, Source);
 			exit(FAIL);

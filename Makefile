@@ -1,32 +1,22 @@
-# $Id: Makefile,v 8.0 1990/05/21 14:37:54 ste_cm Rel $
+# $Header: /users/source/archives/cm_tools.vcs/RCS/Makefile,v 9.1 1991/06/18 14:03:37 dickey Exp $
 # Top-level make-file for CM_TOOLS
 # (see also CM_TOOLS/src/common)
 #
 # $Log: Makefile,v $
-# Revision 8.0  1990/05/21 14:37:54  ste_cm
-# BASELINE Mon Aug 13 15:06:41 1990 -- LINCNT, ADA_TRANS
+# Revision 9.1  1991/06/18 14:03:37  dickey
+# correction to install-doc
 #
-#	Revision 7.3  90/05/21  14:37:54  dickey
-#	corrected 'clobber' rule
+#	Revision 9.0  91/06/05  14:21:52  ste_cm
+#	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
 #	
-#	Revision 7.2  90/05/21  14:12:38  dickey
-#	notes
-#	
-#	Revision 7.1  90/05/10  15:11:20  dickey
-#	simplified using "::" rules and "-x" option of 'checkout'
-#	
-#	Revision 7.0  89/10/05  09:45:39  ste_cm
-#	BASELINE Mon Apr 30 12:49:21 1990 -- (CPROTO)
-#	
-
 ####### (Development) ##########################################################
-INSTALL_PATH = /ste_site/ste/bin
-INSTALL_DOCS = /ste_site/ste/doc
+INSTALL_BIN = ~ste_cm/bin/`arch`
+INSTALL_DOC = /ste_site/ste/doc
+COPY	= cp -p
+MAKE	= make $(MFLAGS) -k$(MAKEFLAGS) CFLAGS="$(CFLAGS)"
+THIS	= cm_tools
+
 RCS_PATH= `which rcs | sed -e s+/rcs$$+/+`
-GET	= checkout
-THIS	= Makefile
-CFLAGS	=
-MAKE	= make $(MFLAGS) -k$(MAKEFLAGS) GET=$(GET) CFLAGS="$(CFLAGS)"
 
 ####### (Standard Lists) #######################################################
 SOURCES	=\
@@ -84,13 +74,15 @@ lincnt.out:	$(FIRST)
 
 run_tests\
 sources\
-install\
-deinstall:	$(FIRST)
+install:	$(FIRST)
 	cd certificate;	$(MAKE) $@
 	cd support;	$(MAKE) $@
 	cd src;		$(MAKE) $@
-	cd user;	$(MAKE) $@
-	cd bin;		$(MAKE) $@ INSTALL_PATH=$(INSTALL_PATH)
+	cd user;	$(MAKE) $@ INSTALL_PATH=$(INSTALL_DOC)
+	cd bin;		$(MAKE) $@ INSTALL_PATH=$(INSTALL_BIN)
+
+deinstall:	bin/makefile
+	cd bin;		$(MAKE) $@ INSTALL_PATH=$(INSTALL_BIN)
 
 destroy::
 	rm -rf $(DIRS)
@@ -99,33 +91,28 @@ destroy::
 ####### (Details of Productions) ###############################################
 .first:		$(FIRST)
 
-$(SOURCES):			; $(GET) $@
+$(MFILES)\
+$(SOURCES):			; checkout -x $@
 $(DIRS):			; mkdir $@
-
-bin/Makefile\
-certificate/Makefile\
-support/Makefile\
-src/Makefile\
-user/Makefile:			; $(GET) -x $@
 
 # Embed default installation path in places where we want it compiled-in.
 # Note that we exploit the use of lower-case makefile for this purpose.
-bin/makefile:	bin/Makefile	$(THIS)
+bin/makefile:	bin/Makefile	Makefile
 	rm -f $@
-	sed -e s+INSTALL_PATH=.*+INSTALL_PATH=$(INSTALL_PATH)+ bin/Makefile >$@
+	sed -e s+INSTALL_PATH=.*+INSTALL_PATH=$(INSTALL_BIN)+ bin/Makefile >$@
 
-user/makefile:	user/Makefile	$(THIS)
+user/makefile:	user/Makefile	Makefile
 	rm -f $@
-	sed -e s+INSTALL_PATH=.*+INSTALL_PATH=$(INSTALL_DOCS)+ user/Makefile >$@
+	sed -e s+INSTALL_PATH=.*+INSTALL_PATH=$(INSTALL_DOC)+ user/Makefile >$@
 
 # If the rcs tool is not found in our path, assume that it lies in the same
 # directory as that in which we will install; but the install-directory has
 # been removed from our path as part of a clean-build.
-interface/rcspath.h:		$(THIS)
+interface/rcspath.h:		Makefile
 	rm -f $@
 	echo "#define	RCS_PATH	\"$(RCS_PATH)\"" >$@
 	sh -c 'if ( grep "\"no\ rcs\ in" $@ )\
-		then echo "#define RCS_PATH \"$(INSTALL_PATH)/\"" >$@;\
+		then echo "#define RCS_PATH \"$(INSTALL_BIN)/\"" >$@;\
 		else echo found rcs-path; fi'
 
 # We use the 'copy' utility rather than the unix 'cp' utility, since it

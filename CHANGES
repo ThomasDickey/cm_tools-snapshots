@@ -1,3 +1,190 @@
+1991-06-20  dickey@software.org
+
+	* src/checkout/src/checkout.c, src/checkout/src/rcsget.c, src/checkin/src/rcsput.c, src/checkin/src/checkin.c:
+	use 'shoarg()'
+
+1991-06-18  dickey@software.org
+
+	* Makefile: correction to install-doc
+
+1991-06-11  dickey@software.org
+
+	* src/permit/src/permit.c: lint
+
+	* src/checkin/src/checkin.c: lint (apollo sr10.2)
+
+1991-06-11  ste_cm@software.org
+
+	* src/checkin/src/checkin.c:
+	BASELINE Tue Jun 11 08:31:06 1991 -- apollo sr10.3
+
+1991-06-11  dickey@software.org
+
+	* src/checkout/src/checkout.c: lint (apollo sr10.2)
+
+1991-06-11  ste_cm@software.org
+
+	* src/checkout/src/checkout.c:
+	BASELINE Tue Jun 11 08:26:48 1991 -- apollo sr10.3
+
+1991-06-07  dickey@software.org
+
+	* certify/config.txt: updated to current configuration.
+
+1991-06-07  ste_cm@software.org
+
+	* certify/config.txt:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-06  dickey@software.org
+
+	* src/checkout/src/rcsget.c: use "-x" option in local name-checking
+
+1991-06-06  ste_cm@software.org
+
+	* src/checkout/src/rcsget.c:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-06  dickey@software.org
+
+	* src/checkin/src/rcsput.c: use "-x" option in local name-checking
+
+1991-06-06  ste_cm@software.org
+
+	* src/checkin/src/rcsput.c:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-05  dickey@software.org
+
+	* src/permit/Makefile: cleanup install-rule
+
+1991-06-05  ste_cm@software.org
+
+	* src/permit/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-05  dickey@software.org
+
+	* src/link2rcs/Makefile: cleanup install-rule
+
+1991-06-05  ste_cm@software.org
+
+	* src/link2rcs/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-05  dickey@software.org
+
+	* src/checkup/Makefile: cleanup install-rule
+
+1991-06-05  ste_cm@software.org
+
+	* src/checkup/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-05  dickey@software.org
+
+	* src/checkout/Makefile: cleanup install-rule
+
+1991-06-05  ste_cm@software.org
+
+	* src/checkout/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-05  dickey@software.org
+
+	* src/checkin/Makefile: cleanup install-rule
+
+1991-06-05  ste_cm@software.org
+
+	* src/checkin/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-05  dickey@software.org
+
+	* src/baseline/Makefile: cleanup install-rule
+
+1991-06-05  ste_cm@software.org
+
+	* src/baseline/Makefile:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-05  dickey@software.org
+
+	* src/copy/Makefile: cleanup install-rule
+
+1991-06-05  ste_cm@software.org
+
+	* src/copy/Makefile: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-05  dickey@software.org
+
+	* Makefile: corrected deinstall-path
+
+1991-06-05  ste_cm@software.org
+
+	* Makefile: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-05  dickey@software.org
+
+	* support/copy.sh:
+	removed the tar-coding since this does not work under apollo sr10.3
+
+1991-06-05  ste_cm@software.org
+
+	* support/copy.sh:
+	BASELINE Fri Oct 18 16:46:43 1991 -- ANSI conversion; vcs
+
+	* support/copy.sh: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+	* support/copy.sh: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-06-05  dickey@software.org
+
+	* Makefile: cleanup recursive-make
+
+1991-06-04  dickey@software.org
+
+	* Makefile: standardized install-path
+
+	* src/link2rcs/src/link2rcs.c:
+	check for the special case in which the environment-variable
+	is the current path.
+
+1991-06-04  ste_cm@software.org
+
+	* src/link2rcs/src/link2rcs.c:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-04  dickey@software.org
+
+	* certify/README: notes for baseline 9
+
+1991-06-04  ste_cm@software.org
+
+	* certify/README:
+	BASELINE Fri Oct 18 16:49:43 1991 -- ANSI conversion; vcs
+
+	* certify/README: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-04  dickey@software.org
+
+	* certify/release.txt: notes for baseline 9
+
+1991-06-04  ste_cm@software.org
+
+	* certify/release.txt:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-06-04  dickey@software.org
+
+	* certify/config.txt: notes for baseline 9
+
+1991-06-03  dickey@software.org
+
+	* src/checkout/src/rcsget.c: pass-thru "-x" to 'checkout'
+
+	* src/checkin/src/rcsput.c: pass-thru "-x" to 'checkin'
+
 1991-05-31  dickey@software.org
 
 	* src/permit/src/permit.c: lint (unused arg of 'do_arcs()')
