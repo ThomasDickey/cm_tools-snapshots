@@ -3,6 +3,8 @@
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * Modified:
+ *		06 Dec 1998, if the source has a symbolic link to a directory,
+ *			     copy the link.
  *		08 Sep 1997, added 'o' option.
  *		21 Sep 1995, added '-F' option
  *		22 Sep 1993, gcc warnings.  Purify found an alloc-too-small.
@@ -62,7 +64,7 @@
 #include	<td_qsort.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: link2rcs.c,v 11.5 1997/09/08 14:19:19 tom Exp $")
+MODULE_ID("$Id: link2rcs.c,v 11.6 1998/12/07 01:17:05 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -111,6 +113,7 @@ static	char	Source[BUFSIZ] = ".";
 static	char	Target[BUFSIZ] = ".";
 static	char	Current[BUFSIZ];
 
+static	char	*fmt_LINK = "link-to-DIR:";
 static	char	*fmt_link = "link-to-RCS:";
 static	char	*fmt_file = "link-to-file";
 
@@ -230,6 +233,20 @@ _DCL(int,	level)
 		p->path = path_to(tmp);
 		p->from = sameleaf(s, rcs_dir()) ? path_from(tmp) : 0;
 		p->what = fmt_link;
+#if HAVE_READLINK
+		if (p->from == 0
+		 && lstat(tmp, sp) == 0
+		 && MODE(sp->st_mode) == S_IFLNK) {
+			char result[MAXPATHLEN];
+			int len = readlink(tmp, result, sizeof(result)-1);
+			if (len > 0) {
+				result[len] = EOS;
+				p->from = txtalloc(result);
+				p->what = fmt_LINK;
+			}
+			readable = -1;
+		}
+#endif
 		if (p->from != 0)
 			readable = -1;
 	} else if ((files_too || hard_links)
@@ -368,8 +385,12 @@ same_dev(
 	Stat_t	sb_src;
 	Stat_t	sb_dst;
 
-	if (stat_file(src, &sb_src) < 0)
+	if (stat_file(src, &sb_src) < 0) {
+		if (isDIR(sb_src.st_mode)
+		 && stat_file(dst, &sb_dst) < 0)
+		 	return FALSE;
 		failed(src);
+	}
 	if (stat_file(dst, &sb_dst) < 0) {	/* this probably doesn't exist */
 		(void)pathhead(dst, &sb_dst);
 	}
@@ -520,14 +541,14 @@ QSORT_FUNC(compar_LIST)
 
 /* compress duplicate items out of the LIST-vector, returns the resulting len */
 static
-int	unique_LIST(
+unsigned unique_LIST(
 	_ARX(LIST *,	vec)
 	_AR1(unsigned,	count)
 		)
 	_DCL(LIST *,	vec)
 	_DCL(unsigned,	count)
 {
-	register int	j, k;
+	register unsigned j, k;
 	for (j = k = 0; k < count; j++, k++) {
 		if (j != k)
 			vec[j] = vec[k];
@@ -542,13 +563,13 @@ static int
 has_children(
 _ARX(LIST *,	vec)
 _ARX(unsigned,	count)
-_AR1(int,	old)
+_AR1(unsigned,	old)
 	)
 _DCL(LIST *,	vec)
 _DCL(unsigned,	count)
-_DCL(int,	old)
+_DCL(unsigned,	old)
 {
-	register int	new;
+	register unsigned new;
 	auto	 size_t	len = strlen(vec[old].path);
 
 	if (vec[old].what == fmt_file)		/* preserve files */
@@ -574,13 +595,13 @@ static int
 skip_children(
 _ARX(LIST *,	vec)
 _ARX(unsigned,	count)
-_AR1(int,	old)
+_AR1(unsigned,	old)
 	)
 _DCL(LIST *,	vec)
 _DCL(unsigned,	count)
-_DCL(int,	old)
+_DCL(unsigned,	old)
 {
-	register int	new;
+	register unsigned new;
 	auto	 size_t	len = strlen(vec[old].path);
 
 	for (new = old+1; new < count; new++) {
@@ -591,7 +612,7 @@ _DCL(int,	old)
 }
 
 /* purge entries which do not have an underlying RCS-directory */
-static int
+static unsigned
 purge_LIST(
 _ARX(LIST *,	vec)
 _AR1(unsigned,	count)
@@ -599,7 +620,7 @@ _AR1(unsigned,	count)
 _DCL(LIST *,	vec)
 _DCL(unsigned,	count)
 {
-	register int	j, k;
+	register unsigned j, k;
 	for (j = k = 0; k < count; j++, k++) {
 		while (!has_children(vec,count,k))
 			k = skip_children(vec,count,k);
@@ -661,7 +682,8 @@ _DCL(char *,	path)
 		} else {		/* symbolic-link */
 			register char *s;
 			(void)pathcat(dst, path, p->path);
-			if ((s = strrchr(dst, '/')) != NULL)
+			if (p->what != fmt_LINK
+			 && (s = strrchr(dst, '/')) != NULL)
 				*s = EOS;
 			make_lnk(relative ? relpath(tmp, dst, p->from)
 					  : p->from,
@@ -718,7 +740,7 @@ usage(_AR0)
 	,"  -s dir  specify source-directory (default .)"
 	,"  -v      verbose (show detailed actions)"
 	};
-	register int	j;
+	register unsigned j;
 	for (j = 0; j < sizeof(msg)/sizeof(msg[0]); j++)
 		WARN "%s\n", msg[j]);
 	(void)fflush(stderr);
