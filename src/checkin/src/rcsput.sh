@@ -1,4 +1,4 @@
-: '$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.sh,v 2.0 1988/10/05 07:38:49 ste_cm Exp $'
+: '$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.sh,v 4.0 1989/05/09 10:20:22 ste_cm Rel $'
 # Check-in one or more modules to RCS (T.E.Dickey).
 # This uses 'checkin' to maintain file modification dates as the checkin times.
 # 
@@ -49,7 +49,7 @@ do	case $i in
 		LOG=`pwd`/$F
 		i="-L$LOG"
 		cd $WD;;
-	-[bh])	BLANKS="-b";;
+	-[bh])	BLANKS="$BLANKS $i";;
 	-c)	PAGER="cat";;
 	-d)	NOP="T";;
 	-*)	echo 'usage: <ci_opts> -b -c -d -h -Lfile files'
