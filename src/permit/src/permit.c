@@ -1,7 +1,3 @@
-#ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/RCS/permit.c,v 11.5 1994/11/09 00:09:19 tom Exp $";
-#endif
-
 /*
  * Title:	permit.c (RCS directory-permissions)
  * Author:	T.E.Dickey
@@ -48,6 +44,8 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/permit/src/
 #include	<rcsdefs.h>
 #include	<ctype.h>
 #include	<time.h>
+
+MODULE_ID("$Id: permit.c,v 11.6 1994/11/09 00:09:19 tom Exp $")
 
 /************************************************************************
  *	local definitions						*

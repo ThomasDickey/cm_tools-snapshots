@@ -1,12 +1,9 @@
-#ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/checkout.c,v 11.7 1994/11/08 23:56:40 tom Exp $";
-#endif
-
 /*
  * Title:	checkout.c (front end for RCS checkout)
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		12 Nov 1994, pass-thru '-f', '-k' options to 'ci'.
  *		22 Sep 1993, gcc warnings
  *		24 Jun 1993, fixes for apollo-setuid for RCS version 5.
  *		02 Nov 1992, mods for RCS version 5.
@@ -92,6 +89,8 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
 #include	<signal.h>
 #include	<time.h>
 
+MODULE_ID("$Id: checkout.c,v 11.9 1994/11/12 18:08:13 tom Exp $")
+
 /* local definitions */
 #define	WARN	FPRINTF(stderr,
 #define	TELL	if (!silent) FPRINTF
@@ -121,6 +120,8 @@ static	char	*UidHack;		/* intermediate file for setuid	*/
 static	char	*opt_rev;		/* revision to find */
 static	char	*opt_who;		/* "-w[login] value	*/
 static	char	*opt_sta;		/* "-s[state] value	*/
+static	char	*co_f_opt;		/* "-f" option, if any	*/
+static	char	*co_k_opt;		/* "-k" option, if any	*/
 
 /************************************************************************
  *	local procedures						*
@@ -399,6 +400,7 @@ int	RcsCheckout(_AR0)
 {
 	static	DYN	*cmds;
 	auto	char	*opt	= to_stdout ? "-p" : (locked ? "-l" : "-r");
+	auto	int	code	= 0;
 
 	dyn_init(&cmds, BUFSIZ);
 #if	RCS_VERSION >= 5
@@ -406,16 +408,15 @@ int	RcsCheckout(_AR0)
 #endif
 	if (silent)	CATARG(cmds, "-q");
 	CATARG2(cmds, opt, rev_buffer);
+	if (!EMPTY(co_f_opt))	CATARG(cmds, co_f_opt);
+	if (!EMPTY(co_k_opt))	CATARG(cmds, co_k_opt);
 	CATARG(cmds, UidHack);
 	CATARG(cmds, Archive);
 
 	if (!silent || debug) shoarg(log_fp, CO_TOOL, dyn_string(cmds));
-	if (no_op)
-		;
-	else if (execute(rcspath(CO_TOOL), dyn_string(cmds)) < 0) {
-		return(-1);
-	}
-	return (0);
+	if (!no_op)
+		code = execute(rcspath(CO_TOOL), dyn_string(cmds));
+	return (code);
 }
 
 /*
@@ -434,27 +435,32 @@ void	Execute(
 {
 	auto	int	code;
 	auto	Stat_t	sb;
+	auto	long	oldctime;
+	auto	int	copied;
 
-	UidHack = to_stdout ? "" : rcstemp(Working, FALSE);
+	UidHack  = to_stdout ? "" : rcstemp(Working, FALSE);
+	copied   = strcmp(UidHack,Working);
+	oldctime = 0;
+	if (!copied && stat(UidHack, &sb) >= 0)
+		oldctime = sb.st_ctime;
 
 #if	RCS_VERSION >= 5
-	if (saves_uid())
+	if (saves_uid()) {
 		code = RcsCheckout();
-	else
+	} else {
 		code = for_admin(RcsCheckout);
+	}
 #else
 	code = RcsCheckout();
 #endif
 
 	if ((code >= 0) && !no_op && !to_stdout) {
 		if (stat(UidHack, &sb) >= 0) {
-			int	copied = strcmp(UidHack,Working);
-
 			DEBUG((log_fp, "=> file \"%s\"\n", UidHack))
 			DEBUG((log_fp, "=> size = %ld\n", (long)(sb.st_size)))
 			DEBUG((log_fp, "=> date = %s", ctime(&sb.st_mtime)))
 			DEBUG((log_fp, "..(comp)  %s", ctime(&oldtime)))
-			if (!copied && (sb.st_mtime == oldtime)) {
+			if (!copied && (sb.st_ctime == oldctime)) {
 				TELL(log_fp, "** checkout was not performed\n");
 			} else {
 				if (copied && (usercopy(UidHack, Working) < 0))
@@ -617,11 +623,18 @@ _MAIN
 				TELL(log_fp, "++ cutoff: %s", ctime(&opt_date));
 				break;
 
+		case 'f':	co_f_opt = argv[j];
+				break;
+
+		case 'k':	co_k_opt = argv[j];
+				break;
+
 		case 'q':	silent++;
 				if (!EMPTY(s))	opt_rev = s;
 				break;
 
 		case 'l':	locked++;
+				/* FALL-THROUGH */
 		case 'r':	if (!EMPTY(s))	opt_rev = s;
 				break;
 

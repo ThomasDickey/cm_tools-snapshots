@@ -1,7 +1,3 @@
-#ifndef	lint
-static	char	Id[] = "$Id: unlock.c,v 11.2 1993/09/22 14:51:18 dickey Exp $";
-#endif
-
 /*
  * Title:	vcs_unlock.c
  * Author:	T.E.Dickey
@@ -14,7 +10,9 @@ static	char	Id[] = "$Id: unlock.c,v 11.2 1993/09/22 14:51:18 dickey Exp $";
  *		locks that the user has made are undone.
  */
 
-#include "vcs.h"
+#include <vcs.h>
+
+MODULE_ID("$Id: unlock.c,v 11.3 1993/09/22 14:51:18 tom Exp $")
 
 /******************************************************************************/
 static

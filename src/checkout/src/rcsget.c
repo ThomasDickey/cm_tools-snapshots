@@ -1,12 +1,9 @@
-#ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/src/RCS/rcsget.c,v 11.2 1994/11/08 23:57:02 tom Exp $";
-#endif
-
 /*
  * Title:	rcsget.c (rcs get-tree)
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		12 Nov 1994, pass-thru -f, -k options for 'co'.
  *		22 Sep 1993, gcc warnings
  *		06 Feb 1992, revised filename-parsing with 'rcsargpair()',
  *			     obsoleted "-x" option.
@@ -45,6 +42,8 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkout/sr
 #include	<rcsdefs.h>
 #include	<sccsdefs.h>
 #include	<errno.h>
+
+MODULE_ID("$Id: rcsget.c,v 11.4 1994/11/12 18:06:30 tom Exp $")
 
 #define	VERBOSE	if (!quiet) PRINTF
 
@@ -144,7 +143,7 @@ int	WALK_FUNC(scan_archive)
 		return (readable);
 
 	set_wd(user_wd);
-	Checkout(name, pathcat(tmp, rcs_dir(), name));
+	Checkout(rcs2name(name, FALSE), pathcat(tmp, rcs_dir(), name));
 	set_wd(path);
 	return(readable);
 }
@@ -250,7 +249,7 @@ _MAIN
 	/* process options */
 	for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
 		t = s + strlen(s);
-		if (strchr("lpqrcswj", s[1]) != 0) {
+		if (strchr("fklpqrcswj", s[1]) != 0) {
 			catarg(co_opts, s);
 			if (s[1] == 'q')
 				quiet = TRUE;

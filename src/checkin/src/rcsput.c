@@ -1,7 +1,3 @@
-#ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 11.4 1994/11/08 23:53:43 tom Exp $";
-#endif
-
 /*
  * Title:	rcsput.c (rcs put-tree)
  * Author:	T.E.Dickey
@@ -46,6 +42,8 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
 #include	<sccsdefs.h>
 #include	<dyn_str.h>
 extern	char	*tmpnam(_ar1(char *,name));
+
+MODULE_ID("$Id: rcsput.c,v 11.5 1994/11/08 23:53:43 tom Exp $")
 
 #define	VERBOSE		if (!quiet) PRINTF
 
