@@ -9,7 +9,9 @@
 % mkdir test/subdir
 ** link-to-RCS:    test/subdir/RCS
 % ln -s PWD/test/subdir/RCS test/subdir/RCS
+** link-to-SCCS    test/subdir/SCCS
+% ln -s PWD/test/subdir/SCCS test/subdir/SCCS
 ** make directory: test/subdir/first
 % mkdir test/subdir/first
-Totals: 2 directories, 1 soft links, 0 hard links (0 remade) made
+Totals: 2 directories, 2 soft links, 0 hard links (0 remade) made
 Resulting tree:

@@ -39,7 +39,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: baseline.c,v 11.3 1994/11/08 23:44:46 tom Exp $")
+MODULE_ID("$Id: baseline.c,v 11.4 1999/06/27 18:37:38 tom Exp $")
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
@@ -294,7 +294,7 @@ usage(_AR0)
 ,"  -R          recur when lower-level directories are found"
 ,"  -v          verbose (shows details)"
 			};
-	register int	j;
+	unsigned j;
 	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
 		WARN "%s\n", tbl[j]);
 	FFLUSH(stderr);

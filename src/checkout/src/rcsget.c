@@ -43,7 +43,7 @@
 #include	<sccsdefs.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: rcsget.c,v 11.4 1994/11/12 18:06:30 tom Exp $")
+MODULE_ID("$Id: rcsget.c,v 11.5 1999/06/27 18:38:31 tom Exp $")
 
 #define	VERBOSE	if (!quiet) PRINTF
 
@@ -230,7 +230,7 @@ _DCL(int,	option)
 ,"  -R       recur (same as -d)"
 ,"  -T TOOL  specify alternate tool to \"checkout\" to invoke per-file"
 	};
-	register int	j;
+	unsigned j;
 	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
 		FPRINTF(stderr, "%s\n", tbl[j]);
 	if (option == '?')

@@ -89,7 +89,7 @@
 #include	<signal.h>
 #include	<time.h>
 
-MODULE_ID("$Id: checkout.c,v 11.9 1994/11/12 18:08:13 tom Exp $")
+MODULE_ID("$Id: checkout.c,v 11.10 1999/06/27 18:38:23 tom Exp $")
 
 /* local definitions */
 #define	WARN	FPRINTF(stderr,
@@ -575,7 +575,7 @@ usage(_AR0)
 ,"Special:"
 ,"  -D       debug/no-op"
 	};
-	register int	j;
+	unsigned j;
 	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
 		FPRINTF(stderr, "%s\n", tbl[j]);
 	FFLUSH(stderr);

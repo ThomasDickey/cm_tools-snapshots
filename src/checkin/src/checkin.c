@@ -132,7 +132,7 @@
 #include	<errno.h>
 extern	char	*mktemp(_ar1(char *,name));
 
-MODULE_ID("$Id: checkin.c,v 11.25 1998/04/22 16:00:37 tom Exp $")
+MODULE_ID("$Id: checkin.c,v 11.26 1999/06/27 18:38:02 tom Exp $")
 
 /* local declarations: */
 #define	CI_TOOL		"ci"
@@ -1140,7 +1140,7 @@ void	usage(_AR0)
 "  -B       ignore existing baseline version when defaulting revision",
 "  -D       debug/no-op (show actions, but don't do)"
 	};
-	register int	j;
+	unsigned j;
 	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
 		WARN "%s\n", tbl[j]);
 	(void)exit(FAIL);

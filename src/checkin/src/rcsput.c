@@ -44,7 +44,7 @@
 #include	<dyn_str.h>
 extern	char	*tmpnam(_ar1(char *,name));
 
-MODULE_ID("$Id: rcsput.c,v 11.6 1997/05/10 12:29:37 tom Exp $")
+MODULE_ID("$Id: rcsput.c,v 11.7 1999/06/27 18:38:12 tom Exp $")
 
 #define	VERBOSE		if (!quiet) PRINTF
 
@@ -278,7 +278,7 @@ void	usage(
 ,"  -T TOOL  specify alternate tool to \"checkin\" to invoke per-file"
 ,""
 	};
-	register int	j;
+	unsigned j;
 	for (j = 0; j < sizeof(tbl)/sizeof(tbl[0]); j++)
 		FPRINTF(stderr, "%s\n", tbl[j]);
 	if (option == '?')

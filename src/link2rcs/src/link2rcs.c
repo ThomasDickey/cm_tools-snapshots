@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * Modified:
+ *		27 Jun 1999, treat SCCS directory like RCS, making links for it.
  *		06 Dec 1998, if the source has a symbolic link to a directory,
  *			     copy the link.
  *		08 Sep 1997, added 'o' option.
@@ -61,10 +62,11 @@
 #define	STR_PTYPES
 #include	<ptypes.h>
 #include	<rcsdefs.h>
+#include	<sccsdefs.h>
 #include	<td_qsort.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: link2rcs.c,v 11.6 1998/12/07 01:17:05 tom Exp $")
+MODULE_ID("$Id: link2rcs.c,v 11.7 1999/06/27 18:45:18 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -115,6 +117,7 @@ static	char	Current[BUFSIZ];
 
 static	char	*fmt_LINK = "link-to-DIR:";
 static	char	*fmt_link = "link-to-RCS:";
+static	char	*fmt_sccs = "link-to-SCCS";
 static	char	*fmt_file = "link-to-file";
 
 /*
@@ -231,8 +234,15 @@ _DCL(int,	level)
 		p = new_LIST();
 		/* patch: test for link-to-link */
 		p->path = path_to(tmp);
-		p->from = sameleaf(s, rcs_dir()) ? path_from(tmp) : 0;
 		p->what = fmt_link;
+		if (sameleaf(s, rcs_dir())) {
+			p->from = path_from(tmp);
+		} else if (sameleaf(s, sccs_dir(path, name))) {
+			p->from = path_from(tmp);
+			p->what = fmt_sccs;
+		} else {
+			p->from = 0;
+		}
 #if HAVE_READLINK
 		if (p->from == 0
 		 && lstat(tmp, sp) == 0
@@ -515,11 +525,11 @@ _DCL(char *,	what)
 static
 char	*
 deslash(
-_ARX(char *,	dst)
-_AR1(LIST *,	p)
-	)
-_DCL(char *,	dst)
-_DCL(LIST *,	p)
+	_ARX(char *, dst)
+	_AR1(const LIST *, p)
+		)
+	_DCL(char *, dst)
+	_DCL(const LIST *, p)
 {
 	auto	 char	*base = dst;
 	register char	*src = p->path;
@@ -643,7 +653,7 @@ _DCL(char *,	path)
 	auto	char	dst[BUFSIZ];
 	auto	char	tmp[BUFSIZ];
 	auto	unsigned count;
-	register int	j;
+	unsigned j;
 
 	TELL "** dst-path = %s\n", path);
 
