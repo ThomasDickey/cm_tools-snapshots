@@ -1,6 +1,26 @@
-$Id: release.txt,v 11.8 1994/11/09 00:43:45 tom Exp $
+$Id: release.txt,v 11.9 1997/05/10 13:05:53 tom Exp $
 
 --------------------------------------------------------------------------------
+
+970510
+	pass-through -w, ci option by rcsput.
+
+960924
+	add '-U' option to copy
+
+950921
+	add '-F' option to link2rcs
+
+941112
+	pass-through -f, -k ci/co options by checkin/checkout, rcsget/rcsput.
+
+941108
+	modify -a option of checkup to show non-text files as well as the dot
+	files.
+
+940618
+	drop -S (setuid) option from copy, add -S and -D options to copy
+	to MS-DOS filesystem (Linux).
 
 Version 12.0:
 ------------

@@ -1,4 +1,4 @@
-.\" $Id: link2rcs.man,v 11.0 1991/09/25 08:58:58 ste_cm Rel $
+.\" $Id: link2rcs.man,v 11.1 1997/05/10 12:53:27 tom Exp $
 .de DS
 .RS
 .nf
@@ -58,6 +58,9 @@ of the link-text.
 .TP
 .B \-f
 makes links to files as well as directories.
+.TP
+.B \-F
+makes hard links to files as well as directories.
 .TP
 .B \-m
 merge against destination, i.e., don't quit if a target

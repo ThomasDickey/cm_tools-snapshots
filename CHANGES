@@ -1,3 +1,17 @@
+1997-05-10  Thomas E. Dickey  <dickey@clark.net>
+
+	* certify/release.txt: notes of interface changes
+
+	* certify/README: updated
+
+	* user/link2rcs.man: note about -F option
+
+	* src/permit/src/permit.c:
+	argument to mktemp() must have the XXXXXX pattern (I must have gotten by on
+	apollo with a non-standard mktemp).
+
+	* src/checkin/src/rcsput.c: pass-thru -w option
+
 1996-09-24  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/copy/src/copy.c: add -U option
