@@ -1,3 +1,17 @@
+1994-05-12  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/copy/src/copy.c:
+	bumped the level of verboseness of "nothing copied" so I can use 'copy'
+	in import/export scripts and see what files _were_ copied.
+
+1994-05-09  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/checkin/src/rcsput.c:
+	omitted conflicting defn of 'popen()' to compile on Linux
+
+	* src/checkin/src/checkin.c:
+	ifdef'd out the setreuid() code, since Linux doesn't seem to have that
+
 1993-09-24  ste_cm@software.org
 
 	* certify/config.txt: document this configuration

@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 11.2 1993/09/22 14:19:23 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 11.3 1994/05/09 20:12:53 tom Exp $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		09 May 1994, port to Linux
  *		22 Sep 1993, gcc warnings
  *		04 Mar 1992, test "-f" after 'different()'
  *		05 Feb 1992, revised filename-parsing with 'rcsargpair()',
@@ -44,7 +45,6 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
 #include	<rcsdefs.h>
 #include	<sccsdefs.h>
 #include	<dyn_str.h>
-extern	FILE	*popen(_arx(char *,cmd) _ar1(char *,mode));
 extern	char	*tmpnam(_ar1(char *,name));
 
 #define	VERBOSE		if (!quiet) PRINTF
