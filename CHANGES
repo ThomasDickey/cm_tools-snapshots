@@ -1,3 +1,8 @@
+2000-07-21  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/checkup/src/checkup.c:
+	mods to support 'checkup -o' with $SCCS_VAULT
+
 2000-01-24  Thomas E. Dickey  <dickey@clark.net>
 
 	* aclocal.m4: resync with my-autoconf
