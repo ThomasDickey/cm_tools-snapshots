@@ -1,3 +1,11 @@
+1995-05-13  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/copy/src/copy.c: change interface to setmtime()
+
+	* src/copy/src/copy.c: module-id
+
+	* support/set_date.c: change interface to setmtime
+
 1995-01-28  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/vcs/src/Makefile, src/vcs/Makefile, src/permit/src/Makefile, src/permit/Makefile, support/Makefile:

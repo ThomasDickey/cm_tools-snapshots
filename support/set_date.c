@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	*Id = "$Id: set_date.c,v 11.2 1993/09/22 13:57:02 dickey Exp $";
+static	char	*Id = "$Id: set_date.c,v 11.3 1995/05/13 23:06:14 tom Exp $";
 #endif
 
 #include "ptypes.h"
@@ -44,7 +44,7 @@ _MAIN
 	if (optind < argc) {
 		while (optind < argc) {
 			char	*name = argv[optind++];
-			if (setmtime(name, when) < 0)
+			if (setmtime(name, when, when) < 0)
 				failed(name);
 		}
 	} else

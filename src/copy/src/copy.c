@@ -1,12 +1,10 @@
-#ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 11.13 1994/11/09 00:02:55 tom Exp $";
-#endif
-
 /*
  * Title:	copy.c (enhanced unix copy utility)
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
- * Modified:	18 Jun 1994, removed 'S' setuid option.  Corrected test for
+ * Modified:
+ *		28 Jan 1995, retain 's' modes on destination directory.
+ *		18 Jun 1994, removed 'S' setuid option.  Corrected test for
  *			     overwrite of same-inode.  Added S/D MSDOS
  *			     compatibility options for Linux. Make trace to
  *			     standard output.
@@ -107,11 +105,15 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RC
 #include	<ptypes.h>
 #include	<errno.h>
 
+MODULE_ID("$Id: copy.c,v 11.17 1995/05/13 23:09:02 tom Exp $")
+
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
 
 #define	VERBOSE	if_Verbose PRINTF
 #define	DEBUG	if_Debug   PRINTF
+
+#define	S_MODEBITS	(~S_IFMT)
 
 #ifndef	S_IFLNK
 #define	lstat	stat
@@ -264,12 +266,20 @@ int	SetMode(
 	_DCL(char *,	path)
 	_DCL(int,	mode)
 {
+	Stat_t	sb;
+
+	/* if the mkdir inherited an s-bit, keep it... */
+	if (stat(path, &sb) == 0) {
+		if (isDIR(sb.st_mode))
+			mode |= (sb.st_mode & (S_ISUID | S_ISGID));
+	}
 	DEBUG("++ chmod %03o %s\n", mode, path);
-	if (!n_opt)
+	if (!n_opt) {
 		if (chmod(path, mode) < 0) {
 			perror(path);
 			return -1;
 		}
+	}
 	return 0;
 }
 
@@ -279,24 +289,26 @@ int	SetMode(
 static
 int	SetDate(
 	_ARX(char *,	path)
-	_AR1(time_t,	when)
+	_ARX(time_t,	modified)
+	_AR1(time_t,	accessed)
 		)
 	_DCL(char *,	path)
-	_DCL(time_t,	when)
+	_DCL(time_t,	modified)
+	_DCL(time_t,	accessed)
 {
 #if	DOS_VISIBLE
 	if (dst_type != src_type) {
 		if (dst_type == MsDos) {	/* Linux to MsDos */
-			when &= ~1L;
-			when -= gmt_offset(when);
+			modified &= ~1L;
+			modified -= gmt_offset(modified);
 		} else {			/* MsDos to Linux */
-			when += gmt_offset(when);
+			modified += gmt_offset(modified);
 		}
 	}
 #endif
 	if_Debug {
 		struct	tm split;
-		split = *localtime(&when);
+		split = *localtime(&modified);
 		PRINTF("++ touch %02d%02d%02d%02d%04d.%02d %s\n",
 			split.tm_mon + 1,
 			split.tm_mday,
@@ -306,7 +318,7 @@ int	SetDate(
 			split.tm_sec,
 			path);
 	}
-	return n_opt ? 0 : setmtime(path, when);
+	return n_opt ? 0 : setmtime(path, modified, accessed);
 }
 
 /*
@@ -320,7 +332,7 @@ void	RestoreMode(
 	_DCL(char *,	path)
 	_DCL(Stat_t *,	sb)
 {
-	(void)SetMode(path, (int)(sb->st_mode & 0777));
+	(void)SetMode(path, (int)(sb->st_mode & S_MODEBITS));
 }
 
 /*
@@ -384,8 +396,8 @@ int	copyfile(
 #else	/* unix	*/
 	FILE	*ifp, *ofp;
 	int	num;
-	int	old_mode = new_sb->st_mode & 0777,
-		tmp_mode = old_mode | 0600;	/* must be writeable! */
+	int	old_mode = new_sb->st_mode & S_MODEBITS,
+		tmp_mode = old_mode | S_IWUSR;	/* must be writeable! */
 
 	if ((ifp = fopen(src, "r")) == 0) {
 		perror(src);
@@ -748,15 +760,16 @@ int	copyit(
 	}
 
 	if (isFILE(src_sb.st_mode) || isDIR(src_sb.st_mode)) {
-		int	mode	= dst_sb.st_mode & 0777;
+		int	mode	= dst_sb.st_mode & S_MODEBITS;
 		if (isFILE(src_sb.st_mode) && s_opt) {
-			mode	&= ~0222;	/* can't be writeable */
+			/* mustn't be writeable! */
+			mode	&= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 			mode	|=  (S_ISUID | S_ISGID);
 		}
 		if (isDIR(src_sb.st_mode) && !isDIR(dst_sb.st_mode))
-			mode	&= 0111;
+			mode	|= 0111;
 		(void)SetMode(dst, mode);
-		(void)SetDate(dst, src_sb.st_mtime);
+		(void)SetDate(dst, src_sb.st_mtime, src_sb.st_atime);
 	}
 
 	if (isDIR(src_sb.st_mode))

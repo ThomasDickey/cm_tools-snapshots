@@ -1,4 +1,4 @@
-# $Id: Makefile,v 11.6 1994/11/09 00:11:59 tom Exp $
+# $Id: Makefile,v 11.7 1995/01/29 00:40:06 tom Exp $
 # Make-file for RCS/vcs utility
 
 THIS	= vcs
@@ -32,7 +32,7 @@ install:	$(SOURCES) $B $(ALL)
 clean:				; -$(RM) $(CLEAN)
 clobber:	clean		; -$(RM) $(ALL)
 destroy:			; $(DESTROY)
-run_tests:
+run_test:
 sources:	$(SOURCES)
 
 ####### (Details of Productions) ###############################################
