@@ -1,4 +1,4 @@
-$Id: release.txt,v 11.3 1992/08/28 15:20:44 dickey Exp $
+$Id: release.txt,v 11.4 1992/09/04 15:34:13 dickey Exp $
 
 --------------------------------------------------------------------------------
 
@@ -16,6 +16,7 @@ New features in 'ded':
 	* added search commands to workspace pager
 	* added '-commands to repeat specific inline-commands
 	* added history to inline- and workspace-commands.
+	* command-editing allows ctl/V (to insert any ASCII character)
 
 Version 11.0: 
 ------------
