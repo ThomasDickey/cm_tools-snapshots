@@ -1,3 +1,15 @@
+1998-12-09  Thomas E. Dickey  <dickey@clark.net>
+
+	* install-sh: resync with my-autoconf
+
+1998-12-06  Thomas E. Dickey  <dickey@clark.net>
+
+	* src/link2rcs/src/link2rcs.c:
+	fix the case where we have symbolic links to a directory, by copying the
+	link rather than trying to make directories.  I ran into this by having
+	made links to ".", to resolve an include-path problem.  When trying to
+	link the resulting directory, link2rcs went into a loop....
+
 1998-04-22  Thomas E. Dickey  <dickey@clark.net>
 
 	* src/checkin/src/checkin.c: HP-UX 9.x doesn't have setegid()
