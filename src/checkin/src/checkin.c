@@ -1,5 +1,5 @@
 #ifndef	lint
-static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 10.30 1992/02/11 13:10:20 dickey Exp $";
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 11.0 1992/07/17 10:14:44 ste_cm Rel $";
 #endif
 
 /*
@@ -7,6 +7,7 @@ static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		17 Jul 1992, if no lock found, don't exit early from GetLock!
  *		10 Feb 1992, change "-d" to "-D".  Make this recognize symbolic
  *			     revisions and branches.
  *		07 Feb 1992, use dynamic-strings for building arg-lists.
@@ -649,7 +650,6 @@ GetLock(_AR0)
 			if (EMPTY(lock_rev)) {
 				if (implied && !from_keys)
 					(void)strcpy(opt_rev, next_rev);
-				done = TRUE;
 				break;
 			}
 

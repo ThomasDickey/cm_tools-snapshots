@@ -1,3 +1,32 @@
+1992-07-17  dickey@software.org
+
+	* src/checkin/src/checkin.c:
+	regression-testing 'sccs2rcs', noticed that (in this test
+	no locks are used) 'ci' complained about no date-difference
+	and did not do the checkin properly.  The problem was that
+	if I found no lock, I exited early from GetLock and did not
+	pick up a value for the lock-date.  Corrected this.
+
+1992-07-17  ste_cm@software.org
+
+	* src/checkin/src/checkin.c:
+	BASELINE Fri Jul 17 10:17:38 1992 -- SCCS_TOOLS-regression
+
+1992-07-16  ste_cm@software.org
+
+	* src/checkin/test/run_test.sh:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+	* src/checkin/test/run_test.sh:
+	corrected command that saves the rcs-file in case of difference
+	corrected trap-command (by making it know about interrupts)
+
+	* src/checkout/src/checkout.c:
+	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+	* src/checkout/src/checkout.c:
+	recorrected last change to call on 'cutoff()'
+
 1992-06-30  dickey@software.org
 
 	* src/checkout/src/checkout.c: comment
