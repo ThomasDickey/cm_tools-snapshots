@@ -1,0 +1,3 @@
+should provide a hook to recognize -c option and -n option
+between rcsdiff/checkin according to whether an argument is
+given for each...

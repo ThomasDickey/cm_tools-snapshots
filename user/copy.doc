@@ -12,7 +12,8 @@
 	F31 = Classic 12 Bold,
 	F32 = Classic 12 Italic>
 
-<!Page>
+<!Page,
+	Starting Page # = 	Inherit>
 
 <!Autonumber Stream, List, 1>
 
@@ -172,11 +173,11 @@ V4,
 <Page Header, Frame =
 V4,
 (g9,1,0
- (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,September\ 24\,\ 1989)
+ (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,March\ 13\,\ 1989)
  (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,unix\ copy\ utility)
  (t8,3,4,0,0.438782,0,17,@nnclas12b,copy)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
 
 <Page Footer, Frame =
 V4,
@@ -201,9 +202,9 @@ USAGE
 
 <paragraph>
 
-<F31>copy<F0> [-i] [-v] file1 file2
+<F31>copy<F0> [options] file1 file2
 
-<F31>copy<F0> [-i] [-v] file ... directory
+<F31>copy<F0> [options] file ... directory
 
 <header>
 
@@ -228,11 +229,11 @@ exist, <F31>copy<F0> uses the mode of the source file.
 <F0>, without changing their original filenames.  It refuses to copy 
 a file onto itself.
 
-In all cases, <F32>file2<F0> will be set to the same modification 
-date as <F32>file1<F0>.  The owner of the file will be the same as 
-the owner of the process which invokes <F31>copy<F0>.  Unless the 
-<#7f>-<F31>i<F0>" option is used, <F31>copy<F0> ignores permissions 
-of the (previous) destination file.
+<F30@R>Except for symbolic links<F0>, <F32>file2<F0> will be set to 
+the same modification date as <F32>file1<F0>.  The owner of the file 
+will be the same as the owner of the process which invokes <F31>copy<F0>.  
+Unless the <#7f>-<F31>i<F0>" option is used, <F31>copy<F0> ignores 
+permissions of the (previous) destination file.
 
 <header>
 
@@ -255,29 +256,31 @@ will cause an old file to be overwritten.  A <#7f>y" answer causes
 copy to continue.  Any other answer prevents it from overwriting the 
 file.
 
-<F30@R>-<F31@R>m<F30@R><Tab>permits you to merge directories.  If the source 
-and destination are directories, <F31@R>copy<F30@R> will normally create 
+-<F31>m<F0><Tab>permits you to merge directories.  If the source 
+and destination are directories, <F31>copy<F0> will normally create 
 a new directory under the destination with the same leaf name as the 
 source.  For example,
 
 <fixed>
 
-<F21@R><Tab><Tab>copy /local/bin /usr/local/bin
+<Tab><Tab>copy /local/bin /usr/local/bin
 
 <options>
 
-<F30@R><Tab>will create and copy into the directory <#7f>/usr/local/bin/bin" 
-if <#7f>/usr/local/bin" exists.  Use the <#7f>-<F31@R>m<F30@R>" option 
+<Tab>will create and copy into the directory <#7f>/usr/local/bin/bin" 
+if <#7f>/usr/local/bin" exists.  Use the <#7f>-<F31>m<F0>" option 
 to copy onto an existing directory.
 
-<|,2><F30@R>-<F31@R>n<F30@R><Tab>disables the actual creation or modification 
+<|,2>-<F31>n<F0><Tab>disables the actual creation or modification 
 of files, and (depending on the level of verboseness) shows the effect 
-which the <F31@R>copy<F30@R> command would have.
+which the <F31>copy<F0> command would have.
 
-<F30@R>-<F31@R>u<F30@R><Tab>resets the effective uid before executing.  
-If <F31@R>copy<F30@R> is invoked from a set-uid program, this undoes the 
-effect of the set-uid by restoring the original permissions of the 
-user.
+<F30@R>-<F31@R>s<F30@R><Tab>enables the set-uid and set-gid file modes in 
+the target.
+
+-<F31>u<F0><Tab>resets the effective uid before executing.  If <F31>copy<F0> 
+is invoked from a set-uid program, this undoes the effect of the set-uid 
+by restoring the original permissions of the user.
 
 -<F31>v<F0><Tab>verbose mode directs <F31>copy<F0> to print the 
 names (to standard error) of the files which it copies.  On Apollo, 
@@ -290,7 +293,9 @@ OPERATIONS
 
 <paragraph>
 
-<F31>Copy<F0> is used exactly as one would use <F31>cp<F0>.
+<F31>Copy<F0> is used exactly as one would use <F31>cp<F0> <F30@R>(for 
+file-copying).  Directory copying is performed without the <#7f>-<F31@R>r<F30@R>" 
+option of <F31@R>cp<F30@R>.
 
 <header>
 
@@ -316,8 +321,8 @@ ANTICIPATED CHANGES
 
 <paragraph>
 
-<F31>Copy<F0> does not currently know how to handle symbolic links 
-and special files.
+<F31>Copy<F0> does not currently know how to handle special files 
+(e.g., <F31>/dev/tty<F0>).
 
 <header>
 

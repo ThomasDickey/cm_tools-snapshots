@@ -1,12 +1,28 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)checkin.c	1.26 89/02/27 10:41:28";
+static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 1.32 1989/03/31 14:55:22 dickey Exp $";
 #endif	lint
 
 /*
  * Title:	checkin.c (RCS checkin front-end)
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
- * Modified:
+ * $Log: checkin.c,v $
+ * Revision 1.32  1989/03/31 14:55:22  dickey
+ * only close temp-file if we have opened it!
+ *
+ *		Revision 1.31  89/03/29  14:43:06  dickey
+ *		if working file cannot be found, this may be because checkin is
+ *		running in set-uid mode.  revert to normal rights and try again.
+ *		
+ *		Revision 1.30  89/03/21  13:51:08  dickey
+ *		sccs2rcs keywords
+ *		
+ *		21 Mar 1989, after invoking 'revert()', could no longer write to
+ *			     temp-file (fpT); moved 'tmpfile()' call to fix.
+ *		15 Mar 1989, if no tip-version found, assume we can create
+ *			     initial revision.
+ *		08 Mar 1989, use 'revert()' and 'rcspermit()' to implement
+ *			     CM-restrictions to setuid.
  *		27 Feb 1989, Set comment for VMS filetypes .COM, .MMS, as well
  *			     as unix+VMS types ".mk" and ".e".  Also, test for
  *			     the special case of Makefile/makefile.
@@ -45,21 +61,13 @@ static	char	sccs_id[] = "@(#)checkin.c	1.26 89/02/27 10:41:28";
  *
  *			name => RCS/name,v
  *
- * patch:
- *		Should check access-list in pre-process part to ensure that
- *		user is permitted to check file in.  Or, Pyster wants to
- *		prohibit users from checkin files in (though they may have the
- *		right to make locks for checking files out).
- *
- *		Want the ability to set the default checkin-version on a global
- *		basis (i.e., for directory) to other than 1.1 (again, pyster).
- *
  * patch:	Since 'ci' uses 'access()' to verify that it can put a semaphore
  *		in the RCS directory, I don't see any simple way of handling
  *		this except to make the RCS directory temporarily publicly
  *		writeable ...
  */
 
+#define		STR_PTYPES
 #include	"ptypes.h"
 #include	"rcsdefs.h"
 
@@ -74,10 +82,6 @@ extern	int	errno;
 extern	char	*ftype();
 extern	char	*getuser();
 extern	char	*pathleaf();
-extern	char	*strcat();
-extern	char	*strchr(), *strrchr();
-extern	char	*strcpy();
-extern	char	*strncpy();
 
 /* local declarations: */
 #define	REV_OPT	"rfluqk"
@@ -87,7 +91,6 @@ extern	char	*strncpy();
 #define	TELL	if (!silent) PRINTF
 #define	DEBUG(s)	if (debug) PRINTF s;
 
-static	FILE	*fpT;
 static	int	silent	= FALSE,
 		debug,			/* set by RCS_DEBUG environment */
 		locked	= FALSE,	/* set if file is re-locked */
@@ -104,6 +107,7 @@ static	char	*Working,
 		*TMP_file,		/* temp-file used to fix uid/access */
 		*t_option,		/* "-t" option used for "ci" or "rcs" */
 		RCSdir[BUFSIZ],
+		RCSbase[20],		/* base+ version number */
 		opt_all[BUFSIZ],	/* options for 'ci' */
 		opt_rev[BUFSIZ],
 		old_date[BUFSIZ],
@@ -150,16 +154,14 @@ cleanup(sig)
 static
 ReProcess ()
 {
-FILE	*fpS;
-struct	stat	sb;
-int	len	= strlen(old_date),
-	mode,
-	lines	= 0,
-	changed	= 0;		/* number of substitutions done */
-char	*s, *d,
-	bfr[BUFSIZ];
-
-	(void) rewind (fpT);
+	auto	FILE	*fpS, *fpT = 0;
+	auto	struct	stat	sb;
+	auto	int	len	= strlen(old_date),
+			mode,
+			lines	= 0,
+			changed	= 0;	/* number of substitutions done */
+	register char	*s, *d;
+	auto	char	bfr[BUFSIZ];
 
 	if (!from_keys) {
 
@@ -174,6 +176,8 @@ char	*s, *d,
 
 		if (!(fpS = fopen(Working, "r")))
 			return;
+		if (!(fpT = tmpfile()))
+			failed("(tmpfile)");
 
 		while (fgets(bfr, sizeof(bfr), fpS)) {
 		char	*last = bfr + strlen(bfr) - len;
@@ -183,6 +187,8 @@ char	*s, *d,
 			&&  (d = strchr(bfr, '$'))) {
 				while (d <= last) {
 					if (!strncmp(d, old_date, len)) {
+						DEBUG(("...edit date at %d\n",
+							lines))
 						for (s = new_date; *s; s++)
 							*d++ = *s;
 						changed++;
@@ -200,6 +206,7 @@ char	*s, *d,
 		mode = sb.st_mode & 0777;
 		if (changed) {
 			TMP_file = rcstemp(Working, FALSE);
+			DEBUG(("...copyback %d lines to %s\n", lines, TMP_file))
 			(void)copyback(fpT, TMP_file, mode, lines);
 			if (strcmp(TMP_file,Working)) {
 				if (usercopy(TMP_file, Working) < 0)
@@ -212,6 +219,8 @@ char	*s, *d,
 		if (userprot(Working, mode, modtime) < 0)
 			GiveUp("touch \"%s\" failed");
 	}
+	if (fpT != 0)
+		FCLOSE(fpT);
 }
 
 /*
@@ -366,7 +375,8 @@ Execute()
 static
 GetLock()
 {
-	int	header	= TRUE;
+	int	header	= TRUE,
+		strict	= FALSE;
 	char	*s	= 0,
 		tip[BUFSIZ],
 		key[BUFSIZ],
@@ -383,7 +393,12 @@ GetLock()
 			switch (rcskeys(key)) {
 			case S_HEAD:
 				s = rcsparse_num(tip, s);
+				if (!*tip)
+					header = FALSE;
 				DEBUG(("...GetLock tip = %s\n", tip))
+				break;
+			case S_STRICT:
+				strict = TRUE;
 				break;
 			case S_LOCKS:
 				*tmp = EOS;
@@ -400,7 +415,7 @@ GetLock()
 						TELL("?? branching not supported\n");
 						/* patch:finish this later... */
 					}
-				} else {
+				} else if (strict) {
 					TELL("?? no lock set by %s\n", key);
 				}
 				/* fall-thru to force exit */
@@ -414,7 +429,7 @@ GetLock()
 		}
 		rcsclose();
 	}
-	return (*opt_rev != EOS);
+	return (!strict || (*opt_rev != EOS));
 }
 
 /*
@@ -515,6 +530,11 @@ MakeDirectory()
 		(strncpy(RCSdir, Archive, len))[len] = EOS;
 
 		if (stat(RCSdir, &sb) >= 0) {
+			if (sb.st_uid != geteuid()
+			||  sb.st_gid != getegid())
+				revert(debug ? "non-CM use" : (char *)0);
+			else if (!rcspermit(RCSdir,RCSbase))
+				revert("not listed in permit-file");
 			RCS_uid = sb.st_uid;
 			RCS_gid = sb.st_gid;
 			RCSprot = sb.st_mode & 0777;
@@ -523,6 +543,7 @@ MakeDirectory()
 			TELL("?? not a directory: %s\n", RCSdir);
 			(void)exit(FAIL);
 		} else {
+			revert(debug ? "new user directory" : (char *)0);
 			RCS_uid = getuid();
 			RCS_gid = getgid();
 			RCSprot = 0755;
@@ -551,7 +572,7 @@ char	*argv[];
 	int	logmsg	= 0;
 	register int	j;
 	char	bfr[BUFSIZ];
-	char	*dft	= (code < 0) ? getenv("RCS_BASE") : 0;
+	char	*dft	= (code < 0) ? RCSbase : 0;
 	register char *s;
 
 	*opt_rev = EOS;
@@ -566,8 +587,12 @@ char	*argv[];
 				silent++;
 			if (strchr(REV_OPT, *s)) {
 				if (*s == 'l')	locked = TRUE;
-				if (*(++s))
-					(void)strcpy(opt_rev, s);
+				if (*(++s)) {
+					s = strcpy(opt_rev, s);
+					s += strlen(opt_rev) - 2;
+					if (s > opt_rev && !strcmp(s, ".0"))
+						revert("baseline version");
+				}
 				last = j;
 			} else if (*s == 'm')
 				logmsg = TRUE;
@@ -582,7 +607,7 @@ char	*argv[];
 	 */
 	if ((*opt_rev == EOS)
 	&&  (!from_keys)
-	&&  (dft != 0)) {
+	&&  ((dft != 0) && (*dft != EOS))) {
 		if (last) {
 			*opt_all = EOS;
 			for (j = 1; j < argc; j++) {
@@ -650,7 +675,8 @@ char	*argv[];
 	register char	*s;
 
 	debug = RCS_DEBUG;
-	fpT = tmpfile();
+	if (s = getenv("RCS_BASE"))
+		(void)strcpy(RCSbase,s);
 	catchall(cleanup);
 	DEBUG(("uid=%d, euid=%d, gid=%d, egid=%d\n",
 		getuid(), geteuid(), getgid(), getegid()))
@@ -677,8 +703,12 @@ char	*argv[];
 			Archive = name2rcs(s);
 			code = -1;
 
-			if (!(modtime = PreProcess (Working)))
-				GiveUp("file not found: %s");
+			if (!(modtime = PreProcess (Working))) {
+				revert(debug ? "directory access" : (char *)0);
+				if (!(modtime = PreProcess (Working))) {
+					GiveUp("file not found: %s");
+				}
+			}
 
 			oldtime = 0;	/* assume we don't find archive */
 			if (MakeDirectory()

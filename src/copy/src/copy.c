@@ -1,12 +1,36 @@
 #ifndef	lint
-static	char	sccs_id[] = "@(#)copy.c	1.9 89/01/24 11:41:32";
+static	char	sccs_id[] = "$Header: /users/source/archives/cm_tools.vcs/src/copy/src/RCS/copy.c,v 4.0 1989/03/30 15:13:05 ste_cm Rel $";
 #endif	lint
 
 /*
  * Title:	copy.c (enhanced unix copy utility)
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
- * Modified:
+ * $Log: copy.c,v $
+ * Revision 4.0  1989/03/30 15:13:05  ste_cm
+ * BASELINE Thu Aug 24 10:16:23 EDT 1989 -- support:navi_011(rel2)
+ *
+ *		Revision 3.0  89/03/30  15:13:05  ste_cm
+ *		BASELINE Mon Jun 19 14:17:23 EDT 1989
+ *		
+ *		Revision 2.0  89/03/30  15:13:05  ste_cm
+ *		BASELINE Thu Apr  6 13:08:58 EDT 1989
+ *		
+ *		Revision 1.14  89/03/30  15:13:05  dickey
+ *		modified normal unix file-copy code so that if the destination file
+ *		could not be opened for output, then we restore its protection.
+ *		
+ *		Revision 1.13  89/03/27  08:30:46  dickey
+ *		added logic to test for success of Aegis 'cpf' (must rely on
+ *		the file-statistics differing).  Also, use 'abspath()' on the
+ *		argument passed to 'mkdir()' to make this tolerant of '.' in
+ *		the arguments.
+ *		
+ *		Revision 1.12  89/03/13  10:31:56  dickey
+ *		sccs2rcs keywords
+ *		
+ *		13 Mar 1989, added "-s" (set-uid) option.
+ *		06 Mar 1989, added code to copy symbolic links
  *		24 Jan 1989, use 'pathleaf()' to correct pathnames of copy into
  *			     an existing directory.  Added copy-directory with
  *			     "-m" option.
@@ -28,28 +52,22 @@ static	char	sccs_id[] = "@(#)copy.c	1.9 89/01/24 11:41:32";
  * patch:	if running as root, should try also to keep owner/mode of the
  *		destination intact.
  *
- * patch:	this copies only files and directories; must handle other stuff
- *		such as symbolic links and devices.
+ * patch:	this copies only files, directories and symbolic links; must
+ *		handle other stuff such as devices.
  *
  * patch:	how do we keep from losing the destination file if we have a
  *		fault in the system?
  */
 
 #define		DIR_PTYPES	/* include directory-definitions */
+#define		STR_PTYPES	/* include string-definitions */
 #include	"ptypes.h"
 extern	int	optind;		/* index in 'argv[]' of first argument */
 extern	char	*pathcat(),
-		*pathleaf(),
-		*strcat(),
-		*strcpy(),
-		*strrchr();
+		*pathleaf();
 
 #define	R_OK	4
 #define	W_OK	2
-
-#ifndef	S_IFLNK
-#define	lstat	stat
-#endif	S_IFLNK
 
 #define	TELL	FPRINTF(stderr,
 #define	VERBOSE	if (v_opt) TELL
@@ -58,12 +76,21 @@ extern	char	*pathcat(),
 #define	isFILE(s)	((s.st_mode & S_IFMT) == S_IFREG)
 #define	isDIR(s)	((s.st_mode & S_IFMT) == S_IFDIR)
 
-static	long	total_files,
+#ifdef	S_IFLNK
+#define	isLINK(s)	((s.st_mode & S_IFMT) == S_IFLNK)
+#else
+#define	lstat	stat
+#endif	S_IFLNK
+
+static	long	total_dirs,
+		total_links,
+		total_files,
 		total_bytes;
 static	int	d_opt,		/* obtain source from destination arg */
 		i_opt,		/* interactive: force prompt before overwrite */
 		m_opt,		/* merge directories */
 		n_opt,		/* true if we don't actually do copies */
+		s_opt,		/* enable set-uid/gid in target files */
 		v_opt;		/* verbose */
 static	int	no_dir_yet;	/* disables access-test on destination-dir */
 
@@ -127,9 +154,11 @@ char	*dst, *src;
  * to do the copy.
  */
 static
-copyfile(src, dst, previous)
+copyfile(src, dst, previous, new_sb)
 char	*src, *dst;
+struct	stat	*new_sb;
 {
+	int	retval	= -1;
 	char	bfr1[BUFSIZ];
 #ifdef	apollo
 	char	bfr2[BUFSIZ];
@@ -140,38 +169,73 @@ char	*src, *dst;
 	*bfr1 = EOS;
 	catarg(bfr1, convert(bfr2,src));
 	catarg(bfr1, convert(bfr2,dst));
+	catarg(bfr1, "-pdt");	/* ...so we can test for success of copy */
 	if (previous)
 		catarg(bfr1, "-r");
 	DEBUG "++ cpf %s\n", bfr1);
-	return (execute("/com/cpf", bfr1));
+	if (execute("/com/cpf", bfr1) < 0) {
+		TELL "?? copy to %s failed\n", dst);
+		return (-1);
+	}
+	if (previous) {		/* verify that we copied file */
+		struct	stat	sb;
+		if (stat(dst, &sb) < 0)
+			return (-1);
+		if ((sb.st_mtime != new_sb->st_mtime)
+		||  (sb.st_size  != new_sb->st_size))
+			return (-1);	/* copy was not successful */
+	}
+	retval = 0;
 #else	apollo
 	FILE	*ifp, *ofp;
 	int	num;
+	int	old_mode = new_sb->st_mode & 0777,
+		tmp_mode = old_mode | 0600;	/* must be writeable! */
 
 	if ((ifp = fopen(src, "r")) == 0) {
 		perror(src);
-		return(-1);
-	}
-	if (previous && chmod(dst, 0644) < 0) {
-		FCLOSE(ifp);
+	} else if (previous && chmod(dst, tmp_mode) < 0) {
 		perror(dst);
-		return(-1);
-	}
-	if ((ofp = fopen(dst, previous ? "w+" : "w")) == 0) {
-		FCLOSE(ifp);
+	} else if ((ofp = fopen(dst, previous ? "w+" : "w")) == 0) {
 		perror(dst);
-		return(-1);
+	} else {
+		retval = 0;		/* probably will go ok now */
+		while ((num = fread(bfr1, 1, sizeof(bfr1), ifp)) > 0)
+			if (fwrite(bfr1, 1, num, ofp) != num) {
+					/* no, error found anyway */
+				retval = -1;
+				perror(dst);
+				break;
+			}
+		FCLOSE(ofp);
 	}
-	while ((num = fread(bfr1, 1, sizeof(bfr1), ifp)) > 0)
-		if (fwrite(bfr1, 1, num, ofp) != num) {
-			perror(dst);
-			break;
-		}
 	FCLOSE(ifp);
-	FCLOSE(ofp);
-	return (0);
+	if (retval < 0)		/* restore old-mode in case of err */
+		(void)chmod(dst, old_mode);
 #endif	apollo
+	return (retval);
 }
+
+#ifdef	S_IFLNK
+static
+copylink(src,dst)
+char	*src, *dst;
+{
+	auto	char	bfr[BUFSIZ];
+	auto	int	len;
+
+	if ((len = readlink(src, bfr, sizeof(bfr))) < 0) {
+		perror(src);
+		return(-1);
+	}
+	bfr[len] = EOS;
+	if (symlink(bfr, dst) < 0) {
+		perror(dst);
+		return(-1);
+	}
+	return (0);
+}
+#endif	S_IFLNK
 
 static
 copydir(src, dst, previous)
@@ -184,9 +248,10 @@ char	*src, *dst;
 	auto	int		save_dir = no_dir_yet;
 
 	DEBUG "copydir(%s, %s, %d)\n", src, dst, previous);
+	abspath(strcpy(bfr1, dst));
 	if (previous > 0) {
 		if (!n_opt) {
-			if (unlink(dst) < 0) {
+			if (unlink(bfr1) < 0) {
 				perror(dst);
 				return(-1);
 			}
@@ -196,7 +261,7 @@ char	*src, *dst;
 	if (previous >= 0) {	/* called from 'copyit()' */
 		VERBOSE "** make directory \"%s\"\n", dst);
 		if (!n_opt) {
-			if (mkdir(dst, 0755) < 0) {
+			if (mkdir(bfr1, 0755) < 0) {
 				perror(dst);
 				return (-1);
 			}
@@ -258,14 +323,22 @@ char	*src, *dst;
 		TELL "?? file not found: \"%s\"\n", src);
 		return;
 	}
-	if (!isFILE(src_sb) && !isDIR(src_sb)) {
+	if (!isFILE(src_sb)
+#ifdef	S_IFLNK
+	&&  !isLINK(src_sb)
+#endif	S_IFLNK
+	&&  !isDIR(src_sb)) {
 		TELL "?? not a file: \"%s\"\n", src);
 		return;
 	}
 
 	/* Check to see if we can overwrite the destination */
 	if (num = (lstat(dst, &dst_sb) >= 0)) {
-		if (isFILE(dst_sb)) {
+		if (isFILE(dst_sb)
+#ifdef	S_IFLNK
+		||  isLINK(dst_sb)
+#endif	S_IFLNK
+		) {
 			if (i_opt) {
 				TELL "%s ? ", dst);
 				if (gets(bfr1)) {
@@ -287,16 +360,42 @@ char	*src, *dst;
 	if (isDIR(src_sb) && copydir(src,dst,num) < 0)
 		return;
 	if (!n_opt) {
-		if (isFILE(src_sb) && copyfile(src,dst,num) < 0)
+#ifdef	S_IFLNK
+		if (num && !isDIR(src_sb) && isLINK(dst_sb)) {
+			if (unlink(dst) < 0) {
+				perror(dst);
+				return;
+			}
+		}
+		if (isLINK(src_sb)) {
+			if (copylink(src,dst) < 0)
+				return;
+		}
+#endif	S_IFLNK
+		if (isFILE(src_sb) && copyfile(src,dst,num,&src_sb) < 0)
 			return;
-		(void)chmod(dst, (int)(dst_sb.st_mode & 0777));
-		(void)setmtime(dst, src_sb.st_mtime);
+		if (isFILE(src_sb) || isDIR(src_sb)) {
+			int	mode	= dst_sb.st_mode & 0777;
+			if (isFILE(src_sb) && s_opt) {
+				mode	&= ~0222;	/* can't be writeable */
+				mode	|=  (S_ISUID | S_ISGID);
+			}
+			(void)chmod(dst, mode);
+			(void)setmtime(dst, src_sb.st_mtime);
+		}
 	}
+
+	if (isDIR(src_sb))
+		total_dirs++;
 
 	if (isFILE(src_sb)) {
 		total_files++;
 		total_bytes += src_sb.st_size;
 	}
+#ifdef	S_IFLNK
+	if (isLINK(src_sb))
+		total_links++;
+#endif	S_IFLNK
 }
 
 static
@@ -310,6 +409,7 @@ Options:\n\
   -i  interactive (prompt before overwriting)\n\
   -m  merge directories\n\
   -n  no-op (show what would be copied)\n\
+  -s  enable set-uid/gid in target\n\
   -u  reset effective uid before executing\n\
   -v  verbose\n");
 	(void)exit(FAIL);
@@ -364,7 +464,11 @@ char	*argv[];
 		} else if (num != 2) {
 			TELL "?? Destination is not a directory\n");
 			usage();
-		} else if (isFILE(dst_sb)) {
+		} else if (isFILE(dst_sb)
+#ifdef	S_IFLNK
+			|| isLINK(dst_sb)
+#endif	S_IFLNK
+		) {
 			copyit(argv[optind], dst);
 		} else {
 			TELL "?? Destination is not a file\n");
@@ -412,11 +516,12 @@ char	*argv[];
 {
 	register int	j;
 
-	while ((j = getopt(argc, argv, "dimnuv")) != EOF) switch (j) {
+	while ((j = getopt(argc, argv, "dimnsuv")) != EOF) switch (j) {
 	case 'd':	d_opt = TRUE;	break;
 	case 'i':	i_opt = TRUE;	break;
 	case 'm':	m_opt = TRUE;	break;
 	case 'n':	n_opt = TRUE;	break;
+	case 's':	s_opt = TRUE;	break;
 	case 'u':	(void)setuid(getuid());	break;
 	case 'v':	v_opt++;	break;
 	default:	usage();
@@ -427,11 +532,22 @@ char	*argv[];
 	else
 		arg_pairs(argc, argv);
 
-	VERBOSE "** %ld file%s %scopied, %ld bytes\n",
-			total_files,
-			total_files == 1 ? "" : "s",
-			n_opt ? "would be " : "",
+#define	MAY		n_opt ? "would be " : ""
+#define	WOULD(n,y,s)	n, n == 1 ? y : s, MAY
+#define	SUMMARY(n)	WOULD(n, "", "s")
+
+	if (total_dirs)	VERBOSE "** %d director%s %scopied\n",
+			WOULD(total_dirs,"y","ies"));
+#ifdef	S_IFLNK
+	if (total_links)VERBOSE "** %ld link%s %scopied\n",
+			SUMMARY(total_links));
+#endif	S_IFLNK
+	if (total_files)VERBOSE "** %ld file%s %scopied, %ld bytes\n",
+			SUMMARY(total_files),
 			total_bytes);
+	if (!(total_dirs || total_links || total_files))
+		VERBOSE "** nothing %scopied\n", MAY);
+
 	(void)exit(SUCCESS);
 	/*NOTREACHED*/
 }

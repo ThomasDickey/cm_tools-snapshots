@@ -1,0 +1,14 @@
+$Header: /users/source/archives/cm_tools.vcs/certify/RCS/release.txt,v 2.0 1989/03/27 16:19:48 ste_cm Exp $
+
+$Log: release.txt,v $
+Revision 2.0  1989/03/27 16:19:48  ste_cm
+BASELINE Tue Apr  4 16:00:32 EDT 1989
+
+Revision 1.1  89/03/27  16:19:48  dickey
+RCS_BASE
+
+--------------------------------------------------------------------------------
+
+This version of CM_TOOLS implements baseline and link2rcs as scripts.
+The new release will probably recode these to integrate them better
+with 'permit'.

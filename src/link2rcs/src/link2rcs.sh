@@ -1,10 +1,30 @@
-: '@(#) $Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/link2rcs.sh,v 1.2 1988/11/10 15:59:12 dickey Exp $'
+: '@(#) $Header: /users/source/archives/cm_tools.vcs/src/link2rcs/src/RCS/link2rcs.sh,v 5.0 1989/03/28 13:49:24 ste_cm Rel $'
 # Make a template of an existing tree, with symbolic links to the original
 # tree's RCS directories (T.Dickey).
 #
 # Arguments are the subtrees to instantiate.  After the template is built,
 # the 'rcsget' script can be run to extract files for the tree.
 #
+# $Log: link2rcs.sh,v $
+# Revision 5.0  1989/03/28 13:49:24  ste_cm
+# BASELINE Fri Oct 27 12:27:25 1989 -- apollo SR10.1 mods + ADA_PITS 4.0
+#
+# Revision 4.0  89/03/28  13:49:24  ste_cm
+# BASELINE Thu Aug 24 10:36:51 EDT 1989 -- support:navi_011(rel2)
+# 
+# Revision 3.0  89/03/28  13:49:24  ste_cm
+# BASELINE Mon Jun 19 14:44:56 EDT 1989
+# 
+# Revision 2.0  89/03/28  13:49:24  ste_cm
+# BASELINE Thu Apr  6 13:37:00 EDT 1989
+# 
+# Revision 1.4  89/03/28  13:49:24  dickey
+# updated getopt/usage for -m option
+# 
+# Revision 1.3  89/03/28  09:04:10  dickey
+# added -m (merge) option.
+# 
+
 # hacks to make this run on apollo:
 if [ -f /com/vt100 ]
 then	PATH=$PATH:/sys5/bin
@@ -15,14 +35,16 @@ WD=`pwd`
 SRC=.
 DST=
 OPT=
-set -$TRACE `getopt s:d: $*`
+set -$TRACE `getopt ms:d: $*`
 for i in $*
 do
 	case $i in
+	-m)	OPT=$i; shift;;
 	-s)	SRC=$2;	shift; shift;;
 	-d)	DST=$2;	shift; shift;;
 	--)	shift; break;;
-	-*)	echo "usage: $0 [-s src_dir] [-d dst_dir] directories";exit 1;;
+	-*)	echo "usage: `basename $0 .sh` [-m] [-s src_dir] [-d dst_dir] directories"
+		exit 1;;
 	esac
 done
 #
@@ -56,9 +78,16 @@ do
 	for j in `cat $TMP`
 	do
 		k=`basename $j`
-		if [ -r $j -o -s $j ]
-		then	echo '?? exists:         '$j
-			break
+		if test -r $j -o -s $j
+		then
+			if test "$OPT" = "-m"
+			then
+				echo '** merged:         '$j
+				continue
+			else
+				echo '?? exists:         '$j
+				break
+			fi
 		else
 			case $k in
 			.*|\$.*.\$)

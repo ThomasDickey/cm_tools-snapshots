@@ -5,19 +5,17 @@
 	Default Printer =	"cx">
 
 <!Font Definitions,
-	F30 = Classic 12,
 	F27 = Classic 10,
+	F30 = Classic 12,
 	F21 = Typewriter 10,
 	F34 = Classic 14 Bold,
 	F31 = Classic 12 Bold,
 	F32 = Classic 12 Italic,
-	F49 = Modern 12,
-	F6 = Symbols 12,
-	F51 = Modern 12 Italic,
-	F46 = Modern 10,
-	F48 = Modern 10 Italic>
+	F48 = Modern 10 Italic,
+	F6 = Symbols 12>
 
-<!Page>
+<!Page,
+	Starting Page # = 	Inherit>
 
 <!Autonumber Stream, List, 1>
 
@@ -180,8 +178,8 @@ V4,
  (t8,1,4,5.698608,0.438782,2,17,@nnclas12b,August\ 24\,\ 1988)
  (t8,2,4,2.849304,0.438782,1,17,@nnclas12b,RCS\ directory\ template)
  (t8,3,4,0,0.438782,0,17,@nnclas12b,link2rcs)
- (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,1,1,1,1,0.066667,0.066667,6,6,0,0.066
-  667,6))>
+ (E10,0,0,0,1,1,0.053333,1,15,0,0,1,0,0,0,0.007813,1,1,1,0.066667,0.066667,6,6,
+  0,0.066667,6))>
 
 <Page Footer, Frame =
 V4,

@@ -1,25 +1,82 @@
-MANIFEST for cm_tools, version t19890227
+MANIFEST for cm_tools, version t19890331
 --------------------------------------------------------------------------------
 MANIFEST                        this file
+COPYING                         copyright notice for CM_TOOLS
+Makefile                        top-level makefile for CM_TOOLS.
+README                          top-level README for CM_TOOLS
+bin                             subdirectory
+bin/Makefile                    make-file for CM_TOOLS bin-directory
+certify                         subdirectory
+certify/Makefile                certificate-makefile for CM_TOOLS
+certify/README                  certificate-README for CM_TOOLS
+certify/config.txt              configuration-sheet for CM_TOOLS
+certify/release.txt             release-notes for CM_TOOLS
+src                             subdirectory
+src/Makefile                    make-file for CM_TOOLS src-directory
+src/baseline                    subdirectory
+src/baseline/Makefile           top-level makefile for RCS baseline utility
 src/baseline/src                subdirectory
+src/baseline/src/Makefile       make-file for RCS baseline utility
 src/baseline/src/baseline.sh    
+src/baseline/test               subdirectory
+src/baseline/test/Makefile      make-file for baseline utility regression test
+src/baseline/test/run_test.sed  sed-script to extract the tip-version of an RCS-file (infers baseline).
+src/baseline/test/run_test.sh   test-script for baseline utility
+src/checkin                     subdirectory
+src/checkin/Makefile            top-level makefile for RCS checkin utility
 src/checkin/src                 subdirectory
 src/checkin/src/Makefile        
 src/checkin/src/checkin.c       wrapper for 'ci'
 src/checkin/src/rcsput.sh       
+src/checkin/test                subdirectory
+src/checkin/test/Makefile       make-file for RCS checkin-utility tests
+src/checkin/test/run_test.sh    test-script for RCS checkin-utility
+src/checkout                    subdirectory
+src/checkout/Makefile           top-level makefile for 'checkout' utility
 src/checkout/src                subdirectory
 src/checkout/src/Makefile       
 src/checkout/src/checkout.c     wrapper for 'co'
 src/checkout/src/rcsget.sh      
+src/checkout/test               subdirectory
+src/checkout/test/Makefile      make-file for 'checkout' regression tests
+src/checkout/test/run_test.sh   test-script for RCS checkout package
+src/checkup                     subdirectory
+src/checkup/Makefile            top-level makefile for RCS/sccs checkup utility
 src/checkup/src                 subdirectory
 src/checkup/src/Makefile        
 src/checkup/src/checkup.c       utility to find files not checked-in
+src/checkup/test                subdirectory
+src/checkup/test/Makefile       make-file for 'checkup' test
+src/checkup/test/run_test.sh    test-script for 'checkup'
+src/copy                        subdirectory
+src/copy/Makefile               top-level makefile for unix copy-utility
 src/copy/src                    subdirectory
 src/copy/src/Makefile           
 src/copy/src/copy.c             a better version of 'cp'.
+src/copy/test                   subdirectory
+src/copy/test/Makefile          make-file for testing unix copy utility
+src/copy/test/run_test.sh       test-script for unix-copy utility
+src/link2rcs                    subdirectory
+src/link2rcs/Makefile           top-level makefile for link2rcs utility
 src/link2rcs/src                subdirectory
+src/link2rcs/src/Makefile       make-file for RCS skeleton-tree utility (link2rcs)
 src/link2rcs/src/link2rcs.sh    makes a template-tree, in which all of the RCS-directories are replaced by
+src/link2rcs/test               subdirectory
+src/link2rcs/test/Makefile      make-file for link2rcs test
+src/link2rcs/test/run_test.sh   test-script for link2rcs
+src/permit                      subdirectory
+src/permit/Makefile             top-level makefile for the CM_TOOLS 'permit' utility
+src/permit/src                  subdirectory
+src/permit/src/Makefile         
+src/permit/src/permit.c         setuid-style admin utility
+src/permit/test                 subdirectory
+src/permit/test/Makefile        makefile for 'permit' regression tests
+src/permit/test/run_test.sh     test/example script for 'permit' utility (no-op mode only)
+support                         subdirectory
+support/Makefile                make-file for CM_TOOLS support utilities
+support/copy.sh                 copy-script to use til we have a working copy utility
 user                            subdirectory
+user/Makefile                   make-file (for installation and source-control) of user-documentation
 user/baseline.doc               
 user/checkin.doc                
 user/checkout.doc               
@@ -27,5 +84,7 @@ user/checkup.doc
 user/copy.doc                   
 user/ded.doc                    
 user/link2rcs.doc               
+user/permit.doc                 
 user/rcsget.doc                 
+user/rcsput.bug                 known problems to resolve
 user/rcsput.doc                 
