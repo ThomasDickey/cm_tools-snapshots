@@ -1,16 +1,16 @@
 #ifndef	lint
-static	char	Id[] = "$Id: rcsput.c,v 8.0 1990/08/14 14:16:27 ste_cm Rel $";
-#endif	lint
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/rcsput.c,v 8.1 1991/05/20 12:33:16 dickey Exp $";
+#endif
 
 /*
  * Title:	rcsput.c (rcs put-tree)
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * $Log: rcsput.c,v $
- * Revision 8.0  1990/08/14 14:16:27  ste_cm
- * BASELINE Tue Aug 14 14:19:47 1990 -- ADA_TRANS, LINCNT
+ * Revision 8.1  1991/05/20 12:33:16  dickey
+ * mods to compile on apollo sr10.3
  *
- *		Revision 7.1  90/08/14  14:16:27  dickey
+ *		Revision 7.1  90/08/14  14:17:25  dickey
  *		lint
  *		
  *		Revision 7.0  90/04/19  08:32:49  ste_cm

@@ -1,16 +1,16 @@
 #ifndef	lint
-static	char	Id[] = "$Id: checkin.c,v 8.0 1990/08/14 14:14:56 ste_cm Rel $";
-#endif	lint
+static	char	Id[] = "$Header: /users/source/archives/cm_tools.vcs/src/checkin/src/RCS/checkin.c,v 8.1 1991/05/20 12:34:54 dickey Exp $";
+#endif
 
 /*
  * Title:	checkin.c (RCS checkin front-end)
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * $Log: checkin.c,v $
- * Revision 8.0  1990/08/14 14:14:56  ste_cm
- * BASELINE Tue Aug 14 14:19:47 1990 -- ADA_TRANS, LINCNT
+ * Revision 8.1  1991/05/20 12:34:54  dickey
+ * mods to compile on apollo sr10.3
  *
- *		Revision 7.1  90/08/14  14:14:56  dickey
+ *		Revision 7.1  90/08/14  14:17:01  dickey
  *		lint
  *		
  *		Revision 7.0  90/04/19  12:06:04  ste_cm
@@ -133,6 +133,7 @@ static	char	Id[] = "$Id: checkin.c,v 8.0 1990/08/14 14:14:56 ste_cm Rel $";
  *		writeable ...
  */
 
+#define		SIG_PTYPES
 #define		STR_PTYPES
 #include	"ptypes.h"
 #include	"rcsdefs.h"
@@ -208,7 +209,7 @@ clean_file()
  * If interrupted, clean up and exit
  */
 static
-SIGS_T
+void
 cleanup(sig)
 {
 	(void)signal(sig, SIG_IGN);
@@ -216,6 +217,7 @@ cleanup(sig)
 	if (TMP_mode)	HackMode(FALSE);
 	WARN "checkin: cleaned up\n\n");
 	(void)exit(FAIL);
+	/*NOTREACHED*/
 }
 
 /*

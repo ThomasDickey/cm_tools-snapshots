@@ -1,3 +1,44 @@
+1991-05-31  dickey@software.org
+
+	* src/permit/src/permit.c: lint (unused arg of 'do_arcs()')
+
+1991-05-31  ste_cm@software.org
+
+	* src/permit/src/permit.c:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-05-31  dickey@software.org
+
+	* src/copy/src/copy.c: lint (SunOs): ifdef'd out 'convert()'
+
+1991-05-31  ste_cm@software.org
+
+	* src/copy/src/copy.c:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-05-20  dickey@software.org
+
+	* src/permit/src/permit.c, src/link2rcs/src/link2rcs.c, src/copy/src/copy.c, src/checkup/src/checkup.c:
+	mods to compile on apollo sr10.3
+
+1991-05-20  ste_cm@software.org
+
+	* src/checkup/src/checkup.c:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
+1991-05-20  dickey@software.org
+
+	* src/checkout/src/rcsget.c, src/checkout/src/checkout.c, src/checkin/src/checkin.c, src/checkin/src/rcsput.c:
+	mods to compile on apollo sr10.3
+
+	* src/baseline/src/baseline.c:
+	apollo sr10.3 cpp complains about endif-tags
+
+1991-05-20  ste_cm@software.org
+
+	* src/baseline/src/baseline.c:
+	BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
+
 1990-08-21  dickey@software.org
 
 	* src/link2rcs/src/link2rcs.c:
