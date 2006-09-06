@@ -1,3 +1,11 @@
+2006-09-05  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/copy/src/copy.c: gcc warning
+
+	* configure: resync with my-autoconf
+
+	* aclocal.m4: resync with my-autoconf (comments changed)
+
 2004-03-07  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* src/checkin/src/rcsput.c, src/checkin/src/checkin.c, src/vcs/src/delete.c, src/vcs/src/insert.c, src/vcs/src/unlock.c, src/vcs/src/vcs.c, src/vcs/src/vcs.h, src/permit/src/permit.c, src/link2rcs/src/link2rcs.c, src/copy/src/copy.c, src/checkup/src/checkup.c, src/checkout/src/rcsget.c, src/checkout/src/checkout.c, src/baseline/src/baseline.c:
