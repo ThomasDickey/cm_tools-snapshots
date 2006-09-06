@@ -1,9 +1,10 @@
-MANIFEST for cm_tools, version t20040307
+MANIFEST for cm_tools, version t20060905
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
 README                          top-level README for CM_TOOLS
 aclocal.m4                      macros for CM_TOOLS configure script
+configure                       generated
 configure.in                    template for CM_TOOLS configure script
 install-sh                      install-script
 makefile.in                     cm_tools makefile template

@@ -118,7 +118,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.31 2004/03/08 00:45:53 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.32 2006/09/05 23:41:01 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -321,9 +321,9 @@ copyfile(char *src, char *dst, int previous, Stat_t * new_sb)
     int did_chmod = TRUE;
     int old_mode = new_sb->st_mode & S_MODEBITS;
     int tmp_mode = old_mode | S_IWUSR;	/* must be writeable! */
-    size_t want = (((long) new_sb->st_size > (long) sizeof(bfr1))
+    size_t want = (((size_t) new_sb->st_size > (long) sizeof(bfr1))
 		   ? sizeof(bfr1)
-		   : new_sb->st_size);
+		   : (size_t) new_sb->st_size);
 
     if_Verbose PRINTF("** copy %s to %s\n", src, dst);
     if (n_opt)
