@@ -3,6 +3,8 @@
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		23 Oct 2005, correct parsing if -c param is not a separate
+ *			     option.
  *		28 Dec 2000, restore file-ownership if setuid'd to root.
  *		12 Nov 1994, pass-thru '-f', '-k' options to 'ci'.
  *		22 Sep 1993, gcc warnings
@@ -90,7 +92,7 @@
 #include	<signal.h>
 #include	<time.h>
 
-MODULE_ID("$Id: checkout.c,v 11.13 2004/03/08 00:13:54 tom Exp $")
+MODULE_ID("$Id: checkout.c,v 11.14 2006/10/23 22:50:20 tom Exp $")
 
 /* local definitions */
 #define	TELL	if (!silent) FPRINTF
@@ -576,8 +578,14 @@ _MAIN
 	    break;
 
 	case 'c':
-	    optind = j + 1;
-	    optarg = *s ? s : argv[optind++];
+	    if (*s != EOS) {
+		optind = j;
+		argv[j] = s;
+		optarg = s;
+	    } else {
+		optind = j + 1;
+		optarg = argv[optind++];
+	    }
 	    opt_date = cutoff(argc, argv);
 	    j = optind;
 	    FORMAT(tmp, "-d%s", ctime(&opt_date));
