@@ -1,3 +1,8 @@
+2006-10-23  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/checkout/src/checkout.c:
+	fix a bug in parsing -c option when its parameter is not a separate token.
+
 2006-09-05  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* src/copy/src/copy.c: gcc warning
