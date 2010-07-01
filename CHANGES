@@ -1,3 +1,48 @@
+2010-06-30  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* configure: regen
+
+	* aclocal.m4: add macros for --enable-warnings
+
+	* configure.in:
+	add --enable-warnings here, since compiler/options may differ from td_lib
+
+	* src/baseline/src/makefile.in, src/checkin/src/makefile.in, src/checkout/src/makefile.in, src/checkup/src/makefile.in, src/copy/src/makefile.in, src/link2rcs/src/makefile.in, src/permit/src/makefile.in, src/vcs/src/makefile.in:
+	allow for compiler/options different from td_lib
+
+	* COPYING: update
+
+	* src/baseline/src/makefile.in, src/checkin/src/makefile.in, src/checkout/src/makefile.in, src/checkup/src/makefile.in, src/copy/src/makefile.in, src/link2rcs/src/makefile.in, src/permit/src/makefile.in, src/vcs/src/makefile.in:
+	add CC/CFLAGS substitutions, no need to use same settings as td_lib
+
+	* package/cm_tools-12.0.spec: RCS_BASE
+
+	* user/makefile.in:
+	add CC/CFLAGS substitutions, no need to use same settings as td_lib
+
+	* bin/makefile.in: use DESTDIR, needed for RPM
+
+	* bin/makefile.in: use "mkdir -p" rather than mkdirs.sh
+	fix distclean rule, to avoid removing RCS symlink
+
+	* user/makefile.in: use "mkdir -p" rather than mkdirs.sh
+
+	* aclocal.m4: various updates to configure script macros
+
+	* configure: regen
+
+2010-06-27  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/debian/docs: RCS_BASE
+
+2010-04-20  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/debian/compat: RCS_BASE
+
+2009-12-31  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* config.guess, config.sub: RCS_BASE
+
 2006-10-23  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* src/checkout/src/checkout.c:
