@@ -1,0 +1,17 @@
+Source: cmtools
+Maintainer: Thomas E. Dickey <dickey@invisible-island.net>
+Section: devel
+Priority: extra
+Standards-Version: 3.8.4
+Build-Depends: debhelper (>= 5), tdlib-dev
+Homepage: http://invisible-island.net/ded/
+
+Package: cmtools
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: conflict - filename conflict listing
+ These are utility programs which simplify and extend the RCS programs
+ by preserving timestamps of archived files, as well as providing a
+ workaround for the long-broken setuid feature of RCS.  The latter is
+ used to support access-control lists, supported in a utility "permit".
+ Finally, there is an improved copy-file utility.

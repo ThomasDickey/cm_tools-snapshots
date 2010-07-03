@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t20100630
+MANIFEST for cm_tools, version t20100702
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -14,6 +14,17 @@ bin                             subdirectory
 bin/makefile.in                 cm_tools/bin makefile template
 package                         subdirectory
 package/cm_tools-12.0.spec      build RPMs for cm_tools
+package/debian                  subdirectory
+package/debian/changelog        debian build script
+package/debian/compat           debian build script
+package/debian/control          debian build script
+package/debian/copyright        debian build script
+package/debian/docs             debian build script
+package/debian/rules            debian build script
+package/debian/source           subdirectory
+package/debian/source/format    debian build script
+package/debian                  subdirectory
+package/debian/watch            debian build script
 src/baseline                    subdirectory
 src/baseline/makefile.in        cm_tools/src/baseline makefile template
 src/baseline/src                subdirectory
