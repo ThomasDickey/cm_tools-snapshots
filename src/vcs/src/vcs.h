@@ -1,4 +1,4 @@
-/* $Id: vcs.h,v 11.1 2004/03/08 01:06:27 tom Exp $ */
+/* $Id: vcs.h,v 11.2 2010/07/04 17:37:51 tom Exp $ */
 
 #ifndef	_vcs_h
 #define	_vcs_h
@@ -28,12 +28,12 @@ MAIN	int	x_opt;		/* expand full-path in 'rcsopen()' */
 
 MAIN	int	verbose;
 
-MAIN	int	RCS_uid,	/* owner and group of RCS-directory */
-		RCS_gid,
-		RCS_prot;	/* protection of reference-directory */
+MAIN	uid_t	RCS_uid;	/* owner and group of RCS-directory */
+MAIN	gid_t	RCS_gid;
+MAIN	mode_t	RCS_prot;	/* protection of reference-directory */
 MAIN	char	RCS_cmd[BUFSIZ];/* command we issue in set-uid mode */
-MAIN	char	*RCS_verb,	/* command-verb we show in trace */
-		*RCS_path;	/* full path of command */
+MAIN	const char *RCS_verb;	/* command-verb we show in trace */
+MAIN	const char *RCS_path;	/* full path of command */
 
 MAIN	char	original[MAXPATHLEN];
 
@@ -47,18 +47,18 @@ extern	void	set_option(
 extern	int	do_command(void);
 
 extern	void	invoke_command(
-		char *		verb,
-		char *		path);
+		const char *	verb,
+		const char *	path);
 
 extern	void	ShowPath(
-		char *		command,
-		char *		name);
+		const char *	command,
+		const char *	name);
 
 extern	int	DirExists(
-		char *		path);
+		const char *	path);
 
 extern	int	IsDirectory(
-		char *		path);
+		const char *	path);
 
 extern	int	Access(
 		char *		archive,

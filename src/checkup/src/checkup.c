@@ -66,7 +66,7 @@
 #include	<sccsdefs.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: checkup.c,v 11.18 2004/03/08 00:36:34 tom Exp $")
+MODULE_ID("$Id: checkup.c,v 11.19 2010/07/04 18:27:28 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -74,8 +74,8 @@ MODULE_ID("$Id: checkup.c,v 11.18 2004/03/08 00:36:34 tom Exp $")
 
 typedef struct _exts {
     struct _exts *link;
-    char *if_ext,		/* conditional extension */
-     *no_ext;			/* extension to suppress */
+    char *if_ext;		/* conditional extension */
+    char *no_ext;		/* extension to suppress */
 } EXTS;
 
 static EXTS *exts;		/* "-x" and "-t" extension list */
@@ -118,7 +118,7 @@ ignore(char *string)
  * Define a new extension-to-ignore
  */
 static void
-extension(char *string)
+extension(const char *string)
 {
     EXTS *savep = exts;
     char *s = strrchr(string, *string);
@@ -148,10 +148,11 @@ extension(char *string)
  * wishes to ignore.  If so, return TRUE.
  */
 static int
-suppress(char *name)
+suppress(const char *name)
 {
     EXTS *p;
-    int len, off = strlen(name);
+    int len;
+    int off = (int) strlen(name);
     char bfr[BUFSIZ];
     struct stat sb;
 
@@ -198,7 +199,9 @@ indent(int level)
  * prepended if the "-c" option is specified).
  */
 static void
-pipes(char *path, char *name, char *vers)
+pipes(const char *path,
+      const char *name,
+      const char *vers)
 {
     char tmp[BUFSIZ];
     int fake_tee = (redir_out && (redir_out != redir_err));
@@ -222,7 +225,7 @@ pipes(char *path, char *name, char *vers)
 }
 
 static char *
-compared(char *what, char *rev)
+compared(const char *what, const char *rev)
 {
     static char buffer[80];
     FORMAT(buffer, "%s than %s", what, rev);
@@ -235,15 +238,15 @@ compared(char *what, char *rev)
  * be careful where we look for the working file!
  */
 static void
-do_obs(char *working,		/* current working directory, from 'do_stat()' */
-       char *archive,		/* name of directory (may be symbolic link) */
+do_obs(const char *working,	/* current working directory, from 'do_stat()' */
+       const char *archive,	/* name of directory (may be symbolic link) */
        int level)
 {
     DIR *dp;
     DirentT *de;
     char tpath[BUFSIZ], tname[BUFSIZ];
     Stat_t sb;
-    char *tag = "?", *vers, *owner;
+    const char *tag = "?", *vers, *owner;
     time_t cdate;
 
     if (!(dp = opendir(pathcat(tpath, working, archive)))) {
@@ -320,9 +323,12 @@ cmp_date(time_t a, time_t b)
 static int
 WALK_FUNC(do_stat)
 {
-    char *change = 0, *vers, *owner, *locked_by = 0;
+    const char *change = 0;
+    const char *vers;
+    const char *owner;
+    const char *locked_by = 0;
     time_t cdate;
-    int mode = (sp != 0) ? sp->st_mode : 0;
+    mode_t mode = (sp != 0) ? sp->st_mode : 0;
     int ok_text = TRUE;
 
     if (isDIR(mode)) {
@@ -423,7 +429,7 @@ WALK_FUNC(do_stat)
  * Process a single argument: a directory name.
  */
 static void
-do_arg(char *name)
+do_arg(const char *name)
 {
     FPRINTF(stderr, "** path = %s\n", name);
     lines = 0;
@@ -433,7 +439,7 @@ do_arg(char *name)
 static void
 usage(void)
 {
-    static char *msg[] =
+    static const char *msg[] =
     {
 	"Usage: checkup [options] [directory [...]]",
 	"",
@@ -563,7 +569,7 @@ _MAIN
      * If we are asked to do a reverse-comparison, we must juggle the
      * revision-level so that 'dotcmp()' can give us a useful return value.
      */
-    if (revision[j = strlen(revision) - 1] == '+') {
+    if (revision[j = (int) strlen(revision) - 1] == '+') {
 	char *s;
 
 	revision = strcpy(tmp, revision);

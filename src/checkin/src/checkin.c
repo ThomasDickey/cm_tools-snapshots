@@ -132,7 +132,7 @@
 #include	<errno.h>
 extern char *mktemp(char *);
 
-MODULE_ID("$Id: checkin.c,v 11.31 2004/03/08 01:44:40 tom Exp $")
+MODULE_ID("$Id: checkin.c,v 11.32 2010/07/04 18:28:39 tom Exp $")
 
 /* local declarations: */
 #define	CI_TOOL		"ci"
@@ -166,12 +166,12 @@ static int use_base = TRUE;	/* use RCS_BASE for base-version */
 static int u_or_l = FALSE;	/* set if file is re-locked */
 static int w_opts;		/* set iff we used "-w" option */
 static int from_keys = FALSE;	/* set if we get date from RCS file */
-static int TMP_mode;		/* saved protection of RCS-directory */
-static int HIS_uid;		/* working-file's owner */
-static int HIS_gid;		/* working-file's group */
-static int RCS_uid;		/* archive's owner */
-static int RCS_gid;		/* archive's group */
-static int RCSprot;		/* protection of RCS-directory */
+static mode_t TMP_mode;		/* saved protection of RCS-directory */
+static uid_t HIS_uid;		/* working-file's owner */
+static gid_t HIS_gid;		/* working-file's group */
+static uid_t RCS_uid;		/* archive's owner */
+static gid_t RCS_gid;		/* archive's group */
+static mode_t RCSprot;		/* protection of RCS-directory */
 static time_t modtime;		/* timestamp of working file */
 
 #if	RCS_VERSION <= 4
@@ -202,7 +202,7 @@ static char old_date[BUFSIZ],	/* subprocess variables */
  ************************************************************************/
 
 static void
-GiveUp(char *msg, char *arg)
+GiveUp(const char *msg, const char *arg)
 {
     TELL("?? %s \"%s\"\n", msg, arg);
     (void) exit(FAIL);
@@ -216,7 +216,7 @@ WhoAmI(void)
 }
 
 static void
-GiveBack(char *why)
+GiveBack(const char *why)
 {
     if (revert(debug ? why : (char *) 0))
 	WhoAmI();
@@ -244,7 +244,7 @@ clean_file(void)
 }
 
 static void
-ChangeProt(char *name, int mode)
+ChangeProt(char *name, mode_t mode)
 {
     TELL("%% chmod %#o %s\n", mode, name);
     if (!no_op)
@@ -265,9 +265,9 @@ HackMode(int save)
 	;
     } else if (save) {
 	if ((RCSdir[0] != EOS)
-	    && ((int) getuid() != RCS_uid)) {
+	    && (getuid() != RCS_uid)) {
 	    /* patch: check if group is compatible */
-	    int need = ((int) getgid() == RCS_gid) ? 0775 : 0777;
+	    mode_t need = (getgid() == RCS_gid) ? 0775 : 0777;
 	    DEBUG(("...need mode %04o for %s, was %04o\n",
 		   need, RCSdir, RCSprot));
 	    if (need != RCSprot) {
@@ -305,7 +305,7 @@ SIGNAL_FUNC(cleanup)
  * Restore ownership of a file to the "natural" owner after a check-in
  */
 static void
-FixOwnership(char *name, int uid, int gid)
+FixOwnership(char *name, uid_t uid, gid_t gid)
 {
     if (!geteuid()) {
 	DEBUG(("...fix ownership of %s\n", name));
@@ -320,7 +320,6 @@ FixOwnership(char *name, int uid, int gid)
 static void
 OwnWorking(void)
 {
-
     FixOwnership(Working, HIS_uid, HIS_gid);
 }
 
@@ -485,7 +484,7 @@ PostProcess(void)
  * running in set-uid mode (sigh).
  */
 static int
-DoIt(char *verb, char *args)
+DoIt(const char *verb, const char *args)
 {
     int code;
 #if defined(HAVE_SETRUID)
@@ -794,7 +793,7 @@ typedef struct _prefix {
 static PREFIX *clist;
 
 static void
-define_prefix(char *suffix, char *prefix)
+define_prefix(const char *suffix, const char *prefix)
 {
     char tmp[BUFSIZ];
     PREFIX *new = ALLOC(PREFIX, 1);
@@ -805,8 +804,8 @@ define_prefix(char *suffix, char *prefix)
     clist = new;
 } static
 
-char *
-copy_to(char *dst, char *src)
+const char *
+copy_to(char *dst, const char *src)
 {
     char delim;
     if ((delim = *src) != EOS) {
@@ -821,8 +820,8 @@ copy_to(char *dst, char *src)
     return (src);
 }
 
-static char *
-get_prefix(char *suffix)
+static const char *
+get_prefix(const char *suffix)
 {
     PREFIX *new;
     for (new = clist; new != 0; new = new->link) {
@@ -842,7 +841,8 @@ RcsInitialize(void)
 {
     static DYN *cmds;
     static char list[BUFSIZ];	/* static so we do list once */
-    char *s, *t;
+    const char *s;
+    char *t;
 
     if (clist == 0) {
 	define_prefix(".a", "--  ");
@@ -881,7 +881,7 @@ RcsInitialize(void)
 	    else
 		GiveUp("owner of RCS directory for", Working);
 
-	    if ((int) getuid() != HIS_uid) {
+	    if (getuid() != HIS_uid) {
 		if ((p = getpwuid(HIS_uid)) != 0)
 		    FORMAT(list + strlen(list), ",%s", p->pw_name);
 		else
@@ -941,7 +941,7 @@ MakeDirectory(void)
 	    TELL("%% mkdir %s\n", RCSdir);
 
 	    if (!no_op) {
-		int omask = umask(0);
+		mode_t omask = umask(0);
 		if (mkdir(RCSdir, RCSprot) < 0)
 		    GiveUp("directory-create", RCSdir);
 		(void) umask(omask);
@@ -953,7 +953,7 @@ MakeDirectory(void)
 
 #if defined(HAVE_GETEUID) && defined(HAVE_SETEGID)
 	if (getegid() != sb.st_gid) {
-	    (void) setegid((int) sb.st_gid);
+	    (void) setegid(sb.st_gid);
 	    WhoAmI();
 	}
 
@@ -990,13 +990,13 @@ MakeDirectory(void)
 static void
 SetOpts(int argc, char **argv, int new_file)
 {
-    char *m_option = (cat_input != 0)
-    ? cat_input
-    : (from_keys
-       ? "FROM_KEYS"
-       : (new_file
-	  ? "RCS_BASE"
-	  : (char *) 0));
+    const char *m_option = ((cat_input != 0)
+			    ? cat_input
+			    : (from_keys
+			       ? "FROM_KEYS"
+			       : (new_file
+				  ? "RCS_BASE"
+				  : (char *) 0)));
     char last_rev;
     int j;
     char *s;
@@ -1052,7 +1052,8 @@ SetOpts(int argc, char **argv, int new_file)
 		}
 		if (last_rev != EOS)
 		    CATARG(opt_all, fast);
-		fast[1] = last_rev = code;
+		fast[1] = (char) code;
+		last_rev = (char) code;
 		(void) strcpy(opt_opt, fast);
 	    } else {
 		if (*s == 'w')
@@ -1067,7 +1068,7 @@ SetOpts(int argc, char **argv, int new_file)
 
     if (new_file) {
 	if (EMPTY(opt_rev)) {
-	    static char *fmt = "%d.1";
+	    static const char *fmt = "%d.1";
 	    char last_base[REVSIZ];
 	    int value;
 
@@ -1088,7 +1089,7 @@ static
 void
 usage(void)
 {
-    static char *tbl[] =
+    static const char *tbl[] =
     {
 	"Usage: checkin [-options] [working_or_archive [...]]",
 	"",

@@ -16,7 +16,7 @@
 
 #include <vcs.h>
 
-MODULE_ID("$Id: delete.c,v 11.4 2004/03/08 01:16:57 tom Exp $")
+MODULE_ID("$Id: delete.c,v 11.5 2010/07/04 17:48:11 tom Exp $")
 
 typedef struct _item {
     struct _item *link;
@@ -79,7 +79,7 @@ Append(char *path, int flag)
 
 /******************************************************************************/
 static void
-Cannot(char *path, char *why)
+Cannot(const char *path, const char *why)
 {
     if (can_do || verbose) {
 	can_do = FALSE;
@@ -89,7 +89,7 @@ Cannot(char *path, char *why)
 
 /******************************************************************************/
 static void
-UserCannot(char *path, char *who, char *what)
+UserCannot(const char *path, const char *who, const char *what)
 {
     char temp[BUFSIZ];
     FORMAT(temp, "user \"%s\" %s", who, what);
@@ -106,6 +106,8 @@ WALK_FUNC(do_tree)
     char tmp[BUFSIZ];
     char *full = pathcat(tmp, path, name);
 
+    (void) level;
+
     if (readable < 0 || sp == 0) {
 	Cannot(full, "not readable");
     } else if ((mode = (sp->st_mode & S_IFMT)) == S_IFDIR) {
@@ -116,8 +118,8 @@ WALK_FUNC(do_tree)
 	    Cannot(full, "no access");
 	else if (geteuid() != 0 && RCS_uid != geteuid())
 	    UserCannot(full, uid2s(RCS_uid), "not owner");
-	else if (!rcspermit(path, part, (char **) 0))
-	    UserCannot(full, uid2s((int) getuid()), "not on access-list");
+	else if (!rcspermit(path, part, (const char **) 0))
+	    UserCannot(full, uid2s(getuid()), "not on access-list");
 	else
 	    Append(full, TRUE);
     } else

@@ -1,11 +1,11 @@
-dnl $Id: aclocal.m4,v 11.9 2010/06/30 23:13:46 tom Exp $
+dnl $Id: aclocal.m4,v 11.10 2010/07/04 01:02:15 tom Exp $
 dnl Macros for CM_TOOLS configure script.
 dnl
 dnl see
 dnl		http://invisible-island.net/autoconf/
 dnl ---------------------------------------------------------------------------
 dnl ---------------------------------------------------------------------------
-dnl CF_ADD_SUBDIR_PATH version: 2 updated: 2007/07/29 10:12:59
+dnl CF_ADD_SUBDIR_PATH version: 3 updated: 2010/07/03 20:58:12
 dnl ------------------
 dnl Append to a search-list for a nonstandard header/lib-file
 dnl	$1 = the variable to return as result
@@ -17,7 +17,7 @@ AC_DEFUN([CF_ADD_SUBDIR_PATH],
 [
 test "$4" != "$5" && \
 test -d "$4" && \
-ifelse([$5],NONE,,[(test $5 = NONE || test -d $5) &&]) {
+ifelse([$5],NONE,,[(test $5 = NONE || test "$4" != "$5") &&]) {
 	test -n "$verbose" && echo "	... testing for $3-directories under $4"
 	test -d $4/$3 &&          $1="[$]$1 $4/$3"
 	test -d $4/$3/$2 &&       $1="[$]$1 $4/$3/$2"
@@ -219,7 +219,7 @@ fi
 ])
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_FIND_TDLIB version: 8 updated: 2010/03/23 18:47:33
+dnl CF_FIND_TDLIB version: 9 updated: 2010/07/03 20:58:12
 dnl -------------
 dnl Locate TD_LIB, which is available in one of these configurations:
 dnl a) installed, with headers, library and include-file for make
@@ -266,7 +266,7 @@ if test "$cf_cv_tdlib_devel" = no ; then
         char *p = doalloc(0,1)],
         doalloc)
 	if test -z "$cf_libdir" ; then
-		CF_LIBRARY_PATH(cf_search,td)
+		CF_SUBDIR_PATH(cf_search,td,share)
 		cf_libdir=/usr/local/lib
 		cf_td_lib_rules=no
 		for cf_libdir in $cf_search
@@ -276,8 +276,13 @@ if test "$cf_cv_tdlib_devel" = no ; then
 				break
 			fi
 		done
-		test $cf_td_lib_rules = no && AC_MSG_ERROR(Cannot find td_lib.mk)
+	else
+		cf_libdir=`echo "$cf_libdir" | sed -e 's,/lib[[^/]]*$,share,'`
+		if test -f $cf_libdir/td_lib.mk ; then
+			cf_td_lib_rules=yes
+		fi
 	fi
+	test $cf_td_lib_rules = no && AC_MSG_ERROR(Cannot find td_lib.mk)
 	TD_LIB_rules=$cf_libdir
 else
 	CPPFLAGS="$CPPFLAGS -I$cf_cv_tdlib_devel/include $CPPFLAGS"

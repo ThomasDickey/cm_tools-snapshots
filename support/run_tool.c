@@ -1,5 +1,5 @@
-#ifndef	lint
-static	char	*Id = "$Id: run_tool.c,v 11.1 1992/10/27 09:38:27 dickey Exp $";
+#ifndef	NO_IDENT
+static const char Id[] = "$Id: run_tool.c,v 11.2 2010/07/04 18:13:43 tom Exp $";
 #endif
 
 /*
@@ -15,10 +15,10 @@ static	char	*Id = "$Id: run_tool.c,v 11.1 1992/10/27 09:38:27 dickey Exp $";
 
 _MAIN
 {
-	if (argc > 1) {
-		char	*tool	= argv[1];
-		execv(rcspath(tool), &argv[1]);
-		failed("execv");
-	}
-	/*NOTREACHED*/
+    if (argc > 1) {
+	char *tool = argv[1];
+	execv(rcspath(tool), &argv[1]);
+	failed("execv");
+    }
+    return EXIT_SUCCESS;
 }

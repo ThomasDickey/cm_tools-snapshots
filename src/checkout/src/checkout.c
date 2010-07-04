@@ -92,7 +92,7 @@
 #include	<signal.h>
 #include	<time.h>
 
-MODULE_ID("$Id: checkout.c,v 11.14 2006/10/23 22:50:20 tom Exp $")
+MODULE_ID("$Id: checkout.c,v 11.15 2010/07/04 16:37:23 tom Exp $")
 
 /* local definitions */
 #define	TELL	if (!silent) FPRINTF
@@ -113,11 +113,11 @@ static int locked;		/* TRUE if user is locking file */
 static FILE *log_fp;		/* normally stdout, unless "-p" */
 static int to_stdout;		/* TRUE if 'co' writes to stdout */
 
-static int Effect, Caller;	/* effective/real uid's */
+static uid_t Effect, Caller;	/* effective/real uid's */
 static char Working[MAXPATHLEN];	/* current names we are using */
 static char Archive[MAXPATHLEN];
 static char rev_buffer[REVSIZ];
-static char *UidHack;		/* intermediate file for setuid */
+static const char *UidHack;	/* intermediate file for setuid */
 static char *opt_rev;		/* revision to find */
 static char *opt_who;		/* "-w[login] value     */
 static char *opt_sta;		/* "-s[state] value     */
@@ -192,7 +192,7 @@ path_of(char *dst, char *src)
 }
 
 static void
-GiveBack(int tell_why, char *why)
+GiveBack(int tell_why, const char *why)
 {
     if (revert((tell_why || debug) ? why : (char *) 0)) {
 	Effect = geteuid();
@@ -260,7 +260,7 @@ PreProcess(time_t * revtime,	/* date with which to touch file */
 	     */
 	case S_HEAD:
 	    s = rcsparse_num(this_rev, s);
-	    if (EMPTY(rev_buffer))
+	    if (*rev_buffer == '\0')
 		(void) strcpy(rev_buffer, this_rev);
 	    break;
 	case S_SYMBOLS:
@@ -356,7 +356,7 @@ static int
 RcsCheckout(void)
 {
     static DYN *cmds;
-    char *opt = to_stdout ? "-p" : (locked ? "-l" : "-r");
+    const char *opt = to_stdout ? "-p" : (locked ? "-l" : "-r");
     int code = 0;
 
     dyn_init(&cmds, BUFSIZ);
@@ -383,7 +383,7 @@ RcsCheckout(void)
 	}
 	code = execute(rcspath(CO_TOOL), dyn_string(cmds));
 	if (Effect == 0
-	    && Effect != (int) sb.st_uid)
+	    && Effect != sb.st_uid)
 	    chown(Archive, sb.st_uid, sb.st_gid);
     }
     return (code);
@@ -513,7 +513,7 @@ do_file(void)
 static void
 usage(void)
 {
-    static char *tbl[] =
+    static const char *tbl[] =
     {
 	"Usage: checkout [options] [working_or_archive [...]]"
 	,""

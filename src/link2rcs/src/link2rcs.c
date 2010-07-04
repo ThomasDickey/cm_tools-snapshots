@@ -66,7 +66,7 @@
 #include	<td_qsort.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: link2rcs.c,v 11.11 2004/03/08 00:55:02 tom Exp $")
+MODULE_ID("$Id: link2rcs.c,v 11.12 2010/07/04 18:27:16 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -81,9 +81,9 @@ MODULE_ID("$Id: link2rcs.c,v 11.11 2004/03/08 00:55:02 tom Exp $")
 
 typedef struct _list {
     struct _list *link;		/* link to next item in list */
-    char *path;			/* path to define */
-    char *from;			/* link to define */
-    char *what;			/* annotation for sym-links */
+    const char *path;		/* path to define */
+    const char *from;		/* link to define */
+    const char *what;		/* annotation for sym-links */
 } LIST;
 
 static LIST *list;
@@ -111,16 +111,16 @@ static char Source[BUFSIZ] = ".";
 static char Target[BUFSIZ] = ".";
 static char Current[BUFSIZ];
 
-static char *fmt_LINK = "link-to-DIR:";
-static char *fmt_link = "link-to-RCS:";
-static char *fmt_sccs = "link-to-SCCS";
-static char *fmt_file = "link-to-file";
+static const char *fmt_LINK = "link-to-DIR:";
+static const char *fmt_link = "link-to-RCS:";
+static const char *fmt_sccs = "link-to-SCCS";
+static const char *fmt_file = "link-to-file";
 
 /*
  * Print normal-trace using a common format
  */
 static void
-tell_it(char *tag, char *path)
+tell_it(const char *tag, const char *path)
 {
     TELL("** %-16s%s\n", tag, path);
 }
@@ -167,15 +167,16 @@ path_to(char *src)
 {
     char dst[BUFSIZ];
     char *d = relpath(dst, Source, src);
+
     if (!strcmp(d, "."))
-	return ".";
+	return txtalloc(".");
     if (!strncmp(d, "./", 2))
 	d += 2;
     return txtalloc(d);
 }
 
 static char *
-path_from(char *src)
+path_from(const char *src)
 {
 #ifdef	apollo
     char tmp[BUFSIZ];
@@ -200,8 +201,11 @@ src_stat(char *path, char *name, struct stat *sp, int readable, int level)
     char tmp[BUFSIZ];
     char *s = pathcat(tmp, path, name);
 
-    if (sp == 0) ;
-    else if (MODE(sp->st_mode) == S_IFDIR) {
+    (void) level;
+
+    if (sp == 0) {
+	;
+    } else if (MODE(sp->st_mode) == S_IFDIR) {
 	if (suppress_dots(s))
 	    return (-1);
 	p = new_LIST();
@@ -248,7 +252,7 @@ src_stat(char *path, char *name, struct stat *sp, int readable, int level)
  * Process a single argument to obtain the list of source-directory names
  */
 static void
-find_src(char *path, char *name)
+find_src(const char *path, const char *name)
 {
     char tmp[BUFSIZ];
     size_t len = strlen(path);
@@ -262,14 +266,15 @@ find_src(char *path, char *name)
 
     /* process the 'name[]' argument
      */
-    (void) getwd(tmp);
+    if (getcwd(tmp, sizeof(tmp)) == 0)
+	failed(tmp);
     abspath(name = pathcat(tmp, tmp, name));
     TELL("** src-path = %s\n", path_from(name));
     (void) walktree((char *) 0, name, src_stat, "r", 0);
 }
 
 static void
-exists(char *name)
+exists(const char *name)
 {
     FPRINTF(stderr, "?? %s: already exists\n", name);
     (void) fflush(stderr);
@@ -277,7 +282,7 @@ exists(char *name)
 }
 
 static int
-tell_merged(char *path)
+tell_merged(const char *path)
 {
     if (verbose)
 	tell_it("(no change)", path);
@@ -285,14 +290,14 @@ tell_merged(char *path)
 }
 
 static int
-tell_existing(char *path)
+tell_existing(const char *path)
 {
     tell_it("(existing)", path);
     return (TRUE);
 }
 
 static int
-ok_if_unlink(char *path)
+ok_if_unlink(const char *path)
 {
     int ok = TRUE;
 
@@ -309,11 +314,12 @@ ok_if_unlink(char *path)
 }
 
 static int
-samelink(char *dst, char *src)
+samelink(const char *dst, const char *src)
 {
     int len;
     char bfr[BUFSIZ];
-    len = readlink(dst, bfr, sizeof(bfr));
+
+    len = (int) readlink(dst, bfr, sizeof(bfr));
     if (len > 0) {
 	bfr[len] = EOS;
 	return (!strcmp(bfr, src));
@@ -336,7 +342,7 @@ same_ino(Stat_t * sb1, Stat_t * sb2)
  * reasonable to make hard links
  */
 static int
-same_dev(char *src, char *dst)
+same_dev(const char *src, const char *dst)
 {
     Stat_t sb_src;
     Stat_t sb_dst;
@@ -359,7 +365,9 @@ same_dev(char *src, char *dst)
  * can replace a hard link to a file with a soft link to the same file.
  */
 static int
-conflict(char *path, int mode, char *from)
+conflict(const char *path,
+	 int mode,
+	 const char *from)
 {
     struct stat sb;
     struct stat sb2;
@@ -404,7 +412,7 @@ conflict(char *path, int mode, char *from)
  * Create a single directory
  */
 static void
-make_dir(char *path)
+make_dir(const char *path)
 {
     if (strcmp(path, ".")
 	&& !conflict(path, S_IFDIR, ".")) {
@@ -423,7 +431,7 @@ make_dir(char *path)
  * Create a symbolic link
  */
 static void
-make_lnk(char *src, char *dst, char *what)
+make_lnk(const char *src, const char *dst, const char *what)
 {
     if (!conflict(dst, S_IFLNK, src)) {
 	int ok = TRUE;
@@ -456,10 +464,10 @@ static char *
 deslash(char *dst, const LIST * p)
 {
     char *base = dst;
-    char *src = p->path;
+    const char *src = p->path;
     do {
 	char c = *src++;
-	*dst = (c == '/') ? '\n' : c;
+	*dst = (char) ((c == '/') ? '\n' : c);
     } while (*dst++);
     return (base);
 }
@@ -474,10 +482,10 @@ QSORT_FUNC(compar_LIST)
 }
 
 /* compress duplicate items out of the LIST-vector, returns the resulting len */
-static unsigned
-unique_LIST(LIST * vec, unsigned count)
+static size_t
+unique_LIST(LIST * vec, size_t count)
 {
-    unsigned j, k;
+    size_t j, k;
     for (j = k = 0; k < count; j++, k++) {
 	if (j != k)
 	    vec[j] = vec[k];
@@ -489,9 +497,9 @@ unique_LIST(LIST * vec, unsigned count)
 
 /* given a directory-entry, find if a subordinate RCS-directory exists */
 static int
-has_children(LIST * vec, unsigned count, unsigned old)
+has_children(LIST * vec, size_t count, size_t old)
 {
-    unsigned new;
+    size_t new;
     size_t len = strlen(vec[old].path);
 
     if (vec[old].what == fmt_file)	/* preserve files */
@@ -513,10 +521,10 @@ has_children(LIST * vec, unsigned count, unsigned old)
 }
 
 /* skip past the specified directory-entry and all of its children */
-static int
-skip_children(LIST * vec, unsigned count, unsigned old)
+static size_t
+skip_children(LIST * vec, size_t count, size_t old)
 {
-    unsigned new;
+    size_t new;
     size_t len = strlen(vec[old].path);
 
     for (new = old + 1; new < count; new++) {
@@ -527,10 +535,10 @@ skip_children(LIST * vec, unsigned count, unsigned old)
 }
 
 /* purge entries which do not have an underlying RCS-directory */
-static unsigned
-purge_LIST(LIST * vec, unsigned count)
+static size_t
+purge_LIST(LIST * vec, size_t count)
 {
-    unsigned j, k;
+    size_t j, k;
 
     for (j = k = 0; k < count; j++, k++) {
 	while (!has_children(vec, count, k))
@@ -551,7 +559,7 @@ make_dst(char *path)
     LIST *p, *q;
     char dst[BUFSIZ];
     char tmp[BUFSIZ];
-    unsigned count;
+    size_t count;
     unsigned j;
 
     TELL("** dst-path = %s\n", path);
@@ -570,7 +578,7 @@ make_dst(char *path)
 	    dofree((char *) p);
 	}
 	vec[count] = dummy;
-	qsort((char *) vec, (LEN_QSORT) count, sizeof(LIST), compar_LIST);
+	qsort((char *) vec, count, sizeof(LIST), compar_LIST);
 	count = unique_LIST(vec, count);
 	if (baseline >= 0)
 	    count = purge_LIST(vec, count);
@@ -612,7 +620,8 @@ getdir(char *buffer)
     abspath(strcpy(buffer, optarg));
     if (chdir(optarg) < 0)
 	failed(optarg);
-    (void) chdir(Current);
+    if (chdir(Current) != 0)
+	failed(Current);
     return (optarg);
 }
 
@@ -622,7 +631,7 @@ getdir(char *buffer)
 static void
 usage(void)
 {
-    static char *msg[] =
+    static const char *msg[] =
     {
 	"Usage: link2rcs [options] [directory [...]]"
 	,""
@@ -666,14 +675,16 @@ _MAIN
     char *p;
     int j;
 
-    (void) getwd(Current);
+    if (getcwd(Current, sizeof(Current)) == 0)
+	strcpy(Current, ".");
+
     while ((j = getopt(argc, argv, "ab:d:e:fFmnorqs:v")) != EOF)
 	switch (j) {
 	case 'a':
 	    allnames++;
 	    break;
 	case 'b':
-	    baseline = strtol(optarg, &p, 0);
+	    baseline = (int) strtol(optarg, &p, 0);
 	    if (*p != EOS)
 		usage();
 	    break;
@@ -758,7 +769,8 @@ _MAIN
      */
     if (chdir(src_dir) < 0)
 	failed(src_dir);
-    (void) getwd(Source);
+    if (getcwd(Source, sizeof(Source)) == 0)
+	failed(Source);
     if (optind < argc) {
 	for (j = optind; j < argc; j++)
 	    find_src(src_dir, argv[j]);
@@ -768,7 +780,8 @@ _MAIN
     /*
      * Construct the list of destination-directory names:
      */
-    (void) chdir(Target);
+    if (chdir(Target) != 0)
+	failed(Target);
     make_dst(Target);
 
     TELL

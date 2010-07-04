@@ -39,7 +39,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: baseline.c,v 11.7 2004/03/07 23:35:16 tom Exp $")
+MODULE_ID("$Id: baseline.c,v 11.8 2010/07/04 17:33:31 tom Exp $")
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
@@ -68,7 +68,7 @@ static int recur;
 static int verbose;
 
 static void
-doit(char *verb, char *args, int really)
+doit(const char *verb, const char *args, int really)
 {
     if (verbose)
 	shoarg(stdout, verb, args);
@@ -88,7 +88,7 @@ quiet_opt(char *args)
 }
 
 static void
-purge_rights(char *path)
+purge_rights(const char *path)
 {
     char args[BUFSIZ];
     static LIST *purged;
@@ -115,11 +115,11 @@ purge_rights(char *path)
 }
 
 static void
-baseline( char *path, char *name, time_t edited)
+baseline(const char *path, const char *name, time_t edited)
 {
     char args[BUFSIZ];
-    char *version;
-    char *locker;
+    const char *version;
+    const char *locker;
     time_t date;
     int cmp;
     int pending;		/* true if lock implies change */
@@ -213,7 +213,7 @@ WALK_FUNC(scan_tree)
 }
 
 static void
-do_arg( char *name)
+do_arg(const char *name)
 {
     int infer_rev = FALSE;
 
@@ -229,7 +229,7 @@ do_arg( char *name)
     if (revision < 0) {
 	char vname[BUFSIZ];
 	time_t date;
-	char *locker, *version;
+	const char *locker, *version;
 	rcslast(".",
 		vcs_file(rcs_dir(NULL, NULL), vname, FALSE),
 		&version, &date, &locker);
@@ -249,7 +249,7 @@ do_arg( char *name)
 static void
 usage(void)
 {
-    static char *tbl[] =
+    static const char *tbl[] =
     {
 	"Usage: baseline [options] [files]"
 	,""
@@ -291,7 +291,7 @@ _MAIN
 	if (*(s = argv[j]) == '-') {
 	    while (*(++s)) {
 		if (isdigit(UCH(*s))) {
-		    if ((revision = strtol(s, &d, 10)) < 2)
+		    if ((revision = (int) strtol(s, &d, 10)) < 2)
 			usage();
 		    s = d - 1;
 		} else if (*s == 'm') {
