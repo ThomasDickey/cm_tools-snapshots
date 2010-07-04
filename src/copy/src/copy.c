@@ -118,12 +118,12 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.32 2006/09/05 23:41:01 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.33 2010/07/04 17:02:49 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
 
-#define	S_MODEBITS	(~S_IFMT)
+#define	S_MODEBITS	(mode_t) (~S_IFMT)
 
 #if !defined(S_IFLNK) && !defined(lstat)
 #define	lstat	stat
@@ -170,7 +170,8 @@ static int copyit(		/* forward-reference */
 		     int tested_acc);
 
 static void
-problem(char *command, char *argument)
+problem(const char *command,
+	const char *argument)
 {
     char temp[BUFSIZ + MAXPATHLEN];
     strcpy(temp, command);
@@ -207,7 +208,7 @@ skip_dots(char *path)
 }
 
 static int
-SetOwner(char *path, int uid, int gid)
+SetOwner(char *path, uid_t uid, gid_t gid)
 {
     if (p_opt) {
 	if_Debug PRINTF("++ chown %03o %s\n", uid, path);
@@ -225,7 +226,7 @@ SetOwner(char *path, int uid, int gid)
  * set the protection after we're done copying.
  */
 static int
-SetMode(char *path, int mode)
+SetMode(const char *path, mode_t mode)
 {
     Stat_t sb;
 
@@ -279,16 +280,17 @@ SetDate(char *path, time_t modified, time_t accessed)
  * Restore protection of a file that we changed temporarily
  */
 static void
-RestoreMode(char *path, Stat_t * sb)
+RestoreMode(const char *path, Stat_t * sb)
 {
-    (void) SetMode(path, (int) (sb->st_mode & S_MODEBITS));
+    (void) SetMode(path, (sb->st_mode & S_MODEBITS));
 }
 
 /*
  * Show percent-progress if we're verbose
  */
 static void
-progress(unsigned long numer, unsigned long denom)
+progress(unsigned long numer,
+	 unsigned long denom)
 {
     static time_t last;
     time_t now;
@@ -301,7 +303,7 @@ progress(unsigned long numer, unsigned long denom)
 	    } else if ((now = time((time_t *) 0)) != last) {
 		last = now;
 		FPRINTF(stderr, "%.1f%%\r",
-			(numer * 100.0) / denom);
+			((double) numer * 100.0) / (double) denom);
 	    }
 	}
     }
@@ -319,8 +321,8 @@ copyfile(char *src, char *dst, int previous, Stat_t * new_sb)
     unsigned long num;
     unsigned long transferred = 0;
     int did_chmod = TRUE;
-    int old_mode = new_sb->st_mode & S_MODEBITS;
-    int tmp_mode = old_mode | S_IWUSR;	/* must be writeable! */
+    mode_t old_mode = new_sb->st_mode & S_MODEBITS;
+    mode_t tmp_mode = old_mode | S_IWUSR;	/* must be writeable! */
     size_t want = (((size_t) new_sb->st_size > (long) sizeof(bfr1))
 		   ? sizeof(bfr1)
 		   : (size_t) new_sb->st_size);
@@ -341,17 +343,17 @@ copyfile(char *src, char *dst, int previous, Stat_t * new_sb)
     } else {
 	retval = 0;		/* probably will go ok now */
 	do {
-	    progress(transferred, new_sb->st_size);
+	    progress(transferred, (unsigned long) new_sb->st_size);
 	    if (fwrite(bfr1, sizeof(char), (size_t) num, ofp) != num) {
 		/* no, error found anyway */
 		retval = -1;
 		problem("fwrite", dst);
 		break;
 	    }
-	    progress(transferred += num, new_sb->st_size);
+	    progress(transferred += num, (unsigned long) new_sb->st_size);
 	} while ((num = fread(bfr1, sizeof(char), want, ifp)) > 0);
 	FCLOSE(ofp);
-	progress(transferred, new_sb->st_size);
+	progress(transferred, (unsigned long) new_sb->st_size);
     }
     if (ifp != 0)
 	FCLOSE(ifp);
@@ -365,7 +367,7 @@ copyfile(char *src, char *dst, int previous, Stat_t * new_sb)
 static int
 ReadLink(char *src, char *dst)
 {
-    int len = readlink(src, dst, BUFSIZ);
+    int len = (int) readlink(src, dst, BUFSIZ);
     if (len >= 0)
 	dst[len] = EOS;
     return (len >= 0);
@@ -455,7 +457,7 @@ copydir(char *src, char *dst, int previous)
 	if (dir_exists(bfr1, &dst_sb) < 0) {
 	    if_Verbose PRINTF("** make directory \"%s\"\n", dst);
 	    if (!n_opt) {
-		int omask = umask(0);
+		mode_t omask = umask(0);
 		int ok_make = (mkdir(bfr1, 0755) >= 0);
 		(void) umask(omask);
 		if (!ok_make) {
@@ -509,8 +511,13 @@ copyit(char *parent,
        int tested_acc)		/* true iff we already tested */
 {
     Stat_t dst_sb, src_sb;
-    int num, ok1, ok2, forced = FALSE;
-    char bfr1[BUFSIZ], bfr2[BUFSIZ], temp[BUFSIZ];
+    int num;
+    int ok1;
+    int ok2;
+    int forced = FALSE;
+    char bfr1[BUFSIZ];
+    char bfr2[BUFSIZ];
+    char temp[BUFSIZ];
 
     if (z_opt && *fleaf(src) == '.')
 	return 0;
@@ -679,10 +686,11 @@ copyit(char *parent,
 	return forced;
 
     if (isFILE(src_sb.st_mode) || isDIR(src_sb.st_mode)) {
-	int mode = dst_sb.st_mode & S_MODEBITS;
+	mode_t mode = dst_sb.st_mode & S_MODEBITS;
+
 	if (isFILE(src_sb.st_mode) && s_opt) {
 	    /* mustn't be writeable! */
-	    mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
+	    mode &= (mode_t) (~(S_IWUSR | S_IWGRP | S_IWOTH));
 	    mode |= (S_ISUID | S_ISGID);
 	}
 	(void) SetOwner(dst, src_sb.st_uid, src_sb.st_gid);

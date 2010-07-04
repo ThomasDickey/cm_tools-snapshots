@@ -44,17 +44,17 @@
 #include	<dyn_str.h>
 extern char *tmpnam(char *);
 
-MODULE_ID("$Id: rcsput.c,v 11.9 2004/03/08 01:44:52 tom Exp $")
+MODULE_ID("$Id: rcsput.c,v 11.10 2010/07/04 16:29:27 tom Exp $")
 
 #define	VERBOSE		if (!quiet) PRINTF
 
 static DYN *ci_opts;
 static DYN *diff_opts;
-static char *verb = "checkin";
+static const char *verb = "checkin";
 static FILE *log_fp;
 static int a_opt;		/* all-directory scan */
 static int no_op;		/* no-op mode */
-static char *pager;		/* nonzero if we don't cat diffs */
+static const char *pager;	/* nonzero if we don't cat diffs */
 static int force;
 static int quiet;
 
@@ -77,7 +77,7 @@ static int
 different(char *working)
 {
     static DYN *cmds, *opts;
-    static char *prog = "rcsdiff";
+    static const char *prog = "rcsdiff";
 
     FILE *ifp, *ofp;
     char buffer[BUFSIZ], out_diff[BUFSIZ];
@@ -137,7 +137,7 @@ different(char *working)
 }
 
 static void
-checkin(char *path, char *working, char *archive)
+checkin(const char *path, char *working, const char *archive)
 {
     static DYN *args;
     int first;
@@ -208,6 +208,8 @@ WALK_FUNC(scan_tree)
 {
     char tmp[BUFSIZ], *s = pathcat(tmp, path, name);
 
+    (void) level;
+
     if (RCS_DEBUG)
 	PRINTF("++ scan %s / %s\n", path, name);
 
@@ -236,7 +238,7 @@ WALK_FUNC(scan_tree)
 }
 
 static void
-do_arg(char *name)
+do_arg(const char *name)
 {
     (void) walktree((char *) 0, name, scan_tree, "r", 0);
 }
@@ -244,7 +246,7 @@ do_arg(char *name)
 static void
 usage(int option)
 {
-    static char *tbl[] =
+    static const char *tbl[] =
     {
 	"Usage: rcsput [options] files_or_directories"
 	,""
@@ -270,7 +272,7 @@ usage(int option)
 _MAIN
 {
     int j;
-    char *s;
+    const char *s;
     char *cat_input = 0;
     int m_opt = FALSE;
     char original[MAXPATHLEN];

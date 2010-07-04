@@ -43,13 +43,13 @@
 #include	<sccsdefs.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: rcsget.c,v 11.7 2004/03/08 00:14:19 tom Exp $")
+MODULE_ID("$Id: rcsget.c,v 11.8 2010/07/04 16:36:56 tom Exp $")
 
 #define	VERBOSE	if (!quiet) PRINTF
 
 static char user_wd[BUFSIZ];	/* working-directory for scan_archive */
 static char co_opts[BUFSIZ];
-static char *verb = "checkout";
+static const char *verb = "checkout";
 static int a_opt;		/* all-directory scan */
 static int R_opt;		/* recur/directory-mode */
 static int L_opt;		/* follow links */
@@ -57,7 +57,7 @@ static int n_opt;		/* no-op mode */
 static int quiet;		/* "-q" option */
 
 static void
-set_wd(char *path)
+set_wd(const char *path)
 {
     if (!n_opt)
 	if (chdir(path) < 0)
@@ -82,9 +82,10 @@ Checkout(char *working, char *archive)
 }
 
 static int
-an_archive(char *name)
+an_archive(const char *name)
 {
-    int len_name = strlen(name), len_type = strlen(RCS_SUFFIX);
+    size_t len_name = strlen(name);
+    size_t len_type = strlen(RCS_SUFFIX);
     return (len_name > len_type
 	    && !strcmp(name + len_name - len_type, RCS_SUFFIX));
 }
@@ -105,7 +106,7 @@ ignore_dir(char *path)
 }
 
 static void
-Ignore(char *name, char *why)
+Ignore(const char *name, const char *why)
 {
     VERBOSE("?? ignored: %s%s\n", name, why);
 }
@@ -115,6 +116,8 @@ static int
 WALK_FUNC(scan_archive)
 {
     char tmp[BUFSIZ];
+
+    (void) level;
 
     if (!strcmp(user_wd, path))	/* account for initial argument */
 	return (readable);
@@ -179,7 +182,7 @@ WALK_FUNC(scan_tree)
 }
 
 static void
-do_arg(char *name)
+do_arg(const char *name)
 {
 #ifdef	S_IFLNK
     if (!L_opt) {
@@ -196,7 +199,7 @@ do_arg(char *name)
 static void
 usage(int option)
 {
-    static char *tbl[] =
+    static const char *tbl[] =
     {
 	"usage: rcsget [options] files"
 	,""

@@ -10,12 +10,12 @@
 
 #include <vcs.h>
 
-MODULE_ID("$Id: insert.c,v 11.5 2004/03/08 01:16:44 tom Exp $")
+MODULE_ID("$Id: insert.c,v 11.6 2010/07/04 18:23:39 tom Exp $")
 
 /******************************************************************************/
 /* we have to change directories to keep fooling rcs about the vcs-file */
 static void
-ChangeWd(char *name)
+ChangeWd(const char *name)
 {
     ShowPath("chdir", name);
     if (!no_op) {
@@ -28,7 +28,7 @@ ChangeWd(char *name)
 static void
 MakeDirectory(char *name)
 {
-    int old = umask(0);
+    mode_t old = umask(0);
 
     ShowPath("mkdir", name);
     if (!no_op) {
@@ -42,7 +42,7 @@ MakeDirectory(char *name)
 static void
 MakePermit(char *dst, char *base)
 {
-    static char *prefix = "../..";
+    static const char *prefix = "../..";
     char src[MAXPATHLEN];
     char buffer[BUFSIZ];
 
@@ -117,8 +117,9 @@ InsertDir(char *name, char *base)
     if (!Access(vcs_file(ref_path, temp, FALSE), no_op))
 	return FALSE;
 
-    if (no_op && !DirExists(ref_path)) ;	/* assume we could if we wanted to */
-    else if (!rcspermit(ref_path, base, (char **) 0)) {
+    if (no_op && !DirExists(ref_path)) {
+	;			/* assume we could if we wanted to */
+    } else if (!rcspermit(ref_path, base, (const char **) 0)) {
 	FPRINTF(stderr, "? no permission on %s\n", ref_path);
 	return FALSE;
     } else if ((s = strchr(base, '.')) != NULL) {

@@ -1,16 +1,18 @@
 Summary: CM Tools for RCS
-%define AppVersion 20100630
-%define LibVersion 20100624
-# $Header: /users/source/archives/cm_tools.vcs/package/RCS/cm_tools-12.0.spec,v 1.1 2010/06/30 09:07:26 tom Exp $
-Name: cm_tools
-Version: 12.x
-# Base version is 12.x; rpm version corresponds to "Source1" directory name.
-Release: %{AppVersion}
+%define AppProgram cm_tools
+%define AppLibrary td_lib
+%define AppVersion 12.x
+%define AppRelease 20100704
+%define LibRelease 20100704
+# $Id: cm_tools-12.0.spec,v 1.2 2010/07/03 13:42:59 tom Exp $
+Name: %{AppProgram}
+Version: %{AppVersion}
+Release: %{AppRelease}
 License: MIT-X11
-Group: Applications/Editors
+Group: Development/Tools
 URL: ftp://invisible-island.net/ded
-Source0: td_lib-%{LibVersion}.tgz
-Source1: cm_tools-%{AppVersion}.tgz
+Source0: %{AppLibrary}-%{LibRelease}.tgz
+Source1: %{AppProgram}-%{AppRelease}.tgz
 Vendor: Thomas Dickey <dickey@invisible-island.net>
 
 %description
@@ -27,15 +29,15 @@ Finally, there is an improved copy-file utility.
 # -D (do not delete directory before unpacking)
 # -q (quiet)
 # -T (do not do default unpacking, is used with -a or -b)
-rm -rf cm_tools-12.x
-mkdir cm_tools-12.x
+rm -rf %{AppProgram}-%{AppVersion}
+mkdir %{AppProgram}-%{AppVersion}
 %setup -q -D -T -a 1
-mv cm_tools-%{AppVersion}/* .
+mv %{AppProgram}-%{AppRelease}/* .
 %setup -q -D -T -a 0
 
 %build
 
-cd td_lib-%{LibVersion}
+cd %{AppLibrary}-%{LibRelease}
 
 ./configure \
 		--target %{_target_platform} \
@@ -43,7 +45,8 @@ cd td_lib-%{LibVersion}
 		--bindir=%{_bindir} \
 		--libdir=%{_libdir} \
 		--mandir=%{_mandir} \
-		--datadir=%{_datadir}
+		--datadir=%{_datadir} \
+		--disable-echo
 make
 
 cd ..
@@ -90,6 +93,9 @@ make install                    DESTDIR=$RPM_BUILD_ROOT
 
 %changelog
 # each patch should add its ChangeLog entries here
+
+* Sat Jul 03 2010 Thomas Dickey
+- code cleanup
 
 * Wed Jun 30 2010 Thomas Dickey
 - initial version

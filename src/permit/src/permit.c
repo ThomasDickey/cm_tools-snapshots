@@ -46,7 +46,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: permit.c,v 11.10 2004/03/08 01:02:39 tom Exp $")
+MODULE_ID("$Id: permit.c,v 11.11 2010/07/04 17:21:37 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -161,7 +161,7 @@ indent(int level)
  * updated properly.
  */
 static void
-set_revision(char *dst, char *opt)
+set_revision(char *dst, const char *opt)
 {
     char *d;
     char bfr[20];
@@ -249,7 +249,7 @@ create_permit(char *s)
     }
 
     /* if we are expunging ourselves, no sense in making permit-file */
-    (void) strcpy(owner, uid2s((int) (sb.st_uid)));
+    (void) strcpy(owner, uid2s(sb.st_uid));
     if (expunge_opt && on_list(user_name, owner))
 	return;
 
@@ -318,7 +318,7 @@ compute_base(void)
  * list.
  */
 static void
-modify_access(char *file, char *name, char *opt)
+modify_access(const char *file, const char *name, const char *opt)
 {
     char cmd[BUFSIZ], tmp[BUFSIZ];
 
@@ -347,10 +347,10 @@ WALK_FUNC(do_arcs)
     int got_lock = FALSE;	/* true if lock found */
 #endif
     int got_owner = FALSE;	/* true if owner is on access list */
-    int mode = (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
+    mode_t mode = (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
     int header = TRUE;
     int code = S_FAIL;
-    int num = strlen(name) - (sizeof(RCS_SUFFIX) - 1);
+    int num = (int) (strlen(name) - (sizeof(RCS_SUFFIX) - 1));
     char *s = 0;
     char list[BUFSIZ];		/* users to add/expunge */
     char to_find[BUFSIZ];	/* check-off list of users */
@@ -360,6 +360,8 @@ WALK_FUNC(do_arcs)
     char key[80];		/* current keyword */
     char tmp[BUFSIZ];
 
+    (void) path;
+
     if (mode != S_IFREG)	/* please, no subdirectories of RCS! */
 	return (readable);
 
@@ -367,7 +369,7 @@ WALK_FUNC(do_arcs)
 	|| strcmp(name + num, RCS_SUFFIX))
 	return (readable);
 
-    (void) strcpy(owner, uid2s((int) (sp->st_uid)));
+    (void) strcpy(owner, uid2s(sp->st_uid));
     (void) strcpy(to_find, user_name);
     *list = EOS;
     *found = EOS;
@@ -453,7 +455,7 @@ WALK_FUNC(do_arcs)
  * highest version, from which the most recent baseline can be inferred.
  */
 static void
-scan_arcs(char *path, char *name, int level)
+scan_arcs(const char *path, const char *name, int level)
 {
     *high_ver = EOS;
     (void) walktree(path, name, do_arcs, "r", level);
@@ -472,7 +474,7 @@ scan_arcs(char *path, char *name, int level)
  * the RCS directory is on the access list of the permit-file.
  */
 static int
-do_base(char *path, char *parent, int level, int *flag_)
+do_base(const char *path, const char *parent, int level, int *flag_)
 {
     char nextpath[BUFSIZ];
     char acc_file[BUFSIZ];
@@ -503,8 +505,8 @@ do_base(char *path, char *parent, int level, int *flag_)
 static int
 WALK_FUNC(do_tree)
 {
-    char *notes;
-    int mode = (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
+    const char *notes;
+    mode_t mode = (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
 
     if (mode == S_IFDIR) {
 	char tmp[BUFSIZ];
@@ -570,7 +572,7 @@ WALK_FUNC(do_tree)
  * Process a single argument: a directory name.
  */
 static void
-do_arg(char *name)
+do_arg(const char *name)
 {
     TELL("** path = %s\n", name);
     lines = 0;
@@ -581,7 +583,7 @@ static void
 usage(void)
 {
     char buffer[BUFSIZ];
-    static char *tbl[] =
+    static const char *tbl[] =
     {
 	"usage: permit [-{a|e|u}USER] [-bBASE] [-p] [-nqsv] [directory [...]]",
 	"",
@@ -639,7 +641,7 @@ _MAIN
 	    add_opt = TRUE;	/* add permissions */
 	    break;
 	case 'b':
-	    if (((base_opt = strtol(optarg, &d, 10)) < 1)
+	    if (((base_opt = (int) strtol(optarg, &d, 10)) < 1)
 		|| (*d != EOS))
 		usage();
 	    break;

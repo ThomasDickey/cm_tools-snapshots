@@ -13,7 +13,7 @@
 #define	MAIN
 #include <vcs.h>
 
-MODULE_ID("$Id: vcs.c,v 11.4 2004/03/08 01:16:44 tom Exp $")
+MODULE_ID("$Id: vcs.c,v 11.5 2010/07/04 18:22:37 tom Exp $")
 
 /************************************************************************
  *	utility procedures						*
@@ -48,7 +48,7 @@ do_command(void)
  * our uid/gid to the effective user (usually!).
  */
 void
-invoke_command(char *verb, char *path)
+invoke_command(const char *verb, const char *path)
 {
     RCS_verb = verb;
     RCS_path = path;
@@ -58,7 +58,7 @@ invoke_command(char *verb, char *path)
 
 /******************************************************************************/
 void
-ShowPath(char *command, char *name)
+ShowPath(const char *command, const char *name)
 {
     if (verbose) {
 	char temp[BUFSIZ];
@@ -74,7 +74,7 @@ ShowPath(char *command, char *name)
 /******************************************************************************/
 /* test to see if an argument is a directory */
 int
-DirExists(char *path)
+DirExists(const char *path)
 {
     struct stat sb;
     return (stat(path, &sb) >= 0 && (sb.st_mode & S_IFMT) == S_IFDIR);
@@ -83,7 +83,7 @@ DirExists(char *path)
 /******************************************************************************/
 /* test to see if an argument is a directory (ignore it if so!) */
 int
-IsDirectory(char *path)
+IsDirectory(const char *path)
 {
     struct stat sb;
     if (stat(path, &sb) < 0 || (sb.st_mode & S_IFMT) != S_IFDIR)
@@ -151,7 +151,8 @@ DoArg(char *name)
     case Insert:
 	if (InsertDir(name, base))
 	    VERBOSE(".. completed %s.x %s\n", base, name);
-	(void) chdir(original);
+	if (chdir(original) != 0)
+	    failed(original);
 	break;
     default:
 	break;
@@ -162,7 +163,7 @@ DoArg(char *name)
 static void
 usage(void)
 {
-    static char *msg[] =
+    static const char *msg[] =
     {
 	"Usage: vcs [options] [names]",
 	"",
