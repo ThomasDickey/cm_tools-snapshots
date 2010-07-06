@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.4 1997/09/28 20:15:39 tom Exp $
+# $Id: makefile.in,v 11.5 2010/07/05 17:08:41 tom Exp $
 # Top-level makefile for RCS checkout utility
 
 THIS	= checkout
@@ -18,12 +18,12 @@ ALL	=\
 
 ####### (Standard Productions) #################################################
 all\
-run_test::	$(LIB_DEPS) bin
+check::		$(LIB_DEPS) bin
 
 all\
 clean\
 distclean\
-run_test\
+check\
 lint.out::
 	cd src &&	$(MAKE) $(MAKE_OPTS) $@
 	cd test &&	$(MAKE) $(MAKE_OPTS) $@

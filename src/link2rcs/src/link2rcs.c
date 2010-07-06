@@ -66,7 +66,7 @@
 #include	<td_qsort.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: link2rcs.c,v 11.12 2010/07/04 18:27:16 tom Exp $")
+MODULE_ID("$Id: link2rcs.c,v 11.13 2010/07/05 17:36:32 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -195,7 +195,7 @@ path_from(const char *src)
  */
 /*ARGSUSED*/
 static int
-src_stat(char *path, char *name, struct stat *sp, int readable, int level)
+src_stat(const char *path, const char *name, struct stat *sp, int readable, int level)
 {
     LIST *p;
     char tmp[BUFSIZ];
@@ -268,9 +268,10 @@ find_src(const char *path, const char *name)
      */
     if (getcwd(tmp, sizeof(tmp)) == 0)
 	failed(tmp);
-    abspath(name = pathcat(tmp, tmp, name));
+    abspath(pathcat(tmp, tmp, name));
+    name = tmp;
     TELL("** src-path = %s\n", path_from(name));
-    (void) walktree((char *) 0, name, src_stat, "r", 0);
+    (void) walktree((const char *) 0, name, src_stat, "r", 0);
 }
 
 static void
@@ -354,7 +355,7 @@ same_dev(const char *src, const char *dst)
 	failed(src);
     }
     if (stat_file(dst, &sb_dst) < 0) {	/* this probably doesn't exist */
-	(void) pathhead(dst, &sb_dst);
+	return FALSE;
     }
     return (sb_src.st_dev == sb_dst.st_dev);
 }

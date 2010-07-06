@@ -2,9 +2,9 @@ Summary: CM Tools for RCS
 %define AppProgram cm_tools
 %define AppLibrary td_lib
 %define AppVersion 12.x
-%define AppRelease 20100704
-%define LibRelease 20100704
-# $Id: cm_tools-12.0.spec,v 1.2 2010/07/03 13:42:59 tom Exp $
+%define AppRelease 20100705
+%define LibRelease 20100705
+# $Id: cm_tools-12.0.spec,v 1.4 2010/07/05 22:05:10 tom Exp $
 Name: %{AppProgram}
 Version: %{AppVersion}
 Release: %{AppRelease}
@@ -76,6 +76,8 @@ make install                    DESTDIR=$RPM_BUILD_ROOT
 %{_bindir}/checkup
 %{_bindir}/copy
 %{_bindir}/link2rcs
+%{_bindir}/pci
+%{_bindir}/pco
 %{_bindir}/permit
 %{_bindir}/rcsget
 %{_bindir}/rcsput

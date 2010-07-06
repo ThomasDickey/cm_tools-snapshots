@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.2 1997/09/28 20:15:39 tom Exp $
+# $Id: makefile.in,v 11.3 2010/07/05 17:13:00 tom Exp $
 # Top-level makefile for CM_TOOLS src-directory
 
 
@@ -12,7 +12,7 @@ all\
 clean\
 distclean\
 lint.out\
-run_test\
+check\
 install\
 uninstall::
 	cd baseline &&	$(MAKE) $(MAKE_OPTS) $@

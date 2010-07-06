@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.7 2010/06/30 08:48:01 tom Exp $
+# $Id: makefile.in,v 11.8 2010/07/05 17:13:36 tom Exp $
 # user documentation
 
 THIS	= cm_tools
@@ -47,7 +47,7 @@ ALL	=
 all:		$(SOURCES) $(ALL)
 clean:					; -$(RM) $(CLEAN)
 distclean:	clean			; -$(RM) $(ALL) *.cat
-run_test:
+check:
 install:	$(MANDIR) $(IT)
 uninstall:				; -$(RM) $(IT)
 

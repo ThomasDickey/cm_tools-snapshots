@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t20100704
+MANIFEST for cm_tools, version t20100705
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -155,6 +155,7 @@ support/copy.sh                 copy-script to use til we have a working copy ut
 support/makefile.in             cm_tools/support makefile template
 support/run_tool.c              sets mtime of a given file
 support/set_date.c              runs specific tool in rcs-path
+support/showtree.sh             show a directory-tree, sorted
 support/testinit.sh             sets common vcs environment-variables for testing
 support/testpath.sh             sets up PATH variable for tests
 support/who_suid.sh             finds an executable, echos owner iff it is set-uid

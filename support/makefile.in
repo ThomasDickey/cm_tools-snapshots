@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.2 1997/09/28 20:15:39 tom Exp $
+# $Id: makefile.in,v 11.3 2010/07/05 17:13:36 tom Exp $
 # support scripts & utilities
 
 
@@ -25,7 +25,7 @@ ALL	= \
 all:	$(SOURCES) $(ALL)
 clean:			; -$(RM) $(CLEAN)
 distclean:	clean	; -$(RM) $(ALL)
-run_test:
+check:
 install:
 uninstall:
 

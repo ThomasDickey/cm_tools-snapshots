@@ -18,7 +18,7 @@
 % rmdir foo/FOO
 % rmdir foo
 ** resulting tree:
-foobar
 FOO
 FOO/FOO,v
 FOO/foobar,v
+foobar

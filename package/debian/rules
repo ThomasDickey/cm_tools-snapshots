@@ -82,6 +82,10 @@ binary-arch: build install
 	dh_strip
 	dh_compress
 	dh_fixperms
+	chown root:root debian/cmtools/usr/bin/checkin
+	chown root:root debian/cmtools/usr/bin/checkout
+	chmod 4755 debian/cmtools/usr/bin/checkin
+	chmod 4755 debian/cmtools/usr/bin/checkout
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol

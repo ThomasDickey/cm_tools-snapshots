@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.9 1997/09/14 21:51:49 tom Exp $
+# $Id: run_test.sh,v 11.10 2010/07/05 20:48:14 tom Exp $
 #
 #	test-script for 'vcs' utility
 #
@@ -50,8 +50,7 @@ then
 		insert)
 			(
 				vcs -i foo/src foo/test foo2 2>&1
-				echo '** resulting tree:'
-				find $JUNK -print
+				showtree.sh $JUNK
 			) >>$LOG
 			;;
 		unlock)
@@ -64,8 +63,7 @@ then
 		delete)
 			(
 				vcs -d foo/src foo2 foo 2>&1
-				echo '** resulting tree:'
-				find $JUNK -print
+				showtree.sh $JUNK
 			) >>$LOG
 			;;
 		esac

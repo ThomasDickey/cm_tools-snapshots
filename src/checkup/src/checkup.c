@@ -66,7 +66,7 @@
 #include	<sccsdefs.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: checkup.c,v 11.19 2010/07/04 18:27:28 tom Exp $")
+MODULE_ID("$Id: checkup.c,v 11.20 2010/07/05 17:25:57 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -88,7 +88,7 @@ static int verbose;		/* "-v" option */
 static int show_links;		/* "-L" option */
 #endif
 static int lines;		/* line-number, for report */
-static char *revision = "0";	/* required revision level */
+static const char *revision = "0";	/* required revision level */
 static int reverse;		/* true if we reverse revision-test */
 
 static int redir_out;		/* true if stdout isn't tty */
@@ -204,6 +204,7 @@ pipes(const char *path,
       const char *vers)
 {
     char tmp[BUFSIZ];
+    char tmp2[BUFSIZ];
     int fake_tee = (redir_out && (redir_out != redir_err));
 
     if ((verbose < 0) || fake_tee) {
@@ -217,7 +218,7 @@ pipes(const char *path,
 	}
 	path = pathcat(tmp, path, name);
 	if (original != 0)
-	    path = relpath(path, original, path);
+	    path = relpath(tmp2, original, path);
 	PRINTF("%s\n", path);
 	if (!fake_tee)
 	    fflush(stdout);
@@ -572,14 +573,14 @@ _MAIN
     if (revision[j = (int) strlen(revision) - 1] == '+') {
 	char *s;
 
-	revision = strcpy(tmp, revision);
-	revision[j] = EOS;
-	if ((s = strrchr(revision, '.')) != NULL) {
+	strcpy(tmp, revision);
+	tmp[j] = EOS;
+	if ((s = strrchr(tmp, '.')) != NULL) {
 	    if (s[1] == EOS)
-		(void) strcat(revision, "0");
+		(void) strcat(tmp, "0");
 	} else
-	    (void) strcat(revision, ".0");
-	revision = txtalloc(revision);
+	    (void) strcat(tmp, ".0");
+	revision = txtalloc(tmp);
 	reverse = TRUE;
     }
 

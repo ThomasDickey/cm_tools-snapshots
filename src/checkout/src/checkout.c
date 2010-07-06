@@ -92,7 +92,7 @@
 #include	<signal.h>
 #include	<time.h>
 
-MODULE_ID("$Id: checkout.c,v 11.15 2010/07/04 16:37:23 tom Exp $")
+MODULE_ID("$Id: checkout.c,v 11.16 2010/07/05 17:18:09 tom Exp $")
 
 /* local definitions */
 #define	TELL	if (!silent) FPRINTF
@@ -490,7 +490,7 @@ do_file(void)
 	if (locked
 	    && (TestAccess(path_of(temp, Archive), W_OK) >= 0))
 	    GiveBack(FALSE, "RCS-directory is writable");
-	else if (!rcspermit(temp, (char *) 0, (char **) 0))
+	else if (!rcspermit(temp, (char *) 0, (const char **) 0))
 	    GiveBack(Effect && locked, "not listed in permit-file");
     }
 
