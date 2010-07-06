@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.6 2010/06/30 08:47:53 tom Exp $
+# $Id: makefile.in,v 11.8 2010/07/05 20:52:47 tom Exp $
 
 THIS	= cm_tools
 
@@ -13,23 +13,25 @@ top_srcdir	= @top_srcdir@
 
 B	= $(DESTDIR)$(bindir)
 
-IT	=\
-	$B/baseline\
-	$B/checkin\
-	$B/checkout\
-	$B/checkup\
-	$B/copy\
-	$B/link2rcs\
-	$B/permit\
-	$B/rcsget\
-	$B/rcsput\
+IT	= \
+	$B/baseline \
+	$B/checkin \
+	$B/checkout \
+	$B/checkup \
+	$B/copy \
+	$B/link2rcs \
+	$B/pci \
+	$B/pco \
+	$B/permit \
+	$B/rcsget \
+	$B/rcsput \
 	$B/vcs
 
 ####### (Standard Productions) #################################################
 all:
 clean:				; -$(RM) $(CLEAN)
 distclean:	clean		; -$(SHELL) -c 'for n in $(ALL) [a-ln-z]*; do test -f "$$n" && rm -f "$$n"; done'
-run_test:
+check:
 install:	$B $(IT)
 uninstall:			; -$(RM) $(IT)
 
@@ -48,3 +50,5 @@ $B/permit:	permit		; $(USER)
 $B/rcsget:	rcsget		; $(USER)
 $B/rcsput:	rcsput		; $(USER)
 $B/vcs:		vcs		; $(ADMIN)
+$B/pci:		$B/checkin	; cd $B && ln -s checkin pci
+$B/pco:		$B/checkout	; cd $B && ln -s checkout pco

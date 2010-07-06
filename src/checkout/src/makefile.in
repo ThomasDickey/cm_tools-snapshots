@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.5 2010/06/30 23:06:09 tom Exp $
+# $Id: makefile.in,v 11.6 2010/07/05 17:08:41 tom Exp $
 # Make-file for RCS checkout utilities
 
 THIS	= checkout
@@ -21,7 +21,7 @@ install:	$(SOURCES) $B $(ALL)
 
 clean:				; -$(RM) $(CLEAN)
 distclean: 	clean		; -$(RM) $(ALL)
-run_test:
+check:
 
 ####### (Details of Productions) ###############################################
 $B:				; mkdir $@

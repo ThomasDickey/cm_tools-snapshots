@@ -118,7 +118,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.33 2010/07/04 17:02:49 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.34 2010/07/05 17:19:45 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -705,7 +705,7 @@ copyit(char *parent,
 
     if (isFILE(src_sb.st_mode)) {
 	total_files++;
-	total_bytes += src_sb.st_size;
+	total_bytes += (long) src_sb.st_size;
     }
 #ifdef	S_IFLNK
     if (isLINK(src_sb.st_mode))

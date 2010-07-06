@@ -1,3 +1,37 @@
+2010-07-05  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/cm_tools-12.0.spec: add pci/pco symlinks
+
+	* package/debian/rules:
+	install checkin/checkout setuid, so they can work with permit-files
+
+	* package/debian/changelog, package/cm_tools-12.0.spec: bump
+
+	* bin/makefile.in: add symlinks for pci/pco
+
+	* src/vcs/test/delete.ref, src/vcs/test/insert.ref: resync
+
+	* src/vcs/test/run_test.sh:
+	split-out the script to show the resulting tree, since it was unsorted.
+
+	* support/showtree.sh: RCS_BASE
+
+	* src/vcs/test/compare.sh:
+	improve portabiity by limiting this to POSIX, allowing mixed-case in the
+	generated part of the temporary filename.  Also, show diff's with the
+	reference on the left.
+
+	* src/permit/test/case0.ref: resync
+
+	* src/link2rcs/test/run_test.sh:
+	this shell script is locale-sensitive - force it to POSIX
+
+	* src/link2rcs/src/link2rcs.c, src/checkup/src/checkup.c, src/checkin/src/rcsput.c, src/copy/src/copy.c, src/checkout/src/checkout.c, src/checkin/src/checkin.c:
+	stricter gcc warnings
+
+	* support/makefile.in, user/makefile.in, src/vcs/test/makefile.in, src/vcs/makefile.in, src/vcs/src/makefile.in, src/link2rcs/src/makefile.in, src/link2rcs/test/makefile.in, src/makefile.in, src/permit/makefile.in, src/permit/src/makefile.in, src/permit/test/makefile.in, src/link2rcs/makefile.in, src/copy/test/makefile.in, src/copy/src/makefile.in, src/copy/makefile.in, src/checkup/makefile.in, src/checkup/src/makefile.in, src/checkup/test/makefile.in, bin/makefile.in, makefile.in, src/baseline/makefile.in, src/baseline/src/makefile.in, src/baseline/test/makefile.in, src/checkin/makefile.in, src/checkin/src/makefile.in, src/checkin/test/makefile.in, src/checkout/makefile.in, src/checkout/src/makefile.in, src/checkout/test/makefile.in:
+	s/run_test/check/
+
 2010-07-04  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* src/checkin/src/checkin.c, src/checkup/src/checkup.c, src/link2rcs/src/link2rcs.c, src/vcs/src/insert.c, src/vcs/src/vcs.c, support/set_date.c, support/run_tool.c, src/vcs/src/delete.c, src/vcs/src/vcs.h, src/baseline/src/baseline.c, src/permit/src/permit.c, src/copy/src/copy.c, src/checkout/src/checkout.c, src/checkout/src/rcsget.c, src/checkin/src/rcsput.c:

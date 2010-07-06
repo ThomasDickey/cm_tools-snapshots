@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.4 2004/03/07 23:26:48 tom Exp $
+# $Id: makefile.in,v 11.5 2010/07/05 17:08:41 tom Exp $
 # Top-level make-file for CM_TOOLS
 
 THIS	= cm_tools
@@ -15,7 +15,7 @@ PURE		= *.cache *.status
 all\
 clean\
 distclean\
-run_test\
+check\
 install\
 uninstall::
 	cd support &&	$(MAKE) $(MAKE_OPTS) $@

@@ -44,7 +44,7 @@
 #include	<dyn_str.h>
 extern char *tmpnam(char *);
 
-MODULE_ID("$Id: rcsput.c,v 11.10 2010/07/04 16:29:27 tom Exp $")
+MODULE_ID("$Id: rcsput.c,v 11.11 2010/07/05 17:22:57 tom Exp $")
 
 #define	VERBOSE		if (!quiet) PRINTF
 
@@ -74,7 +74,7 @@ cat2fp(FILE *fp, char *name)
 }
 
 static int
-different(char *working)
+different(const char *working)
 {
     static DYN *cmds, *opts;
     static const char *prog = "rcsdiff";
@@ -137,7 +137,7 @@ different(char *working)
 }
 
 static void
-checkin(const char *path, char *working, const char *archive)
+checkin(const char *path, const char *working, const char *archive)
 {
     static DYN *args;
     int first;
@@ -151,7 +151,7 @@ checkin(const char *path, char *working, const char *archive)
 	first = TRUE;
     } else {
 	time_t date;
-	char *vers, *locker;
+	const char *vers, *locker;
 	rcslast(path, working, &vers, &date, &locker);
 	if (*vers == '?')
 	    first = TRUE;	/* no revisions present */

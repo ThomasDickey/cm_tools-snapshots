@@ -1,7 +1,16 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.3 1999/06/27 18:43:45 tom Exp $
+# $Id: run_test.sh,v 11.4 2010/07/05 19:51:35 tom Exp $
 # test-script for link2rcs (RCS skeleton tree utility)
-#
+
+LANG=C; export LANG
+LC_ALL=C; export LC_ALL
+LC_TIME=C; export LC_TIME
+LC_CTYPE=C; export LC_CTYPE
+LANGUAGE=C; export LANGUAGE
+LC_COLLATE=C; export LC_COLLATE
+LC_NUMERIC=C; export LC_NUMERIC
+LC_MESSAGES=C; export LC_MESSAGES
+
 if test $# != 0
 then
 	echo '** '`date`

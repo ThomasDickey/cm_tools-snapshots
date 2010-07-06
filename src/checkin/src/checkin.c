@@ -132,7 +132,7 @@
 #include	<errno.h>
 extern char *mktemp(char *);
 
-MODULE_ID("$Id: checkin.c,v 11.32 2010/07/04 18:28:39 tom Exp $")
+MODULE_ID("$Id: checkin.c,v 11.33 2010/07/05 17:17:13 tom Exp $")
 
 /* local declarations: */
 #define	CI_TOOL		"ci"
@@ -188,7 +188,7 @@ static char *t_option;		/* "-t" option used for "ci" or "rcs" */
 static char *cat_input;		/* "-m" text, from pipe */
 static char RCSdir[MAXPATHLEN];
 static char RCSbase[REVSIZ];	/* base+ version number */
-static char *RCSaccess;		/* last permission-list */
+static const char *RCSaccess;	/* last permission-list */
 static char opt_opt[3];
 static char opt_rev[REVSIZ];
 

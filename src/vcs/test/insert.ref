@@ -90,6 +90,8 @@ done
 % chdir ../..
 .. completed 2.x foo2
 ** resulting tree:
+FOO
+FOO/FOO,v
 foo
 foo/FOO
 foo/FOO/FOO,v
@@ -102,5 +104,3 @@ foo/test/FOO/FOO,v
 foo2
 foo2/FOO
 foo2/FOO/FOO,v
-FOO
-FOO/FOO,v
