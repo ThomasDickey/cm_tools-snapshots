@@ -1,4 +1,4 @@
-dnl $Id: aclocal.m4,v 11.10 2010/07/04 01:02:15 tom Exp $
+dnl $Id: aclocal.m4,v 11.11 2011/04/12 22:47:41 tom Exp $
 dnl Macros for CM_TOOLS configure script.
 dnl
 dnl see
@@ -293,7 +293,7 @@ fi
 AC_SUBST(TD_LIB_rules)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_GCC_ATTRIBUTES version: 13 updated: 2009/08/11 20:19:56
+dnl CF_GCC_ATTRIBUTES version: 14 updated: 2010/10/23 15:52:32
 dnl -----------------
 dnl Test for availability of useful gcc __attribute__ directives to quiet
 dnl compiler warnings.  Though useful, not all are supported -- and contrary
@@ -320,7 +320,7 @@ if test "$GCC" = yes
 then
 	AC_CHECKING([for $CC __attribute__ directives])
 cat > conftest.$ac_ext <<EOF
-#line __oline__ "${as_me-configure}"
+#line __oline__ "${as_me:-configure}"
 #include "confdefs.h"
 #include "conftest.h"
 #include "conftest.i"
@@ -417,7 +417,7 @@ if test "$GCC" = yes ; then
 fi
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_GCC_WARNINGS version: 25 updated: 2010/04/24 11:03:31
+dnl CF_GCC_WARNINGS version: 27 updated: 2010/10/23 15:52:32
 dnl ---------------
 dnl Check if the compiler supports useful warning options.  There's a few that
 dnl we don't use, simply because they're too noisy:
@@ -442,7 +442,7 @@ AC_REQUIRE([CF_GCC_VERSION])
 CF_INTEL_COMPILER(GCC,INTEL_COMPILER,CFLAGS)
 
 cat > conftest.$ac_ext <<EOF
-#line __oline__ "${as_me-configure}"
+#line __oline__ "${as_me:-configure}"
 int main(int argc, char *argv[[]]) { return (argv[[argc-1]] == 0) ; }
 EOF
 
@@ -521,7 +521,7 @@ then
 	done
 	CFLAGS="$cf_save_CFLAGS"
 fi
-rm -f conftest*
+rm -rf conftest*
 
 AC_SUBST(EXTRA_CFLAGS)
 ])dnl
@@ -655,7 +655,7 @@ ifelse($1,,,[$1=$LIB_PREFIX])
 	AC_SUBST(LIB_PREFIX)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAKE_INCLUDE version: 8 updated: 2008/03/23 14:48:54
+dnl CF_MAKE_INCLUDE version: 9 updated: 2010/10/23 15:52:32
 dnl ---------------
 dnl Check for the use of 'include' in 'make' (BSDI is a special case)
 dnl The symbol $ac_make is set in AC_MAKE_SET, as a side-effect.
@@ -684,7 +684,7 @@ all :
 CF_EOF
 	cf_make_include=""
 	CDPATH=; export CDPATH
-	eval `(cd $cf_dir && ${MAKE-make}) 2>&AC_FD_CC | grep cf_make_include=OK`
+	eval `(cd $cf_dir && ${MAKE:-make}) 2>&AC_FD_CC | grep cf_make_include=OK`
 	if test -n "$cf_make_include"; then
 		make_include_left="$cf_include"
 		make_include_quote="$cf_quote"
@@ -713,15 +713,15 @@ AC_SUBST(make_include_left)
 AC_SUBST(make_include_right)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MSG_LOG version: 4 updated: 2007/07/29 09:55:12
+dnl CF_MSG_LOG version: 5 updated: 2010/10/23 15:52:32
 dnl ----------
 dnl Write a debug message to config.log, along with the line number in the
 dnl configure script.
 AC_DEFUN([CF_MSG_LOG],[
-echo "${as_me-configure}:__oline__: testing $* ..." 1>&AC_FD_CC
+echo "${as_me:-configure}:__oline__: testing $* ..." 1>&AC_FD_CC
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_PROGRAM_FULLPATH version: 5 updated: 2009/01/11 20:30:23
+dnl CF_PROGRAM_FULLPATH version: 6 updated: 2010/10/23 16:12:25
 dnl -------------------
 dnl Tests for one or more programs given by name along the user's path, and
 dnl sets a variable to the program's full-path if found.
@@ -743,7 +743,7 @@ AC_CACHE_VAL(cf_cv_$1,[
 				if test -f "$cf_word" && test ! -f "./$cf_word" && test -x "$cf_word"; then
 					cf_cv_$1="$cf_word"
 				else
-					IFS="${IFS= 	}"; cf_save_ifs="$IFS"; IFS="${IFS}${PATH_SEPARATOR}"
+					IFS="${IFS:- 	}"; cf_save_ifs="$IFS"; IFS="${IFS}${PATH_SEPARATOR}"
 					for cf_dir in $PATH; do
 						test -z "$cf_dir" && cf_dir=.
 						if test "$cf_dir" != "." && test -f $cf_dir/$cf_word && test -x $cf_dir/$cf_word; then

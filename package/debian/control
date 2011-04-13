@@ -9,7 +9,7 @@ Homepage: http://invisible-island.net/ded/
 Package: cmtools
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: conflict - filename conflict listing
+Description: cm_tools - CM Tools for RCS
  These are utility programs which simplify and extend the RCS programs
  by preserving timestamps of archived files, as well as providing a
  workaround for the long-broken setuid feature of RCS.  The latter is

@@ -1,3 +1,9 @@
+cmtools (20110412) unstable; urgency=low
+
+  * Configure script updates
+
+ -- Thomas E. Dickey <dickey@invisible-island.net>  Tue, 12 Apr 2011 18:54:51 -0400
+
 cmtools (20100705) unstable; urgency=high
 
   * Initial package release
