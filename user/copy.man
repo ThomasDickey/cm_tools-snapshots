@@ -1,4 +1,4 @@
-.\" $Id: copy.man,v 11.8 2001/01/09 21:47:38 tom Exp $
+.\" $Id: copy.man,v 11.9 2012/01/07 18:34:59 tom Exp $
 .de DS
 .RS
 .nf
@@ -157,4 +157,4 @@ existing directory rather than create a new one.
 cp\ (1)
 .SH AUTHOR:
 .PP
-Thomas Dickey <dickey@clark.net>
+Thomas E. Dickey <dickey@invisible-island.net>

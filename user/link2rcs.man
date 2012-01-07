@@ -1,4 +1,4 @@
-.\" $Id: link2rcs.man,v 11.3 1997/09/14 22:06:52 tom Exp $
+.\" $Id: link2rcs.man,v 11.4 2012/01/07 18:34:09 tom Exp $
 .de DS
 .RS
 .nf
@@ -122,6 +122,12 @@ to check-out files into the destination tree.
 .SH ENVIRONMENT
 .PP
 \fBLink2rcs\fR is written in C and runs in a UNIX\*R environment.
+.PP
+It uses the \fBDED_CM_LOOKUP\fP variable (see ded(1)) to decide
+whether to create a symbolic link or actual directory for CVS, RCS and SCCS.
+By default, \fBlinkrcs\fP creates links for RCS and SCCS directories.
+But if  \fBDEC_CM_LOOKUP\fP is set, \fBlink2rcs\fP creates links
+only if those features are listed in the environment variable.
 .SH FILES
 .PP
 \fBLink2rcs\fR consists of a single binary file, \fBlink2rcs\fR.
@@ -130,7 +136,7 @@ to check-out files into the destination tree.
 None.
 .SH SEE ALSO
 .PP
-baseline, rcsget, checkout, permit, rcs\ (1)
+ded, baseline, rcsget, checkout, permit, rcs(1)
 .SH AUTHOR:
 .PP
-Thomas Dickey <dickey@clark.net>
+Thomas E. Dickey <dickey@invisible-island.net>

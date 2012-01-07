@@ -1,3 +1,19 @@
+2012-01-07  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* user/baseline.man, user/checkin.man, user/checkout.man, user/checkup.man, user/copy.man, user/permit.man, user/rcsget.man, user/rcsput.man, user/vcs.man:
+	update email address
+
+	* user/link2rcs.man: document use of DEC_CM_LOOKUP variable
+
+	* package/debian/changelog: feature change for link2rcs
+
+	* src/link2rcs/src/link2rcs.c:
+	check $DED_CM_LOOKUP, use that to specify which of the CVS/RCS/SCCS directories
+	will be symlinked rather than created.  This feature is useful for special
+	cases, e.g., where a tree contains SCCS directories for an SCCS implementation.
+
+	* package/cm_tools-12.0.spec: bump
+
 2011-04-12  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* package/cm_tools-12.0.spec: use the most recent td_lib

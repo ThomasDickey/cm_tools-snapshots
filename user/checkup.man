@@ -1,4 +1,4 @@
-.\" $Id: checkup.man,v 11.2 1997/09/14 22:04:09 tom Exp $
+.\" $Id: checkup.man,v 11.3 2012/01/07 18:34:59 tom Exp $
 .de DS
 .RS
 .nf
@@ -198,4 +198,4 @@ None.
 rlog\ (1), sact\ (1).
 .SH AUTHOR:
 .PP
-Thomas Dickey <dickey@clark.net>
+Thomas E. Dickey <dickey@invisible-island.net>
