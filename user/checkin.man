@@ -1,4 +1,4 @@
-.\" $Id: checkin.man,v 11.1 1997/09/14 21:56:33 tom Exp $
+.\" $Id: checkin.man,v 11.2 2012/01/07 18:34:59 tom Exp $
 .de DS
 .RS
 .nf
@@ -203,4 +203,4 @@ the RCS administrative program
 baseline, rcsput, permit, ded, ci\ (1), co\ (1), rcs\ (1)
 .SH AUTHOR:
 .PP
-Thomas Dickey <dickey@clark.net>
+Thomas E. Dickey <dickey@invisible-island.net>

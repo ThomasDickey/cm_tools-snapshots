@@ -1,4 +1,4 @@
-.\" $Id: permit.man,v 11.2 1997/09/14 21:56:33 tom Exp $
+.\" $Id: permit.man,v 11.3 2012/01/07 18:34:59 tom Exp $
 .de DS
 .RS
 .nf
@@ -154,4 +154,4 @@ None.
 baseline, rcs\ (1), ci\ (1).
 .SH AUTHOR:
 .PP
-Thomas Dickey <dickey@clark.net>
+Thomas E. Dickey <dickey@invisible-island.net>

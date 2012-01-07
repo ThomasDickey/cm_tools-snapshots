@@ -3,6 +3,8 @@
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * Modified:
+ *		07 Jan 2012, use $DED_CM_LOOKUP to decide whether to treat
+ *			     CVS/RCS/SCCS as ordinary directories.
  *		27 Jun 1999, treat SCCS directory like RCS, making links for it.
  *		06 Dec 1998, if the source has a symbolic link to a directory,
  *			     copy the link.
@@ -66,7 +68,7 @@
 #include	<td_qsort.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: link2rcs.c,v 11.13 2010/07/05 17:36:32 tom Exp $")
+MODULE_ID("$Id: link2rcs.c,v 11.14 2012/01/07 18:25:50 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -101,6 +103,10 @@ static int verbose;		/* "-v" option */
 static char *env_path;		/* variable-name */
 static int env_size;		/* corresponding path-size */
 #endif
+
+static int ignore_cvs;
+static int ignore_rcs;
+static int ignore_sccs;
 
 static long total_mkdirs;
 static long total_relinks;
@@ -212,9 +218,11 @@ src_stat(const char *path, const char *name, struct stat *sp, int readable, int 
 	/* patch: test for link-to-link */
 	p->path = path_to(tmp);
 	p->what = fmt_link;
-	if (sameleaf(s, rcs_dir(path, name))) {
+	if (ignore_cvs && sameleaf(s, "CVS")) {
 	    p->from = path_from(tmp);
-	} else if (sameleaf(s, sccs_dir(path, name))) {
+	} else if (ignore_rcs && sameleaf(s, rcs_dir(path, name))) {
+	    p->from = path_from(tmp);
+	} else if (ignore_sccs && sameleaf(s, sccs_dir(path, name))) {
 	    p->from = path_from(tmp);
 	    p->what = fmt_sccs;
 	} else {
@@ -679,7 +687,7 @@ _MAIN
     if (getcwd(Current, sizeof(Current)) == 0)
 	strcpy(Current, ".");
 
-    while ((j = getopt(argc, argv, "ab:d:e:fFmnorqs:v")) != EOF)
+    while ((j = getopt(argc, argv, "ab:d:e:fFmnorqs:v")) != EOF) {
 	switch (j) {
 	case 'a':
 	    allnames++;
@@ -728,6 +736,37 @@ _MAIN
 	    usage();
 	    /*NOTREACHED */
 	}
+    }
+
+    if ((p = getenv("DED_CM_LOOKUP")) != 0) {
+	char *q;
+	const char *delim = ",";
+
+	p = stralloc(p);
+	while ((q = strtok(p, delim)) != 0) {
+	    if (!strucmp(q, "CVS")) {
+		ignore_cvs = TRUE;
+	    } else if (!strucmp(q, "RCS")) {
+		ignore_rcs = TRUE;
+	    } else if (!strucmp(q, "SCCS")) {
+		ignore_sccs = TRUE;
+	    }
+	    p = 0;
+	}
+    } else {
+#ifdef RCS_PATH
+	ignore_rcs = (strlen(RCS_PATH) != 0);
+#endif
+#ifdef SCCS_PATH
+	ignore_sccs = (strlen(SCCS_PATH) != 0);
+#endif
+    }
+    if (ignore_cvs)
+	VERBOSE("** can link to CVS\n");
+    if (ignore_rcs)
+	VERBOSE("** can link to %s\n", rcs_dir(".", 0));
+    if (ignore_sccs)
+	VERBOSE("** can link to %s\n", sccs_dir(".", 0));
 
     /*
      * Verify that the source/target directories are distinct
