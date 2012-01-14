@@ -1,13 +1,17 @@
-.\" $Id: rcsput.man,v 11.2 2012/01/07 18:34:59 tom Exp $
-.de DS
+.\" $Id: rcsput.man,v 11.3 2012/01/13 20:10:02 tom Exp $
+.de ES
 .RS
 .nf
 .sp
 ..
-.de DE
+.de Ex
 .fi
 .RE
 .sp .5
+..
+.\" Bulleted paragraph
+.de bP
+.IP \(bu 4
 ..
 .TH RCSPUT 1
 .SH NAME
@@ -27,26 +31,21 @@ archived version and prompts you for change history comments.
 .PP
 \fBRcsput\fR uses the \fIrcs\fR utility \fBci\fR to maintain
 versions of a given source file in a dependent directory named "RCS":
-.TP
-.B \-
+.bP
 It checks to ensure that each file is indeed a text
 file (so that you do not accidentally archive ".o" files, for
 example).
-.TP
-.B \-
+.bP
 If you give \fBrcsput\fR a directory name, it
 will recur, checking-in files in the directory.
-.TP
-.B \-
+.bP
 For each file which has a corresponding ",v" file, \fBrcs
 put\fR compares the two (using \fBdiff\fR) and pipes the result
 through the pager.
-.TP
-.B \-
+.bP
 An option is provided so that you may direct \fBrcsput\fR
 to perform the differencing without checking the file into rcs.
-.TP
-.B \-
+.bP
 The ",v" file is post-processed by \fBrcsput\fR
 so that the check-in date matches the file's modification date.
 .PP
@@ -70,26 +69,26 @@ check-in process into one utility program.
 Some of the options which you may specify to \fBrcsput\fR are
 passed through to the underlying \fBci\fR utility.
 Others represent extensions:
-.TP
+.TP 5
 .B \-b
 is passed to \fBdiff\fR, and directs it
 to ignore trailing blanks on a line, and to treat repeated blanks
 as a single blank.
-.TP
+.TP 5
 .B \-c
 directs \fBrcsput\fR to use \fBcat\fR rather
 than the \fBPAGER\fR (usually \fBmore\fR) to display differences.
 This is most useful in an Apollo pad, since the \fBmore\fR program
 would otherwise switch to VT100 emulator mode.
-.TP
+.TP 5
 .B \-d
 instructs \fBrcsput\fR to test for differences,
 but not to check the files into \fIrcs\fR.
-.TP
+.TP 5
 .B \-h
 is passed to \fBdiff\fR, and permits it to handle
 huge differences.
-.TP
+.TP 5
 .BI \-L file
 causes \fBrcsput\fR to generate a
 log-file of the files which are processed, and all differences which
@@ -107,8 +106,7 @@ overrides the default "\fBcheckin\fR".
 The \fBrcsput\fR utility is designed for use in small development
 projects.
 The methodology for this tool follows:
-.TP
-.B \-
+.bP
 Develop source files "normally".
 Each file should
 contain rcs keywords (see \fIci\ (1)\fR) so that you will be
@@ -117,27 +115,24 @@ The rcs keywords should appear at the top of your source file, for consistency.
 In C language programs,
 the convention is to make a string which will permit the \fBident\fR
 utility to show the versions of the modules which make up a program:
-.DS
+.ES
 #ifndef	lint
 static	char	ident[] = "$\&Id: rcsput.man,v 10.1 92/02/06 10:01:45 dickey Exp $";
 #endif
-.DE
-.TP
-.B \-
+.Ex
+.bP
 Periodically archive (with \fBrcsput\fR) those versions
 of files which you wish to keep
 (you should never have programs which have new features
 which you wish to keep, while there are defects in other parts of
 the program.
 That would be an unsound approach to development!).
-.TP
-.B \-
+.bP
 When you reach the point of releasing the program, ensure
 that all source files have been checked-in.
 The directory editor
 (\fBded\fR) is useful for reviewing the check-in dates.
-.TP
-.B \-
+.bP
 Copy the directory containing your program to the release
 directory.
 Purge all files, except those which are stored in the \fIrcs\fR subdirectories.
@@ -145,13 +140,11 @@ Use \fBrcsget\fR to extract the files.
 The unadorned \fBco\fR utility will work, of course,
 but it retains the file modification dates.
 You may also use \fBcheckout\fR to retain file dates.
-.TP
-.B \-
+.bP
 Ensure that all files have been checked-in and released.
 You may use \fBdiff\fR to compare the directories \- the only
 differences should be the substituted \fIrcs\fR keywords.
-.TP
-.B \-
+.bP
 Build the released version of your program.
 All files should be present.
 No embedded path names should refer to your development copy.

@@ -1,10 +1,10 @@
-.\" $Id: permit.man,v 11.3 2012/01/07 18:34:59 tom Exp $
-.de DS
+.\" $Id: permit.man,v 11.4 2012/01/13 20:13:10 tom Exp $
+.de ES
 .RS
 .nf
 .sp
 ..
-.de DE
+.de Ex
 .fi
 .RE
 .sp .5
@@ -47,7 +47,7 @@ directory owner to the access list of each archive.
 The "\-\fBp\fR"
 (purge) option is used to delete all usernames from the access lists.
 .SH OPTIONS
-.TP
+.TP 5
 .BI \-a userlist
 adds the list of specified users
 to each RCS archive access list.
@@ -105,7 +105,7 @@ current directory tree.
 The directory-access archives are not found,
 so \fBpermit\fR scans through each RCS archive to obtain the
 \fBbaseline\fR revision number:
-.DS
+.ES
 bsd4.2(64) permit -n
 ** path = .
    1:	./
@@ -123,7 +123,7 @@ rcs -aimpact ./RCS,v
   11:	|---|---|-- 2.1 > descrip.mms,v (dickey,impact)
   12:	|---|---|-- 2.1 > release_notes.txt,v (dickey,impact)
 \&...
-.DE
+.Ex
 .SH ENVIRONMENT
 .PP
 \fBPermit\fR is a C-language program which runs in a portable
