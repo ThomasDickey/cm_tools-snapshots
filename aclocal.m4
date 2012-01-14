@@ -1,4 +1,4 @@
-dnl $Id: aclocal.m4,v 11.11 2011/04/12 22:47:41 tom Exp $
+dnl $Id: aclocal.m4,v 11.12 2012/01/13 19:42:33 tom Exp $
 dnl Macros for CM_TOOLS configure script.
 dnl
 dnl see
@@ -719,66 +719,6 @@ dnl Write a debug message to config.log, along with the line number in the
 dnl configure script.
 AC_DEFUN([CF_MSG_LOG],[
 echo "${as_me:-configure}:__oline__: testing $* ..." 1>&AC_FD_CC
-])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_PROGRAM_FULLPATH version: 6 updated: 2010/10/23 16:12:25
-dnl -------------------
-dnl Tests for one or more programs given by name along the user's path, and
-dnl sets a variable to the program's full-path if found.
-AC_DEFUN([CF_PROGRAM_FULLPATH],
-[
-AC_REQUIRE([CF_PATHSEP])
-AC_REQUIRE([CF_PROG_EXT])
-AC_MSG_CHECKING(full path of $1)
-AC_CACHE_VAL(cf_cv_$1,[
-	cf_cv_$1="[$]$1"
-	if test -z "[$]cf_cv_$1"; then
-		set -- $2;
-		while test [$]# != 0; do
-			cf_word=[$]1${PROG_EXT}
-			case [$]1 in
-			-*)
-				;;
-			*)
-				if test -f "$cf_word" && test ! -f "./$cf_word" && test -x "$cf_word"; then
-					cf_cv_$1="$cf_word"
-				else
-					IFS="${IFS:- 	}"; cf_save_ifs="$IFS"; IFS="${IFS}${PATH_SEPARATOR}"
-					for cf_dir in $PATH; do
-						test -z "$cf_dir" && cf_dir=.
-						if test "$cf_dir" != "." && test -f $cf_dir/$cf_word && test -x $cf_dir/$cf_word; then
-							cf_cv_$1="$cf_dir/$cf_word"
-							break
-						fi
-					done
-					IFS="$cf_save_ifs"
-				fi
-				if test -n "[$]cf_cv_$1"; then
-					shift
-					break
-				fi
-				;;
-			esac
-			shift
-		done
-	fi
-	# append options, if any
-	if test -n "[$]cf_cv_$1"; then
-		while test [$]# != 0; do
-			case [$]1 in
-			-[*]) cf_cv_$1="[$]cf_cv_$1 [$]1";;
-			[*])  set -- end;;
-			esac
-			shift
-		done
-	fi
-])
-if test -n "[$]cf_cv_$1"; then
-	AC_DEFINE_UNQUOTED($1,"[$]cf_cv_$1")
-  AC_MSG_RESULT("[$]cf_cv_$1")
-else
-  AC_MSG_RESULT((not found))
-fi
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_SUBDIR_PATH version: 6 updated: 2010/04/21 06:20:50

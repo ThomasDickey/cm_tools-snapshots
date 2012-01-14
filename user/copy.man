@@ -1,10 +1,10 @@
-.\" $Id: copy.man,v 11.9 2012/01/07 18:34:59 tom Exp $
-.de DS
+.\" $Id: copy.man,v 11.10 2012/01/13 20:12:06 tom Exp $
+.de ES
 .RS
 .nf
 .sp
 ..
-.de DE
+.de Ex
 .fi
 .RE
 .sp .5
@@ -45,7 +45,7 @@ permissions of the (previous) destination file.
 .PP
 \fBCopy\fR recognizes options similar to those of \fBcp\fR,
 but with extensions:
-.TP
+.TP 5
 .B \-a
 include dot-files (names beginning with '.').
 This is the default.
@@ -83,9 +83,9 @@ a new directory under the destination with the same leaf name as the
 source.
 For example,
 .RS
-.DS
+.ES
 copy /local/bin /usr/local/bin
-.DE
+.Ex
 .PP
 will create and copy into the directory "/usr/local/bin/bin"
 if "/usr/local/bin" exists.

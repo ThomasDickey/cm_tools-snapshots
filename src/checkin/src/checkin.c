@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		13 Jan 2012, add -M option to allow check-in message from file.
  *		23 Sep 1993, gcc warnings
  *		11 Nov 1992, initialize access-list of each module to match
  *			     the permit-list.
@@ -132,7 +133,7 @@
 #include	<errno.h>
 extern char *mktemp(char *);
 
-MODULE_ID("$Id: checkin.c,v 11.33 2010/07/05 17:17:13 tom Exp $")
+MODULE_ID("$Id: checkin.c,v 11.34 2012/01/13 19:56:55 tom Exp $")
 
 /* local declarations: */
 #define	CI_TOOL		"ci"
@@ -145,7 +146,7 @@ MODULE_ID("$Id: checkin.c,v 11.33 2010/07/05 17:17:13 tom Exp $")
 #define	is_option(s)	(*(s) == '-')
 #define	is_m_opt(s)	(s[1] == 'm')
 #define	is_t_opt(s)	(s[1] == 't')
-#define	is_my_opt(s)	(s[1] == 'B' || s[1] == 'D')
+#define	is_my_opt(s)	(s[1] == 'B' || s[1] == 'D' || s[1] == 'M')
 
 #define	TELL	if (!silent || debug) PRINTF
 #define	DEBUG(s)	if (debug) PRINTF s
@@ -185,7 +186,7 @@ static char Working[MAXPATHLEN];
 static char Archive[MAXPATHLEN];
 static char *TMP_file;		/* temp-file used to fix uid/access */
 static char *t_option;		/* "-t" option used for "ci" or "rcs" */
-static char *cat_input;		/* "-m" text, from pipe */
+static char *cat_input;		/* "-m" text, from pipe, or "-M" from file */
 static char RCSdir[MAXPATHLEN];
 static char RCSbase[REVSIZ];	/* base+ version number */
 static const char *RCSaccess;	/* last permission-list */
@@ -1101,6 +1102,7 @@ usage(void)
 	"  -u[rev]  like \"-l\", but no lock is made",
 	"  -q[rev]  quiet mode",
 	"  -mmsg    specifies log-message \"msg\"",
+	"  -Mfile   specifies log-message \"msg\"",
 	"  -nname   assigns symbolic name to the checked-in revision",
 	"  -Nname   like \"-n\", but overrides previous assignment",
 	"  -sstate  sets the revision-state (default: \"Exp\")",
@@ -1153,6 +1155,9 @@ _MAIN
 		continue;
 	    } else if (*s == 'D') {
 		no_op++;
+		continue;
+	    } else if (*s == 'M') {
+		cat_input = strtrim(file2mem(s + 1));
 		continue;
 	    } else if (*s != '?')
 		FPRINTF(stderr, "unknown option: %s\n", s - 1);

@@ -1,10 +1,10 @@
-$Id: COPYING,v 11.2 2010/06/30 09:32:57 tom Exp $
+$Id: COPYING,v 11.3 2012/01/13 19:46:46 tom Exp $
 
 CM_TOOLS
 
 --------------------------------------------------------------------------------
 
-Copyright 1992-2006,2010 by Thomas E. Dickey.  All Rights Reserved.
+Copyright 1992-2011,2012 by Thomas E. Dickey.  All Rights Reserved.
 
 Permission to use, copy, modify, and distribute this software and its
 documentation for any purpose and without fee is hereby granted, provided that

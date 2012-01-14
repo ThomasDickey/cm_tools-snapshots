@@ -1,13 +1,17 @@
-.\" $Id: checkup.man,v 11.3 2012/01/07 18:34:59 tom Exp $
-.de DS
+.\" $Id: checkup.man,v 11.4 2012/01/13 20:11:31 tom Exp $
+.de ES
 .RS
 .nf
 .sp
 ..
-.de DE
+.de Ex
 .fi
 .RE
 .sp .5
+..
+.\" Bulleted paragraph
+.de bP
+.IP \(bu 4
 ..
 .TH CHECKUP 1
 .hy 0
@@ -28,14 +32,11 @@ It also shows those which have been modified since the last check-in.
 \fBCheckup\fR scans each filename given as an argument, looking
 first for a corresponding \fIrcs\fR archive, then for an \fIsccs\fR archive.
 For each file, \fBcheckup\fR determines if the file
-.TP
-.B \-
+.bP
 has been archived,
-.TP
-.B \-
+.bP
 has been locked for modification,
-.TP
-.B \-
+.bP
 has been modified since its check-in date, or has
 a modification date older than the check-in date.
 .PP
@@ -48,7 +49,7 @@ for each file.
 This list may be piped into other utilities, such
 as the directory editor \fBded\fR.
 .SH OPTIONS
-.TP
+.TP 5
 .B \-a
 permits \fBcheckup\fR to examine directories
 (and their subdirectories) whose leafnames begin with ".".
@@ -146,7 +147,7 @@ Multiple instances of the "\-\fBi\fR" and "\-\fBx\fR" options may be used.
 .SH OPERATIONS
 .PP
 An example of the use of \fBcheckup\fR is shown below:
-.DS
+.ES
 bsd4.2(64) checkup -t -x.e.c ~/traces/lib
 ** path = //dickey/local/dickey/traces/lib
    1:	//dickey/local/dickey/traces/lib/
@@ -173,7 +174,7 @@ bsd4.2(65) checkup  ~/traces/lib
   14:	|---|-- lincnt.out (not archived)
   15:	|---|-- lint.out (not archived)
   16:	|-- traces/
-.DE
+.Ex
 .SH ENVIRONMENT
 .PP
 \fBCheckup\fR is a C-language program which runs in a portable

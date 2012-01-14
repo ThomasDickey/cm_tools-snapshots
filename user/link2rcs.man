@@ -1,10 +1,10 @@
-.\" $Id: link2rcs.man,v 11.4 2012/01/07 18:34:09 tom Exp $
-.de DS
+.\" $Id: link2rcs.man,v 11.5 2012/01/13 20:12:45 tom Exp $
+.de ES
 .RS
 .nf
 .sp
 ..
-.de DE
+.de Ex
 .fi
 .RE
 .sp .5
@@ -34,7 +34,7 @@ assume that the \fIrcs\fR files are in a subdirectory named "RCS".
 .SH OPTIONS
 .PP
 \fBLink2rcs\fR recognizes the following options:
-.TP
+.TP 5
 .B \-a
 process all directory names.  Like the \fBls\fR
 option "-\fBa\fR", this enables the processing of names beginning
@@ -98,9 +98,9 @@ Normally, you use \fBlink2rcs\fR when constructing a development
 directory based on an existing source tree.  To copy an entire tree,
 change your shell's working directory to the source directory (i.e.,
 using the "cd" command) and type
-.DS
+.ES
 link2rcs -d \fIdst_dir\fR .
-.DE
+.Ex
 .PP
 where \fIdst_dir\fR is the name of the (existing) directory under
 which you wish to create the template directory, and the "." specifies

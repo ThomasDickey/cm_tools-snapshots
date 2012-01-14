@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		13 Jan 2013, pass "-M" option to checkin.
  *		10 May 1997, pass-thru -w option to checkin.
  *		09 May 1994, port to Linux
  *		22 Sep 1993, gcc warnings
@@ -44,7 +45,7 @@
 #include	<dyn_str.h>
 extern char *tmpnam(char *);
 
-MODULE_ID("$Id: rcsput.c,v 11.11 2010/07/05 17:22:57 tom Exp $")
+MODULE_ID("$Id: rcsput.c,v 11.12 2012/01/13 20:23:16 tom Exp $")
 
 #define	VERBOSE		if (!quiet) PRINTF
 
@@ -291,7 +292,7 @@ _MAIN
 
     /* process options */
     for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
-	if (strchr("BqrfklumnNstw", s[1]) != 0) {
+	if (strchr("BqrfklumMnNstw", s[1]) != 0) {
 	    CATARG(ci_opts, s);
 	    switch (s[1]) {
 	    case 'f':

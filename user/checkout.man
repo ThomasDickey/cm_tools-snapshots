@@ -1,10 +1,10 @@
-.\" $Id: checkout.man,v 11.2 2012/01/07 18:34:59 tom Exp $
-.de DS
+.\" $Id: checkout.man,v 11.3 2012/01/13 20:14:00 tom Exp $
+.de ES
 .RS
 .nf
 .sp
 ..
-.de DE
+.de Ex
 .fi
 .RE
 .sp .5
@@ -51,21 +51,21 @@ not be on the access list.
 except for the "\-\fBd\fR" cutoff date.
 Instead, the "\-\fBc\fR"
 option is used:
-.TP
--\fBc\fR \fIcutoff\fR
+.TP 5
+.B \-c\fR \fIcutoff\fR
 specifies the \fIrcs\fR cutoff
 date, in SCCS-format
 .RS
-.DS
+.ES
 YY[MM[DD[HH[MM[SS]]]]]
-.DE
+.Ex
 .PP
 Punctuation in the date is permitted.
 For example,
-.DS
+.ES
 -c 77/2/2 9:22:25
 -c 770202092225
-.DE
+.Ex
 .PP
 represent the same date.
 This option is translated to the \fBco\fR

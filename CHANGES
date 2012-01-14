@@ -1,3 +1,22 @@
+2012-01-13  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/checkin/src/rcsput.c: pass "-M" option to checkin
+
+	* package/debian/changelog, package/cm_tools-12.0.spec: bump
+
+	* user/checkin.man: document -M option
+	formatting fixes
+
+	* user/checkout.man, user/permit.man, user/link2rcs.man, user/copy.man, user/checkup.man, user/rcsput.man:
+	formatting fixes, renaming macros which groff has altered incompatibly
+
+	* src/checkin/src/checkin.c:
+	implement -M option, to provide check-in message from file.
+
+	* COPYING: bump
+
+	* aclocal.m4: remove unused CF_PROGRAM_FULLPATH
+
 2012-01-07  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* user/baseline.man, user/checkin.man, user/checkout.man, user/checkup.man, user/copy.man, user/permit.man, user/rcsget.man, user/rcsput.man, user/vcs.man:
