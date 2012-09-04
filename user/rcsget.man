@@ -1,4 +1,4 @@
-.\" $Id: rcsget.man,v 11.2 2012/01/07 18:34:59 tom Exp $
+.\" $Id: rcsget.man,v 11.3 2012/09/04 09:07:33 tom Exp $
 .TH RCSGET 1
 .SH NAME
 .PP
@@ -23,8 +23,8 @@ check-in date.
 .PP
 \fBRcsget\fR is a directory-recursive interface to the \fBco\fR
 utility which does special things with the file modification date.
-Most of its options are passed to \fBco\fR, and then interpreted
-to determine the correct modification date.
+Most of its options are passed to \fBcheckout\fR or \fBco\fR,
+and then interpreted to determine the correct modification date.
 Options special to \fBrcsget\fR are:
 .TP
 .B \-a

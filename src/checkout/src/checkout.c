@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		04 Sep 2012, correction to previous -c change.
  *		23 Oct 2005, correct parsing if -c param is not a separate
  *			     option.
  *		28 Dec 2000, restore file-ownership if setuid'd to root.
@@ -92,7 +93,7 @@
 #include	<signal.h>
 #include	<time.h>
 
-MODULE_ID("$Id: checkout.c,v 11.16 2010/07/05 17:18:09 tom Exp $")
+MODULE_ID("$Id: checkout.c,v 11.17 2012/09/04 00:44:03 tom Exp $")
 
 /* local definitions */
 #define	TELL	if (!silent) FPRINTF
@@ -584,10 +585,10 @@ _MAIN
 		optarg = s;
 	    } else {
 		optind = j + 1;
-		optarg = argv[optind++];
+		optarg = argv[optind];
 	    }
 	    opt_date = cutoff(argc, argv);
-	    j = optind;
+	    j = optind - 1;
 	    FORMAT(tmp, "-d%s", ctime(&opt_date));
 	    (void) strtrim(tmp);
 	    TELL(log_fp, "++ cutoff: %s", ctime(&opt_date));
