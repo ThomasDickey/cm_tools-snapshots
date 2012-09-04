@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		04 Sep 2012, pass-thru -c option for 'checkout'.
  *		12 Nov 1994, pass-thru -f, -k options for 'co'.
  *		22 Sep 1993, gcc warnings
  *		06 Feb 1992, revised filename-parsing with 'rcsargpair()',
@@ -43,7 +44,7 @@
 #include	<sccsdefs.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: rcsget.c,v 11.8 2010/07/04 16:36:56 tom Exp $")
+MODULE_ID("$Id: rcsget.c,v 11.9 2012/09/04 09:03:04 tom Exp $")
 
 #define	VERBOSE	if (!quiet) PRINTF
 
@@ -231,7 +232,7 @@ _MAIN
     /* process options */
     for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
 	t = s + strlen(s);
-	if (strchr("fklpqrcswj", s[1]) != 0) {
+	if (strchr("cfklpqrcswj", s[1]) != 0) {
 	    catarg(co_opts, s);
 	    if (s[1] == 'q')
 		quiet = TRUE;

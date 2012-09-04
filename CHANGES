@@ -1,3 +1,26 @@
+2012-09-04  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* user/rcsget.man: some options are passed only to checkout
+
+	* src/checkout/src/rcsget.c: pass-thru the "-c" option to checkout
+
+	* package/debian/copyright, package/debian/changelog, package/cm_tools-12.0.spec:
+	bump
+
+	* configure:
+	regenerate using newer autoconf patch (which supports --datarootdir)
+
+	* aclocal.m4: add CF_CLANG_COMPILER
+	change dependency on CF_LIB_PREFIX (no longer AC_DEFUN'd)
+
+2012-09-03  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/checkout/src/checkout.c: bug-fix for the last -c change
+
+2012-02-25  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* config.guess, config.sub: update to 2012-02-10
+
 2012-01-13  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* src/checkin/src/rcsput.c: pass "-M" option to checkin
