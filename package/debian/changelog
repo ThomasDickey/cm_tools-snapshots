@@ -1,3 +1,9 @@
+cmtools (20131207) unstable; urgency=low
+
+  * update configure-script
+
+ -- Thomas E. Dickey <dickey@invisible-island.net>  Sat, 07 Dec 2013 13:43:40 -0500
+
 cmtools (20120929) unstable; urgency=low
 
   * regression in configure-script
