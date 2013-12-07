@@ -1,3 +1,27 @@
+2013-12-07  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* configure: regen
+
+	* user/makefile.in: honor --datarootdir
+
+	* package/cm_tools-12.0.spec: bump
+
+	* aclocal.m4, configure.in:
+	resync with my-autoconf, modified these macros:
+		CF_ADD_SUBDIR_PATH CF_CHECK_CACHE CF_CLANG_COMPILER CF_DISABLE_ECHO
+		CF_GCC_ATTRIBUTES CF_GCC_VERSION CF_GCC_WARNINGS CF_INTEL_COMPILER
+	use CF_PROG_CC as well
+
+	* package/debian/changelog, package/debian/copyright, COPYING: bump
+
+2013-10-25  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* config.sub: 2013-10-01
+
+2013-09-07  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* config.guess: 2013-06-10
+
 2012-09-29  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* package/debian/changelog, package/cm_tools-12.0.spec: bump

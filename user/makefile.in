@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.8 2010/07/05 17:13:36 tom Exp $
+# $Id: makefile.in,v 11.9 2013/12/07 18:57:19 tom Exp $
 # user documentation
 
 THIS	= cm_tools
@@ -9,6 +9,7 @@ THIS	= cm_tools
 
 prefix		= @prefix@
 exec_prefix	= @exec_prefix@
+datarootdir	= @datarootdir@
 mandir		= @mandir@
 top_srcdir	= @top_srcdir@
 
