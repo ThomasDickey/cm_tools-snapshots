@@ -1,13 +1,20 @@
-.\" $Id: rcsput.man,v 11.3 2012/01/13 20:10:02 tom Exp $
-.de ES
-.RS
+.\" $Id: rcsput.man,v 11.5 2014/12/14 20:15:50 tom Exp $
+.de Es
+.ne \\$1
+.nr mE \\n(.f
+.RS 5n
+.sp .7
 .nf
-.sp
+.nh
+.ta 9n 17n 25n 33n 41n 49n
+.ft CW
 ..
 .de Ex
+.ft \\n(mE
 .fi
+.hy \\n(HY
 .RE
-.sp .5
+.sp .7
 ..
 .\" Bulleted paragraph
 .de bP
@@ -115,9 +122,9 @@ The rcs keywords should appear at the top of your source file, for consistency.
 In C language programs,
 the convention is to make a string which will permit the \fBident\fR
 utility to show the versions of the modules which make up a program:
-.ES
+.Es 3
 #ifndef	lint
-static	char	ident[] = "$\&Id: rcsput.man,v 10.1 92/02/06 10:01:45 dickey Exp $";
+static char ident[] = "$\&Id: rcsput.man,v 10.1 92/02/06 10:01:45 dickey Exp $";
 #endif
 .Ex
 .bP
@@ -160,7 +167,7 @@ file (with the \fIrcs\fR keywords substituted).
 \fBRcsput\fR would archive this anyway.
 .SH ENVIRONMENT
 .PP
-\fBRcsput\fR is written in C, and runs on UNIX\*R systems.
+\fBRcsput\fR is written in C, and runs on POSIX systems.
 .PP
 Environment variables imported by \fBrcsput\fR include:
 .TP

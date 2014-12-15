@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	16 Aug 1988
  * Modified:
+ *		14 Dec 2014, coverity warnings
  *		03 Jul 2002, workaround for broken NFS implementation, which
  *			     allows root to open a file for input but not to
  *			     read data from it.
@@ -118,7 +119,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.34 2010/07/05 17:19:45 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.38 2014/12/14 18:00:28 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -367,7 +368,7 @@ copyfile(char *src, char *dst, int previous, Stat_t * new_sb)
 static int
 ReadLink(char *src, char *dst)
 {
-    int len = (int) readlink(src, dst, BUFSIZ);
+    int len = (int) readlink(src, dst, BUFSIZ - 1);
     if (len >= 0)
 	dst[len] = EOS;
     return (len >= 0);
@@ -437,11 +438,15 @@ copydir(char *src, char *dst, int previous)
     DIR *dp;
     DirentT *de;
     Stat_t dst_sb;
-    char bfr1[BUFSIZ];
-    char bfr2[BUFSIZ];
+    char bfr1[MAXPATHLEN];
+    char bfr2[MAXPATHLEN];
     int no_dir_yet = FALSE;
 
     if_Debug PRINTF("copydir(%s, %s, %d)\n", src, dst, previous);
+
+    if (strlen(dst) >= sizeof(bfr1))
+	failed("copydir parameter too long");
+
     abshome(strcpy(bfr1, dst));
     if (previous > 0) {
 	if_Debug PRINTF("++ rmdir %s\n", bfr1);
@@ -541,8 +546,12 @@ copyit(char *parent,
 	if (u_opt) {
 #ifdef	S_IFLNK
 	    if (!l_opt) {
-		lstat(bfr1, &src_sb);
-		lstat(bfr2, &dst_sb);
+		if (lstat(bfr1, &src_sb) < 0 ||
+		    lstat(bfr2, &dst_sb) < 0) {
+		    if_Debug PRINTF("?? %s or %s vanished (not copied)\n",
+				    src, dst);
+		    return FALSE;
+		}
 	    }
 #endif
 	    if (isFILE(src_sb.st_mode) && isFILE(dst_sb.st_mode)) {
@@ -764,7 +773,7 @@ arg_pairs(int argc, char **argv)
     Stat_t src_sb;
     int num, ok_dst;
     char parent[MAXPATHLEN];
-    char dst[BUFSIZ];
+    char dst[MAXPATHLEN];
 
     if ((num = (argc - optind)) < 2) {
 	FPRINTF(stderr,
@@ -773,6 +782,8 @@ arg_pairs(int argc, char **argv)
     }
 
     /* hacks to allow copying to a symbolic-link, or into a directory */
+    if (strlen(argv[argc - 1]) >= sizeof(dst))
+	failed("argument too long");
     abshome(strcpy(dst, argv[argc - 1]));
     (void) strcpy(parent, dst);
 #ifdef	S_IFLNK

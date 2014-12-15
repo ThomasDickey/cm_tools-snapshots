@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	09 Mar 1989
  * Modified:
+ *		14 Dec 2014, coverity warnings
  *		10 May 1997, correct argument to mktemp() for descriptions.
  *		04 Dec 1992, added "-l" option, to allow links to be shown
  *		23 Nov 1992, allow user-names to be given that are not in the
@@ -46,7 +47,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: permit.c,v 11.11 2010/07/04 17:21:37 tom Exp $")
+MODULE_ID("$Id: permit.c,v 11.13 2014/12/14 16:37:48 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -385,7 +386,7 @@ WALK_FUNC(do_arcs)
 	case S_HEAD:
 	    s = rcsparse_num(tip, s);
 	    num = dotcmp(tip, high_ver);
-	    if (num > 0)
+	    if (num > 0 && strlen(tip) < sizeof(high_ver))
 		(void) strcpy(high_ver, tip);
 	    break;
 	case S_ACCESS:
@@ -408,7 +409,8 @@ WALK_FUNC(do_arcs)
 	    break;
 	case S_LOCKS:
 	    *tmp = EOS;
-	    s = rcslocks(s, strcpy(key, user_name), tmp);
+	    if (strlen(user_name) < sizeof(key))
+		s = rcslocks(s, strcpy(key, user_name), tmp);
 #ifdef	PATCH
 	    if (*tmp)
 		got_lock = TRUE;

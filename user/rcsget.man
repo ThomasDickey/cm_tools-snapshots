@@ -1,4 +1,4 @@
-.\" $Id: rcsget.man,v 11.3 2012/09/04 09:07:33 tom Exp $
+.\" $Id: rcsget.man,v 11.4 2014/12/14 20:15:50 tom Exp $
 .TH RCSGET 1
 .SH NAME
 .PP
@@ -68,7 +68,7 @@ than "RCS"), \fBrcsget\fR will recur to extract files at lower
 levels.
 .SH ENVIRONMENT
 .PP
-\fBRcsget\fR is written in C, and runs on UNIX\*R systems.
+\fBRcsget\fR is written in C, and runs on POSIX systems.
 .SH FILES
 .PP
 \fBRcsget\fR uses the following files:

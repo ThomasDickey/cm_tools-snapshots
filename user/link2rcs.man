@@ -1,13 +1,20 @@
-.\" $Id: link2rcs.man,v 11.5 2012/01/13 20:12:45 tom Exp $
-.de ES
-.RS
+.\" $Id: link2rcs.man,v 11.7 2014/12/14 20:15:50 tom Exp $
+.de Es
+.ne \\$1
+.nr mE \\n(.f
+.RS 5n
+.sp .7
 .nf
-.sp
+.nh
+.ta 9n 17n 25n 33n 41n 49n
+.ft CW
 ..
 .de Ex
+.ft \\n(mE
 .fi
+.hy \\n(HY
 .RE
-.sp .5
+.sp .7
 ..
 .TH LINK2RCS 1
 .SH NAME
@@ -15,7 +22,7 @@
 \fBlink2rcs\fR \- rcs directory template
 .SH USAGE
 .PP
-\fBlink2rcs\fI [options] [file-specifications]
+\fBlink2rcs\fP\fI [options] [file-specifications]\fP
 .SH SYNOPSIS
 .PP
 \fBLink2rcs\fR makes (an empty) template of an existing directory
@@ -98,7 +105,7 @@ Normally, you use \fBlink2rcs\fR when constructing a development
 directory based on an existing source tree.  To copy an entire tree,
 change your shell's working directory to the source directory (i.e.,
 using the "cd" command) and type
-.ES
+.Es
 link2rcs -d \fIdst_dir\fR .
 .Ex
 .PP
@@ -121,7 +128,7 @@ When you have created the template tree, you may use \fBrcsget\fR
 to check-out files into the destination tree.
 .SH ENVIRONMENT
 .PP
-\fBLink2rcs\fR is written in C and runs in a UNIX\*R environment.
+\fBLink2rcs\fR is written in C and runs in a POSIX environment.
 .PP
 It uses the \fBDED_CM_LOOKUP\fP variable (see ded(1)) to decide
 whether to create a symbolic link or actual directory for CVS, RCS and SCCS.

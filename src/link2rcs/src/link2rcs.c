@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	29 Nov 1989
  * Modified:
+ *		14 Dec 2014, coverity warnings
  *		07 Jan 2012, use $DED_CM_LOOKUP to decide whether to treat
  *			     CVS/RCS/SCCS as ordinary directories.
  *		27 Jun 1999, treat SCCS directory like RCS, making links for it.
@@ -68,7 +69,7 @@
 #include	<td_qsort.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: link2rcs.c,v 11.14 2012/01/07 18:25:50 tom Exp $")
+MODULE_ID("$Id: link2rcs.c,v 11.15 2014/12/14 15:12:44 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -328,7 +329,7 @@ samelink(const char *dst, const char *src)
     int len;
     char bfr[BUFSIZ];
 
-    len = (int) readlink(dst, bfr, sizeof(bfr));
+    len = (int) readlink(dst, bfr, sizeof(bfr) - 1);
     if (len > 0) {
 	bfr[len] = EOS;
 	return (!strcmp(bfr, src));
