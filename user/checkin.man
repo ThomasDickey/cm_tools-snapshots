@@ -1,13 +1,20 @@
-.\" $Id: checkin.man,v 11.3 2012/01/13 20:14:38 tom Exp $
-.de ES
-.RS
+.\" $Id: checkin.man,v 11.5 2014/12/14 20:15:50 tom Exp $
+.de Es
+.ne \\$1
+.nr mE \\n(.f
+.RS 5n
+.sp .7
 .nf
-.sp
+.nh
+.ta 9n 17n 25n 33n 41n 49n
+.ft CW
 ..
 .de Ex
+.ft \\n(mE
 .fi
+.hy \\n(HY
 .RE
-.sp .5
+.sp .7
 ..
 .\" Bulleted paragraph
 .de bP
@@ -63,7 +70,7 @@ for any particular user (e.g., the administrator of a project).
 For example, suppose that \fB/proj\fR is the location of project-specific
 tools, and is owned by \fBadmin\fR.
 Then
-.ES
+.Es 2
 cp checkin /proj		# admin now owns this copy
 chmod 4755 /proj/checkin	# sets u+s mode
 .Ex
@@ -112,7 +119,7 @@ further access rights to those permitted.
 .PP
 If the "\-\fBk\fR" option is used, \fBcheckin\fR supplies
 a default log-message
-.ES
+.Es
 FROM_KEYS
 .Ex
 .PP
@@ -174,12 +181,12 @@ is set to a string controlling the initial setting
 of the rcs "\-\fBc\fR" option.
 For example, the strings
 .RS
-.ES
+.Es
 setenv RCS_COMMENT '/.c/ *> /'
 .Ex
 .PP
 and
-.ES
+.Es
 setenv RCS_COMMENT '/.d/# /,/.bas/REM /'
 .Ex
 .PP
@@ -190,12 +197,11 @@ leaf-name).
 .RE
 .TP
 .B RCS_DIR
-if defined, specifies the directory in which \fIrcs
-\fR archive files are found.
+if defined, specifies the directory in which \fIrcs\fR archive files are found.
 Normally files are found in "./RCS".
 .TP
 .B TZ
-is the UNIX\*R time zone, which is overridden internally
+is the POSIX time zone, which is overridden internally
 so that file modification dates are independent of the local time
 zone.
 .SH FILES

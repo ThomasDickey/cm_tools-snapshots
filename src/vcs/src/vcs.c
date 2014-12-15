@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	06 Sep 1989
  * Modified:
+ *		14 Dec 2014, coverity warnings
  *		22 Sep 1993, gcc warnings
  *		17 Oct 1991, split out 'vcs_insert.c' and 'vcs_unlock.c'
  *		10 Oct 1991, began rewrite (never did finish this!)
@@ -13,7 +14,7 @@
 #define	MAIN
 #include <vcs.h>
 
-MODULE_ID("$Id: vcs.c,v 11.5 2010/07/04 18:22:37 tom Exp $")
+MODULE_ID("$Id: vcs.c,v 11.6 2014/12/14 17:50:41 tom Exp $")
 
 /************************************************************************
  *	utility procedures						*
@@ -136,26 +137,28 @@ DateOf(char *name)
 static void
 DoArg(char *name)
 {
-    char base[BUFSIZ];
+    char base[MAXPATHLEN];
 
     VERBOSE("** processing %s\n", name);
 
-    switch (operation) {
-    case Unlock:
-	if (!IsDirectory(name))
-	    UnLockFile(name);
-	break;
-    case Delete:
-	DeleteDir(name);
-	break;
-    case Insert:
-	if (InsertDir(name, base))
-	    VERBOSE(".. completed %s.x %s\n", base, name);
-	if (chdir(original) != 0)
-	    failed(original);
-	break;
-    default:
-	break;
+    if (strlen(name) < sizeof(base)) {
+	switch (operation) {
+	case Unlock:
+	    if (!IsDirectory(name))
+		UnLockFile(name);
+	    break;
+	case Delete:
+	    DeleteDir(name);
+	    break;
+	case Insert:
+	    if (InsertDir(name, base))
+		VERBOSE(".. completed %s.x %s\n", base, name);
+	    if (chdir(original) != 0)
+		failed(original);
+	    break;
+	default:
+	    break;
+	}
     }
 }
 

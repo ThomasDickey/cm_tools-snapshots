@@ -1,13 +1,20 @@
-.\" $Id: copy.man,v 11.10 2012/01/13 20:12:06 tom Exp $
-.de ES
-.RS
+.\" $Id: copy.man,v 11.12 2014/12/14 20:15:50 tom Exp $
+.de Es
+.ne \\$1
+.nr mE \\n(.f
+.RS 5n
+.sp .7
 .nf
-.sp
+.nh
+.ta 9n 17n 25n 33n 41n 49n
+.ft CW
 ..
 .de Ex
+.ft \\n(mE
 .fi
+.hy \\n(HY
 .RE
-.sp .5
+.sp .7
 ..
 .TH COPY 1
 .SH NAME
@@ -20,7 +27,7 @@
 .BI copy " [options] file ... directory"
 .SH SYNOPSIS
 .PP
-\fBCopy\fR is an extension of the basic UNIX\*R \fBcp\fR utility.
+\fBCopy\fR is an extension of the basic POSIX \fBcp\fR utility.
 It copies files, preserving their modification date.
 .SH DESCRIPTION
 .PP
@@ -82,8 +89,7 @@ and destination are directories, \fBcopy\fR will normally create
 a new directory under the destination with the same leaf name as the
 source.
 For example,
-.RS
-.ES
+.Es
 copy /local/bin /usr/local/bin
 .Ex
 .PP
@@ -137,14 +143,14 @@ Directory copying is performed without the "\-\fBr\fR"
 option of \fBcp\fR.
 .PP
 \fBCopy\fR recognizes the C-shell "~" (tilde) to denote the
-home directory of UNIX users.
+home directory of POSIX users.
 .PP
 If more than two arguments are given, or if the destination ends with
 "/", \fBcopy\fR assumes that the user wants to write into an
 existing directory rather than create a new one.
 .SH ENVIRONMENT
 .PP
-\fBCopy\fR is a C-language program which runs in a UNIX environment.
+\fBCopy\fR is a C-language program which runs in a POSIX environment.
 .SH FILES
 .PP
 \fBCopy\fR is a single binary file, "copy".

@@ -1,13 +1,20 @@
-.\" $Id: checkout.man,v 11.3 2012/01/13 20:14:00 tom Exp $
-.de ES
-.RS
+.\" $Id: checkout.man,v 11.5 2014/12/14 20:15:50 tom Exp $
+.de Es
+.ne \\$1
+.nr mE \\n(.f
+.RS 5n
+.sp .7
 .nf
-.sp
+.nh
+.ta 9n 17n 25n 33n 41n 49n
+.ft CW
 ..
 .de Ex
+.ft \\n(mE
 .fi
+.hy \\n(HY
 .RE
-.sp .5
+.sp .7
 ..
 .TH CHECKOUT 1
 .SH NAME
@@ -56,13 +63,13 @@ option is used:
 specifies the \fIrcs\fR cutoff
 date, in SCCS-format
 .RS
-.ES
+.Es
 YY[MM[DD[HH[MM[SS]]]]]
 .Ex
 .PP
 Punctuation in the date is permitted.
 For example,
-.ES
+.Es 2
 -c 77/2/2 9:22:25
 -c 770202092225
 .Ex
@@ -99,7 +106,7 @@ if defined, specifies the directory in which \fIrcs
 Normally files are found in "./RCS".
 .TP
 \fBTZ\fR
-is the UNIX\*R time zone, which is overridden internally
+is the POSIX time zone, which is overridden internally
 so that file modification dates are independent of the local time
 zone.
 .SH FILES

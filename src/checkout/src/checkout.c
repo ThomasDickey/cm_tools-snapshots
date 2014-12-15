@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		14 Dec 2014, coverity warnings
  *		04 Sep 2012, correction to previous -c change.
  *		23 Oct 2005, correct parsing if -c param is not a separate
  *			     option.
@@ -93,7 +94,7 @@
 #include	<signal.h>
 #include	<time.h>
 
-MODULE_ID("$Id: checkout.c,v 11.17 2012/09/04 00:44:03 tom Exp $")
+MODULE_ID("$Id: checkout.c,v 11.19 2014/12/14 17:57:15 tom Exp $")
 
 /* local definitions */
 #define	TELL	if (!silent) FPRINTF
@@ -210,7 +211,7 @@ trim_branch(char *s)
     char *t = strrchr(s, '.');
     if (t != 0) {
 	*t = EOS;
-	if ((t = strrchr(s, '.')) != NULL) {
+	if (strrchr(s, '.') != NULL) {
 	    ;
 	} else
 	    *s = EOS;		/* trunk (i.e., "9.1") */
@@ -238,7 +239,10 @@ PreProcess(time_t * revtime,	/* date with which to touch file */
 	   int *co_mode)
 {
     int ok_vers = FALSE, ok_date = FALSE;
-    char key[BUFSIZ], tmp[BUFSIZ], this_rev[REVSIZ], *s = 0;
+    char key[BUFSIZ];
+    char tmp[BUFSIZ];
+    char this_rev[REVSIZ];
+    char *s = 0;
     int header = TRUE, code = S_FAIL;
 
     if (!rcsopen(Archive, -debug, TRUE)) {
@@ -287,7 +291,7 @@ PreProcess(time_t * revtime,	/* date with which to touch file */
 	     * against is the right one.
 	     */
 	case S_VERS:
-	    (void) strcpy(this_rev, key);
+	    (void) sprintf(this_rev, "%.*s", REVSIZ - 1, key);
 	    DEBUG((log_fp, "version = %s\n", this_rev));
 	    ok_vers = same_branch(rev_buffer, this_rev);
 	    ok_date = FALSE;

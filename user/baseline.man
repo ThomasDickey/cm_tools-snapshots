@@ -1,13 +1,20 @@
-.\" $Id: baseline.man,v 11.2 2012/01/07 18:34:59 tom Exp $
-.de EX
-.RS
+.\" $Id: baseline.man,v 11.4 2014/12/14 20:15:50 tom Exp $
+.de Es
+.ne \\$1
+.nr mE \\n(.f
+.RS 5n
+.sp .7
 .nf
-.sp
+.nh
+.ta 9n 17n 25n 33n 41n 49n
+.ft CW
 ..
-.de EE
+.de Ex
+.ft \\n(mE
 .fi
+.hy \\n(HY
 .RE
-.sp .5
+.sp .7
 ..
 .TH BASELINE 1
 .SH NAME
@@ -40,14 +47,14 @@ since the first development version is, by convention, 1.1.
 After baselining, you may use \fBcheckout\fR to obtain
 a particular set of files.
 For example,
-.EX
+.Es
 checkout \-r2.0 file
-.EE
+.Ex
 .PP
 obtains the baseline "2.0" version, while
-.EX
+.Es
 checkout \-r2 file1 file2 file3
-.EE
+.Ex
 .PP
 obtains the last development version beginning with "2.0", but
 before "3.0".
@@ -59,9 +66,9 @@ before "3.0".
 \fRthe new baseline version, specified as a whole
 number after a hyphen, e.g.,
 .RS
-.EX
+.Es
 baseline \-2 file1 file2 file3
-.EE
+.Ex
 .PP
 If no baseline version is specified, the most recent baseline
 version (as recorded in the \fBRCS,v\fR \fBpermit\fR-file) is
@@ -132,7 +139,7 @@ a file with a lower version than has been archived will result in
 an error.
 .SH ENVIRONMENT
 .PP
-\fBBaseline\fR is written in C, and runs under UNIX\*R systems.
+\fBBaseline\fR is written in C, and runs under POSIX systems.
 .SH FILES
 .PP
 \fBBaseline\fR uses the following files

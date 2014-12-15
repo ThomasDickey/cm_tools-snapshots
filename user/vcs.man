@@ -1,4 +1,4 @@
-.\" $Id: vcs.man,v 11.2 2012/01/07 18:34:59 tom Exp $
+.\" $Id: vcs.man,v 11.3 2014/12/14 20:15:50 tom Exp $
 .TH VCS 1
 .SH NAME
 .PP
@@ -61,7 +61,7 @@ You must specify exactly one of the
 options "-\fBd\fR", "-\fBi\fR" or "-\fBu\fR".
 .SH ENVIRONMENT
 .PP
-\fBVcs\fR is written in C, and runs on UNIX\*R systems.
+\fBVcs\fR is written in C, and runs on POSIX systems.
 .PP
 Environment variables imported by \fBvcs\fR include:
 .TP

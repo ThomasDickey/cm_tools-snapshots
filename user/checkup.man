@@ -1,13 +1,20 @@
-.\" $Id: checkup.man,v 11.4 2012/01/13 20:11:31 tom Exp $
-.de ES
-.RS
+.\" $Id: checkup.man,v 11.6 2014/12/14 20:15:50 tom Exp $
+.de Es
+.ne \\$1
+.nr mE \\n(.f
+.RS 5n
+.sp .7
 .nf
-.sp
+.nh
+.ta 9n 17n 25n 33n 41n 49n
+.ft CW
 ..
 .de Ex
+.ft \\n(mE
 .fi
+.hy \\n(HY
 .RE
-.sp .5
+.sp .7
 ..
 .\" Bulleted paragraph
 .de bP
@@ -72,7 +79,7 @@ listing.
 .TP
 .BI \-i " string"
 directs \fBcheckup\fR to ignore all files matching the pattern in \fIstring\fR.
-The wildcard characters "*" and "?" are interpreted as in the UNIX shell.
+The wildcard characters "*" and "?" are interpreted as in the POSIX shell.
 .TP
 .BI \-l " file"
 reroutes the directory-tree display
@@ -147,7 +154,7 @@ Multiple instances of the "\-\fBi\fR" and "\-\fBx\fR" options may be used.
 .SH OPERATIONS
 .PP
 An example of the use of \fBcheckup\fR is shown below:
-.ES
+.Es 26
 bsd4.2(64) checkup -t -x.e.c ~/traces/lib
 ** path = //dickey/local/dickey/traces/lib
    1:	//dickey/local/dickey/traces/lib/
@@ -178,7 +185,7 @@ bsd4.2(65) checkup  ~/traces/lib
 .SH ENVIRONMENT
 .PP
 \fBCheckup\fR is a C-language program which runs in a portable
-UNIX\*R environment.
+POSIX environment.
 Environment variables include:
 .TP
 .B RCS_DIR

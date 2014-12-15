@@ -1,3 +1,32 @@
+2014-12-14  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* user/baseline.man, user/checkin.man, user/checkout.man, user/checkup.man, user/copy.man, user/link2rcs.man, user/permit.man, user/rcsget.man, user/rcsput.man, user/vcs.man:
+	s/UNIX/POSIX/g
+
+	* user/baseline.man, user/checkin.man, user/checkout.man, user/checkup.man, user/copy.man, user/link2rcs.man, user/rcsput.man, user/permit.man:
+	The last change to manpages (to work around groff's incompatibilities with
+	other manpage macros) did not work with its html conversion.  Adapt features
+	from groff's EX/EE macros to fix this.
+
+	* src/copy/src/copy.c:
+	coverity #78446 - unchecked return-value from lstat()
+
+	* src/checkout/src/checkout.c: coverity - unused assignment
+
+	* src/vcs/src/vcs.c, src/permit/src/permit.c: add limit-check
+
+	* src/copy/src/copy.c: coverity #78466 - add limit-check
+
+	* src/copy/src/copy.c: coverity #78477 - add limit-check
+
+	* src/permit/src/permit.c: coverity #78465 - add limit-check
+
+	* src/checkout/src/checkout.c:
+	coverity #78452 - destination buffer too small
+
+	* src/link2rcs/src/link2rcs.c, src/copy/src/copy.c:
+	coverity - incorrect limit for readlink()
+
 2013-12-07  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* configure: regen

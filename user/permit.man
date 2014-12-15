@@ -1,21 +1,29 @@
-.\" $Id: permit.man,v 11.4 2012/01/13 20:13:10 tom Exp $
-.de ES
-.RS
+.\" $Id: permit.man,v 11.6 2014/12/14 20:15:50 tom Exp $
+.de Es
+.ne \\$1
+.nr mE \\n(.f
+.RS 5n
+.sp .7
 .nf
-.sp
+.nh
+.ta 9n 17n 25n 33n 41n 49n
+.ft CW
 ..
 .de Ex
+.ft \\n(mE
 .fi
+.hy \\n(HY
 .RE
-.sp .5
+.sp .7
 ..
 .TH PERMIT 1
 .SH NAME
+.
 .PP
 \fBpermit\fR \- RCS directory-level permissions
 .SH USAGE
 .PP
-\fBpermit\fI [options] [directory-specifications]
+\fBpermit\fR\fI [options] [directory-specifications]\fP
 .SH SYNOPSIS
 .PP
 \fBPermit\fR maintains a special-purpose RCS archive in each RCS
@@ -105,7 +113,7 @@ current directory tree.
 The directory-access archives are not found,
 so \fBpermit\fR scans through each RCS archive to obtain the
 \fBbaseline\fR revision number:
-.ES
+.Es 16
 bsd4.2(64) permit -n
 ** path = .
    1:	./
@@ -127,7 +135,7 @@ rcs -aimpact ./RCS,v
 .SH ENVIRONMENT
 .PP
 \fBPermit\fR is a C-language program which runs in a portable
-UNIX\*R environment.
+POSIX environment.
 .PP
 Environment variables include:
 .TP
