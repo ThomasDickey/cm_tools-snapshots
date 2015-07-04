@@ -1,4 +1,4 @@
-.\" $Id: rcsput.man,v 11.5 2014/12/14 20:15:50 tom Exp $
+.\" $Id: rcsput.man,v 11.6 2014/12/15 21:40:15 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -18,7 +18,7 @@
 ..
 .\" Bulleted paragraph
 .de bP
-.IP \(bu 4
+.IP \(bu 3n
 ..
 .TH RCSPUT 1
 .SH NAME
@@ -76,7 +76,7 @@ check-in process into one utility program.
 Some of the options which you may specify to \fBrcsput\fR are
 passed through to the underlying \fBci\fR utility.
 Others represent extensions:
-.TP 5
+.TP 4n
 .B \-b
 is passed to \fBdiff\fR, and directs it
 to ignore trailing blanks on a line, and to treat repeated blanks

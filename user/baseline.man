@@ -1,4 +1,4 @@
-.\" $Id: baseline.man,v 11.4 2014/12/14 20:15:50 tom Exp $
+.\" $Id: baseline.man,v 11.5 2014/12/15 21:39:43 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -61,7 +61,7 @@ before "3.0".
 .SH OPTIONS
 .PP
 \fBBaseline\fR recognizes several options:
-.TP
+.TP 4n
 .BI \- integer
 \fRthe new baseline version, specified as a whole
 number after a hyphen, e.g.,

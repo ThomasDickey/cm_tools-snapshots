@@ -1,4 +1,4 @@
-.\" $Id: link2rcs.man,v 11.7 2014/12/14 20:15:50 tom Exp $
+.\" $Id: link2rcs.man,v 11.8 2014/12/15 21:39:59 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -41,7 +41,7 @@ assume that the \fIrcs\fR files are in a subdirectory named "RCS".
 .SH OPTIONS
 .PP
 \fBLink2rcs\fR recognizes the following options:
-.TP 5
+.TP 4n
 .B \-a
 process all directory names.  Like the \fBls\fR
 option "-\fBa\fR", this enables the processing of names beginning

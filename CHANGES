@@ -1,3 +1,27 @@
+2015-07-04  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/debian/copyright, package/debian/changelog, package/cm_tools-12.0.spec:
+	bump
+
+	* configure: regen
+
+	* aclocal.m4: resync with my-autoconf
+
+	* COPYING: bump
+
+	* user/makefile.in: improve clean-rule
+
+2015-05-02  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* config.guess: 2015-03-04
+
+	* config.sub: 2015-03-08
+
+2014-12-15  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* user/copy.man, user/vcs.man, user/rcsput.man, user/rcsget.man, user/permit.man, user/link2rcs.man, user/checkup.man, user/checkout.man, user/baseline.man, user/checkin.man:
+	formatting fixes
+
 2014-12-14  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* user/baseline.man, user/checkin.man, user/checkout.man, user/checkup.man, user/copy.man, user/link2rcs.man, user/permit.man, user/rcsget.man, user/rcsput.man, user/vcs.man:

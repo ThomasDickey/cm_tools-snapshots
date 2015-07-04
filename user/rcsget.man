@@ -1,4 +1,4 @@
-.\" $Id: rcsget.man,v 11.4 2014/12/14 20:15:50 tom Exp $
+.\" $Id: rcsget.man,v 11.5 2014/12/15 21:40:09 tom Exp $
 .TH RCSGET 1
 .SH NAME
 .PP
@@ -26,7 +26,7 @@ utility which does special things with the file modification date.
 Most of its options are passed to \fBcheckout\fR or \fBco\fR,
 and then interpreted to determine the correct modification date.
 Options special to \fBrcsget\fR are:
-.TP
+.TP 4n
 .B \-a
 permits \fBrcsget\fR to process directory names
 beginning with ".".
