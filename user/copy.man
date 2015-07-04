@@ -1,4 +1,4 @@
-.\" $Id: copy.man,v 11.12 2014/12/14 20:15:50 tom Exp $
+.\" $Id: copy.man,v 11.13 2014/12/15 21:42:53 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -52,7 +52,7 @@ permissions of the (previous) destination file.
 .PP
 \fBCopy\fR recognizes options similar to those of \fBcp\fR,
 but with extensions:
-.TP 5
+.TP 4n
 .B \-a
 include dot-files (names beginning with '.').
 This is the default.
@@ -92,7 +92,7 @@ For example,
 .Es
 copy /local/bin /usr/local/bin
 .Ex
-.PP
+.IP
 will create and copy into the directory "/usr/local/bin/bin"
 if "/usr/local/bin" exists.
 Use the "\-\fBm\fR" option

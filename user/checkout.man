@@ -1,4 +1,4 @@
-.\" $Id: checkout.man,v 11.5 2014/12/14 20:15:50 tom Exp $
+.\" $Id: checkout.man,v 11.6 2014/12/15 21:39:48 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -58,7 +58,7 @@ not be on the access list.
 except for the "\-\fBd\fR" cutoff date.
 Instead, the "\-\fBc\fR"
 option is used:
-.TP 5
+.TP 4n
 .B \-c\fR \fIcutoff\fR
 specifies the \fIrcs\fR cutoff
 date, in SCCS-format

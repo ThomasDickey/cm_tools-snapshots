@@ -1,4 +1,4 @@
-.\" $Id: vcs.man,v 11.3 2014/12/14 20:15:50 tom Exp $
+.\" $Id: vcs.man,v 11.4 2014/12/15 21:40:20 tom Exp $
 .TH VCS 1
 .SH NAME
 .PP
@@ -23,7 +23,7 @@ a special file in the "RCS" directory (named "RCS,v").
 This file controls permission on the creation or deletion of
 files -- or of the entire directory.
 .SH OPTIONS
-.TP
+.TP 4n
 .B \-d
 delete archive-directory leaf.
 If you are on the access list of the vcs-file within which the directory

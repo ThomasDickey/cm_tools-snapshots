@@ -1,4 +1,4 @@
-.\" $Id: permit.man,v 11.6 2014/12/14 20:15:50 tom Exp $
+.\" $Id: permit.man,v 11.7 2014/12/15 21:40:04 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -55,7 +55,7 @@ directory owner to the access list of each archive.
 The "\-\fBp\fR"
 (purge) option is used to delete all usernames from the access lists.
 .SH OPTIONS
-.TP 5
+.TP 4n
 .BI \-a userlist
 adds the list of specified users
 to each RCS archive access list.
