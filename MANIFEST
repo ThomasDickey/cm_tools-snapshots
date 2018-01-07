@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t20150704
+MANIFEST for cm_tools, version t20180107
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -74,6 +74,7 @@ src/checkin/test/case3_f.sh     script for case 3f
 src/checkin/test/clean.sh       cleanup-script for 'junk' directory
 src/checkin/test/makefile.in    cm_tools/src/checkin/test makefile template
 src/checkin/test/run_test.sh    test-script for RCS checkin-utility
+src/checkin/test/set_date.c     sets a date on a file (used here so I can use rlog's output in comparisons)
 src/checkout                    subdirectory
 src/checkout/makefile.in        cm_tools/src/checkout makefile template
 src/checkout/src                subdirectory
