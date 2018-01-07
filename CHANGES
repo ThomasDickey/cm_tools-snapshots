@@ -1,3 +1,18 @@
+2018-01-07  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/debian/copyright, COPYING, package/debian/changelog, package/cm_tools-12.0.spec:
+	bump
+
+	* configure: regen
+
+	* aclocal.m4: resync with my-autoconf
+
+2017-11-25  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* config.guess: 2017-11-07
+
+	* config.sub: 2017-11-23
+
 2015-07-04  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* package/debian/copyright, package/debian/changelog, package/cm_tools-12.0.spec:
@@ -708,7 +723,7 @@
 
 	* src/vcs/src/unlock.c: gcc-warnings
 
-1993-09-22  Thomas E. Dickey  <dickey@software.org>
+1993-09-22  dickey@software.org
 
 	* src/vcs/src/unlock.c: module-id
 
@@ -716,7 +731,7 @@
 
 	* src/vcs/src/insert.c: gcc-warnings
 
-1993-09-22  Thomas E. Dickey  <dickey@software.org>
+1993-09-22  dickey@software.org
 
 	* src/vcs/src/insert.c: module-id
 
@@ -724,7 +739,7 @@
 
 	* src/vcs/src/vcs.c: gcc-warnings
 
-1993-09-22  Thomas E. Dickey  <dickey@software.org>
+1993-09-22  dickey@software.org
 
 	* src/vcs/src/vcs.c: module-id
 
@@ -732,7 +747,7 @@
 
 	* src/vcs/src/delete.c: gcc-warnings
 
-1993-09-22  Thomas E. Dickey  <dickey@software.org>
+1993-09-22  dickey@software.org
 
 	* src/vcs/src/delete.c: module-id
 
@@ -1095,7 +1110,7 @@
 	* src/baseline/test/run_tool.c, src/checkin/test/run_tool.c, src/checkout/test/run_tool.c, support/run_tool.c:
 	RCS_BASE
 
-1992-10-27  Thomas E. Dickey  <dickey@software.org>
+1992-10-27  dickey@software.org
 
 	* src/baseline/test/run_tool.c: module-id
 
@@ -1736,7 +1751,7 @@
 	* src/checkin/test/set_date.c:
 	BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
 
-1992-02-11  Thomas E. Dickey  <dickey@software.org>
+1992-02-11  dickey@software.org
 
 	* src/checkin/test/set_date.c: module-id
 
@@ -1968,7 +1983,7 @@
 
 	* COPYING: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
 
-1992-02-04  Thomas E. Dickey  <dickey@software.org>
+1992-02-04  dickey@software.org
 
 	* COPYING: update notice
 
