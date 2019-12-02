@@ -1,4 +1,4 @@
-MANIFEST for cm_tools, version t20180324
+MANIFEST for cm_tools, version t20191202
 --------------------------------------------------------------------------------
 MANIFEST                        this file
 COPYING                         copyright notice for CM_TOOLS
@@ -10,8 +10,6 @@ configure                       generated
 configure.in                    template for CM_TOOLS configure script
 install-sh                      install-script
 makefile.in                     cm_tools makefile template
-bin                             subdirectory
-bin/makefile.in                 cm_tools/bin makefile template
 package                         subdirectory
 package/cm_tools-12.0.spec      build RPMs for cm_tools
 package/debian                  subdirectory
