@@ -3,6 +3,8 @@
  * Author:	T.E.Dickey
  * Created:	09 Mar 1989
  * Modified:
+ *		05 Dec 2019, use "show_argv2()"
+ *		04 Dec 2019, use "executev()"
  *		14 Dec 2014, coverity warnings
  *		10 May 1997, correct argument to mktemp() for descriptions.
  *		04 Dec 1992, added "-l" option, to allow links to be shown
@@ -47,7 +49,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: permit.c,v 11.13 2014/12/14 16:37:48 tom Exp $")
+MODULE_ID("$Id: permit.c,v 11.16 2019/12/05 10:13:57 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -157,12 +159,22 @@ indent(int level)
     }
 }
 
+static void
+doit(char **argv, const char *tool, const char *msg)
+{
+    if_TELL {
+	show_argv2(stdout, tool, argv);
+    }
+    if (!null_opt && (executev(argv) < 0))
+	failed(msg);
+}
+
 /*
  * Compute the "-r" option needed for the permit-file so that it will be
  * updated properly.
  */
-static void
-set_revision(char *dst, const char *opt)
+static int
+set_revision(int argc, char **argv, const char *opt)
 {
     char *d;
     char bfr[20];
@@ -176,22 +188,27 @@ set_revision(char *dst, const char *opt)
 	    }
 	    FORMAT(base_ver, "%d.1", base_opt);
 	}
-	catarg(dst, strcat(strcpy(bfr, opt), base_ver));
+	strcat(strcpy(bfr, opt), base_ver);
+	argv[argc++] = txtalloc(bfr);
     } else if (base_opt) {
 	FORMAT(bfr, "%s%d.1", opt, base_opt);
-	catarg(dst, bfr);
+	argv[argc++] = txtalloc(bfr);
     }
+    return argc;
 }
 
 /*
  * Initialize an RCS-command string
  */
-static void
-set_command(char *dst)
+static int
+set_command(const char *verb, char **argv)
 {
-    *dst = EOS;
-    if (verbose < 0)
-	catarg(dst, "-q");
+    int argc = 0;
+    argv[argc++] = txtalloc(verb);
+    if (verbose < 0) {
+	argv[argc++] = txtalloc("-q");
+    }
+    return argc;
 }
 
 /*
@@ -200,26 +217,25 @@ set_command(char *dst)
 static void
 set_baseline(void)
 {
-    char tmp[BUFSIZ];
+    int argc;
+    char *argv[20];
     char acc_file[BUFSIZ];
     static char msg[] = "setting baseline version in permit-file";
 
     (void) vcs_file("./", acc_file, FALSE);
 
-    set_command(tmp);
-    catarg(tmp, "-l");
-    catarg(tmp, acc_file);
-    if_TELL shoarg(stdout, CO_TOOL, tmp);
-    if (!null_opt && (execute(rcspath(CO_TOOL), tmp) < 0))
-	failed(msg);
+    argc = set_command(rcspath(CO_TOOL), argv);
+    argv[argc++] = txtalloc("-l");
+    argv[argc++] = acc_file;
+    argv[argc] = NULL;
+    doit(argv, CO_TOOL, msg);
 
-    set_command(tmp);
-    set_revision(tmp, "-f");
-    catarg(tmp, m_buffer);
-    catarg(tmp, acc_file);
-    if_TELL shoarg(stdout, CI_TOOL, tmp);
-    if (!null_opt && (execute(rcspath(CI_TOOL), tmp) < 0))
-	failed(msg);
+    argc = set_command(rcspath(CI_TOOL), argv);
+    argc = set_revision(argc, argv, "-f");
+    argv[argc++] = m_buffer;
+    argv[argc++] = acc_file;
+    argv[argc] = NULL;
+    doit(argv, CI_TOOL, msg);
 }
 
 /*
@@ -229,7 +245,8 @@ set_baseline(void)
 static void
 create_permit(char *s)
 {
-    char tmp[BUFSIZ];
+    int argc;
+    char *argv[20];
     char bfr[BUFSIZ];
     char owner[BUFSIZ];
     FILE *fp;
@@ -271,30 +288,29 @@ create_permit(char *s)
     } else
 	failed("creating description");
 
-    set_command(tmp);
-    catarg(tmp, "-mPERMIT FILE");
-    catarg(tmp, strcat(strcpy(bfr, "-t"), tmp_desc));
-    set_revision(tmp, "-r");
-    catarg(tmp, tmp_file);
-    catarg(tmp, acc_file);
-    if_TELL shoarg(stdout, CI_TOOL, tmp);
-    if (!null_opt && (execute(rcspath(CI_TOOL), tmp) < 0))
-	failed("creating permit-file");
+    argc = set_command(rcspath(CI_TOOL), argv);
+    argv[argc++] = txtalloc("-mPERMIT FILE");
+    argv[argc++] = strcat(strcpy(bfr, "-t"), tmp_desc);
+    argc = set_revision(argc, argv, "-r");
+    argv[argc++] = tmp_file;
+    argv[argc++] = acc_file;
+    argv[argc] = NULL;
+    doit(argv, CI_TOOL, "creating permit-file");
+
     (void) unlink(tmp_file);
     (void) unlink(tmp_desc);
 
     if (!purge_opt && !expunge_opt) {
 	char temp_user[BUFSIZ];
 	del_list(strcpy(temp_user, user_name), owner);
-	set_command(tmp);
+	argc = set_command(rcspath(RCS_TOOL), argv);
 	(void) strcat(strcpy(bfr, "-a"), owner);
 	if (add_opt)
 	    cat_list(bfr, temp_user);
-	catarg(tmp, bfr);
-	catarg(tmp, acc_file);
-	if_TELL shoarg(stdout, RCS_TOOL, tmp);
-	if (!null_opt && (execute(rcspath(RCS_TOOL), tmp) < 0))
-	    failed("modifying permit-file");
+	argv[argc++] = bfr;
+	argv[argc++] = acc_file;
+	argv[argc] = NULL;
+	doit(argv, RCS_TOOL, "modifying permit-file");
     }
 }
 
@@ -321,15 +337,16 @@ compute_base(void)
 static void
 modify_access(const char *file, const char *name, const char *opt)
 {
-    char cmd[BUFSIZ], tmp[BUFSIZ];
+    int argc;
+    char *argv[20];
+    char tmp[BUFSIZ];
 
     if (*name) {
-	set_command(cmd);
-	catarg(cmd, strcat(strcpy(tmp, opt), name));
-	catarg(cmd, file);
-	if_TELL shoarg(stdout, RCS_TOOL, cmd);
-	if (!null_opt && (execute(rcspath(RCS_TOOL), cmd) < 0))
-	    failed("adding to access list");
+	argc = set_command(rcspath(RCS_TOOL), argv);
+	argv[argc++] = strcat(strcpy(tmp, opt), name);
+	argv[argc++] = txtalloc(file);
+	argv[argc] = NULL;
+	doit(argv, RCS_TOOL, "adding to access list");
     }
 }
 #define	add_user(file,name)	modify_access(file,name,"-a")

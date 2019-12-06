@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.3 1993/04/27 11:42:53 dickey Exp $'
+# $Id: run_test.sh,v 11.4 2019/12/03 00:16:39 tom Exp $'
 # run regression test for RCS permission utility
 #
 if test $# != 0
@@ -9,12 +9,14 @@ then
 	. testinit.sh
 	Q="-q";		export Q
 	RCS_DIR=FOO;	export RCS_DIR
+	THISDIR=`pwd`
 
 	for name in $*
 	do
 		name=`basename $name .sh`
 		( $name.sh 2>&1 ) | \
 			sed	-e s'@/tmp/permit[^ ]*@TMP@' \
+				-e "s@$THISDIR@PWD@" \
 				-e s@$ADMIN@ADMIN@g \
 				-e s@$USER@USER@g >$name.tst
 		if test -f $name.ref

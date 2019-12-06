@@ -1,4 +1,5 @@
-/* $Id: vcs.h,v 11.2 2010/07/04 17:37:51 tom Exp $ */
+/* $Id: vcs.h,v 11.3 2019/12/04 01:37:02 tom Exp $ */
+/* *INDENT-OFF* */
 
 #ifndef	_vcs_h
 #define	_vcs_h
@@ -31,9 +32,9 @@ MAIN	int	verbose;
 MAIN	uid_t	RCS_uid;	/* owner and group of RCS-directory */
 MAIN	gid_t	RCS_gid;
 MAIN	mode_t	RCS_prot;	/* protection of reference-directory */
-MAIN	char	RCS_cmd[BUFSIZ];/* command we issue in set-uid mode */
 MAIN	const char *RCS_verb;	/* command-verb we show in trace */
-MAIN	const char *RCS_path;	/* full path of command */
+MAIN	char   *RCS_argv[20];	/* parameters for command */
+MAIN	int	RCS_argc;
 
 MAIN	char	original[MAXPATHLEN];
 
@@ -42,7 +43,10 @@ extern	void	set_command(void);
 
 extern	void	set_option(
 		int		option,
-		char *		value);
+		const char *	value);
+
+extern	void	add_params(
+		const char *	value);
 
 extern	int	do_command(void);
 
@@ -79,3 +83,4 @@ extern	void	UnLockFile(
 		char *		name);
 
 #endif	/* _vcs_h */
+/* *INDENT-ON* */

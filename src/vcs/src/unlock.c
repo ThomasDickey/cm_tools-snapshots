@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	16 Oct 1991 (from 'vcs.c')
  * Modified:
+ *		03 Dec 2019, use "executev()"
  *		22 Sep 1993, gcc warnings
  *
  * Function:	Unlocks an RCS archive-file for the user.  If the user happens
@@ -12,7 +13,7 @@
 
 #include <vcs.h>
 
-MODULE_ID("$Id: unlock.c,v 11.4 2004/03/08 01:16:44 tom Exp $")
+MODULE_ID("$Id: unlock.c,v 11.5 2019/12/04 01:30:47 tom Exp $")
 
 /******************************************************************************/
 static int
@@ -76,14 +77,12 @@ UnLockFile(char *name)
 	if (!strcmp(rev, old_rev))
 	    break;
 
-	*RCS_cmd = EOS;
+	RCS_argc = 1;
 	FORMAT(tmp, "-u%s", rev);
-	catarg(RCS_cmd, tmp);
-	catarg(RCS_cmd, Archive);
+	add_params(tmp);
+	add_params(Archive);
 	VERBOSE(".. locked by %s\n", who);
 
-	RCS_verb = RCS;
-	RCS_path = rcspath(RCS);
 	invoke_command(RCS, rcspath(RCS));
 	if (no_op)
 	    break;

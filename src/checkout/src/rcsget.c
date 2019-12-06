@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		05 Dec 2019, use DYN-argv lists.
  *		04 Sep 2012, pass-thru -c option for 'checkout'.
  *		12 Nov 1994, pass-thru -f, -k options for 'co'.
  *		22 Sep 1993, gcc warnings
@@ -27,7 +28,6 @@
  *			     in this usage-message.
  *		01 Nov 1989, walktree passes null pointer to stat-block if
  *			     no-access.
- *		
  *
  * Function:	Use 'checkout' to checkout one or more files from the
  *		RCS-directory which is located in the current working
@@ -40,16 +40,16 @@
 
 #define	STR_PTYPES
 #include	<ptypes.h>
+#include	<dyn_str.h>
 #include	<rcsdefs.h>
 #include	<sccsdefs.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: rcsget.c,v 11.9 2012/09/04 09:03:04 tom Exp $")
+MODULE_ID("$Id: rcsget.c,v 11.10 2019/12/05 09:35:00 tom Exp $")
 
 #define	VERBOSE	if (!quiet) PRINTF
 
 static char user_wd[BUFSIZ];	/* working-directory for scan_archive */
-static char co_opts[BUFSIZ];
 static const char *verb = "checkout";
 static int a_opt;		/* all-directory scan */
 static int R_opt;		/* recur/directory-mode */
@@ -65,21 +65,27 @@ set_wd(const char *path)
 	    failed(path);
 }
 
+static ARGV *co_dyns;
+
 static void
 Checkout(char *working, char *archive)
 {
-    char args[BUFSIZ];
+    ARGV *list;
 
-    (void) strcpy(args, co_opts);
-    catarg(args, working);
-    catarg(args, archive);
+    list = argv_init();
+    argv_append(&list, verb);
+    argv_merge(&list, co_dyns);
+    argv_append(&list, working);
+    argv_append(&list, archive);
 
-    if (!quiet || n_opt)
-	shoarg(stdout, verb, args);
+    if (!quiet || n_opt) {
+	show_argv(stdout, argv_values(list));
+    }
     if (!n_opt) {
-	if (execute(verb, args) < 0)
+	if (executev(argv_values(list)) < 0)
 	    failed(working);
     }
+    argv_free(&list);
 }
 
 static int
@@ -233,7 +239,7 @@ _MAIN
     for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
 	t = s + strlen(s);
 	if (strchr("cfklpqrcswj", s[1]) != 0) {
-	    catarg(co_opts, s);
+	    argv_append(&co_dyns, s);
 	    if (s[1] == 'q')
 		quiet = TRUE;
 	} else

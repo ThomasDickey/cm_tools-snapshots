@@ -1,13 +1,17 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.4 1997/09/14 21:32:30 tom Exp $
+# $Id: run_test.sh,v 11.5 2019/12/02 22:08:25 tom Exp $
 # test-script for RCS baseline utility
 #
 F="makefile.in run_test.sh"
 date
 #
 # run from test-versions:
-for n in .. ../../.. ../../checkin ../../copy
-do	PATH=`cd $n/bin;pwd`:$PATH
+for p in .. ../bin ../.. ../../bin ../../.. ../../../bin
+do
+	for q in . checkin copy
+	do
+		[ -d $p/$q ] && PATH=`unset CDPATH;cd $p/$q && pwd`:$PATH
+	done
 done
 PATH=:`pwd`:$PATH export PATH
 #
