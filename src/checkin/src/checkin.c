@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	19 May 1988, from 'sccsbase'
  * Modified:
+ *		05 Dec 2019, use DYN-argv lists.
  *		13 Jan 2012, add -M option to allow check-in message from file.
  *		23 Sep 1993, gcc warnings
  *		11 Nov 1992, initialize access-list of each module to match
@@ -133,7 +134,7 @@
 #include	<errno.h>
 extern char *mktemp(char *);
 
-MODULE_ID("$Id: checkin.c,v 11.34 2012/01/13 19:56:55 tom Exp $")
+MODULE_ID("$Id: checkin.c,v 11.35 2019/12/06 00:18:44 tom Exp $")
 
 /* local declarations: */
 #define	CI_TOOL		"ci"
@@ -151,8 +152,8 @@ MODULE_ID("$Id: checkin.c,v 11.34 2012/01/13 19:56:55 tom Exp $")
 #define	TELL	if (!silent || debug) PRINTF
 #define	DEBUG(s)	if (debug) PRINTF s
 
-#if	RCS_VERSION >= 4
-#if	RCS_VERSION >= 5
+#if RCS_VERSION >= 4
+#if RCS_VERSION >= 5
 #define	if_D_option(s)	s;	/* "-M" option always needs "-d" */
 #else
 #define	if_D_option(s)	if (lock_date < modtime) s;
@@ -175,12 +176,12 @@ static gid_t RCS_gid;		/* archive's group */
 static mode_t RCSprot;		/* protection of RCS-directory */
 static time_t modtime;		/* timestamp of working file */
 
-#if	RCS_VERSION <= 4
+#if RCS_VERSION <= 4
 static time_t lock_date;
 static time_t oldtime;		/* timestamp of archive file */
 #endif
 
-static DYN *opt_all;		/* options for 'ci' */
+static ARGV *opt_all;		/* options for 'ci' */
 
 static char Working[MAXPATHLEN];
 static char Archive[MAXPATHLEN];
@@ -193,7 +194,7 @@ static const char *RCSaccess;	/* last permission-list */
 static char opt_opt[3];
 static char opt_rev[REVSIZ];
 
-#if	RCS_VERSION <= 4
+#if RCS_VERSION <= 4
 static char old_date[BUFSIZ],	/* subprocess variables */
   new_date[BUFSIZ];
 #endif
@@ -334,7 +335,7 @@ OwnArchive(void)
  * If we could not persuade 'ci' to check-in the file with "-d", filter a copy
  * of it so that the date-portion of the identifiers is set properly.
  */
-#if	RCS_VERSION <= 4
+#if RCS_VERSION <= 4
 static int
 Filter(void)
 {
@@ -485,7 +486,7 @@ PostProcess(void)
  * running in set-uid mode (sigh).
  */
 static int
-DoIt(const char *verb, const char *args)
+DoIt(ARGV *args)
 {
     int code;
 #if defined(HAVE_SETRUID)
@@ -501,8 +502,8 @@ DoIt(const char *verb, const char *args)
 #endif
 
     if (!silent || debug)
-	shoarg(stdout, verb, args);
-    code = no_op ? 0 : execute(rcspath(verb), args);
+	show_argv(stdout, argv_values(args));
+    code = no_op ? 0 : executev(argv_values(args));
 
 #if defined(HAVE_SETRUID)
     if (!no_op && fix_id) {
@@ -520,30 +521,34 @@ DoIt(const char *verb, const char *args)
 static int
 RcsCheckin(void)
 {
-    static DYN *cmds;
+    ARGV *args;
+    int result = 0;
 
-    dyn_init(&cmds, BUFSIZ);
-#if	RCS_VERSION >= 5
-    CATARG(cmds, "-M");
+    args = argv_init1(CI_TOOL);
+#if RCS_VERSION >= 5
+    argv_append(&args, "-M");
 #endif
-    if (!from_keys || !saves_uid())
-	if (!w_opts)
-	    CATARG2(cmds, "-w", uid2s(HIS_uid));
-    APPEND(cmds, dyn_string(opt_all));
-    if (EMPTY(opt_rev))
-	CATARG(cmds, opt_opt);
-    else
-	CATARG2(cmds, opt_opt, opt_rev);
-    CATARG(cmds, Archive);
-    CATARG(cmds, TMP_file);
+    if (!from_keys || !saves_uid()) {
+	if (!w_opts) {
+	    argv_append2(&args, "-w", uid2s(HIS_uid));
+	}
+    }
+    argv_merge(&args, opt_all);
+    if (EMPTY(opt_rev)) {
+	argv_append(&args, opt_opt);
+    } else {
+	argv_append2(&args, opt_opt, opt_rev);
+    }
+    argv_append(&args, Archive);
+    argv_append(&args, TMP_file);
 
-    if (DoIt(CI_TOOL, dyn_string(cmds)) < 0)
-#if	RCS_VERSION >= 5
+    if (DoIt(args) < 0)
+#if RCS_VERSION >= 5
 	GiveUp("rcs checkin for", Working);
 #else
-	return -1;
+	result = -1;
 #endif
-    return 0;
+    return result;
 }
 
 /*
@@ -560,7 +565,7 @@ Execute(void)
     HackMode(TRUE);
     TMP_file = rcstemp(Working, TRUE);
 
-#if	RCS_VERSION >= 5
+#if RCS_VERSION >= 5
     if (saves_uid())
 	code = RcsCheckin();
     else
@@ -576,7 +581,7 @@ Execute(void)
     if (no_op) ;
     else if (code >= 0) {	/* ... check-in file ok */
 	if (stat(TMP_file, &sb) >= 0) {		/* working file not deleted */
-#if	RCS_VERSION >= 5
+#if RCS_VERSION >= 5
 	    static int modified = TRUE;
 #else
 	    int modified = (sb.st_mtime != modtime);
@@ -614,15 +619,22 @@ Execute(void)
  *	+1 - a lock is present
  *	 0 - no lock was set (or can be forced)
  */
-#if	RCS_VERSION <= 4
+#if RCS_VERSION <= 4
 static int
 GetLock(void)
 {
-    int done = FALSE, strict = FALSE, implied = EMPTY(opt_rev), match, code
-    = S_FAIL;
+    int done = FALSE;
+    int strict = FALSE;
+    int implied = EMPTY(opt_rev);
+    int match;
+    int code = S_FAIL;
 
-    char *s = 0, lock_rev[REVSIZ], head_rev[REVSIZ], next_rev[REVSIZ],
-    lock_by[BUFSIZ], key[BUFSIZ];
+    char *s = 0;
+    char lock_rev[REVSIZ];
+    char head_rev[REVSIZ];
+    char next_rev[REVSIZ];
+    char lock_by[BUFSIZ];
+    char key[BUFSIZ];
 
     (void) strcpy(lock_by, getuser());
 
@@ -840,7 +852,7 @@ get_prefix(const char *suffix)
 static int
 RcsInitialize(void)
 {
-    static DYN *cmds;
+    ARGV *args;
     static char list[BUFSIZ];	/* static so we do list once */
     const char *s;
     char *t;
@@ -866,13 +878,13 @@ RcsInitialize(void)
 	}
     }
 
-    dyn_init(&cmds, BUFSIZ);
+    args = argv_init1(RCS_TOOL);
 
-    CATARG(cmds, t_option);
-    CATARG(cmds, "-i");
+    argv_append(&args, t_option);
+    argv_append(&args, "-i");
 
     if ((s = RCSaccess) && !EMPTY(s))
-	CATARG2(cmds, "-a", s);
+	argv_append2(&args, "-a", s);
     else {
 	if (EMPTY(list)) {
 	    struct passwd *p;
@@ -889,7 +901,7 @@ RcsInitialize(void)
 		    GiveUp("owner of directory for", Working);
 	    }
 	}
-	CATARG(cmds, list);
+	argv_append(&args, list);
     }
 
     s = ftype(t = pathleaf(Working));
@@ -897,14 +909,14 @@ RcsInitialize(void)
 		|| !strcmp(t, "IMakefile")
 		|| !strcmp(t, "AMakefile")
 		|| !strcmp(t, "makefile")))
-	CATARG(cmds, "-c#\t");
+	argv_append(&args, "-c#\t");
     else if ((s = get_prefix(s)) != NULL)
-	CATARG(cmds, s);
+	argv_append(&args, s);
 
     if (silent)
-	CATARG(cmds, "-q");
-    CATARG(cmds, Archive);
-    if (DoIt(RCS_TOOL, dyn_string(cmds)) < 0)
+	argv_append(&args, "-q");
+    argv_append(&args, Archive);
+    if (DoIt(args) < 0)
 	GiveUp("rcs initialization for", Working);
     return 0;
 }
@@ -981,7 +993,7 @@ MakeDirectory(void)
 }
 
 /*
- * Generate the string 'opt_all[]' which we will pass to 'ci' for options.
+ * Generate the argv-list 'opt_all[]' which we will pass to 'ci' for options.
  * We may have to generate it before each file because some are initial
  * checkins.
  *
@@ -1002,7 +1014,7 @@ SetOpts(int argc, char **argv, int new_file)
     int j;
     char *s;
 
-    dyn_init(&opt_all, BUFSIZ);
+    opt_all = argv_init();
 
     w_opts = FALSE;
     u_or_l = FALSE;
@@ -1052,14 +1064,14 @@ SetOpts(int argc, char **argv, int new_file)
 			(void) revert("baseline version");
 		}
 		if (last_rev != EOS)
-		    CATARG(opt_all, fast);
+		    argv_append(&opt_all, fast);
 		fast[1] = (char) code;
 		last_rev = (char) code;
 		(void) strcpy(opt_opt, fast);
 	    } else {
 		if (*s == 'w')
 		    w_opts = TRUE;
-		CATARG(opt_all, argv[j]);
+		argv_append(&opt_all, argv[j]);
 	    }
 	}
     }
@@ -1074,20 +1086,19 @@ SetOpts(int argc, char **argv, int new_file)
 	    int value;
 
 	    if (EMPTY(RCSbase) || from_keys)
-		CATARG(opt_all, opt_opt);
+		argv_append(&opt_all, opt_opt);
 	    else if (use_base)
-		CATARG2(opt_all, opt_opt, RCSbase);
+		argv_append2(&opt_all, opt_opt, RCSbase);
 	    else if (sscanf(RCSbase, fmt, &value) == 1) {
 		FORMAT(last_base, fmt, value - 1);
-		CATARG2(opt_all, opt_opt, last_base);
+		argv_append2(&opt_all, opt_opt, last_base);
 	    }
 	}
     }
-    CATARG2(opt_all, "-m", m_option);
+    argv_append2(&opt_all, "-m", m_option);
 }
 
-static
-void
+static void
 usage(void)
 {
     static const char *tbl[] =
@@ -1178,7 +1189,7 @@ _MAIN
 		    GiveUp("file not found:", Working);
 	    }
 
-#if	RCS_VERSION <= 4
+#if RCS_VERSION <= 4
 	    if (new_file = (rcs_archive(Archive, &sb) < 0)) {
 		oldtime = 0;	/* did not find archive */
 		MakeDirectory();
@@ -1194,7 +1205,7 @@ _MAIN
 
 		if_D_option(
 			       if (!from_keys && modtime != 0)
-			       CATARG(opt_all, "-d")
+			       argv_append(&opt_all, "-d")
 		    )
 
 		    if (Execute()) {
@@ -1219,7 +1230,7 @@ _MAIN
 	    SetOpts(j, argv, new_file);
 
 	    if (!from_keys && modtime != 0)
-		CATARG(opt_all, "-d");
+		argv_append(&opt_all, "-d");
 
 	    if (Execute())
 		OwnWorking();

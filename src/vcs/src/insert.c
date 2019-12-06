@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	17 Oct 1991, broke out from 'vcs.c'
  * Modified:
+ *		03 Dec 2019, use "executev()"
  *		22 Sep 1993, gcc warnings
  *
  * Function:	performs insert-directory function for 'vcs'.
@@ -10,7 +11,7 @@
 
 #include <vcs.h>
 
-MODULE_ID("$Id: insert.c,v 11.6 2010/07/04 18:23:39 tom Exp $")
+MODULE_ID("$Id: insert.c,v 11.7 2019/12/04 01:10:35 tom Exp $")
 
 /******************************************************************************/
 /* we have to change directories to keep fooling rcs about the vcs-file */
@@ -48,7 +49,7 @@ MakePermit(char *dst, char *base)
 
     set_command();
     set_option('b', base);
-    catarg(RCS_cmd, dst);
+    add_params(dst);
     invoke_command(PERMIT, PERMIT);
 
     ChangeWd(dst);
@@ -57,7 +58,7 @@ MakePermit(char *dst, char *base)
 
     set_command();
     set_option('A', vcs_file(src, buffer, FALSE));
-    catarg(RCS_cmd, vcs_file(".", buffer, FALSE));
+    add_params(vcs_file(".", buffer, FALSE));
     invoke_command(RCS, rcspath(RCS));
 
     ChangeWd(prefix);

@@ -1,10 +1,14 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.3 1997/09/14 21:34:13 tom Exp $
+# $Id: run_test.sh,v 11.4 2019/12/02 22:11:31 tom Exp $
 date
 #
 # run from test-versions:
-for n in .. ../../.. ../../checkin ../../checkout
-do	PATH=`cd $n/bin;pwd`:$PATH
+for p in .. ../bin ../.. ../../bin
+do
+	for q in . checkin checkout
+	do
+		[ -d $p/$q ] && PATH=`unset CDPATH;cd $p/$q && pwd`:$PATH
+	done
 done
 PATH=:`pwd`:$PATH
 export PATH

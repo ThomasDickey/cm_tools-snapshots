@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	24 Oct 1989
  * Modified:
+ *		04 Dec 2019, use "executev()" and "show_argv()"
  *		22 Sep 1993, gcc warnings
  *		17 Jan 1992, added "-L" option.  Renamed "-r" to "-R" option
  *			     and "-f" to "-p" for consistency.
@@ -39,7 +40,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: baseline.c,v 11.8 2010/07/04 17:33:31 tom Exp $")
+MODULE_ID("$Id: baseline.c,v 11.10 2019/12/04 09:41:24 tom Exp $")
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
@@ -68,33 +69,28 @@ static int recur;
 static int verbose;
 
 static void
-doit(const char *verb, const char *args, int really)
+doit(char **argv, int really)
 {
-    if (verbose)
-	shoarg(stdout, verb, args);
+    if (verbose) {
+	show_argv(stdout, argv);
+    }
     if (really) {
-	if (execute(verb, args) < 0) {
-	    FPRINTF(stderr, "?? %s\n", verb);
+	if (executev(argv) < 0) {
+	    FPRINTF(stderr, "?? %s\n", argv[0]);
 	    exit(FAIL);
 	}
     }
 }
 
 static void
-quiet_opt(char *args)
-{
-    if (!verbose)
-	catarg(args, "-q");
-}
-
-static void
 purge_rights(const char *path)
 {
-    char args[BUFSIZ];
+    int argc;
+    char *argv[20];
+    char myrev[80];
     static LIST *purged;
     LIST *p;
 
-    FORMAT(args, "-b%d ", revision);
     for (p = purged; p; p = p->link) {
 	if (!strcmp(p->text, path))
 	    return;
@@ -104,20 +100,28 @@ purge_rights(const char *path)
     p->text = txtalloc(path);
     purged = p;
 
-    quiet_opt(args);
+    argc = 0;
+    argv[argc++] = txtalloc("permit");
+    FORMAT(myrev, "-b%d", revision);
+    argv[argc++] = myrev;
+    if (!verbose)
+	argv[argc++] = txtalloc("-q");
     if (no_op)
-	catarg(args, "-n");
+	argv[argc++] = txtalloc("-n");
     if (purge_opt)
-	catarg(args, "-p");
-    catarg(args, m_option);
-    catarg(args, rcs_dir(NULL, NULL));
-    doit("permit", args, no_op < 2);
+	argv[argc++] = txtalloc("-p");
+    argv[argc++] = m_option;
+    argv[argc++] = txtalloc(rcs_dir(NULL, NULL));
+    argv[argc] = NULL;
+    doit(argv, no_op < 2);
 }
 
 static void
 baseline(const char *path, const char *name, time_t edited)
 {
-    char args[BUFSIZ];
+    int argc;
+    char *argv[20];
+    char myrev[80];
     const char *version;
     const char *locker;
     time_t date;
@@ -152,21 +156,31 @@ baseline(const char *path, const char *name, time_t edited)
     PRINTF("** %s\n", name);
 
     if (*locker == '?') {	/* wasn't locked, must do so now */
-	*args = EOS;
-	catarg(args, "-l");
-	quiet_opt(args);
-	catarg(args, name);
-	doit("checkout", args, !no_op);
+	argc = 0;
+	argv[argc++] = txtalloc("checkout");
+	argv[argc++] = txtalloc("-l");
+	if (!verbose)
+	    argv[argc++] = txtalloc("-q");
+	argv[argc++] = txtalloc(name);
+	argv[argc] = NULL;
+	doit(argv, !no_op);
     }
 
-    FORMAT(args, "-r%d.0 -f -u ", revision);
-    quiet_opt(args);
+    argc = 0;
+    argv[argc++] = txtalloc("checkin");
+    FORMAT(myrev, "-r%d.0", revision);
+    argv[argc++] = myrev;
+    argv[argc++] = txtalloc("-f");
+    argv[argc++] = txtalloc("-u");
+    if (!verbose)
+	argv[argc++] = txtalloc("-q");
     if (lock_up)
-	catarg(args, "-l");
-    catarg(args, m_option);
-    catarg(args, "-sRel");
-    catarg(args, name);
-    doit("checkin", args, !no_op);
+	argv[argc++] = txtalloc("-l");
+    argv[argc++] = m_option;
+    argv[argc++] = txtalloc("-sRel");
+    argv[argc++] = txtalloc(name);
+    argv[argc] = NULL;
+    doit(argv, !no_op);
 }
 
 static int

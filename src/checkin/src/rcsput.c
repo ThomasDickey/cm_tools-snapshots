@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	19 Oct 1989
  * Modified:
+ *		05 Dec 2019, use DYN-argv lists.
  *		13 Jan 2013, pass "-M" option to checkin.
  *		10 May 1997, pass-thru -w option to checkin.
  *		09 May 1994, port to Linux
@@ -38,6 +39,7 @@
  * Options:	see 'usage()'
  */
 
+#define	CUR_PTYPES
 #define	STR_PTYPES
 #include	<ptypes.h>
 #include	<rcsdefs.h>
@@ -45,12 +47,12 @@
 #include	<dyn_str.h>
 extern char *tmpnam(char *);
 
-MODULE_ID("$Id: rcsput.c,v 11.12 2012/01/13 20:23:16 tom Exp $")
+MODULE_ID("$Id: rcsput.c,v 11.13 2019/12/06 01:07:32 tom Exp $")
 
 #define	VERBOSE		if (!quiet) PRINTF
 
-static DYN *ci_opts;
-static DYN *diff_opts;
+static ARGV *ci_opts;
+static ARGV *diff_opts;
 static const char *verb = "checkin";
 static FILE *log_fp;
 static int a_opt;		/* all-directory scan */
@@ -77,7 +79,9 @@ cat2fp(FILE *fp, char *name)
 static int
 different(const char *working)
 {
-    static DYN *cmds, *opts;
+    ARGV *cmds;
+    ARGV *opts;
+    DYN *flat;
     static const char *prog = "rcsdiff";
 
     FILE *ifp, *ofp;
@@ -85,27 +89,26 @@ different(const char *working)
     int changed = FALSE;
     size_t n;
 
-    dyn_init(&opts, BUFSIZ);
-    APPEND(opts, dyn_string(diff_opts));
-    CATARG(opts, working);
+    opts = argv_init();
+    argv_merge(&opts, diff_opts);
+    argv_append(&opts, working);
 
     if (!quiet)
-	shoarg(stdout, prog, dyn_string(opts));
+	show_argv2(stdout, prog, argv_values(opts));
 
     /* kludgey, but we don't do many pipes */
-    dyn_init(&cmds, dyn_length(opts) + strlen(prog) + 2);
-    APPEND(cmds, prog);
-    APPEND(cmds, " ");
-    (void) bldcmd(dyn_string(cmds) + dyn_length(cmds),
-		  dyn_string(opts), dyn_length(opts));
+    cmds = argv_init1(prog);
+    argv_merge(&cmds, opts);
 
     if (!tmpnam(out_diff))
 	failed("tmpnam");
     if (!(ofp = fopen(out_diff, "w")))
 	failed("open-tmpnam");
 
-    if (!(ifp = popen(dyn_string(cmds), "r")))
+    flat = argv_flatten(cmds);
+    if (!(ifp = popen(dyn_string(flat), "r")))
 	failed("popen");
+    dyn_free(flat);
 
     /* copy the result to a file so we can send it two places */
     while ((n = fread(buffer, sizeof(char), sizeof(buffer), ifp)) > 0) {
@@ -134,13 +137,15 @@ different(const char *working)
     }
 
     (void) unlink(out_diff);
+    argv_free(&opts);
+    argv_free(&cmds);
     return (changed);
 }
 
 static void
 checkin(const char *path, const char *working, const char *archive)
 {
-    static DYN *args;
+    ARGV *args;
     int first;
 
     if ((first = (filesize(archive) < 0)) != 0) {
@@ -163,10 +168,10 @@ checkin(const char *path, const char *working, const char *archive)
 	}
     }
 
-    dyn_init(&args, BUFSIZ);
-    (void) dyn_append(args, dyn_string(ci_opts));
-    CATARG(args, working);
-    CATARG(args, archive);
+    args = argv_init1(verb);
+    argv_merge(&args, ci_opts);
+    argv_append(&args, working);
+    argv_append(&args, archive);
 
     if (!no_op) {
 	PRINTF("*** %s \"%s\"\n",
@@ -181,11 +186,12 @@ checkin(const char *path, const char *working, const char *archive)
     }
 
     if (!quiet)
-	shoarg(stdout, verb, dyn_string(args));
+	show_argv2(stdout, verb, argv_values(args));
     if (!no_op) {
-	if (execute(verb, dyn_string(args)) < 0)
+	if (executev(argv_values(args)) < 0)
 	    failed(working);
     }
+    argv_free(&args);
 }
 
 /*
@@ -287,13 +293,13 @@ _MAIN
     if (!getwd(original))
 	failed("getwd");
 
-    dyn_init(&ci_opts, BUFSIZ);
-    dyn_init(&diff_opts, BUFSIZ);
+    ci_opts = argv_init();
+    diff_opts = argv_init();
 
     /* process options */
     for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
 	if (strchr("BqrfklumMnNstw", s[1]) != 0) {
-	    CATARG(ci_opts, s);
+	    argv_append(&ci_opts, s);
 	    switch (s[1]) {
 	    case 'f':
 		force = TRUE;
@@ -303,7 +309,7 @@ _MAIN
 		break;
 	    case 'q':
 		quiet = TRUE;
-		CATARG(diff_opts, s);
+		argv_append(&diff_opts, s);
 		break;
 	    }
 	} else {
@@ -313,7 +319,7 @@ _MAIN
 		break;
 	    case 'b':
 	    case 'h':
-		CATARG(diff_opts, s);
+		argv_append(&diff_opts, s);
 		break;
 	    case 'c':
 		pager = 0;
@@ -337,7 +343,7 @@ _MAIN
     }
 
     if (cat_input && !m_opt)
-	CATARG2(ci_opts, "-m", cat_input);
+	argv_append2(&ci_opts, "-m", cat_input);
 
     /* process list of filenames */
     if (j < argc) {

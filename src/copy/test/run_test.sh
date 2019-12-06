@@ -1,12 +1,15 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.1 1997/09/14 21:34:46 tom Exp $
+# $Id: run_test.sh,v 11.2 2019/12/02 21:58:04 tom Exp $
 # test unix copy utility be copying some files and directories; should have
 # no differences.
 #
 date
 #
 # run from test-versions:
-PATH=:`pwd`:`cd ../bin;pwd`:`cd ../../../bin;pwd`:/bin:/usr/bin:/usr/ucb
+for p in . ../bin ../../bin ../../../bin
+do
+	[ -d "$p" ] && PATH=`unset CDPATH;cd $p && pwd`:$PATH
+done
 export PATH
 #
 rm -rf junk pile

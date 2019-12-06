@@ -3,6 +3,8 @@
  * Author:	T.E.Dickey
  * Created:	06 Sep 1989
  * Modified:
+ *		05 Dec 2019, use "show_argv2()"
+ *		04 Dec 2019, use "executev()"
  *		14 Dec 2014, coverity warnings
  *		22 Sep 1993, gcc warnings
  *		17 Oct 1991, split out 'vcs_insert.c' and 'vcs_unlock.c'
@@ -14,7 +16,7 @@
 #define	MAIN
 #include <vcs.h>
 
-MODULE_ID("$Id: vcs.c,v 11.6 2014/12/14 17:50:41 tom Exp $")
+MODULE_ID("$Id: vcs.c,v 11.9 2019/12/05 10:14:13 tom Exp $")
 
 /************************************************************************
  *	utility procedures						*
@@ -23,36 +25,45 @@ MODULE_ID("$Id: vcs.c,v 11.6 2014/12/14 17:50:41 tom Exp $")
 void
 set_command(void)
 {
-    *RCS_cmd = EOS;
-    if (q_opt)
-	catarg(RCS_cmd, "-q");
+    RCS_argc = 1;
+    if (q_opt) {
+	add_params("-q");
+    }
 }
 
 void
-set_option(int option, char *value)
+set_option(int option, const char *value)
 {
     char temp[BUFSIZ];
     FORMAT(temp, "-%c%s", option, value);
-    catarg(RCS_cmd, temp);
+    add_params(temp);
+}
+
+void
+add_params(const char *value)
+{
+    RCS_argv[RCS_argc++] = txtalloc(value);
+    RCS_argv[RCS_argc] = NULL;
 }
 
 int
 do_command(void)
 {
-    if (verbose || no_op)
-	shoarg(stdout, RCS_verb, RCS_cmd);
-    return no_op ? 0 : execute(RCS_path, RCS_cmd);
+    if (verbose || no_op) {
+	show_argv2(stdout, RCS_verb, RCS_argv);
+    }
+    return no_op ? 0 : executev(RCS_argv);
 }
 
 /*
- * Invokes 'do_command' (which in turn runs the RCS_verb + RCS_cmd), setting
+ * Invokes 'do_command' (which in turn runs the RCS_argv), setting
  * our uid/gid to the effective user (usually!).
  */
 void
 invoke_command(const char *verb, const char *path)
 {
     RCS_verb = verb;
-    RCS_path = path;
+    RCS_argv[0] = txtalloc(path);
     if (for_admin2(do_command, RCS_uid, RCS_gid) < 0)
 	failed(RCS_verb);
 }

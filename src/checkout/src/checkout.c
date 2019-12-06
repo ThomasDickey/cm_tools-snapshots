@@ -3,6 +3,7 @@
  * Author:	T.E.Dickey
  * Created:	20 May 1988 (from 'sccsdate.c')
  * Modified:
+ *		05 Dec 2019, use DYN-argv lists.
  *		14 Dec 2014, coverity warnings
  *		04 Sep 2012, correction to previous -c change.
  *		23 Oct 2005, correct parsing if -c param is not a separate
@@ -94,7 +95,7 @@
 #include	<signal.h>
 #include	<time.h>
 
-MODULE_ID("$Id: checkout.c,v 11.19 2014/12/14 17:57:15 tom Exp $")
+MODULE_ID("$Id: checkout.c,v 11.20 2019/12/05 10:09:56 tom Exp $")
 
 /* local definitions */
 #define	TELL	if (!silent) FPRINTF
@@ -360,37 +361,38 @@ PreProcess(time_t * revtime,	/* date with which to touch file */
 static int
 RcsCheckout(void)
 {
-    static DYN *cmds;
+    ARGV *args;
     const char *opt = to_stdout ? "-p" : (locked ? "-l" : "-r");
     int code = 0;
 
-    dyn_init(&cmds, BUFSIZ);
-#if	RCS_VERSION >= 5
-    CATARG(cmds, "-M");
+    args = argv_init2(CO_TOOL, rcspath(CO_TOOL));
+#if RCS_VERSION >= 5
+    argv_append(&args, "-M");
 #endif
     if (silent)
-	CATARG(cmds, "-q");
-    CATARG2(cmds, opt, rev_buffer);
+	argv_append(&args, "-q");
+    argv_append2(&args, opt, rev_buffer);
     if (!EMPTY(co_f_opt))
-	CATARG(cmds, co_f_opt);
+	argv_append(&args, co_f_opt);
     if (!EMPTY(co_k_opt))
-	CATARG(cmds, co_k_opt);
-    CATARG(cmds, UidHack);
-    CATARG(cmds, Archive);
+	argv_append(&args, co_k_opt);
+    argv_append(&args, UidHack);
+    argv_append(&args, Archive);
 
     if (!silent || debug)
-	shoarg(log_fp, CO_TOOL, dyn_string(cmds));
+	show_argv2(log_fp, CO_TOOL, argv_values(args));
     if (!no_op) {
 	Stat_t sb;
 	if (Effect == 0) {
 	    if (stat(Archive, &sb) < 0)
 		sb.st_uid = sb.st_gid = 0;
 	}
-	code = execute(rcspath(CO_TOOL), dyn_string(cmds));
+	code = executev(argv_values(args));
 	if (Effect == 0
 	    && Effect != sb.st_uid)
 	    chown(Archive, sb.st_uid, sb.st_gid);
     }
+    argv_free(&args);
     return (code);
 }
 

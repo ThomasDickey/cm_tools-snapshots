@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: run_test.sh,v 11.4 2010/07/05 19:51:35 tom Exp $
+# $Id: run_test.sh,v 11.6 2019/12/03 01:19:21 tom Exp $
 # test-script for link2rcs (RCS skeleton tree utility)
 
 LANG=C; export LANG
@@ -15,6 +15,20 @@ if test $# != 0
 then
 	echo '** '`date`
 	PATH=`../../../support/testpath.sh`;	export PATH
+
+	unset CDPATH
+	HERE=`pwd`
+	if [ -L RCS ]
+	then
+		rm -rf .@RCS
+		mv RCS .@RCS
+		mkdir RCS
+		trap "unset CDPATH; cd $HERE; rmdir RCS; mv .@RCS RCS" EXIT INT QUIT TERM HUP
+	elif [ ! -d RCS ]
+	then
+		mkdir RCS
+		trap "unset CDPATH; cd $HERE; rmdir RCS" EXIT INT QUIT TERM HUP
+	fi
 
 	# initialize
 	WD=`pwd`
@@ -34,6 +48,8 @@ then
 			if ( cmp -s $name.tst $WD/$name.ref )
 			then	echo '** ok:  '$name
 				rm -f $name.tst
+			elif ( cmp -s $name.tst $WD/$name.ref2 )
+			then	echo "** no-SCCS:$name"
 			else	echo '?? fail:'$name
 				diff $name.tst $WD/$name.ref
 			fi

@@ -1,4 +1,44 @@
+2019-12-05  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/cm_tools-12.0.spec, package/debian/changelog: bump
+
+	* src/checkin/src/rcsput.c, src/checkin/src/checkin.c:
+	use DYN-argv lists to replace catarg()
+
+	* src/vcs/src/vcs.c, src/permit/src/permit.c:
+	use show_argv2(), to handle verb vs argv[0]
+
+	* src/checkout/src/checkout.c, src/checkout/src/rcsget.c:
+	use DYN-argv lists to replace catarg()
+
+2019-12-04  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/baseline/src/baseline.c, src/permit/src/permit.c, src/vcs/src/vcs.c:
+	use show_argv() to replace the remaining catarg/shoarg
+
+2019-12-03  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/baseline/src/baseline.c, src/vcs/src/vcs.h, src/vcs/src/vcs.c, src/vcs/src/unlock.c, src/vcs/src/insert.c, src/permit/src/permit.c:
+	replace most uses of catarg() with executev()
+
 2019-12-02  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/link2rcs/test/run_test.sh: ensure that RCS directory exists
+
+	* src/link2rcs/test/run_test.sh:
+	provide for machines w/o SCCS, as well as a couple of cases where the
+	RCS subdirectory is not present.
+
+	* src/link2rcs/test/case1.ref2, src/link2rcs/test/case2.ref2: RCS_BASE
+
+	* src/permit/test/run_test.sh, src/permit/test/case0.ref:
+	case0 has a full pathname; filter that out
+
+	* support/testinit.sh:
+	use POSIX locale for tests, since one of the permit-tests confuses GNU sed.
+
+	* src/checkup/test/run_test.sh, src/baseline/test/run_test.sh, support/testpath.sh, src/copy/test/run_test.sh:
+	generalize the PATH initialization
 
 	* package/debian/compat, package/cm_tools-12.0.spec, package/debian/copyright:
 	bump
