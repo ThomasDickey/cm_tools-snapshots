@@ -1,4 +1,4 @@
-.\" $Id: checkout.man,v 11.6 2014/12/15 21:39:48 tom Exp $
+.\" $Id: checkout.man,v 11.7 2019/12/06 21:41:21 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -9,7 +9,7 @@
 .ta 9n 17n 25n 33n 41n 49n
 .ft CW
 ..
-.de Ex
+.de Eh
 .ft \\n(mE
 .fi
 .hy \\n(HY
@@ -65,14 +65,14 @@ date, in SCCS-format
 .RS
 .Es
 YY[MM[DD[HH[MM[SS]]]]]
-.Ex
+.Eh
 .PP
 Punctuation in the date is permitted.
 For example,
 .Es 2
 -c 77/2/2 9:22:25
 -c 770202092225
-.Ex
+.Eh
 .PP
 represent the same date.
 This option is translated to the \fBco\fR

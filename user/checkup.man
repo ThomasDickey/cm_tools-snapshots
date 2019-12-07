@@ -1,4 +1,4 @@
-.\" $Id: checkup.man,v 11.7 2014/12/15 21:39:52 tom Exp $
+.\" $Id: checkup.man,v 11.8 2019/12/06 21:43:12 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -9,7 +9,7 @@
 .ta 9n 17n 25n 33n 41n 49n
 .ft CW
 ..
-.de Ex
+.de Eh
 .ft \\n(mE
 .fi
 .hy \\n(HY
@@ -18,7 +18,8 @@
 ..
 .\" Bulleted paragraph
 .de bP
-.IP \(bu 3n
+.ie n  .IP \(bu 4
+.el    .IP \(bu 2
 ..
 .TH CHECKUP 1
 .hy 0
@@ -85,7 +86,7 @@ The wildcard characters "*" and "?" are interpreted as in the POSIX shell.
 reroutes the directory-tree display
 (normally written to standard error) to the specified file.
 .TP
-.BI \-L
+.B \-L
 causes \fBcheckup\fR to process symbolic-link targets.
 Ordinarily these are ignored.
 .TP
@@ -181,7 +182,7 @@ bsd4.2(65) checkup  ~/traces/lib
   14:	|---|-- lincnt.out (not archived)
   15:	|---|-- lint.out (not archived)
   16:	|-- traces/
-.Ex
+.Eh
 .SH ENVIRONMENT
 .PP
 \fBCheckup\fR is a C-language program which runs in a portable

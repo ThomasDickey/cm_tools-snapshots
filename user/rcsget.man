@@ -1,4 +1,4 @@
-.\" $Id: rcsget.man,v 11.5 2014/12/15 21:40:09 tom Exp $
+.\" $Id: rcsget.man,v 11.6 2019/12/06 21:45:44 tom Exp $
 .TH RCSGET 1
 .SH NAME
 .PP
@@ -16,9 +16,9 @@ from \fIrcs\fR archives.
 \fBRcsget\fR checks out (extracts) files from an \fIrcs\fR
 archive which have been checked in using \fBrcsput \fRor\fBcheckin\fR.
 \fBRcsput\fR checks in files, retaining their modification
-date as the check-in date. \fB Rcsget\fR extracts a given version
-of one or more files, and sets their modification date to match the
-check-in date.
+date as the check-in date.
+\fB Rcsget\fR extracts a given version of one or more files,
+and sets their modification date to match the check-in date.
 .SH OPTIONS
 .PP
 \fBRcsget\fR is a directory-recursive interface to the \fBco\fR
@@ -62,7 +62,8 @@ To extract files using \fBrcsget\fR, you must provide one or more
 names.
 They may be either file or directory names.
 .PP
-\fBRcsget\fR resolves names until it finds one of the form "RCS/\fIfile\fR,v" before invoking \fBco\fR.
+\fBRcsget\fR resolves names
+until it finds one of the form "RCS/\fIfile\fR,v" before invoking \fBco\fR.
 If it finds a directory (other
 than "RCS"), \fBrcsget\fR will recur to extract files at lower
 levels.

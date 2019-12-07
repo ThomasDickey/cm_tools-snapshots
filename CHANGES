@@ -1,3 +1,10 @@
+2019-12-06  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/cm_tools-12.0.spec, package/debian/changelog: bump
+
+	* user/rcsput.man, user/rcsget.man, user/permit.man, user/link2rcs.man, user/checkup.man, user/checkin.man, user/copy.man, user/checkout.man, user/baseline.man:
+	check-manpage fixes (rename Ex to Eh for consistency, other errata)
+
 2019-12-05  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* package/cm_tools-12.0.spec, package/debian/changelog: bump

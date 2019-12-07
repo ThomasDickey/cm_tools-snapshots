@@ -1,4 +1,4 @@
-.\" $Id: checkin.man,v 11.6 2014/12/15 21:35:40 tom Exp $
+.\" $Id: checkin.man,v 11.7 2019/12/06 21:42:52 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -9,7 +9,7 @@
 .ta 9n 17n 25n 33n 41n 49n
 .ft CW
 ..
-.de Ex
+.de Eh
 .ft \\n(mE
 .fi
 .hy \\n(HY
@@ -18,7 +18,8 @@
 ..
 .\" Bulleted paragraph
 .de bP
-.IP \(bu 3n
+.ie n  .IP \(bu 4
+.el    .IP \(bu 2
 ..
 .TH CHECKIN 1
 .SH NAME
@@ -73,7 +74,7 @@ Then (running as the \fBadmin\fR user):
 .Es 2
 cp checkin /proj		# admin now owns this copy
 chmod 4755 /proj/checkin	# sets u+s mode
-.Ex
+.Eh
 .PP
 Thereafter, users who invoke \fB/proj/checkin\fR will have
 the rights of \fBadmin\fR \- for this application.
@@ -121,7 +122,7 @@ If the "\-\fBk\fR" option is used, \fBcheckin\fR supplies
 a default log-message
 .Es
 FROM_KEYS
-.Ex
+.Eh
 .PP
 Options specific to \fBcheckin\fR are:
 .TP 4n
@@ -173,7 +174,8 @@ preserving the relationship between changes and revisions: a new version
 is made only if the file is changed.
 .IP
 The directory-level revision set by the \fBpermit\fR
-utility may override this environment variable. See \fIbaseline\fR
+utility may override this environment variable.
+See \fIbaseline\fR
 and \fIpermit\fR for more details.
 .TP
 .B RCS_COMMENT
@@ -183,12 +185,12 @@ For example, the strings
 .RS
 .Es
 setenv RCS_COMMENT '/.c/ *> /'
-.Ex
+.Eh
 .PP
 and
 .Es
 setenv RCS_COMMENT '/.d/# /,/.bas/REM /'
-.Ex
+.Eh
 .PP
 define comment-prefixes for ".c", ".d" and ".bas"
 suffixes.
