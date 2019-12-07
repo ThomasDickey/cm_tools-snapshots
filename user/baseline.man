@@ -1,4 +1,4 @@
-.\" $Id: baseline.man,v 11.5 2014/12/15 21:39:43 tom Exp $
+.\" $Id: baseline.man,v 11.6 2019/12/06 21:40:50 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -9,7 +9,7 @@
 .ta 9n 17n 25n 33n 41n 49n
 .ft CW
 ..
-.de Ex
+.de Eh
 .ft \\n(mE
 .fi
 .hy \\n(HY
@@ -49,12 +49,12 @@ a particular set of files.
 For example,
 .Es
 checkout \-r2.0 file
-.Ex
+.Eh
 .PP
 obtains the baseline "2.0" version, while
 .Es
 checkout \-r2 file1 file2 file3
-.Ex
+.Eh
 .PP
 obtains the last development version beginning with "2.0", but
 before "3.0".
@@ -68,7 +68,7 @@ number after a hyphen, e.g.,
 .RS
 .Es
 baseline \-2 file1 file2 file3
-.Ex
+.Eh
 .PP
 If no baseline version is specified, the most recent baseline
 version (as recorded in the \fBRCS,v\fR \fBpermit\fR-file) is

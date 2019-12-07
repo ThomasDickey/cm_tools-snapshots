@@ -1,4 +1,4 @@
-.\" $Id: copy.man,v 11.13 2014/12/15 21:42:53 tom Exp $
+.\" $Id: copy.man,v 11.14 2019/12/06 21:41:39 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -9,7 +9,7 @@
 .ta 9n 17n 25n 33n 41n 49n
 .ft CW
 ..
-.de Ex
+.de Eh
 .ft \\n(mE
 .fi
 .hy \\n(HY
@@ -91,7 +91,7 @@ source.
 For example,
 .Es
 copy /local/bin /usr/local/bin
-.Ex
+.Eh
 .IP
 will create and copy into the directory "/usr/local/bin/bin"
 if "/usr/local/bin" exists.

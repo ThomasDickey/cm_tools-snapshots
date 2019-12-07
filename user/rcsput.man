@@ -1,4 +1,4 @@
-.\" $Id: rcsput.man,v 11.6 2014/12/15 21:40:15 tom Exp $
+.\" $Id: rcsput.man,v 11.7 2019/12/06 21:46:01 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -9,7 +9,7 @@
 .ta 9n 17n 25n 33n 41n 49n
 .ft CW
 ..
-.de Ex
+.de Eh
 .ft \\n(mE
 .fi
 .hy \\n(HY
@@ -18,7 +18,8 @@
 ..
 .\" Bulleted paragraph
 .de bP
-.IP \(bu 3n
+.ie n  .IP \(bu 4
+.el    .IP \(bu 2
 ..
 .TH RCSPUT 1
 .SH NAME
@@ -62,8 +63,9 @@ check-in date.
 This works well only for large projects in which a
 central project administrator is responsible for controlling the versions
 of source files.
-It does not work well for small projects, for which \fIrcs\fR's primary advantage is its compact storage of multiple versions
-of a file.
+It does not work well for small projects,
+for which \fIrcs\fR's primary advantage
+is its compact storage of multiple versions of a file.
 .PP
 By using the file's modification date as a reference, you can more
 easily back up to a meaningful version \- by date, rather than
@@ -126,7 +128,7 @@ utility to show the versions of the modules which make up a program:
 #ifndef	lint
 static char ident[] = "$\&Id: rcsput.man,v 10.1 92/02/06 10:01:45 dickey Exp $";
 #endif
-.Ex
+.Eh
 .bP
 Periodically archive (with \fBrcsput\fR) those versions
 of files which you wish to keep
