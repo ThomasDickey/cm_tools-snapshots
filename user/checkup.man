@@ -1,4 +1,4 @@
-.\" $Id: checkup.man,v 11.8 2019/12/06 21:43:12 tom Exp $
+.\" $Id: checkup.man,v 11.9 2019/12/21 13:55:49 tom Exp $
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -69,7 +69,7 @@ overrides the convention that filenames written to
 standard output are those for which \fBcheckup\fR finds something to report.
 Instead, the filenames are the complete set of archived
 files selected by the other options.
-Each line contains the revison code for the file, followed by its name.
+Each line contains the revision code for the file, followed by its name.
 This option is used to generate configuration lists from a set of working files.
 .TP
 .B \-d
