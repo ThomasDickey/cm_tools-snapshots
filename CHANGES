@@ -1,3 +1,9 @@
+2019-12-21  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/cm_tools-12.0.spec, package/debian/changelog: bump
+
+	* user/checkup.man: fix typo
+
 2019-12-06  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* package/cm_tools-12.0.spec, package/debian/changelog: bump
