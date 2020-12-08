@@ -1,9 +1,17 @@
-# $Id: makefile.in,v 11.3 2010/07/05 17:13:36 tom Exp $
+# $Id: makefile.in,v 11.4 2020/12/08 20:32:56 tom Exp $
 # support scripts & utilities
 
-
+####### (Environment) ##########################################################
+SHELL		= /bin/sh
+top_srcdir	= @top_srcdir@
+srcdir		= @srcdir@
+VPATH		= @srcdir@
+@SET_MAKE@
 
 @make_include_left@@TD_LIB_rules@/td_lib.mk@make_include_right@
+
+BUILD_INC	= $(TD_INC)
+BUILD_LIB	= $(TD_LIB)
 
 ####### (Standard Lists) #######################################################
 SCRIPTS	= \
@@ -30,6 +38,10 @@ install:
 uninstall:
 
 ####### (Details of Productions) ###############################################
-Z	= $(CC) $(CFLAGS) $(CPP_OPTS) -o $@ $@.c $(LIB_ARGS)
+Z	= $(CC) $(CFLAGS) $(CPP_OPTS) -o $@ $(srcdir)/$@.c $(LIB_ARGS)
 run_tool:	$(RCSDEFS_H) $(LIB_DEPS) ; $Z
 set_date:	$(PTYPES_H)  $(LIB_DEPS) ; $Z
+
+# workaround for VPATH versus suffix-rules
+run_tool.c:
+set_date.c:
