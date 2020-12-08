@@ -1,3 +1,36 @@
+2020-12-08  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/cm_tools-12.0.spec, package/debian/changelog: bump
+
+	* user/makefile.in, src/vcs/src/makefile.in, src/baseline/test/makefile.in, src/baseline/makefile.in, src/checkin/test/makefile.in, src/checkout/src/makefile.in, src/checkout/test/makefile.in, src/checkup/src/makefile.in, src/checkup/test/makefile.in, src/copy/src/makefile.in, src/copy/test/makefile.in, src/link2rcs/src/makefile.in, src/link2rcs/test/makefile.in, support/makefile.in:
+	use VPATH
+
+2020-12-07  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/checkin/makefile.in, src/checkout/makefile.in, src/checkup/makefile.in, src/copy/makefile.in, src/link2rcs/makefile.in, src/permit/makefile.in, src/vcs/makefile.in:
+	use VPATH
+
+	* package/debian/compat: bump
+
+	* src/baseline/src/makefile.in, src/checkin/src/makefile.in, src/permit/src/makefile.in, src/permit/test/makefile.in, src/vcs/test/makefile.in:
+	use VPATH
+
+2020-12-06  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/debian/copyright, COPYING: bump
+
+	* configure: regen
+
+	* aclocal.m4: resync with my-autoconf
+
+	* configure.in: without-X
+
+	* package/cm_tools-12.0.spec, package/debian/changelog: bump
+
+2020-08-16  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* config.guess, config.sub: 2020-08-17
+
 2019-12-21  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* package/cm_tools-12.0.spec, package/debian/changelog: bump

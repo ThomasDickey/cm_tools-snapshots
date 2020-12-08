@@ -2,9 +2,9 @@ Summary: CM Tools for RCS
 %define AppProgram cm_tools
 %define AppLibrary td_lib
 %define AppVersion 12.x
-%define AppRelease 20191221
-%define LibRelease 20191221
-# $Id: cm_tools-12.0.spec,v 1.18 2019/12/21 14:08:53 tom Exp $
+%define AppRelease 20201208
+%define LibRelease 20201208
+# $Id: cm_tools-12.0.spec,v 1.20 2020/12/08 23:03:09 tom Exp $
 Name: %{AppProgram}
 Version: %{AppVersion}
 Release: %{AppRelease}
