@@ -1,3 +1,20 @@
+2022-10-11  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* user/makefile.in: use install-sh if needed
+
+	* package/cm_tools-12.0.spec, package/debian/changelog,
+	  package/debian/copyright, COPYING
+:
+	bump
+
+	* configure: regen
+
+	* aclocal.m4: resync with my-autoconf
+
+2022-08-01  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* config.guess, config.sub: 2022-08-01
+
 2021-03-28  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* package/cm_tools-12.0.spec, package/debian/changelog: bump
@@ -16,24 +33,37 @@
 
 	* aclocal.m4: resync with my-autoconf
 
-	* COPYING, package/cm_tools-12.0.spec, package/debian/changelog, package/debian/copyright:
+	* COPYING, package/cm_tools-12.0.spec, package/debian/changelog,
+	  package/debian/copyright:
 	bump
 
 2020-12-08  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* package/cm_tools-12.0.spec, package/debian/changelog: bump
 
-	* user/makefile.in, src/vcs/src/makefile.in, src/baseline/test/makefile.in, src/baseline/makefile.in, src/checkin/test/makefile.in, src/checkout/src/makefile.in, src/checkout/test/makefile.in, src/checkup/src/makefile.in, src/checkup/test/makefile.in, src/copy/src/makefile.in, src/copy/test/makefile.in, src/link2rcs/src/makefile.in, src/link2rcs/test/makefile.in, support/makefile.in:
+	* user/makefile.in, src/vcs/src/makefile.in,
+	  src/baseline/test/makefile.in, src/baseline/makefile.in,
+	  src/checkin/test/makefile.in, src/checkout/src/makefile.in,
+	  src/checkout/test/makefile.in, src/checkup/src/makefile.in,
+	  src/checkup/test/makefile.in, src/copy/src/makefile.in,
+	  src/copy/test/makefile.in, src/link2rcs/src/makefile.in,
+	  src/link2rcs/test/makefile.in, support/makefile.in
+:
 	use VPATH
 
 2020-12-07  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* src/checkin/makefile.in, src/checkout/makefile.in, src/checkup/makefile.in, src/copy/makefile.in, src/link2rcs/makefile.in, src/permit/makefile.in, src/vcs/makefile.in:
+	* src/checkin/makefile.in, src/checkout/makefile.in,
+	  src/checkup/makefile.in, src/copy/makefile.in,
+	  src/link2rcs/makefile.in, src/permit/makefile.in, src/vcs/makefile.in
+:
 	use VPATH
 
 	* package/debian/compat: bump
 
-	* src/baseline/src/makefile.in, src/checkin/src/makefile.in, src/permit/src/makefile.in, src/permit/test/makefile.in, src/vcs/test/makefile.in:
+	* src/baseline/src/makefile.in, src/checkin/src/makefile.in,
+	  src/permit/src/makefile.in, src/permit/test/makefile.in,
+	  src/vcs/test/makefile.in:
 	use VPATH
 
 2020-12-06  Thomas E. Dickey  <dickey@invisible-island.net>
@@ -62,7 +92,9 @@
 
 	* package/cm_tools-12.0.spec, package/debian/changelog: bump
 
-	* user/rcsput.man, user/rcsget.man, user/permit.man, user/link2rcs.man, user/checkup.man, user/checkin.man, user/copy.man, user/checkout.man, user/baseline.man:
+	* user/rcsput.man, user/rcsget.man, user/permit.man, user/link2rcs.man,
+	  user/checkup.man, user/checkin.man, user/copy.man, user/checkout.man,
+	  user/baseline.man:
 	check-manpage fixes (rename Ex to Eh for consistency, other errata)
 
 2019-12-05  Thomas E. Dickey  <dickey@invisible-island.net>
@@ -80,12 +112,15 @@
 
 2019-12-04  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* src/baseline/src/baseline.c, src/permit/src/permit.c, src/vcs/src/vcs.c:
+	* src/baseline/src/baseline.c, src/permit/src/permit.c, src/vcs/src/vcs.c
+:
 	use show_argv() to replace the remaining catarg/shoarg
 
 2019-12-03  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* src/baseline/src/baseline.c, src/vcs/src/vcs.h, src/vcs/src/vcs.c, src/vcs/src/unlock.c, src/vcs/src/insert.c, src/permit/src/permit.c:
+	* src/baseline/src/baseline.c, src/vcs/src/vcs.h, src/vcs/src/vcs.c,
+	  src/vcs/src/unlock.c, src/vcs/src/insert.c, src/permit/src/permit.c
+:
 	replace most uses of catarg() with executev()
 
 2019-12-02  Thomas E. Dickey  <dickey@invisible-island.net>
@@ -104,10 +139,13 @@
 	* support/testinit.sh:
 	use POSIX locale for tests, since one of the permit-tests confuses GNU sed.
 
-	* src/checkup/test/run_test.sh, src/baseline/test/run_test.sh, support/testpath.sh, src/copy/test/run_test.sh:
+	* src/checkup/test/run_test.sh, src/baseline/test/run_test.sh,
+	  support/testpath.sh, src/copy/test/run_test.sh
+:
 	generalize the PATH initialization
 
-	* package/debian/compat, package/cm_tools-12.0.spec, package/debian/copyright:
+	* package/debian/compat, package/cm_tools-12.0.spec,
+	  package/debian/copyright:
 	bump
 
 	* configure: regen
@@ -132,7 +170,8 @@
 
 2018-01-07  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* package/debian/copyright, COPYING, package/debian/changelog, package/cm_tools-12.0.spec:
+	* package/debian/copyright, COPYING, package/debian/changelog,
+	  package/cm_tools-12.0.spec:
 	bump
 
 	* configure: regen
@@ -147,7 +186,8 @@
 
 2015-07-04  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* package/debian/copyright, package/debian/changelog, package/cm_tools-12.0.spec:
+	* package/debian/copyright, package/debian/changelog,
+	  package/cm_tools-12.0.spec:
 	bump
 
 	* configure: regen
@@ -166,15 +206,23 @@
 
 2014-12-15  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* user/copy.man, user/vcs.man, user/rcsput.man, user/rcsget.man, user/permit.man, user/link2rcs.man, user/checkup.man, user/checkout.man, user/baseline.man, user/checkin.man:
+	* user/copy.man, user/vcs.man, user/rcsput.man, user/rcsget.man,
+	  user/permit.man, user/link2rcs.man, user/checkup.man,
+	  user/checkout.man, user/baseline.man, user/checkin.man
+:
 	formatting fixes
 
 2014-12-14  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* user/baseline.man, user/checkin.man, user/checkout.man, user/checkup.man, user/copy.man, user/link2rcs.man, user/permit.man, user/rcsget.man, user/rcsput.man, user/vcs.man:
+	* user/baseline.man, user/checkin.man, user/checkout.man,
+	  user/checkup.man, user/copy.man, user/link2rcs.man, user/permit.man,
+	  user/rcsget.man, user/rcsput.man, user/vcs.man
+:
 	s/UNIX/POSIX/g
 
-	* user/baseline.man, user/checkin.man, user/checkout.man, user/checkup.man, user/copy.man, user/link2rcs.man, user/rcsput.man, user/permit.man:
+	* user/baseline.man, user/checkin.man, user/checkout.man,
+	  user/checkup.man, user/copy.man, user/link2rcs.man, user/rcsput.man,
+	  user/permit.man:
 	The last change to manpages (to work around groff's incompatibilities with
 	other manpage macros) did not work with its html conversion.  Adapt features
 	from groff's EX/EE macros to fix this.
@@ -236,7 +284,8 @@
 
 	* src/checkout/src/rcsget.c: pass-thru the "-c" option to checkout
 
-	* package/debian/copyright, package/debian/changelog, package/cm_tools-12.0.spec:
+	* package/debian/copyright, package/debian/changelog,
+	  package/cm_tools-12.0.spec:
 	bump
 
 	* configure:
@@ -262,7 +311,9 @@
 	* user/checkin.man: document -M option
 	formatting fixes
 
-	* user/checkout.man, user/permit.man, user/link2rcs.man, user/copy.man, user/checkup.man, user/rcsput.man:
+	* user/checkout.man, user/permit.man, user/link2rcs.man, user/copy.man,
+	  user/checkup.man, user/rcsput.man
+:
 	formatting fixes, renaming macros which groff has altered incompatibly
 
 	* src/checkin/src/checkin.c:
@@ -274,7 +325,10 @@
 
 2012-01-07  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* user/baseline.man, user/checkin.man, user/checkout.man, user/checkup.man, user/copy.man, user/permit.man, user/rcsget.man, user/rcsput.man, user/vcs.man:
+	* user/baseline.man, user/checkin.man, user/checkout.man,
+	  user/checkup.man, user/copy.man, user/permit.man, user/rcsget.man,
+	  user/rcsput.man, user/vcs.man
+:
 	update email address
 
 	* user/link2rcs.man: document use of DEC_CM_LOOKUP variable
@@ -337,15 +391,37 @@
 	* src/link2rcs/test/run_test.sh:
 	this shell script is locale-sensitive - force it to POSIX
 
-	* src/link2rcs/src/link2rcs.c, src/checkup/src/checkup.c, src/checkin/src/rcsput.c, src/copy/src/copy.c, src/checkout/src/checkout.c, src/checkin/src/checkin.c:
+	* src/link2rcs/src/link2rcs.c, src/checkup/src/checkup.c,
+	  src/checkin/src/rcsput.c, src/copy/src/copy.c,
+	  src/checkout/src/checkout.c, src/checkin/src/checkin.c
+:
 	stricter gcc warnings
 
-	* support/makefile.in, user/makefile.in, src/vcs/test/makefile.in, src/vcs/makefile.in, src/vcs/src/makefile.in, src/link2rcs/src/makefile.in, src/link2rcs/test/makefile.in, src/makefile.in, src/permit/makefile.in, src/permit/src/makefile.in, src/permit/test/makefile.in, src/link2rcs/makefile.in, src/copy/test/makefile.in, src/copy/src/makefile.in, src/copy/makefile.in, src/checkup/makefile.in, src/checkup/src/makefile.in, src/checkup/test/makefile.in, bin/makefile.in, makefile.in, src/baseline/makefile.in, src/baseline/src/makefile.in, src/baseline/test/makefile.in, src/checkin/makefile.in, src/checkin/src/makefile.in, src/checkin/test/makefile.in, src/checkout/makefile.in, src/checkout/src/makefile.in, src/checkout/test/makefile.in:
+	* support/makefile.in, user/makefile.in, src/vcs/test/makefile.in,
+	  src/vcs/makefile.in, src/vcs/src/makefile.in,
+	  src/link2rcs/src/makefile.in, src/link2rcs/test/makefile.in,
+	  src/makefile.in, src/permit/makefile.in, src/permit/src/makefile.in,
+	  src/permit/test/makefile.in, src/link2rcs/makefile.in,
+	  src/copy/test/makefile.in, src/copy/src/makefile.in,
+	  src/copy/makefile.in, src/checkup/makefile.in,
+	  src/checkup/src/makefile.in, src/checkup/test/makefile.in,
+	  bin/makefile.in, makefile.in, src/baseline/makefile.in,
+	  src/baseline/src/makefile.in, src/baseline/test/makefile.in,
+	  src/checkin/makefile.in, src/checkin/src/makefile.in,
+	  src/checkin/test/makefile.in, src/checkout/makefile.in,
+	  src/checkout/src/makefile.in, src/checkout/test/makefile.in
+:
 	s/run_test/check/
 
 2010-07-04  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* src/checkin/src/checkin.c, src/checkup/src/checkup.c, src/link2rcs/src/link2rcs.c, src/vcs/src/insert.c, src/vcs/src/vcs.c, support/set_date.c, support/run_tool.c, src/vcs/src/delete.c, src/vcs/src/vcs.h, src/baseline/src/baseline.c, src/permit/src/permit.c, src/copy/src/copy.c, src/checkout/src/checkout.c, src/checkout/src/rcsget.c, src/checkin/src/rcsput.c:
+	* src/checkin/src/checkin.c, src/checkup/src/checkup.c,
+	  src/link2rcs/src/link2rcs.c, src/vcs/src/insert.c, src/vcs/src/vcs.c,
+	  support/set_date.c, support/run_tool.c, src/vcs/src/delete.c,
+	  src/vcs/src/vcs.h, src/baseline/src/baseline.c,
+	  src/permit/src/permit.c, src/copy/src/copy.c,
+	  src/checkout/src/checkout.c, src/checkout/src/rcsget.c,
+	  src/checkin/src/rcsput.c:
 	stricter gcc warnings
 
 2010-07-03  Thomas E. Dickey  <dickey@invisible-island.net>
@@ -361,7 +437,9 @@
 
 2010-07-02  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* package/debian/watch, package/debian/rules, package/debian/copyright, package/debian/control, package/debian/changelog, package/debian/source/format:
+	* package/debian/watch, package/debian/rules, package/debian/copyright,
+	  package/debian/control, package/debian/changelog,
+	  package/debian/source/format:
 	RCS_BASE
 
 2010-06-30  Thomas E. Dickey  <dickey@invisible-island.net>
@@ -373,12 +451,20 @@
 	* configure.in:
 	add --enable-warnings here, since compiler/options may differ from td_lib
 
-	* src/baseline/src/makefile.in, src/checkin/src/makefile.in, src/checkout/src/makefile.in, src/checkup/src/makefile.in, src/copy/src/makefile.in, src/link2rcs/src/makefile.in, src/permit/src/makefile.in, src/vcs/src/makefile.in:
+	* src/baseline/src/makefile.in, src/checkin/src/makefile.in,
+	  src/checkout/src/makefile.in, src/checkup/src/makefile.in,
+	  src/copy/src/makefile.in, src/link2rcs/src/makefile.in,
+	  src/permit/src/makefile.in, src/vcs/src/makefile.in
+:
 	allow for compiler/options different from td_lib
 
 	* COPYING: update
 
-	* src/baseline/src/makefile.in, src/checkin/src/makefile.in, src/checkout/src/makefile.in, src/checkup/src/makefile.in, src/copy/src/makefile.in, src/link2rcs/src/makefile.in, src/permit/src/makefile.in, src/vcs/src/makefile.in:
+	* src/baseline/src/makefile.in, src/checkin/src/makefile.in,
+	  src/checkout/src/makefile.in, src/checkup/src/makefile.in,
+	  src/copy/src/makefile.in, src/link2rcs/src/makefile.in,
+	  src/permit/src/makefile.in, src/vcs/src/makefile.in
+:
 	add CC/CFLAGS substitutions, no need to use same settings as td_lib
 
 	* package/cm_tools-12.0.spec: RCS_BASE
@@ -424,7 +510,13 @@
 
 2004-03-07  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* src/checkin/src/rcsput.c, src/checkin/src/checkin.c, src/vcs/src/delete.c, src/vcs/src/insert.c, src/vcs/src/unlock.c, src/vcs/src/vcs.c, src/vcs/src/vcs.h, src/permit/src/permit.c, src/link2rcs/src/link2rcs.c, src/copy/src/copy.c, src/checkup/src/checkup.c, src/checkout/src/rcsget.c, src/checkout/src/checkout.c, src/baseline/src/baseline.c:
+	* src/checkin/src/rcsput.c, src/checkin/src/checkin.c,
+	  src/vcs/src/delete.c, src/vcs/src/insert.c, src/vcs/src/unlock.c,
+	  src/vcs/src/vcs.c, src/vcs/src/vcs.h, src/permit/src/permit.c,
+	  src/link2rcs/src/link2rcs.c, src/copy/src/copy.c,
+	  src/checkup/src/checkup.c, src/checkout/src/rcsget.c,
+	  src/checkout/src/checkout.c, src/baseline/src/baseline.c
+:
 	remove K&R support, indent'd
 
 	* makefile.in: remove certify
@@ -443,7 +535,9 @@
 
 2002-07-05  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* src/checkin/src/checkin.c, src/checkup/src/checkup.c, src/copy/src/copy.c, src/link2rcs/src/link2rcs.c:
+	* src/checkin/src/checkin.c, src/checkup/src/checkup.c,
+	  src/copy/src/copy.c, src/link2rcs/src/link2rcs.c
+:
 	change ifdef convention to work with "gcc -Wundef"
 
 2002-07-03  Thomas E. Dickey  <dickey@invisible-island.net>
@@ -463,7 +557,8 @@
 
 	* src/link2rcs/src/link2rcs.c, src/permit/src/permit.c: gcc warnings
 
-	* src/baseline/src/baseline.c, src/checkin/src/checkin.c, src/checkup/src/checkup.c:
+	* src/baseline/src/baseline.c, src/checkin/src/checkin.c,
+	  src/checkup/src/checkup.c:
 	use UCH() to fix char-subscript warnings in gcc.
 
 2002-06-29  Thomas E. Dickey  <dickey@invisible-island.net>
@@ -485,7 +580,11 @@
 
 2001-12-11  Thomas E. Dickey  <dickey@invisible-island.net>
 
-	* src/vcs/src/insert.c, src/vcs/src/vcs.c, src/permit/src/permit.c, src/link2rcs/src/link2rcs.c, src/checkup/src/checkup.c, src/checkout/src/rcsget.c, src/checkin/src/rcsput.c, src/checkin/src/checkin.c, src/baseline/src/baseline.c:
+	* src/vcs/src/insert.c, src/vcs/src/vcs.c, src/permit/src/permit.c,
+	  src/link2rcs/src/link2rcs.c, src/checkup/src/checkup.c,
+	  src/checkout/src/rcsget.c, src/checkin/src/rcsput.c,
+	  src/checkin/src/checkin.c, src/baseline/src/baseline.c
+:
 	change interface to rcs_dir()
 
 2001-08-28  Thomas E. Dickey  <dickey@invisible-island.net>
@@ -557,7 +656,10 @@
 
 	* src/link2rcs/test/run_test.sh: add SCCS test-case
 
-	* src/copy/src/copy.c, src/checkup/src/checkup.c, src/checkout/src/rcsget.c, src/checkout/src/checkout.c, src/checkin/src/rcsput.c, src/checkin/src/checkin.c, src/baseline/src/baseline.c:
+	* src/copy/src/copy.c, src/checkup/src/checkup.c,
+	  src/checkout/src/rcsget.c, src/checkout/src/checkout.c,
+	  src/checkin/src/rcsput.c, src/checkin/src/checkin.c,
+	  src/baseline/src/baseline.c:
 	signed/unsigned-nits
 
 1999-01-15  Thomas E. Dickey  <dickey@clark.net>
@@ -590,7 +692,20 @@
 
 1997-09-28  Thomas E. Dickey  <dickey@clark.net>
 
-	* makefile.in, bin/makefile.in, certify/makefile.in, src/baseline/makefile.in, src/checkin/makefile.in, src/checkout/makefile.in, src/checkup/makefile.in, src/copy/makefile.in, src/link2rcs/makefile.in, src/makefile.in, src/permit/makefile.in, src/vcs/makefile.in, support/makefile.in, user/makefile.in, src/baseline/src/makefile.in, src/baseline/test/makefile.in, src/checkin/src/makefile.in, src/checkin/test/makefile.in, src/checkout/src/makefile.in, src/checkout/test/makefile.in, src/checkup/src/makefile.in, src/checkup/test/makefile.in, src/copy/src/makefile.in, src/copy/test/makefile.in, src/link2rcs/src/makefile.in, src/link2rcs/test/makefile.in, src/permit/src/makefile.in, src/permit/test/makefile.in, src/vcs/src/makefile.in, src/vcs/test/makefile.in:
+	* makefile.in, bin/makefile.in, certify/makefile.in,
+	  src/baseline/makefile.in, src/checkin/makefile.in,
+	  src/checkout/makefile.in, src/checkup/makefile.in,
+	  src/copy/makefile.in, src/link2rcs/makefile.in, src/makefile.in,
+	  src/permit/makefile.in, src/vcs/makefile.in, support/makefile.in,
+	  user/makefile.in, src/baseline/src/makefile.in,
+	  src/baseline/test/makefile.in, src/checkin/src/makefile.in,
+	  src/checkin/test/makefile.in, src/checkout/src/makefile.in,
+	  src/checkout/test/makefile.in, src/checkup/src/makefile.in,
+	  src/checkup/test/makefile.in, src/copy/src/makefile.in,
+	  src/copy/test/makefile.in, src/link2rcs/src/makefile.in,
+	  src/link2rcs/test/makefile.in, src/permit/src/makefile.in,
+	  src/permit/test/makefile.in, src/vcs/src/makefile.in,
+	  src/vcs/test/makefile.in:
 	fix:sources-rule
 
 1997-09-14  Thomas E. Dickey  <dickey@clark.net>
@@ -601,7 +716,10 @@
 
 	* user/copy.man: -U option
 
-	* user/baseline.man, user/checkin.man, user/checkout.man, user/checkup.man, user/copy.man, user/ded.man, user/link2rcs.man, user/permit.man, user/rcsget.man, user/rcsput.man, user/vcs.man:
+	* user/baseline.man, user/checkin.man, user/checkout.man,
+	  user/checkup.man, user/copy.man, user/ded.man, user/link2rcs.man,
+	  user/permit.man, user/rcsget.man, user/rcsput.man, user/vcs.man
+:
 	my-email-address
 
 	* user/makefile.in: renamed run_tests to run_test
@@ -630,7 +748,10 @@
 
 	* bin/makefile.in: fixes for install-rule
 
-	* src/baseline/makefile.in, src/checkin/makefile.in, src/checkout/makefile.in, src/checkup/makefile.in, src/copy/makefile.in, src/link2rcs/makefile.in, src/permit/makefile.in, src/vcs/makefile.in:
+	* src/baseline/makefile.in, src/checkin/makefile.in,
+	  src/checkout/makefile.in, src/checkup/makefile.in,
+	  src/copy/makefile.in, src/link2rcs/makefile.in,
+	  src/permit/makefile.in, src/vcs/makefile.in:
 	install-rule
 
 	* user/makefile.in: make install-rule
@@ -643,16 +764,35 @@
 
 	* src/checkup/src/makefile.in: $B, $(TD_INC)
 
-	* src/vcs/src/makefile.in, src/permit/src/makefile.in, src/link2rcs/src/makefile.in, src/copy/src/makefile.in, src/checkin/src/makefile.in, src/checkout/src/makefile.in, src/baseline/src/makefile.in:
+	* src/vcs/src/makefile.in, src/permit/src/makefile.in,
+	  src/link2rcs/src/makefile.in, src/copy/src/makefile.in,
+	  src/checkin/src/makefile.in, src/checkout/src/makefile.in,
+	  src/baseline/src/makefile.in:
 	$B
 
-	* src/checkin/makefile.in, src/checkout/makefile.in, src/checkup/makefile.in, src/copy/makefile.in, src/link2rcs/makefile.in, src/permit/makefile.in, src/vcs/makefile.in:
+	* src/checkin/makefile.in, src/checkout/makefile.in,
+	  src/checkup/makefile.in, src/copy/makefile.in,
+	  src/link2rcs/makefile.in, src/permit/makefile.in, src/vcs/makefile.in
+:
 	$(LIB_DEPS)
 
 	* src/baseline/makefile.in: $B
 	$(LIB_DEPS)
 
-	* src/vcs/makefile.in, src/permit/makefile.in, src/makefile.in, src/link2rcs/makefile.in, src/copy/makefile.in, src/checkout/makefile.in, src/checkup/makefile.in, src/checkin/makefile.in, makefile.in, src/baseline/makefile.in, user/makefile.in, support/makefile.in, src/vcs/test/makefile.in, src/vcs/src/makefile.in, src/permit/test/makefile.in, src/permit/src/makefile.in, src/link2rcs/test/makefile.in, src/link2rcs/src/makefile.in, src/copy/src/makefile.in, src/copy/test/makefile.in, src/checkup/test/makefile.in, src/checkup/src/makefile.in, src/checkout/test/makefile.in, src/checkout/src/makefile.in, src/checkin/test/makefile.in, src/checkin/src/makefile.in, src/baseline/test/makefile.in, src/baseline/src/makefile.in, certify/makefile.in, configure.in, aclocal.m4:
+	* src/vcs/makefile.in, src/permit/makefile.in, src/makefile.in,
+	  src/link2rcs/makefile.in, src/copy/makefile.in,
+	  src/checkout/makefile.in, src/checkup/makefile.in,
+	  src/checkin/makefile.in, makefile.in, src/baseline/makefile.in,
+	  user/makefile.in, support/makefile.in, src/vcs/test/makefile.in,
+	  src/vcs/src/makefile.in, src/permit/test/makefile.in,
+	  src/permit/src/makefile.in, src/link2rcs/test/makefile.in,
+	  src/link2rcs/src/makefile.in, src/copy/src/makefile.in,
+	  src/copy/test/makefile.in, src/checkup/test/makefile.in,
+	  src/checkup/src/makefile.in, src/checkout/test/makefile.in,
+	  src/checkout/src/makefile.in, src/checkin/test/makefile.in,
+	  src/checkin/src/makefile.in, src/baseline/test/makefile.in,
+	  src/baseline/src/makefile.in, certify/makefile.in, configure.in,
+	  aclocal.m4:
 	RCS_BASE
 
 1997-09-08  Thomas E. Dickey  <dickey@clark.net>
@@ -714,7 +854,9 @@
 
 1995-01-28  Thomas E. Dickey  <dickey@clark.net>
 
-	* src/vcs/src/Makefile, src/vcs/Makefile, src/permit/src/Makefile, src/permit/Makefile, support/Makefile:
+	* src/vcs/src/Makefile, src/vcs/Makefile, src/permit/src/Makefile,
+	  src/permit/Makefile, support/Makefile
+:
 	renamed-test-rule
 
 	* src/copy/src/copy.c:
@@ -755,7 +897,12 @@
 
 	* certify/release.txt: note about CmVision
 
-	* src/checkin/test/case1_b.ref, src/checkin/test/case2_a.ref, src/checkin/test/case2_b.ref, src/checkin/test/case2_c.ref, src/checkin/test/case2_d.ref, src/checkin/test/case3_a.ref, src/checkin/test/case3_b.ref, src/checkin/test/case3_c.ref, src/checkin/test/case3_d.ref, src/checkin/test/case3_e.ref, src/checkin/test/case3_f.ref:
+	* src/checkin/test/case1_b.ref, src/checkin/test/case2_a.ref,
+	  src/checkin/test/case2_b.ref, src/checkin/test/case2_c.ref,
+	  src/checkin/test/case2_d.ref, src/checkin/test/case3_a.ref,
+	  src/checkin/test/case3_b.ref, src/checkin/test/case3_c.ref,
+	  src/checkin/test/case3_d.ref, src/checkin/test/case3_e.ref,
+	  src/checkin/test/case3_f.ref:
 	*** empty log message ***
 
 	* src/checkin/test/case1_a.ref: comment-leader is obsolete in rcs 5.6.7
@@ -764,22 +911,36 @@
 
 	* src/baseline/test/Makefile: updated lib-symbols
 
-	* src/checkin/Makefile, src/checkin/test/Makefile, src/vcs/test/Makefile, src/vcs/Makefile, support/Makefile, user/Makefile, src/checkout/test/Makefile, src/checkup/test/Makefile, src/copy/test/Makefile, src/link2rcs/test/Makefile, src/permit/test/Makefile, bin/Makefile, certify/Makefile, src/Makefile, src/baseline/test/Makefile:
+	* src/checkin/Makefile, src/checkin/test/Makefile,
+	  src/vcs/test/Makefile, src/vcs/Makefile, support/Makefile,
+	  user/Makefile, src/checkout/test/Makefile, src/checkup/test/Makefile,
+	  src/copy/test/Makefile, src/link2rcs/test/Makefile,
+	  src/permit/test/Makefile, bin/Makefile, certify/Makefile,
+	  src/Makefile, src/baseline/test/Makefile:
 	*** empty log message ***
 
 	* Makefile: updates for autoconf-version of td_lib
 
-	* src/link2rcs/src/Makefile, src/vcs/src/Makefile, src/permit/src/Makefile, src/permit/src/permit.c:
+	* src/link2rcs/src/Makefile, src/vcs/src/Makefile,
+	  src/permit/src/Makefile, src/permit/src/permit.c
+:
 	*** empty log message ***
 
 	* src/permit/src/permit.c: module-id
 
-	* src/permit/Makefile, src/link2rcs/Makefile, src/copy/src/Makefile, src/copy/src/copy.c, src/copy/Makefile, src/checkup/src/checkup.c, src/checkup/src/Makefile, src/checkup/Makefile, src/checkout/src/rcsget.c, src/checkout/src/checkout.c, src/checkout/Makefile, src/checkout/src/Makefile, src/checkin/src/rcsput.c:
+	* src/permit/Makefile, src/link2rcs/Makefile, src/copy/src/Makefile,
+	  src/copy/src/copy.c, src/copy/Makefile, src/checkup/src/checkup.c,
+	  src/checkup/src/Makefile, src/checkup/Makefile,
+	  src/checkout/src/rcsget.c, src/checkout/src/checkout.c,
+	  src/checkout/Makefile, src/checkout/src/Makefile,
+	  src/checkin/src/rcsput.c:
 	*** empty log message ***
 
 	* src/checkin/src/rcsput.c: module-id
 
-	* src/checkin/src/Makefile, src/checkin/src/checkin.c, src/baseline/src/Makefile, src/baseline/Makefile:
+	* src/checkin/src/Makefile, src/checkin/src/checkin.c,
+	  src/baseline/src/Makefile, src/baseline/Makefile
+:
 	*** empty log message ***
 
 	* src/baseline/src/baseline.c: changes for autoconf-version of td_lib
@@ -885,17 +1046,23 @@
 
 1993-09-22  dickey@software.org
 
-	* src/permit/src/permit.c, src/checkup/src/checkup.c, src/checkout/src/rcsget.c, src/checkout/src/checkout.c:
+	* src/permit/src/permit.c, src/checkup/src/checkup.c,
+	  src/checkout/src/rcsget.c, src/checkout/src/checkout.c
+:
 	gcc-warnings
 
 	* src/checkin/src/rcsput.c: gcc warnings
 
-	* src/baseline/src/baseline.c, support/set_date.c, src/checkout/src/Makefile, src/checkup/src/Makefile, src/copy/src/Makefile, src/copy/src/copy.c, src/link2rcs/src/Makefile:
+	* src/baseline/src/baseline.c, support/set_date.c,
+	  src/checkout/src/Makefile, src/checkup/src/Makefile,
+	  src/copy/src/Makefile, src/copy/src/copy.c, src/link2rcs/src/Makefile
+:
 	gcc-warnings
 
 	* src/checkin/src/Makefile: use LINK rather than CC symbol
 
-	* src/baseline/src/Makefile, src/permit/src/Makefile, src/vcs/src/Makefile:
+	* src/baseline/src/Makefile, src/permit/src/Makefile,
+	  src/vcs/src/Makefile:
 	gcc-warnings
 
 1993-09-03  dickey@software.org
@@ -928,7 +1095,24 @@
 
 1993-04-27  dickey@software.org
 
-	* src/vcs/test/run_test.sh, src/vcs/src/Makefile, src/permit/test/run_test.sh, src/link2rcs/test/case2.sh, src/link2rcs/test/case1.sh, src/link2rcs/test/run_test.sh, src/link2rcs/test/Makefile, src/checkout/test/run_test.sh, src/checkin/test/run_test.sh, src/baseline/test/run_test.sh, src/checkout/src/checkout.c, src/checkin/src/checkin.c, src/checkin/src/rcsput.c, src/vcs/test/Makefile, src/permit/test/Makefile, src/baseline/Makefile, src/checkin/Makefile, src/checkout/Makefile, src/checkup/Makefile, src/copy/Makefile, src/link2rcs/Makefile, src/permit/Makefile, src/vcs/Makefile, support/Makefile, certify/Makefile, Makefile, src/baseline/test/Makefile, src/checkin/src/Makefile, src/checkin/test/Makefile, src/checkout/src/Makefile, src/checkout/test/Makefile, bin/Makefile, src/Makefile, src/baseline/src/Makefile, src/link2rcs/src/Makefile, src/permit/src/Makefile, user/Makefile, src/copy/src/Makefile, src/copy/test/Makefile, src/checkup/src/Makefile, src/checkup/test/Makefile:
+	* src/vcs/test/run_test.sh, src/vcs/src/Makefile,
+	  src/permit/test/run_test.sh, src/link2rcs/test/case2.sh,
+	  src/link2rcs/test/case1.sh, src/link2rcs/test/run_test.sh,
+	  src/link2rcs/test/Makefile, src/checkout/test/run_test.sh,
+	  src/checkin/test/run_test.sh, src/baseline/test/run_test.sh,
+	  src/checkout/src/checkout.c, src/checkin/src/checkin.c,
+	  src/checkin/src/rcsput.c, src/vcs/test/Makefile,
+	  src/permit/test/Makefile, src/baseline/Makefile, src/checkin/Makefile,
+	  src/checkout/Makefile, src/checkup/Makefile, src/copy/Makefile,
+	  src/link2rcs/Makefile, src/permit/Makefile, src/vcs/Makefile,
+	  support/Makefile, certify/Makefile, Makefile,
+	  src/baseline/test/Makefile, src/checkin/src/Makefile,
+	  src/checkin/test/Makefile, src/checkout/src/Makefile,
+	  src/checkout/test/Makefile, bin/Makefile, src/Makefile,
+	  src/baseline/src/Makefile, src/link2rcs/src/Makefile,
+	  src/permit/src/Makefile, user/Makefile, src/copy/src/Makefile,
+	  src/copy/test/Makefile, src/checkup/src/Makefile,
+	  src/checkup/test/Makefile:
 	shorten-filenames
 
 1992-12-21  dickey@software.org
@@ -1001,7 +1185,9 @@
 	* src/link2rcs/test/Makefile, src/link2rcs/test/run_test.sh:
 	split out test-cases
 
-	* src/link2rcs/test/case1.sh, src/link2rcs/test/case2.ref, src/link2rcs/test/case1.ref, src/link2rcs/test/case2.sh, src/link2rcs/test/listtree.sh:
+	* src/link2rcs/test/case1.sh, src/link2rcs/test/case2.ref,
+	  src/link2rcs/test/case1.ref, src/link2rcs/test/case2.sh,
+	  src/link2rcs/test/listtree.sh:
 	RCS_BASE
 
 	* src/permit/test/Makefile: split test-cases out of 'run_tests.sh'
@@ -1009,7 +1195,13 @@
 	* src/permit/test/run_test.sh:
 	rewrote so I can do regression test w/o looking at this script's output
 
-	* src/permit/test/case5.ref, src/permit/test/case4.ref, src/permit/test/case3.ref, src/permit/test/case2.ref, src/permit/test/case1.ref, src/permit/test/case0.ref, src/permit/test/case0.sh, src/permit/test/case5.sh, src/permit/test/case4.sh, src/permit/test/case3.sh, src/permit/test/case2.sh, src/permit/test/case1.sh:
+	* src/permit/test/case5.ref, src/permit/test/case4.ref,
+	  src/permit/test/case3.ref, src/permit/test/case2.ref,
+	  src/permit/test/case1.ref, src/permit/test/case0.ref,
+	  src/permit/test/case0.sh, src/permit/test/case5.sh,
+	  src/permit/test/case4.sh, src/permit/test/case3.sh,
+	  src/permit/test/case2.sh, src/permit/test/case1.sh
+:
 	RCS_BASE
 
 	* support/testpath.sh: forgot to put the local tool into the path...
@@ -1094,7 +1286,10 @@
 
 1992-11-11  dickey@software.org
 
-	* src/checkin/test/case3_a.ref, src/checkin/test/case3_b.ref, src/checkin/test/case3_c.ref, src/checkin/test/case3_d.ref, src/checkin/test/case3_e.ref, src/checkin/test/case3_f.ref:
+	* src/checkin/test/case3_a.ref, src/checkin/test/case3_b.ref,
+	  src/checkin/test/case3_c.ref, src/checkin/test/case3_d.ref,
+	  src/checkin/test/case3_e.ref, src/checkin/test/case3_f.ref
+:
 	RCS-5.6.4-beta
 
 	* src/checkin/test/clean.sh: RCS_BASE
@@ -1103,7 +1298,10 @@
 	for RCS 4, don't invoke 'ci' as admin-only.
 	it would result in the wrong user for a lock.
 
-	* src/checkin/test/case3_f.ref, src/checkin/test/case3_e.ref, src/checkin/test/case3_d.ref, src/checkin/test/case3_c.ref, src/checkin/test/case3_b.ref, src/checkin/test/case3_a.ref:
+	* src/checkin/test/case3_f.ref, src/checkin/test/case3_e.ref,
+	  src/checkin/test/case3_d.ref, src/checkin/test/case3_c.ref,
+	  src/checkin/test/case3_b.ref, src/checkin/test/case3_a.ref
+:
 	access-list
 
 	* src/checkin/src/checkin.c:
@@ -1239,7 +1437,9 @@
 
 	* src/checkin/test/run_test.sh: use 'run_tool' to invoke rlog
 
-	* src/baseline/test/run_tool.c, src/checkin/test/run_tool.c, src/checkout/test/run_tool.c, support/run_tool.c:
+	* src/baseline/test/run_tool.c, src/checkin/test/run_tool.c,
+	  src/checkout/test/run_tool.c, support/run_tool.c
+:
 	RCS_BASE
 
 1992-10-27  dickey@software.org
@@ -1263,7 +1463,9 @@
 
 1992-10-26  dickey@software.org
 
-	* src/checkin/test/case2_c.ref, src/checkin/test/case2_b.ref, src/checkin/test/case2_a.ref, src/checkin/test/case1_b.ref, src/checkin/test/case1_a.ref:
+	* src/checkin/test/case2_c.ref, src/checkin/test/case2_b.ref,
+	  src/checkin/test/case2_a.ref, src/checkin/test/case1_b.ref,
+	  src/checkin/test/case1_a.ref:
 	RCS-5.6.4-beta
 
 	* src/checkin/src/checkin.c:
@@ -1288,14 +1490,28 @@
 
 	* src/checkin/src/Makefile, src/checkout/src/Makefile: clutter
 
-	* src/checkup/src/Makefile, src/copy/src/Makefile, src/link2rcs/src/Makefile, src/permit/src/Makefile:
+	* src/checkup/src/Makefile, src/copy/src/Makefile,
+	  src/link2rcs/src/Makefile, src/permit/src/Makefile
+:
 	clutter, lint-def
 
 	* Makefile: got rid of dependent 'makefile' rules
 
 1992-10-09  dickey@software.org
 
-	* src/vcs/test/Makefile, src/permit/test/Makefile, src/permit/src/Makefile, src/vcs/Makefile, src/permit/Makefile, src/link2rcs/Makefile, src/copy/Makefile, src/checkout/test/Makefile, src/checkup/Makefile, src/checkout/src/Makefile, src/checkout/Makefile, src/checkin/src/Makefile, src/checkin/Makefile, src/baseline/Makefile, src/Makefile, bin/Makefile, user/Makefile, src/vcs/src/Makefile, src/link2rcs/test/Makefile, src/link2rcs/src/Makefile, src/copy/test/Makefile, src/copy/src/Makefile, src/checkup/test/Makefile, src/checkup/src/Makefile, src/checkin/test/Makefile, src/baseline/test/Makefile, src/baseline/src/Makefile, certify/Makefile, Makefile:
+	* src/vcs/test/Makefile, src/permit/test/Makefile,
+	  src/permit/src/Makefile, src/vcs/Makefile, src/permit/Makefile,
+	  src/link2rcs/Makefile, src/copy/Makefile, src/checkout/test/Makefile,
+	  src/checkup/Makefile, src/checkout/src/Makefile,
+	  src/checkout/Makefile, src/checkin/src/Makefile, src/checkin/Makefile,
+	  src/baseline/Makefile, src/Makefile, bin/Makefile, user/Makefile,
+	  src/vcs/src/Makefile, src/link2rcs/test/Makefile,
+	  src/link2rcs/src/Makefile, src/copy/test/Makefile,
+	  src/copy/src/Makefile, src/checkup/test/Makefile,
+	  src/checkup/src/Makefile, src/checkin/test/Makefile,
+	  src/baseline/test/Makefile, src/baseline/src/Makefile,
+	  certify/Makefile, Makefile
+:
 	split off CM_LIBRARY
 
 1992-09-04  dickey@software.org
@@ -1316,7 +1532,14 @@
 
 1992-08-07  dickey@software.org
 
-	* src/vcs/test/Makefile, src/permit/test/Makefile, src/link2rcs/test/Makefile, src/copy/test/Makefile, src/checkup/test/Makefile, src/checkout/test/Makefile, src/baseline/test/Makefile, src/checkin/test/Makefile, src/checkout/Makefile, src/checkup/Makefile, src/copy/Makefile, src/link2rcs/Makefile, src/permit/Makefile, src/vcs/Makefile, src/baseline/Makefile, src/checkin/Makefile:
+	* src/vcs/test/Makefile, src/permit/test/Makefile,
+	  src/link2rcs/test/Makefile, src/copy/test/Makefile,
+	  src/checkup/test/Makefile, src/checkout/test/Makefile,
+	  src/baseline/test/Makefile, src/checkin/test/Makefile,
+	  src/checkout/Makefile, src/checkup/Makefile, src/copy/Makefile,
+	  src/link2rcs/Makefile, src/permit/Makefile, src/vcs/Makefile,
+	  src/baseline/Makefile, src/checkin/Makefile
+:
 	use:common.mk
 
 	* src/common.mk: added definition of MAKE
@@ -1331,7 +1554,10 @@
 
 	* src/common.mk: added include-definitions and LINT_EACH
 
-	* src/baseline/src/Makefile, src/vcs/src/Makefile, src/permit/src/Makefile, src/link2rcs/src/Makefile, src/copy/src/Makefile, src/checkup/src/Makefile:
+	* src/baseline/src/Makefile, src/vcs/src/Makefile,
+	  src/permit/src/Makefile, src/link2rcs/src/Makefile,
+	  src/copy/src/Makefile, src/checkup/src/Makefile
+:
 	use:common.mk
 
 	* src/Makefile: added 'common.mk' to sources list
@@ -1873,7 +2099,9 @@
 
 1992-02-11  dickey@software.org
 
-	* src/checkin/test/case1_b.sh, src/checkin/test/case1_b.ref, src/checkin/test/case_1_b.ref, support/set_date.c:
+	* src/checkin/test/case1_b.sh, src/checkin/test/case1_b.ref,
+	  src/checkin/test/case_1_b.ref, support/set_date.c
+:
 	RCS_BASE
 
 	* src/checkin/test/set_date.c: added "-q" option
@@ -2121,12 +2349,18 @@
 
 1992-02-04  dickey@software.org
 
-	* Makefile, src/Makefile, user/Makefile, src/link2rcs/Makefile, src/copy/Makefile, src/checkup/Makefile, src/checkout/Makefile, src/checkin/Makefile, src/permit/Makefile, src/baseline/Makefile, src/vcs/Makefile:
+	* Makefile, src/Makefile, user/Makefile, src/link2rcs/Makefile,
+	  src/copy/Makefile, src/checkup/Makefile, src/checkout/Makefile,
+	  src/checkin/Makefile, src/permit/Makefile, src/baseline/Makefile,
+	  src/vcs/Makefile:
 	*** empty log message ***
 
 	* src/vcs/Makefile: consistency COPY, GET
 
-	* src/baseline/Makefile, src/permit/Makefile, src/checkin/Makefile, src/checkout/Makefile, src/checkup/Makefile, src/copy/Makefile, src/link2rcs/Makefile, user/Makefile, src/Makefile, Makefile:
+	* src/baseline/Makefile, src/permit/Makefile, src/checkin/Makefile,
+	  src/checkout/Makefile, src/checkup/Makefile, src/copy/Makefile,
+	  src/link2rcs/Makefile, user/Makefile, src/Makefile, Makefile
+:
 	consistent COPY, GET
 
 	* bin/Makefile: corrected default install-path
@@ -2741,7 +2975,8 @@
 
 	* src/vcs/test/run_test.sh: fleshed out test-cases
 
-	* src/vcs/test/delete.ref, src/vcs/test/insert.ref, src/vcs/test/compare.sh:
+	* src/vcs/test/delete.ref, src/vcs/test/insert.ref,
+	  src/vcs/test/compare.sh:
 	RCS_BASE
 
 	* src/vcs/src/insert.c:
@@ -2922,7 +3157,8 @@
 
 1991-10-11  dickey@software.org
 
-	* src/checkup/src/checkup.c, src/checkout/src/rcsget.c, src/checkin/src/rcsput.c:
+	* src/checkup/src/checkup.c, src/checkout/src/rcsget.c,
+	  src/checkin/src/rcsput.c:
 	converted to ANSI
 
 	* src/checkin/src/checkin.c: simplified with a macro the lock-date code
@@ -3195,14 +3431,17 @@
 
 	* user/ded.man: RCS_BASE
 
-	* user/checkup.man, user/checkout.man, user/checkin.man, user/baseline.man:
+	* user/checkup.man, user/checkout.man, user/checkin.man,
+	  user/baseline.man:
 	whitespace
 
 	* user/rcsput.man, user/rcsget.man: RCS_BASE
 
 	* user/copy.man: typo
 
-	* user/permit.man, user/link2rcs.man, user/copy.man, user/checkup.man, user/checkout.man, user/checkin.man, user/baseline.man:
+	* user/permit.man, user/link2rcs.man, user/copy.man, user/checkup.man,
+	  user/checkout.man, user/checkin.man, user/baseline.man
+:
 	RCS_BASE
 
 1991-09-23  dickey@software.org
@@ -3273,7 +3512,9 @@
 
 1991-09-09  dickey@software.org
 
-	* src/link2rcs/src/Makefile, src/copy/test/Makefile, src/copy/src/Makefile, src/checkup/test/Makefile:
+	* src/link2rcs/src/Makefile, src/copy/test/Makefile,
+	  src/copy/src/Makefile, src/checkup/test/Makefile
+:
 	fix clean-rule
 
 1991-09-09  ste_cm@software.org
@@ -3311,7 +3552,8 @@
 
 1991-09-06  dickey@software.org
 
-	* src/checkin/src/checkin.c, src/permit/src/permit.c, src/checkout/src/checkout.c:
+	* src/checkin/src/checkin.c, src/permit/src/permit.c,
+	  src/checkout/src/checkout.c:
 	changed interface to 'rcsopen()'
 
 1991-07-15  dickey@software.org
@@ -3329,7 +3571,9 @@
 
 1991-06-20  dickey@software.org
 
-	* src/checkout/src/checkout.c, src/checkout/src/rcsget.c, src/checkin/src/rcsput.c, src/checkin/src/checkin.c:
+	* src/checkout/src/checkout.c, src/checkout/src/rcsget.c,
+	  src/checkin/src/rcsput.c, src/checkin/src/checkin.c
+:
 	use 'shoarg()'
 
 1991-06-18  dickey@software.org
@@ -3534,7 +3778,9 @@
 
 1991-05-20  dickey@software.org
 
-	* src/permit/src/permit.c, src/link2rcs/src/link2rcs.c, src/copy/src/copy.c, src/checkup/src/checkup.c:
+	* src/permit/src/permit.c, src/link2rcs/src/link2rcs.c,
+	  src/copy/src/copy.c, src/checkup/src/checkup.c
+:
 	mods to compile on apollo sr10.3
 
 1991-05-20  ste_cm@software.org
@@ -3544,7 +3790,9 @@
 
 1991-05-20  dickey@software.org
 
-	* src/checkout/src/rcsget.c, src/checkout/src/checkout.c, src/checkin/src/checkin.c, src/checkin/src/rcsput.c:
+	* src/checkout/src/rcsget.c, src/checkout/src/checkout.c,
+	  src/checkin/src/checkin.c, src/checkin/src/rcsput.c
+:
 	mods to compile on apollo sr10.3
 
 	* src/baseline/src/baseline.c:
@@ -5496,7 +5744,10 @@
 
 1989-06-14  dickey@software.org
 
-	* user/baseline.doc, user/rcsput.doc, user/rcsget.doc, user/permit.doc, user/link2rcs.doc, user/copy.doc, user/checkup.doc, user/checkout.doc, user/checkin.doc, user/ded.doc:
+	* user/baseline.doc, user/rcsput.doc, user/rcsget.doc, user/permit.doc,
+	  user/link2rcs.doc, user/copy.doc, user/checkup.doc, user/checkout.doc,
+	  user/checkin.doc, user/ded.doc
+:
 	filtered with DDIF (removed revision bars, sorted cmds)
 
 	* user/Makefile: corrected destroy/clobber/clean rules
@@ -6284,7 +6535,9 @@
 
 	* support/copy.sh, Makefile: RCS_BASE
 
-	* src/permit/Makefile, src/link2rcs/Makefile, src/copy/Makefile, src/checkup/Makefile, src/checkout/Makefile, src/checkin/Makefile, src/baseline/Makefile:
+	* src/permit/Makefile, src/link2rcs/Makefile, src/copy/Makefile,
+	  src/checkup/Makefile, src/checkout/Makefile, src/checkin/Makefile,
+	  src/baseline/Makefile:
 	integration/cleanup for recursive make
 
 	* bin/Makefile: RCS_BASE
@@ -6304,7 +6557,9 @@
 	* src/checkout/Makefile:
 	maintain 'rcsget' script in same directory as 'checkout' module
 
-	* src/checkout/test/run_test.sh, src/checkin/test/run_test.sh, src/checkin/test/Makefile, src/baseline/test/run_test.sh, src/baseline/test/run_test.sed:
+	* src/checkout/test/run_test.sh, src/checkin/test/run_test.sh,
+	  src/checkin/test/Makefile, src/baseline/test/run_test.sh,
+	  src/baseline/test/run_test.sed:
 	New file.
 
 1989-03-27  ste_cm@software.org
@@ -6339,7 +6594,10 @@
 
 1989-03-27  dickey@software.org
 
-	* src/baseline/test/Makefile, src/link2rcs/src/Makefile, src/baseline/src/Makefile, src/baseline/Makefile, src/link2rcs/test/run_test.sh, src/link2rcs/test/Makefile, src/link2rcs/Makefile:
+	* src/baseline/test/Makefile, src/link2rcs/src/Makefile,
+	  src/baseline/src/Makefile, src/baseline/Makefile,
+	  src/link2rcs/test/run_test.sh, src/link2rcs/test/Makefile,
+	  src/link2rcs/Makefile:
 	New file.
 
 	* src/copy/src/copy.c:
@@ -6356,12 +6614,14 @@
 
 	* src/checkout/src/Makefile: revised to CM-standard format
 
-	* src/checkout/Makefile, src/checkup/test/run_test.sh, src/checkup/test/Makefile:
+	* src/checkout/Makefile, src/checkup/test/run_test.sh,
+	  src/checkup/test/Makefile:
 	New file.
 
 	* src/checkup/src/Makefile: revised to standard CM-format
 
-	* src/checkup/Makefile, src/copy/test/run_test.sh, src/copy/test/Makefile:
+	* src/checkup/Makefile, src/copy/test/run_test.sh, src/copy/test/Makefile
+:
 	New file.
 
 1989-03-23  dickey@software.org
@@ -6370,7 +6630,9 @@
 
 	* src/permit/src/permit.c: minor fixes to smooth out regression-tests
 
-	* src/permit/test/run_test.sh, src/permit/test/Makefile, src/copy/Makefile, src/permit/Makefile:
+	* src/permit/test/run_test.sh, src/permit/test/Makefile,
+	  src/copy/Makefile, src/permit/Makefile
+:
 	New file.
 
 	* src/permit/src/permit.c:
@@ -6948,6 +7210,7 @@
 
 1988-05-19  dickey@software.org
 
-	* src/checkin/src/rcsput.sh, src/checkin/src/checkin.c, src/checkin/src/Makefile:
+	* src/checkin/src/rcsput.sh, src/checkin/src/checkin.c,
+	  src/checkin/src/Makefile:
 	New file.
 

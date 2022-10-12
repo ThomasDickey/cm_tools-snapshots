@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.11 2020/12/08 20:52:44 tom Exp $
+# $Id: makefile.in,v 11.12 2022/10/12 00:14:36 tom Exp $
 # user documentation
 
 ####### (Environment) ##########################################################
@@ -54,9 +54,9 @@ ALL	=
 ####### (Standard Productions) #################################################
 all:		$(SOURCES) $(ALL)
 clean:					; -$(RM) $(CLEAN) $(CLEAN__MAN)
-distclean:	clean			; -$(RM) $(ALL) *.cat
+distclean:	clean			; -$(RM) $(ALL) *.cat install-sh
 check:
-install:	$(MANDIR) $(IT)
+install:	install-sh $(MANDIR) $(IT)
 uninstall:				; -$(RM) $(IT)
 
 ####### (Details of Productions) ###############################################
@@ -72,3 +72,6 @@ $(MANDIR)permit.$(SECTION):	permit.$(USE)	; $(INSTALL_DATA) $? $@
 $(MANDIR)rcsget.$(SECTION):	rcsget.$(USE)	; $(INSTALL_DATA) $? $@
 $(MANDIR)rcsput.$(SECTION):	rcsput.$(USE)	; $(INSTALL_DATA) $? $@
 $(MANDIR)vcs.$(SECTION):	vcs.$(USE)	; $(INSTALL_DATA) $? $@
+
+install-sh : $(top_srcdir)/install-sh
+	cp $? $@
