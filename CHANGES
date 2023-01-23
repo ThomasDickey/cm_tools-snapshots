@@ -1,3 +1,22 @@
+2023-01-22  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/cm_tools-12.0.spec: bump
+
+	* configure: regen
+
+	* bin/makefile.in:
+	build-fix for Solaris: rename variable $(USER) to $(AS_USER)
+
+	* package/debian/copyright, COPYING: bump
+
+	* aclocal.m4, configure.in: use pkg-config to find td_lib
+
+	* package/debian/changelog: bump
+
+2023-01-20  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/debian/compat: bump
+
 2022-12-31  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* package/cm_tools-12.0.spec, package/debian/changelog: bump
@@ -3685,6 +3704,10 @@
 	* support/copy.sh: BASELINE Mon Jun 10 10:09:56 1991 -- apollo sr10.3
 
 	* support/copy.sh: BASELINE Thu Jul 16 09:39:01 1992 -- EBPM4 support
+
+1991-06-05  dickey@software.org
+
+	* support/copy.sh: s/Header/Id/
 
 1991-06-05  dickey@software.org
 

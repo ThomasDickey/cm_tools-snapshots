@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Header: /users/source/archives/cm_tools.vcs/support/RCS/copy.sh,v 11.0 1991/06/05 11:20:57 ste_cm Rel $
+# $Id: copy.sh,v 11.1 1991/06/05 11:20:57 tom Exp $
 # cheap version of 'copy' utility, used for bootstrapping the make only.
 S=
 D=

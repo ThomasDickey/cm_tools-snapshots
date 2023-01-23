@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 11.8 2010/07/05 20:52:47 tom Exp $
+# $Id: makefile.in,v 11.9 2023/01/22 19:07:42 tom Exp $
 
 THIS	= cm_tools
 
@@ -36,19 +36,19 @@ install:	$B $(IT)
 uninstall:			; -$(RM) $(IT)
 
 ####### (Details of Productions) ###############################################
-USER	= $(INSTALL) -m  755 $? $@
-ADMIN	= $(INSTALL) -m 4755 $? $@
+AS_USER		= $(INSTALL) -m  755 $? $@
+AS_ADMIN	= $(INSTALL) -m 4755 $? $@
 
 $B:				; mkdir -p $@
-$B/baseline:	baseline	; $(USER)
-$B/checkin:	checkin		; $(ADMIN)
-$B/checkout:	checkout	; $(ADMIN)
-$B/checkup:	checkup		; $(USER)
-$B/copy:	copy		; $(USER)
-$B/link2rcs:	link2rcs	; $(USER)
-$B/permit:	permit		; $(USER)
-$B/rcsget:	rcsget		; $(USER)
-$B/rcsput:	rcsput		; $(USER)
-$B/vcs:		vcs		; $(ADMIN)
+$B/baseline:	baseline	; $(AS_USER)
+$B/checkin:	checkin		; $(AS_ADMIN)
+$B/checkout:	checkout	; $(AS_ADMIN)
+$B/checkup:	checkup		; $(AS_USER)
+$B/copy:	copy		; $(AS_USER)
+$B/link2rcs:	link2rcs	; $(AS_USER)
+$B/permit:	permit		; $(AS_USER)
+$B/rcsget:	rcsget		; $(AS_USER)
+$B/rcsput:	rcsput		; $(AS_USER)
+$B/vcs:		vcs		; $(AS_ADMIN)
 $B/pci:		$B/checkin	; cd $B && ln -s checkin pci
 $B/pco:		$B/checkout	; cd $B && ln -s checkout pco
