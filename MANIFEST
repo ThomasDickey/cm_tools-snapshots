@@ -1,6 +1,7 @@
-MANIFEST for cm_tools, version t20230122
+MANIFEST for cm_tools, version t20240425
 --------------------------------------------------------------------------------
 MANIFEST                        this file
+CHANGES                         generated changelog
 COPYING                         copyright notice for CM_TOOLS
 README                          top-level README for CM_TOOLS
 aclocal.m4                      macros for CM_TOOLS configure script
@@ -21,10 +22,11 @@ package/debian/control          debian build script
 package/debian/copyright        debian build script
 package/debian/docs             debian build script
 package/debian/rules            debian build script
+package/debian/watch            debian build script
 package/debian/source           subdirectory
 package/debian/source/format    debian build script
-package/debian                  subdirectory
-package/debian/watch            debian build script
+src                             subdirectory
+src/makefile.in                 cm_tools/src makefile template
 src/baseline                    subdirectory
 src/baseline/Makefile           top-level makefile for RCS baseline utility
 src/baseline/makefile.in        cm_tools/src/baseline makefile template
@@ -116,8 +118,6 @@ src/link2rcs/test/case2.sh      script for case 2
 src/link2rcs/test/listtree.sh   list tree contents in standard form, for testing
 src/link2rcs/test/makefile.in   cm_tools/src/link2rcs/test makefile template
 src/link2rcs/test/run_test.sh   test-script for link2rcs
-src                             subdirectory
-src/makefile.in                 cm_tools/src makefile template
 src/permit                      subdirectory
 src/permit/makefile.in          cm_tools/src/permit makefile template
 src/permit/src                  subdirectory
