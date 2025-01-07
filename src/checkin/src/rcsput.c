@@ -47,7 +47,7 @@
 #include	<dyn_str.h>
 extern char *tmpnam(char *);
 
-MODULE_ID("$Id: rcsput.c,v 11.13 2019/12/06 01:07:32 tom Exp $")
+MODULE_ID("$Id: rcsput.c,v 11.14 2025/01/07 00:49:12 tom Exp $")
 
 #define	VERBOSE		if (!quiet) PRINTF
 
@@ -121,14 +121,14 @@ different(const char *working)
 
     if (changed) {
 	if (!quiet) {
-	    if (pager == 0)
+	    if (pager == NULL)
 		cat2fp(stdout, out_diff);
 	    else {
 		if (execute(pager, out_diff) < 0)
 		    failed(pager);
 	    }
 	}
-	if (log_fp != 0) {
+	if (log_fp != NULL) {
 	    PRINTF("appending to logfile");
 	    cat2fp(log_fp, out_diff);
 	}
@@ -220,7 +220,7 @@ WALK_FUNC(scan_tree)
     if (RCS_DEBUG)
 	PRINTF("++ scan %s / %s\n", path, name);
 
-    if (sp == 0 || readable < 0) {
+    if (sp == NULL || readable < 0) {
 	readable = -1;
 	if (!ignore_dir(s)) {	/* could be RCS-dir we cannot scan */
 	    perror(name);
@@ -280,7 +280,7 @@ _MAIN
 {
     int j;
     const char *s;
-    char *cat_input = 0;
+    char *cat_input = NULL;
     int m_opt = FALSE;
     char original[MAXPATHLEN];
 
@@ -298,7 +298,7 @@ _MAIN
 
     /* process options */
     for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
-	if (strchr("BqrfklumMnNstw", s[1]) != 0) {
+	if (strchr("BqrfklumMnNstw", s[1]) != NULL) {
 	    argv_append(&ci_opts, s);
 	    switch (s[1]) {
 	    case 'f':
@@ -322,7 +322,7 @@ _MAIN
 		argv_append(&diff_opts, s);
 		break;
 	    case 'c':
-		pager = 0;
+		pager = NULL;
 		break;
 	    case 'd':
 		no_op = TRUE;

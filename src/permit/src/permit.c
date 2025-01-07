@@ -49,7 +49,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: permit.c,v 11.16 2019/12/05 10:13:57 tom Exp $")
+MODULE_ID("$Id: permit.c,v 11.17 2025/01/07 00:52:02 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -87,7 +87,7 @@ static int
 on_list(char *list, char *s)
 {
     int ok = FALSE;
-    if (list != 0) {
+    if (list != NULL) {
 	char bfr[BUFSIZ];
 	char *d;
 
@@ -282,7 +282,7 @@ create_permit(char *s)
     }
 
     tmp_desc = mktemp(strcpy(TMP_DESC, "/tmp/permitXXXXXX"));
-    if (tmp_desc != 0 && (fp = fopen(tmp_desc, "w"))) {
+    if (tmp_desc != NULL && (fp = fopen(tmp_desc, "w"))) {
 	FPRINTF(fp, "directory-level permissions for:\n%s\n", s);
 	FCLOSE(fp);
     } else
@@ -323,7 +323,7 @@ compute_base(void)
 {
     char *s;
 
-    if ((s = strchr(high_ver, '.')) == 0)
+    if ((s = strchr(high_ver, '.')) == NULL)
 	s = high_ver + strlen(high_ver);
     (void) strcpy(s, ".1");
     (void) strcpy(base_ver, high_ver);
@@ -365,11 +365,11 @@ WALK_FUNC(do_arcs)
     int got_lock = FALSE;	/* true if lock found */
 #endif
     int got_owner = FALSE;	/* true if owner is on access list */
-    mode_t mode = (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
+    mode_t mode = (sp != NULL) ? (sp->st_mode & S_IFMT) : 0;
     int header = TRUE;
     int code = S_FAIL;
     int num = (int) (strlen(name) - (sizeof(RCS_SUFFIX) - 1));
-    char *s = 0;
+    char *s = NULL;
     char list[BUFSIZ];		/* users to add/expunge */
     char to_find[BUFSIZ];	/* check-off list of users */
     char found[BUFSIZ];		/* users found (for report) */
@@ -525,7 +525,7 @@ static int
 WALK_FUNC(do_tree)
 {
     const char *notes;
-    mode_t mode = (sp != 0) ? (sp->st_mode & S_IFMT) : 0;
+    mode_t mode = (sp != NULL) ? (sp->st_mode & S_IFMT) : 0;
 
     if (mode == S_IFDIR) {
 	char tmp[BUFSIZ];
@@ -568,7 +568,7 @@ WALK_FUNC(do_tree)
 	}
     }
 
-    if (readable < 0 || sp == 0) {
+    if (readable < 0 || sp == NULL) {
 	VERBOSE("?? %s/%s\n", path, name);
     } else if (mode == S_IFDIR) {
 	notes = (name[strlen(name) - 1] == '/') ? "" : "/";
@@ -646,7 +646,7 @@ disjoint(void)
 _MAIN
 {
     int j;
-    char *user_opt = 0;
+    char *user_opt = NULL;
     char *d;
     time_t now = time((time_t *) 0);
 

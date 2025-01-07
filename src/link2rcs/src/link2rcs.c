@@ -69,7 +69,7 @@
 #include	<td_qsort.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: link2rcs.c,v 11.15 2014/12/14 15:12:44 tom Exp $")
+MODULE_ID("$Id: link2rcs.c,v 11.16 2025/01/07 00:52:02 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -155,13 +155,13 @@ new_LIST(void)
     LIST *p = ALLOC(LIST, 1);
     LIST *q = list;
 
-    if (q != 0) {
+    if (q != NULL) {
 	while (q->link)
 	    q = q->link;
 	q->link = p;
     } else
 	list = p;
-    p->link = 0;
+    p->link = NULL;
     return (p);
 }
 
@@ -210,7 +210,7 @@ src_stat(const char *path, const char *name, struct stat *sp, int readable, int 
 
     (void) level;
 
-    if (sp == 0) {
+    if (sp == NULL) {
 	;
     } else if (MODE(sp->st_mode) == S_IFDIR) {
 	if (suppress_dots(s))
@@ -227,7 +227,7 @@ src_stat(const char *path, const char *name, struct stat *sp, int readable, int 
 	    p->from = path_from(tmp);
 	    p->what = fmt_sccs;
 	} else {
-	    p->from = 0;
+	    p->from = NULL;
 	}
 #if defined(HAVE_READLINK)
 	if (p->from == 0
@@ -243,7 +243,7 @@ src_stat(const char *path, const char *name, struct stat *sp, int readable, int 
 	    readable = -1;
 	}
 #endif
-	if (p->from != 0)
+	if (p->from != NULL)
 	    readable = -1;
     } else if ((files_too || hard_links)
 	       && (MODE(sp->st_mode) == S_IFREG)) {
@@ -275,7 +275,7 @@ find_src(const char *path, const char *name)
 
     /* process the 'name[]' argument
      */
-    if (getcwd(tmp, sizeof(tmp)) == 0)
+    if (getcwd(tmp, sizeof(tmp)) == NULL)
 	failed(tmp);
     abspath(pathcat(tmp, tmp, name));
     name = tmp;
@@ -514,14 +514,14 @@ has_children(LIST * vec, size_t count, size_t old)
 
     if (vec[old].what == fmt_file)	/* preserve files */
 	return (TRUE);
-    if (vec[old].from != 0)
+    if (vec[old].from != NULL)
 	/* patch: check baseline-version here */
 	return (TRUE);
 
     for (new = old + 1; new < count; new++) {
 	if (vec[new].what == fmt_file)	/* skip files */
 	    continue;
-	if (vec[new].from == 0)	/* skip non-RCS entries */
+	if (vec[new].from == NULL)	/* skip non-RCS entries */
 	    continue;
 	if (is_PREFIX(vec[new].path, vec[old].path, len))
 	    /* patch: check baseline-version here */
@@ -597,13 +597,13 @@ make_dst(char *path)
 	list = &vec[0];
 	for (j = 1; j < count; j++)
 	    vec[j - 1].link = &vec[j];
-	vec[count - 1].link = 0;
+	vec[count - 1].link = NULL;
     }
 
     /* process the linked-list */
     (void) strcpy(dst, path);
     for (p = list; p; p = p->link) {
-	if (p->from == 0) {	/* directory */
+	if (p->from == NULL) {	/* directory */
 	    (void) pathcat(dst, path, p->path);
 	    make_dir(p->path);
 	} else {		/* symbolic-link */
@@ -685,7 +685,7 @@ _MAIN
     char *p;
     int j;
 
-    if (getcwd(Current, sizeof(Current)) == 0)
+    if (getcwd(Current, sizeof(Current)) == NULL)
 	strcpy(Current, ".");
 
     while ((j = getopt(argc, argv, "ab:d:e:fFmnorqs:v")) != EOF) {
@@ -739,12 +739,12 @@ _MAIN
 	}
     }
 
-    if ((p = getenv("DED_CM_LOOKUP")) != 0) {
+    if ((p = getenv("DED_CM_LOOKUP")) != NULL) {
 	char *q;
 	const char *delim = ",";
 
 	p = stralloc(p);
-	while ((q = strtok(p, delim)) != 0) {
+	while ((q = strtok(p, delim)) != NULL) {
 	    if (!strucmp(q, "CVS")) {
 		ignore_cvs = TRUE;
 	    } else if (!strucmp(q, "RCS")) {
@@ -752,7 +752,7 @@ _MAIN
 	    } else if (!strucmp(q, "SCCS")) {
 		ignore_sccs = TRUE;
 	    }
-	    p = 0;
+	    p = NULL;
 	}
     } else {
 #ifdef RCS_PATH
@@ -765,9 +765,9 @@ _MAIN
     if (ignore_cvs)
 	VERBOSE("** can link to CVS\n");
     if (ignore_rcs)
-	VERBOSE("** can link to %s\n", rcs_dir(".", 0));
+	VERBOSE("** can link to %s\n", rcs_dir(".", NULL));
     if (ignore_sccs)
-	VERBOSE("** can link to %s\n", sccs_dir(".", 0));
+	VERBOSE("** can link to %s\n", sccs_dir(".", NULL));
 
     /*
      * Verify that the source/target directories are distinct
@@ -810,7 +810,7 @@ _MAIN
      */
     if (chdir(src_dir) < 0)
 	failed(src_dir);
-    if (getcwd(Source, sizeof(Source)) == 0)
+    if (getcwd(Source, sizeof(Source)) == NULL)
 	failed(Source);
     if (optind < argc) {
 	for (j = optind; j < argc; j++)

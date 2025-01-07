@@ -13,7 +13,7 @@
 
 #include <vcs.h>
 
-MODULE_ID("$Id: unlock.c,v 11.5 2019/12/04 01:30:47 tom Exp $")
+MODULE_ID("$Id: unlock.c,v 11.6 2025/01/07 00:52:02 tom Exp $")
 
 /******************************************************************************/
 static int
@@ -21,7 +21,7 @@ GetLock(char *name, char *lock_rev, char *lock_by)
 {
     int header = TRUE;
     int code = S_FAIL;
-    char *s = 0;
+    char *s = NULL;
     char tip[BUFSIZ];
     char key[BUFSIZ];
 

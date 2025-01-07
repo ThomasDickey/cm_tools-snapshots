@@ -66,7 +66,7 @@
 #include	<sccsdefs.h>
 #include	<ctype.h>
 
-MODULE_ID("$Id: checkup.c,v 11.20 2010/07/05 17:25:57 tom Exp $")
+MODULE_ID("$Id: checkup.c,v 11.21 2025/01/07 00:53:07 tom Exp $")
 
 /************************************************************************
  *	local definitions						*
@@ -106,7 +106,7 @@ ignore(char *string)
     EXTS *savep = exts;
     exts = ALLOC(EXTS, 1);
     exts->link = savep;
-    exts->no_ext = 0;
+    exts->no_ext = NULL;
     exts->if_ext = txtalloc(string);
     if (debug) {
 	if (verbose >= 0)
@@ -128,7 +128,7 @@ extension(const char *string)
     exts = ALLOC(EXTS, 1);
     exts->link = savep;
     exts->no_ext = txtalloc(s);
-    exts->if_ext = 0;
+    exts->if_ext = NULL;
     if (s != string) {
 	strcpy(bfr, string)[s - string] = EOS;
 	exts->if_ext = txtalloc(bfr);
@@ -157,7 +157,7 @@ suppress(const char *name)
     struct stat sb;
 
     for (p = exts; p; p = p->link) {
-	if (p->no_ext == 0) {	/* "-i" test? */
+	if (p->no_ext == NULL) {	/* "-i" test? */
 	    if (!strwcmp(p->if_ext, name))
 		return (TRUE);
 	} else {
@@ -217,7 +217,7 @@ pipes(const char *path,
 		return;
 	}
 	path = pathcat(tmp, path, name);
-	if (original != 0)
+	if (original != NULL)
 	    path = relpath(tmp2, original, path);
 	PRINTF("%s\n", path);
 	if (!fake_tee)
@@ -324,12 +324,12 @@ cmp_date(time_t a, time_t b)
 static int
 WALK_FUNC(do_stat)
 {
-    const char *change = 0;
+    const char *change = NULL;
     const char *vers;
     const char *owner;
-    const char *locked_by = 0;
+    const char *locked_by = NULL;
     time_t cdate;
-    mode_t mode = (sp != 0) ? sp->st_mode : 0;
+    mode_t mode = (sp != NULL) ? sp->st_mode : 0;
     int ok_text = TRUE;
 
     if (isDIR(mode)) {
@@ -348,7 +348,7 @@ WALK_FUNC(do_stat)
 	    do_obs(s, sccs_dir(path, name), level);
     }
 
-    if (readable < 0 || sp == 0) {
+    if (readable < 0 || sp == NULL) {
 	if (verbose > 0)
 	    FPRINTF(stderr, "?? %s/%s\n", path, name);
     } else if (isDIR(mode)) {
@@ -368,7 +368,7 @@ WALK_FUNC(do_stat)
 	if (!show_links
 	    && (lstat(name, sp) >= 0)
 	    && isLINK(sp->st_mode)) {
-	    change = 0;
+	    change = NULL;
 	    vers = "link";
 	    readable = -1;
 	} else {
@@ -404,15 +404,15 @@ WALK_FUNC(do_stat)
 #ifdef	S_IFLNK
 	}
 #endif
-	if ((change != 0) || locked_by != 0) {
-	    if (change == 0)
+	if ((change != NULL) || locked_by != NULL) {
+	    if (change == NULL)
 		change = "no change";
 	    indent(level);
 	    if (verbose >= 0)
 		FPRINTF(stderr, "%s (%s%s%s)\n",
 			name,
 			change,
-			(locked_by != 0) ? ", locked by " : "",
+			(locked_by != NULL) ? ", locked by " : "",
 			owner);
 	    pipes(path, name, vers);
 	} else if (debug) {
@@ -525,8 +525,8 @@ _MAIN
 	    ignore(optarg);
 	    break;
 	case 'l':
-	    if (fopen(optarg, "a+") == 0
-		|| freopen(optarg, "a+", stderr) == 0)
+	    if (fopen(optarg, "a+") == NULL
+		|| freopen(optarg, "a+", stderr) == NULL)
 		failed(optarg);
 	    redir_err = -TRUE;
 	    break;

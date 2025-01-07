@@ -45,7 +45,7 @@
 #include	<sccsdefs.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: rcsget.c,v 11.10 2019/12/05 09:35:00 tom Exp $")
+MODULE_ID("$Id: rcsget.c,v 11.11 2025/01/07 00:52:02 tom Exp $")
 
 #define	VERBOSE	if (!quiet) PRINTF
 
@@ -153,12 +153,12 @@ WALK_FUNC(scan_tree)
 	PRINTF("++ %s%sscan (%s, %s, %s%d)\n",
 	       R_opt ? "R " : "",
 	       L_opt ? "L " : "",
-	       path, name, (sp == 0) ? "no-stat, " : "", level);
+	       path, name, (sp == NULL) ? "no-stat, " : "", level);
 
     if (!quiet || n_opt)
 	track_wd(path);
 
-    if (sp == 0) {
+    if (sp == NULL) {
 	if (R_opt && (level > 0)) {
 	    Ignore(name, " (no such file)");
 	}
@@ -238,7 +238,7 @@ _MAIN
     /* process options */
     for (j = 1; (j < argc) && (*(s = argv[j]) == '-'); j++) {
 	t = s + strlen(s);
-	if (strchr("cfklpqrcswj", s[1]) != 0) {
+	if (strchr("cfklpqrcswj", s[1]) != NULL) {
 	    argv_append(&co_dyns, s);
 	    if (s[1] == 'q')
 		quiet = TRUE;

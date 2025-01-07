@@ -119,7 +119,7 @@
 #include	<ptypes.h>
 #include	<errno.h>
 
-MODULE_ID("$Id: copy.c,v 11.38 2014/12/14 18:00:28 tom Exp $")
+MODULE_ID("$Id: copy.c,v 11.39 2025/01/07 00:52:02 tom Exp $")
 
 #define	if_Verbose	if (v_opt)
 #define	if_Debug	if (v_opt > 1)
@@ -332,14 +332,14 @@ copyfile(char *src, char *dst, int previous, Stat_t * new_sb)
     if (n_opt)
 	return 0;
 
-    if ((ifp = fopen(src, "r")) == 0) {
+    if ((ifp = fopen(src, "r")) == NULL) {
 	problem("fopen(src)", src);
     } else if ((num = fread(bfr1, sizeof(char), want, ifp)) < want) {
 	if_Verbose PRINTF("?? cannot read %s\n", src);
 	did_chmod = FALSE;
     } else if (previous && SetMode(dst, tmp_mode) < 0) {
 	did_chmod = FALSE;
-    } else if ((ofp = fopen(dst, previous ? "w+" : "w")) == 0) {
+    } else if ((ofp = fopen(dst, previous ? "w+" : "w")) == NULL) {
 	problem("fopen(dst)", dst);
     } else {
 	retval = 0;		/* probably will go ok now */
@@ -356,7 +356,7 @@ copyfile(char *src, char *dst, int previous, Stat_t * new_sb)
 	FCLOSE(ofp);
 	progress(transferred, (unsigned long) new_sb->st_size);
     }
-    if (ifp != 0)
+    if (ifp != NULL)
 	FCLOSE(ifp);
     if (retval < 0		/* restore old-mode in case of err */
 	&& did_chmod)
@@ -885,7 +885,7 @@ derived(int argc, char **argv)
 	    } else
 		*s = EOS;
 	}
-	if (s == 0) {
+	if (s == NULL) {
 	    (void) fflush(stdout);
 	    FPRINTF(stderr, "?? No destination directory: \"%s\"\n", argv[j]);
 	    (void) fflush(stderr);

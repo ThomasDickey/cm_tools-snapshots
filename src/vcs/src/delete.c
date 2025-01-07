@@ -16,7 +16,7 @@
 
 #include <vcs.h>
 
-MODULE_ID("$Id: delete.c,v 11.5 2010/07/04 17:48:11 tom Exp $")
+MODULE_ID("$Id: delete.c,v 11.6 2025/01/07 00:52:02 tom Exp $")
 
 typedef struct _item {
     struct _item *link;
@@ -51,7 +51,7 @@ PurgeList(void)
 {
     ITEM *p;
 
-    if (!can_do && items != 0)
+    if (!can_do && items != NULL)
 	VERBOSE(".. purging list (no deletion performed)\n");
 
     while ((p = items) != NULL) {
@@ -108,7 +108,7 @@ WALK_FUNC(do_tree)
 
     (void) level;
 
-    if (readable < 0 || sp == 0) {
+    if (readable < 0 || sp == NULL) {
 	Cannot(full, "not readable");
     } else if ((mode = (sp->st_mode & S_IFMT)) == S_IFDIR) {
 	Append(full, FALSE);

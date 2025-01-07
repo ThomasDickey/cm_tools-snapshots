@@ -65,14 +65,14 @@
  *			     RCSbase variable.
  *		31 Mar 1989, only close temp-file if we have opened it!
  *		29 Mar 1989, if working file cannot be found, this may be
- *			     because checkin is running in set-uid mode. 
+ *			     because checkin is running in set-uid mode.
  *			     Revert to normal rights and try again.
  *		21 Mar 1989, after invoking 'revert()', could no longer write to
  *			     temp-file (fpT); moved 'tmpfile()' call to fix.
  *		15 Mar 1989, if no tip-version found, assume we can create
  *			     initial revision.
  *		08 Mar 1989, use 'revert()' and 'rcspermit()' to implement
- *			     CM-restrictions to set-uid 
+ *			     CM-restrictions to set-uid
  *		27 Feb 1989, Set comment for VMS filetypes .COM, .MMS, as well
  *			     as unix+VMS types ".mk" and ".e".  Also, test for
  *			     the special case of Makefile/makefile.
@@ -82,7 +82,7 @@
  *		27 Sep 1988, forgot to make "rcs" utility perform "-t" option.
  *		13 Sep 1988, for ADA-files (".a" or ".ada", added rcs's comment
  *			     header (not in rcs's default table).  Catch signals
- *			     to do cleanup.  Correctly 'rm_work()' for set-uid 
+ *			     to do cleanup.  Correctly 'rm_work()' for set-uid
  *			     Added newtime/oldtime logic to cover up case in
  *			     which 'ci' aborts but does not return error.
  *		09 Sep 1988, use 'rcspath()'
@@ -134,7 +134,7 @@
 #include	<errno.h>
 extern char *mktemp(char *);
 
-MODULE_ID("$Id: checkin.c,v 11.35 2019/12/06 00:18:44 tom Exp $")
+MODULE_ID("$Id: checkin.c,v 11.36 2025/01/07 00:54:05 tom Exp $")
 
 /* local declarations: */
 #define	CI_TOOL		"ci"
@@ -237,12 +237,12 @@ static void
 clean_file(void)
 {
     if ((*Working != 0)
-	&& (TMP_file != 0)
+	&& (TMP_file != NULL)
 	&& strcmp(Working, TMP_file)) {
 	TELL("%% rm -f %s\n", TMP_file);
 	(void) unlink(TMP_file);
     }
-    TMP_file = 0;
+    TMP_file = NULL;
 }
 
 static void
@@ -486,7 +486,7 @@ PostProcess(void)
  * running in set-uid mode (sigh).
  */
 static int
-DoIt(ARGV *args)
+DoIt(ARGV * args)
 {
     int code;
 #if defined(HAVE_SETRUID)
@@ -837,11 +837,11 @@ static const char *
 get_prefix(const char *suffix)
 {
     PREFIX *new;
-    for (new = clist; new != 0; new = new->link) {
+    for (new = clist; new != NULL; new = new->link) {
 	if (!strcmp(new->suffix, suffix))
 	    return (new->prefix);
     }
-    return (0);
+    return (NULL);
 }
 
 /*
@@ -857,7 +857,7 @@ RcsInitialize(void)
     const char *s;
     char *t;
 
-    if (clist == 0) {
+    if (clist == NULL) {
 	define_prefix(".a", "--  ");
 	define_prefix(".ada", "--  ");
 	define_prefix(".com", "$!\t");
@@ -889,13 +889,13 @@ RcsInitialize(void)
 	if (EMPTY(list)) {
 	    struct passwd *p;
 
-	    if ((p = getpwuid(geteuid()? geteuid() : RCS_uid)) != 0)
+	    if ((p = getpwuid(geteuid()? geteuid() : RCS_uid)) != NULL)
 		FORMAT(list, "-a%s", p->pw_name);
 	    else
 		GiveUp("owner of RCS directory for", Working);
 
 	    if (getuid() != HIS_uid) {
-		if ((p = getpwuid(HIS_uid)) != 0)
+		if ((p = getpwuid(HIS_uid)) != NULL)
 		    FORMAT(list + strlen(list), ",%s", p->pw_name);
 		else
 		    GiveUp("owner of directory for", Working);
@@ -1003,7 +1003,7 @@ MakeDirectory(void)
 static void
 SetOpts(int argc, char **argv, int new_file)
 {
-    const char *m_option = ((cat_input != 0)
+    const char *m_option = ((cat_input != NULL)
 			    ? cat_input
 			    : (from_keys
 			       ? "FROM_KEYS"
@@ -1160,7 +1160,7 @@ _MAIN
 	    from_keys++;
 	if (is_t_opt(argv[j]))
 	    t_option = argv[j];
-	if (strchr("rfkluqmnNstw", *s) == 0) {
+	if (strchr("rfkluqmnNstw", *s) == NULL) {
 	    if (*s == 'B') {
 		use_base = FALSE;
 		continue;

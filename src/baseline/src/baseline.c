@@ -40,7 +40,7 @@
 #include	<ctype.h>
 #include	<time.h>
 
-MODULE_ID("$Id: baseline.c,v 11.10 2019/12/04 09:41:24 tom Exp $")
+MODULE_ID("$Id: baseline.c,v 11.11 2025/01/07 00:46:41 tom Exp $")
 
 #define	isDIR(mode)	((mode & S_IFMT) == S_IFDIR)
 #define	isFILE(mode)	((mode & S_IFMT) == S_IFREG)
@@ -189,7 +189,7 @@ WALK_FUNC(scan_tree)
     char tmp[BUFSIZ];
     char *s = pathcat(tmp, path, name);
 
-    if (sp == 0 || level > recur)
+    if (sp == NULL || level > recur)
 	readable = -1;
     else if (isDIR(sp->st_mode)) {
 	abspath(s);		/* get rid of "." and ".." names */

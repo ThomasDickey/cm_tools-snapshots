@@ -1,3 +1,12 @@
+2025-01-06  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* src/checkin/src/checkin.c, src/checkout/src/checkout.c,
+	  src/checkup/src/checkup.c, src/checkout/src/rcsget.c,
+	  src/copy/src/copy.c, src/link2rcs/src/link2rcs.c,
+	  src/permit/src/permit.c, src/vcs/src/delete.c, src/vcs/src/unlock.c,
+	  src/checkin/src/rcsput.c, src/baseline/src/baseline.c:
+	gcc15-warnings
+
 2024-04-25  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* package/debian/copyright, COPYING, package/cm_tools-12.0.spec,

@@ -95,13 +95,13 @@
 #include	<signal.h>
 #include	<time.h>
 
-MODULE_ID("$Id: checkout.c,v 11.20 2019/12/05 10:09:56 tom Exp $")
+MODULE_ID("$Id: checkout.c,v 11.21 2025/01/07 00:54:05 tom Exp $")
 
 /* local definitions */
 #define	TELL	if (!silent) FPRINTF
 #define	DEBUG(s)	if(debug) FPRINTF s
 
-#define	EMPTY(s)	(s == 0 || *s == EOS)
+#define	EMPTY(s)	(s == NULL || *s == EOS)
 #define	MISMATCH(a,b)	((!EMPTY(a)) && strcmp(a,b))
 
 #define	REVSIZ	80
@@ -158,12 +158,12 @@ WhoAmI(void)
 static void
 clean_file(void)
 {
-    if ((UidHack != 0 && *UidHack)
+    if ((UidHack != NULL && *UidHack)
 	&& (*Working != 0)
 	&& strcmp(UidHack, Working)) {
 	(void) unlink(UidHack);
     }
-    UidHack = 0;
+    UidHack = NULL;
 }
 
 static SIG_T
@@ -187,7 +187,7 @@ static char *
 path_of(char *dst, char *src)
 {
     char *s = strrchr(strcpy(dst, src), '/');
-    if (s == 0)
+    if (s == NULL)
 	(void) strcpy(dst, ".");
     else
 	*s = EOS;
@@ -210,7 +210,7 @@ static void
 trim_branch(char *s)
 {
     char *t = strrchr(s, '.');
-    if (t != 0) {
+    if (t != NULL) {
 	*t = EOS;
 	if (strrchr(s, '.') != NULL) {
 	    ;
@@ -236,14 +236,14 @@ same_branch(char *a, char *b)
  * Find the revision which the user has selected.
  */
 static int
-PreProcess(time_t * revtime,	/* date with which to touch file */
+PreProcess(time_t *revtime,	/* date with which to touch file */
 	   int *co_mode)
 {
     int ok_vers = FALSE, ok_date = FALSE;
     char key[BUFSIZ];
     char tmp[BUFSIZ];
     char this_rev[REVSIZ];
-    char *s = 0;
+    char *s = NULL;
     int header = TRUE, code = S_FAIL;
 
     if (!rcsopen(Archive, -debug, TRUE)) {
