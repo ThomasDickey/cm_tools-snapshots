@@ -1,8 +1,8 @@
-dnl $Id: aclocal.m4,v 11.25 2024/04/25 19:00:42 tom Exp $
+dnl $Id: aclocal.m4,v 11.26 2024/12/21 13:44:12 tom Exp $
 dnl Macros for CM_TOOLS configure script.
 dnl ---------------------------------------------------------------------------
 dnl
-dnl Copyright 1997-2022,2023 by Thomas E. Dickey
+dnl Copyright 1997-2023,2024 by Thomas E. Dickey
 dnl
 dnl                         All Rights Reserved
 dnl
@@ -149,6 +149,32 @@ fi
 
 AC_SUBST(EXTRA_CPPFLAGS)
 
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_ADD_LIBS version: 3 updated: 2019/11/02 16:47:33
+dnl -----------
+dnl Add one or more libraries, used to enforce consistency.  Libraries are
+dnl prepended to an existing list, since their dependencies are assumed to
+dnl already exist in the list.
+dnl
+dnl $1 = libraries to add, with the "-l", etc.
+dnl $2 = variable to update (default $LIBS)
+AC_DEFUN([CF_ADD_LIBS],[
+cf_add_libs="[$]ifelse($2,,LIBS,[$2])"
+# reverse order
+cf_add_0lib=
+for cf_add_1lib in $1; do cf_add_0lib="$cf_add_1lib $cf_add_0lib"; done
+# filter duplicates
+for cf_add_1lib in $cf_add_0lib; do
+	for cf_add_2lib in $cf_add_libs; do
+		if test "x$cf_add_1lib" = "x$cf_add_2lib"; then
+			cf_add_1lib=
+			break
+		fi
+	done
+	test -n "$cf_add_1lib" && cf_add_libs="$cf_add_1lib $cf_add_libs"
+done
+ifelse($2,,LIBS,[$2])="$cf_add_libs"
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_ADD_SUBDIR_PATH version: 5 updated: 2020/12/31 20:19:42
@@ -438,7 +464,7 @@ if test "x$ifelse([$2],,CLANG_COMPILER,[$2])" = "xyes" ; then
 fi
 ])
 dnl ---------------------------------------------------------------------------
-dnl CF_CONST_X_STRING version: 8 updated: 2023/12/01 17:22:50
+dnl CF_CONST_X_STRING version: 9 updated: 2024/12/04 03:49:57
 dnl -----------------
 dnl The X11R4-X11R6 Xt specification uses an ambiguous String type for most
 dnl character-strings.
@@ -465,7 +491,7 @@ CF_SAVE_XTRA_FLAGS([CF_CONST_X_STRING])
 
 AC_TRY_COMPILE(
 [
-#include <stdlib.h>
+$ac_includes_default
 #include <X11/Intrinsic.h>
 ],
 [String foo = malloc(1); free((void*)foo)],[
@@ -476,7 +502,7 @@ AC_CACHE_CHECK(for X11/Xt const-feature,cf_cv_const_x_string,[
 #undef  _CONST_X_STRING
 #define _CONST_X_STRING	/* X11R7.8 (perhaps) */
 #undef  XTSTRINGDEFINES	/* X11R5 and later */
-#include <stdlib.h>
+$ac_includes_default
 #include <X11/Intrinsic.h>
 		],[String foo = malloc(1); *foo = 0],[
 			cf_cv_const_x_string=no
@@ -907,7 +933,7 @@ CF_INTEL_COMPILER(GCC,INTEL_COMPILER,CFLAGS)
 CF_CLANG_COMPILER(GCC,CLANG_COMPILER,CFLAGS)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_GCC_WARNINGS version: 41 updated: 2021/01/01 16:53:59
+dnl CF_GCC_WARNINGS version: 43 updated: 2024/12/21 08:44:12
 dnl ---------------
 dnl Check if the compiler supports useful warning options.  There's a few that
 dnl we don't use, simply because they're too noisy:
@@ -1019,6 +1045,26 @@ fi
 rm -rf ./conftest*
 
 AC_SUBST(EXTRA_CFLAGS)
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_GLOB_FULLPATH version: 2 updated: 2024/08/03 12:34:02
+dnl ----------------
+dnl Use this in case-statements to check for pathname syntax, i.e., absolute
+dnl pathnames.  The "x" is assumed since we provide an alternate form for DOS.
+AC_DEFUN([CF_GLOB_FULLPATH],[
+AC_REQUIRE([CF_WITH_SYSTYPE])dnl
+case "$cf_cv_system_name" in
+(cygwin*|msys*|mingw32*|mingw64|os2*)
+	GLOB_FULLPATH_POSIX='/*'
+	GLOB_FULLPATH_OTHER='[[a-zA-Z]]:[[\\/]]*'
+	;;
+(*)
+	GLOB_FULLPATH_POSIX='/*'
+	GLOB_FULLPATH_OTHER=$GLOB_FULLPATH_POSIX
+	;;
+esac
+AC_SUBST(GLOB_FULLPATH_POSIX)
+AC_SUBST(GLOB_FULLPATH_OTHER)
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_HEADER_PATH version: 15 updated: 2021/01/01 13:31:04
@@ -1224,6 +1270,43 @@ AC_DEFUN([CF_MSG_LOG],[
 echo "${as_me:-configure}:__oline__: testing $* ..." 1>&AC_FD_CC
 ])dnl
 dnl ---------------------------------------------------------------------------
+dnl CF_PATH_SYNTAX version: 19 updated: 2024/08/03 13:08:58
+dnl --------------
+dnl Check the argument to see that it looks like a pathname.  Rewrite it if it
+dnl begins with one of the prefix/exec_prefix variables, and then again if the
+dnl result begins with 'NONE'.  This is necessary to work around autoconf's
+dnl delayed evaluation of those symbols.
+AC_DEFUN([CF_PATH_SYNTAX],[
+AC_REQUIRE([CF_GLOB_FULLPATH])dnl
+
+if test "x$prefix" != xNONE; then
+	cf_path_syntax="$prefix"
+else
+	cf_path_syntax="$ac_default_prefix"
+fi
+
+case "x[$]$1" in
+(x\[$]\(*\)*|x\'*\'*)
+	;;
+(x.|x$GLOB_FULLPATH_POSIX|x$GLOB_FULLPATH_OTHER)
+	;;
+(x\[$]\{*prefix\}*|x\[$]\{*dir\}*)
+	eval $1="[$]$1"
+	case "x[$]$1" in
+	(xNONE/*)
+		$1=`echo "[$]$1" | sed -e s%NONE%$cf_path_syntax%`
+		;;
+	esac
+	;;
+(xno|xNONE/*)
+	$1=`echo "[$]$1" | sed -e s%NONE%$cf_path_syntax%`
+	;;
+(*)
+	ifelse([$2],,[AC_MSG_ERROR([expected a pathname, not \"[$]$1\"])],$2)
+	;;
+esac
+])dnl
+dnl ---------------------------------------------------------------------------
 dnl CF_PKG_CONFIG version: 13 updated: 2023/10/28 11:59:01
 dnl -------------
 dnl Check for the package-config program, unless disabled by command-line.
@@ -1350,65 +1433,22 @@ AC_SUBST(X_CFLAGS)
 AC_SUBST(X_LIBS)
 [])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_PATH_SYNTAX version: 18 updated: 2020/12/31 18:40:20
-dnl --------------
-dnl Check the argument to see that it looks like a pathname.  Rewrite it if it
-dnl begins with one of the prefix/exec_prefix variables, and then again if the
-dnl result begins with 'NONE'.  This is necessary to work around autoconf's
-dnl delayed evaluation of those symbols.
-AC_DEFUN([CF_PATH_SYNTAX],[
-if test "x$prefix" != xNONE; then
-	cf_path_syntax="$prefix"
-else
-	cf_path_syntax="$ac_default_prefix"
-fi
-
-case ".[$]$1" in
-(.\[$]\(*\)*|.\'*\'*)
-	;;
-(..|./*|.\\*)
-	;;
-(.[[a-zA-Z]]:[[\\/]]*) # OS/2 EMX
-	;;
-(.\[$]\{*prefix\}*|.\[$]\{*dir\}*)
-	eval $1="[$]$1"
-	case ".[$]$1" in
-	(.NONE/*)
-		$1=`echo "[$]$1" | sed -e s%NONE%$cf_path_syntax%`
-		;;
-	esac
-	;;
-(.no|.NONE/*)
-	$1=`echo "[$]$1" | sed -e s%NONE%$cf_path_syntax%`
-	;;
-(*)
-	ifelse([$2],,[AC_MSG_ERROR([expected a pathname, not \"[$]$1\"])],$2)
-	;;
-esac
-])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_ADD_LIBS version: 3 updated: 2019/11/02 16:47:33
-dnl -----------
-dnl Add one or more libraries, used to enforce consistency.  Libraries are
-dnl prepended to an existing list, since their dependencies are assumed to
-dnl already exist in the list.
+dnl CF_WITH_SYSTYPE version: 1 updated: 2013/01/26 16:26:12
+dnl ---------------
+dnl For testing, override the derived host system-type which is used to decide
+dnl things such as the linker commands used to build shared libraries.  This is
+dnl normally chosen automatically based on the type of system which you are
+dnl building on.  We use it for testing the configure script.
 dnl
-dnl $1 = libraries to add, with the "-l", etc.
-dnl $2 = variable to update (default $LIBS)
-AC_DEFUN([CF_ADD_LIBS],[
-cf_add_libs="[$]ifelse($2,,LIBS,[$2])"
-# reverse order
-cf_add_0lib=
-for cf_add_1lib in $1; do cf_add_0lib="$cf_add_1lib $cf_add_0lib"; done
-# filter duplicates
-for cf_add_1lib in $cf_add_0lib; do
-	for cf_add_2lib in $cf_add_libs; do
-		if test "x$cf_add_1lib" = "x$cf_add_2lib"; then
-			cf_add_1lib=
-			break
-		fi
-	done
-	test -n "$cf_add_1lib" && cf_add_libs="$cf_add_1lib $cf_add_libs"
-done
-ifelse($2,,LIBS,[$2])="$cf_add_libs"
+dnl This is different from the --host option: it is used only for testing parts
+dnl of the configure script which would not be reachable with --host since that
+dnl relies on the build environment being real, rather than mocked up.
+AC_DEFUN([CF_WITH_SYSTYPE],[
+CF_CHECK_CACHE([AC_CANONICAL_SYSTEM])
+AC_ARG_WITH(system-type,
+	[  --with-system-type=XXX  test: override derived host system-type],
+[AC_MSG_WARN(overriding system type to $withval)
+	cf_cv_system_name=$withval
+	host_os=$withval
+])
 ])dnl
