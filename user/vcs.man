@@ -1,16 +1,13 @@
-.\" $Id: vcs.man,v 11.4 2014/12/15 21:40:20 tom Exp $
-.TH VCS 1
+.\" $Id: vcs.man,v 11.6 2025/09/28 22:53:51 tom Exp $
+.TH VCS 1 2025-09-28 "" "User commands"
 .SH NAME
-.PP
-\fBvcs\fR \- version control system utility
-.SH USAGE
-.PP
-\fBvcs\fI [options] [file-specifications]
+\fBvcs\fR \-
+version control system utility
 .SH SYNOPSIS
-.PP
+\fBvcs\fI [options] [file-specifications]\fR
+.SH DESCRIPTION
 \fBVcs\fR is a simple, easy to use interface to \fIrcs\fR
 (\fBr\fRevision \fBc\fRontrol \fBs\fRystem).
-.SH DESCRIPTION
 .PP
 \fBVcs\fR is a source-control tool which can be used by either
 the configuration manager or developers.
@@ -60,7 +57,6 @@ becomes "\fB./name\fR".
 You must specify exactly one of the
 options "-\fBd\fR", "-\fBi\fR" or "-\fBu\fR".
 .SH ENVIRONMENT
-.PP
 \fBVcs\fR is written in C, and runs on POSIX systems.
 .PP
 Environment variables imported by \fBvcs\fR include:
@@ -72,7 +68,6 @@ set this variable (e.g., to 1 or 2) to activate debugging-traces in the tool.
 identifies the name of the RCS subdirectory, and indirectly the name of
 the \fBvcs\fR file within that directory.
 .SH FILES
-.PP
 \fBVcs\fR uses the following files
 .TP
 .B permit
@@ -81,11 +76,8 @@ to initialize a new vcs-file (i.e., so that its baseline version is compatible).
 .B rcs
 to copy access lists from a parent directory to a newly-inserted directory.
 .SH ANTICIPATED CHANGES
-.PP
 None.
-.SH SEE ALSO
-.PP
-checkin, checkout, ci\ (1), co\ (1), rcs\ (1)
-.SH AUTHOR:
-.PP
+.SH AUTHORS
 Thomas E. Dickey <dickey@invisible-island.net>
+.SH SEE ALSO
+checkin, checkout, ci\ (1), co\ (1), rcs\ (1)

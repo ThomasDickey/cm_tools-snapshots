@@ -1,4 +1,10 @@
-.\" $Id: checkout.man,v 11.7 2019/12/06 21:41:21 tom Exp $
+.\" $Id: checkout.man,v 11.9 2025/09/28 23:02:39 tom Exp $
+.TH CHECKOUT 1 2025-09-28 "" "User commands"
+.ie n .ds CW R
+.el   \{
+.ie \n(.g .ds CW CR
+.el       .ds CW CW
+.\}
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -7,7 +13,7 @@
 .nf
 .nh
 .ta 9n 17n 25n 33n 41n 49n
-.ft CW
+.ft \*(CW
 ..
 .de Eh
 .ft \\n(mE
@@ -16,19 +22,15 @@
 .RE
 .sp .7
 ..
-.TH CHECKOUT 1
 .SH NAME
-.PP
-\fBcheckout\fR \- RCS check-out utility
-.SH USAGE
-.PP
-\fBcheckout\fI [options] [file-specifications]
+\fBcheckout\fR \-
+RCS check-out utility
 .SH SYNOPSIS
-.PP
+\fBcheckout\fI [options] [file-specifications]\fR
+.SH DESCRIPTION
 \fBCheckout\fR is an extension of the RCS utility \fBco\fR.
 It uses a file's check-in date to set the file's modification date
 after check-out.
-.SH DESCRIPTION
 .PP
 \fBCheckout\fR uses the rcs utility \fBco\fR.
 It is normally invoked from the \fBrcsget\fR script,
@@ -40,7 +42,6 @@ sets the file's modification date to match the delta-date for
 the extracted version.
 .SS
 Set-UID Operation
-.PP
 Like the \fBcheckin\fR utility, \fBcheckout\fR properly
 handles set-uid operation for a non-root effective user.
 The archived
@@ -53,7 +54,6 @@ to lock a file.
 Of course, if no lock is made, then the user need
 not be on the access list.
 .SH OPTIONS
-.PP
 \fBCheckout\fR recognizes all of the "\fBco\fR" options
 except for the "\-\fBd\fR" cutoff date.
 Instead, the "\-\fBc\fR"
@@ -86,13 +86,11 @@ If the "\-\fBx\fR" option is not set, "\fBpath/name\fR"
 becomes "\fB./RCS/name,v\fR", and "\fBpath/RCS/name,v\fR"
 becomes "\fB./name\fR".
 .SH OPERATIONS
-.PP
 To extract files using \fBcheckout\fR, you must provide one or
 more file names.
 For each name, checkout parses the leaf-name and
 extracts the specified version from the "./RCS" directory.
 .SH ENVIRONMENT
-.PP
 \fBCheckout\fR is a C-language program.
 It invokes \fBco\fR
 via an \fIexeclp\fR call (so that \fBco\fR must be in your
@@ -110,20 +108,16 @@ is the POSIX time zone, which is overridden internally
 so that file modification dates are independent of the local time
 zone.
 .SH FILES
-.PP
 Checkout uses the following files:
 .TP
 \fBco\fR
 the RCS check-out program
 .SH ANTICIPATED CHANGES
-.PP
 This does not handle \fIrcs\fR branches properly.
 .PP
 \fBCheckout\fR does not handle the "\-\fBj\fR" and "\-\fBp\fR"
 options of \fBco\fR.
-.SH SEE ALSO
-.PP
-checkin, rcsput, ded, ci\ (1), co\ (1)
-.SH AUTHOR:
-.PP
+.SH AUTHORS
 Thomas E. Dickey <dickey@invisible-island.net>
+.SH SEE ALSO
+checkin, rcsput, ded, ci\ (1), co\ (1)

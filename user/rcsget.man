@@ -1,17 +1,14 @@
-.\" $Id: rcsget.man,v 11.6 2019/12/06 21:45:44 tom Exp $
-.TH RCSGET 1
+.\" $Id: rcsget.man,v 11.8 2025/09/28 22:53:51 tom Exp $
+.TH RCSGET 1 2025-09-28 "" "User commands"
 .SH NAME
-.PP
-\fBrcsget\fR \- rcs check-out utility
-.SH USAGE
-.PP
-\fBrcsget\fI [options] [file-specifications]
+\fBrcsget\fR \-
+RCS check-out utility
 .SH SYNOPSIS
-.PP
+\fBrcsget\fI [options] [file-specifications]\fR
+.SH DESCRIPTION
 \fBRcsget\fR is a simple interface to \fIrcs\fR (\fBr\fRevision
 \fBc\fRontrol \fBs\fRystem), which is used to extract files
 from \fIrcs\fR archives.
-.SH DESCRIPTION
 .PP
 \fBRcsget\fR checks out (extracts) files from an \fIrcs\fR
 archive which have been checked in using \fBrcsput \fRor\fBcheckin\fR.
@@ -20,7 +17,6 @@ date as the check-in date.
 \fB Rcsget\fR extracts a given version of one or more files,
 and sets their modification date to match the check-in date.
 .SH OPTIONS
-.PP
 \fBRcsget\fR is a directory-recursive interface to the \fBco\fR
 utility which does special things with the file modification date.
 Most of its options are passed to \fBcheckout\fR or \fBco\fR,
@@ -57,7 +53,6 @@ path.
 \fBRcsget\fR also recognizes (and acts on) the "\-\fBq\fR" (quiet)
 and "\-\fBx\fR" options of \fBcheckout\fR.
 .SH OPERATIONS
-.PP
 To extract files using \fBrcsget\fR, you must provide one or more
 names.
 They may be either file or directory names.
@@ -68,10 +63,8 @@ If it finds a directory (other
 than "RCS"), \fBrcsget\fR will recur to extract files at lower
 levels.
 .SH ENVIRONMENT
-.PP
 \fBRcsget\fR is written in C, and runs on POSIX systems.
 .SH FILES
-.PP
 \fBRcsget\fR uses the following files:
 .TP
 \fBcheckout\fR
@@ -79,11 +72,8 @@ a utility which invokes \fBco\fR and then
 modifies the file's modification date so that it matches the version-date
 selected which was extracted via \fBco\fR.
 .SH ANTICIPATED CHANGES
-.PP
 None.
-.SH SEE ALSO
-.PP
-checkin, checkout, rcsput, ded, co\ (1)
-.SH AUTHOR:
-.PP
+.SH AUTHORS
 Thomas E. Dickey <dickey@invisible-island.net>
+.SH SEE ALSO
+checkin, checkout, rcsput, ded, co\ (1)

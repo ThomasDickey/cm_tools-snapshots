@@ -1,10 +1,8 @@
 Summary: CM Tools for RCS
 %define AppProgram cm_tools
-%define AppLibrary td_lib
 %define AppVersion 12.x
-%define AppRelease 20250117
-%define LibRelease 20250117
-# $Id: cm_tools-12.0.spec,v 1.27 2025/01/18 01:10:53 tom Exp $
+%define AppRelease 20250928
+# $Id: cm_tools-12.0.spec,v 1.28 2025/09/28 23:08:40 tom Exp $
 Name: %{AppProgram}
 Version: %{AppVersion}
 Release: %{AppRelease}
@@ -73,6 +71,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 %changelog
 # each patch should add its ChangeLog entries here
+
+* Sun Sep 28 2025 Thomas E. Dickey
+- testing cm_tools 12.0-20250928
 
 * Sun Jan 22 2023 Thomas Dickey
 - build against td_lib package rather than side-by-side configuration

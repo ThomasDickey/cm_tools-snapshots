@@ -1,4 +1,10 @@
-.\" $Id: checkin.man,v 11.7 2019/12/06 21:42:52 tom Exp $
+.\" $Id: checkin.man,v 11.9 2025/09/28 23:02:39 tom Exp $
+.TH CHECKIN 1 2025-09-28 "" "User commands"
+.ie n .ds CW R
+.el   \{
+.ie \n(.g .ds CW CR
+.el       .ds CW CW
+.\}
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -7,7 +13,7 @@
 .nf
 .nh
 .ta 9n 17n 25n 33n 41n 49n
-.ft CW
+.ft \*(CW
 ..
 .de Eh
 .ft \\n(mE
@@ -21,19 +27,15 @@
 .ie n  .IP \(bu 4
 .el    .IP \(bu 2
 ..
-.TH CHECKIN 1
 .SH NAME
-.PP
-\fBcheckin\fR \- rcs check-in utility
-.SH USAGE
-.PP
-\fBcheckin\fP\fI [options] [file-specifications]\fP
+\fBcheckin\fR \-
+RCS check-in utility
 .SH SYNOPSIS
-.PP
+\fBcheckin\fI [options] [file-specifications]\fR
+.SH DESCRIPTION
 \fBCheckin\fR is an extension of the RCS utility \fBci\fR.
 It uses the file's modification date rather than the current date
 as the RCS delta-date.
-.SH DESCRIPTION
 .PP
 \fBCheckin\fR uses the \fIrcs\fR utility \fBci\fR.
 It is normally invoked from the \fBrcsput\fR script, but may be invoked
@@ -55,12 +57,10 @@ its compact storage of multiple versions of a file.
 By using the file's modification date as a reference, you can more
 easily back up to a meaningful version \- by date, rather than
 version number.
-.SS Archive Directory
-.PP
+.SS "Archive Directory"
 If the archive directory (e.g., "./RCS") does not exist, \fBcheckin\fR
 creates it before invoking the \fBci\fR program.
-.SS Set-UID Operation
-.PP
+.SS "Set-UID Operation"
 The rcs \fBci\fR and \fBco\fR utilities work to a degree in
 set-uid mode (i.e., the "u+s" protection is set on the programs).
 However, the code assumes that the effective uid is \fBroot\fR,
@@ -90,8 +90,7 @@ effective uid to the user's.
 This permits a single copy of \fBcheckin\fR
 to be used for both configuration management as well as individual
 developers.
-.SS Sharing RCS Archives
-.PP
+.SS "Sharing RCS Archives"
 \fBCheckin\fR provides support for shared files by using \fIrcs\fR's
 access lists, and providing special handling for set-uid operation:
 .bP
@@ -107,15 +106,13 @@ puts the \fIreal\fR user on the access list as well.
 With the access list is initialized, only those users who appear on
 an access list may place locks on files, even when running in set-uid
 mode.
-.SS Directory-Level Permissions
-.PP
+.SS "Directory-Level Permissions"
 Before attempting to create or lock an archive file, \fBcheckin\fR
 looks first for the directory-level permissions which may be set with
 the \fBpermit\fR utility.
 If they exist, \fBcheckin\fR limits
 further access rights to those permitted.
 .SH OPTIONS
-.PP
 \fBCheckin\fR recognizes all of the "\fBci\fR" options.
 .PP
 If the "\-\fBk\fR" option is used, \fBcheckin\fR supplies
@@ -145,7 +142,6 @@ That is done best in a script.
 For random use, to supply the same check-in message for more
 than one file, the \fB\-M\fP option lets you provide the message via a file.
 .SH OPERATIONS
-.PP
 \fBCheckin\fR is used exactly as one would use \fBci\fR.
 Place a lock on the file using the "\-\fBl\fR" option with \fBci\fR
 (or with \fBco\fR) when you wish to edit a file.
@@ -153,7 +149,6 @@ Check the file
 in using the "\-\fBu\fR" option to retain a working copy after
 modification.
 .SH ENVIRONMENT
-.PP
 \fBCheckin\fR is a C-language program.
 It invokes \fBci\fR (with
 an explicit path, to protect against mishaps in set-uid mode),
@@ -207,7 +202,6 @@ is the POSIX time zone, which is overridden internally
 so that file modification dates are independent of the local time
 zone.
 .SH FILES
-.PP
 \fBCheckin\fR uses the following files
 .TP
 .B ci
@@ -216,11 +210,8 @@ the RCS check-in program
 .B rcs
 the RCS administrative program
 .SH ANTICIPATED CHANGES
-.PP
 None.
-.SH SEE ALSO
-.PP
-baseline, rcsput, permit, ded, ci\ (1), co\ (1), rcs\ (1)
-.SH AUTHOR:
-.PP
+.SH AUTHORS
 Thomas E. Dickey <dickey@invisible-island.net>
+.SH SEE ALSO
+baseline, rcsput, permit, ded, ci\ (1), co\ (1), rcs\ (1)

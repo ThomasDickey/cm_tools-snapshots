@@ -1,4 +1,10 @@
-.\" $Id: checkup.man,v 11.9 2019/12/21 13:55:49 tom Exp $
+.\" $Id: checkup.man,v 11.11 2025/09/28 23:02:39 tom Exp $
+.TH CHECKUP 1 2025-09-28 "" "User commands"
+.ie n .ds CW R
+.el   \{
+.ie \n(.g .ds CW CR
+.el       .ds CW CW
+.\}
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -7,7 +13,7 @@
 .nf
 .nh
 .ta 9n 17n 25n 33n 41n 49n
-.ft CW
+.ft \*(CW
 ..
 .de Eh
 .ft \\n(mE
@@ -21,21 +27,17 @@
 .ie n  .IP \(bu 4
 .el    .IP \(bu 2
 ..
-.TH CHECKUP 1
 .hy 0
 .
 .SH NAME
-.PP
-\fBcheckup\fR \- RCS/SCCS check-in status
-.SH USAGE
-.PP
-\fBcheckup\fI [options] [file-specifications]
+\fBcheckup\fR \-
+RCS/SCCS check-in status
 .SH SYNOPSIS
-.PP
+\fBcheckup\fI [options] [file-specifications]\fR
+.SH DESCRIPTION
 \fBCheckup\fR examines one or more text files, and shows which
 ones have not been archived with either \fIrcs\fR or \fIsccs\fR.
 It also shows those which have been modified since the last check-in.
-.SH DESCRIPTION
 .PP
 \fBCheckup\fR scans each filename given as an argument, looking
 first for a corresponding \fIrcs\fR archive, then for an \fIsccs\fR archive.
@@ -153,7 +155,6 @@ the target extension as in the "\-\fBi\fR" option.
 Multiple instances of the "\-\fBi\fR" and "\-\fBx\fR" options may be used.
 \fBCheckup\fR tests files against the exclusion options from right-to-left.
 .SH OPERATIONS
-.PP
 An example of the use of \fBcheckup\fR is shown below:
 .Es 26
 bsd4.2(64) checkup -t -x.e.c ~/traces/lib
@@ -184,7 +185,6 @@ bsd4.2(65) checkup  ~/traces/lib
   16:	|-- traces/
 .Eh
 .SH ENVIRONMENT
-.PP
 \fBCheckup\fR is a C-language program which runs in a portable
 POSIX environment.
 Environment variables include:
@@ -197,14 +197,10 @@ If not specified, \fBcheckup\fR assumes "RCS".
 specifies the directory in which \fBcheckup\fR will find the "s." files.
 If not specified, \fBcheckup\fR assumes "SCCS".
 .SH FILES
-.PP
 \fBCheckup\fR is a single binary file, "checkup".
 .SH ANTICIPATED CHANGES
-.PP
 None.
-.SH SEE ALSO
-.PP
-rlog\ (1), sact\ (1).
-.SH AUTHOR:
-.PP
+.SH AUTHORS
 Thomas E. Dickey <dickey@invisible-island.net>
+.SH SEE ALSO
+rlog\ (1), sact\ (1).

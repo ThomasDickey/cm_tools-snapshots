@@ -1,4 +1,10 @@
-.\" $Id: rcsput.man,v 11.7 2019/12/06 21:46:01 tom Exp $
+.\" $Id: rcsput.man,v 11.9 2025/09/28 23:02:39 tom Exp $
+.TH RCSPUT 1 2025-09-28 "" "User commands"
+.ie n .ds CW R
+.el   \{
+.ie \n(.g .ds CW CR
+.el       .ds CW CW
+.\}
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -7,7 +13,7 @@
 .nf
 .nh
 .ta 9n 17n 25n 33n 41n 49n
-.ft CW
+.ft \*(CW
 ..
 .de Eh
 .ft \\n(mE
@@ -21,21 +27,18 @@
 .ie n  .IP \(bu 4
 .el    .IP \(bu 2
 ..
-.TH RCSPUT 1
 .SH NAME
-.PP
-\fBrcsput\fR \- RCS check-in utility
-.SH USAGE
-.PP
-\fBrcsput\fI [options] [file-specifications]
+\fBrcsput\fR \-
+RCS check-in utility
 .SH SYNOPSIS
-.PP
-\fBRcsput\fR is a simple, easy to use interface to \fIrcs\fR
+\fBrcsput\fI [options] [file-specifications]\fR
+.SH DESCRIPTION
+\fBRcsput\fR is a simple,
+easy to use interface to \fIrcs\fR
 (\fBr\fRevision \fBc\fRontrol \fBs\fRystem).
 For each
 file specified as input, it checks differences against the previously
 archived version and prompts you for change history comments.
-.SH DESCRIPTION
 .PP
 \fBRcsput\fR uses the \fIrcs\fR utility \fBci\fR to maintain
 versions of a given source file in a dependent directory named "RCS":
@@ -47,8 +50,8 @@ example).
 If you give \fBrcsput\fR a directory name, it
 will recur, checking-in files in the directory.
 .bP
-For each file which has a corresponding ",v" file, \fBrcs
-put\fR compares the two (using \fBdiff\fR) and pipes the result
+For each file which has a corresponding ",v" file,
+\fBrcsput\fR compares the two (using \fBdiff\fR) and pipes the result
 through the pager.
 .bP
 An option is provided so that you may direct \fBrcsput\fR
@@ -74,7 +77,6 @@ version number.
 \fBRcsput\fR integrates all of the functions used in the \fIrcs\fR
 check-in process into one utility program.
 .SH OPTIONS
-.PP
 Some of the options which you may specify to \fBrcsput\fR are
 passed through to the underlying \fBci\fR utility.
 Others represent extensions:
@@ -111,7 +113,6 @@ is specified, rcsput assumes "logfile".
 specifies an alternate tool to invoke,
 overrides the default "\fBcheckin\fR".
 .SH OPERATIONS
-.PP
 The \fBrcsput\fR utility is designed for use in small development
 projects.
 The methodology for this tool follows:
@@ -168,7 +169,6 @@ Or, you may have been editing a checked-out
 file (with the \fIrcs\fR keywords substituted).
 \fBRcsput\fR would archive this anyway.
 .SH ENVIRONMENT
-.PP
 \fBRcsput\fR is written in C, and runs on POSIX systems.
 .PP
 Environment variables imported by \fBrcsput\fR include:
@@ -180,7 +180,6 @@ version.
 There may be a lot of differences \- more than can be
 shown on one screen.
 .SH FILES
-.PP
 \fBRcsput\fR uses the following files
 .TP
 .B checkin
@@ -188,12 +187,9 @@ A utility which invokes \fBci\fR, and modifies
 the \fIrcs\fR ",v" file after check-in so that the check-in
 date matches the file's modification date.
 .SH ANTICIPATED CHANGES
-.PP
 None.
+.SH AUTHORS
+Thomas E. Dickey <dickey@invisible-island.net>
 .SH SEE ALSO
-.PP
 checkin, rcsget, checkout, ded, ci\ (1), co\ (1), diff\ (1),
 ident\ (1)
-.SH AUTHOR:
-.PP
-Thomas E. Dickey <dickey@invisible-island.net>

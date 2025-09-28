@@ -1,4 +1,10 @@
-.\" $Id: link2rcs.man,v 11.9 2019/12/06 21:44:50 tom Exp $
+.\" $Id: link2rcs.man,v 11.11 2025/09/28 23:02:39 tom Exp $
+.TH LINK2RCS 1 2025-09-28 "" "User commands"
+.ie n .ds CW R
+.el   \{
+.ie \n(.g .ds CW CR
+.el       .ds CW CW
+.\}
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -7,7 +13,7 @@
 .nf
 .nh
 .ta 9n 17n 25n 33n 41n 49n
-.ft CW
+.ft \*(CW
 ..
 .de Eh
 .ft \\n(mE
@@ -16,19 +22,15 @@
 .RE
 .sp .7
 ..
-.TH LINK2RCS 1
 .SH NAME
-.PP
-\fBlink2rcs\fR \- rcs directory template
-.SH USAGE
-.PP
-\fBlink2rcs\fP\fI [options] [file-specifications]\fP
+\fBlink2rcs\fR \-
+RCS directory template
 .SH SYNOPSIS
-.PP
+\fBlink2rcs\fI [options] [file-specifications]\fR
+.SH DESCRIPTION
 \fBLink2rcs\fR makes (an empty) template of an existing directory tree.
 All directory names are copied; "RCS" directories are transformed
 into symbolic links pointing to the original tree.
-.SH DESCRIPTION
 .PP
 \fBLink2rcs\fR is used to make a working copy of a source-controlled
 module which is configured in a tree of directories (e.g., bin, lib,
@@ -40,7 +42,6 @@ By making symbolic links to the original set of \fIrcs\fR directories,
 \fBci\fR and \fBco\fR
 assume that the \fIrcs\fR files are in a subdirectory named "RCS".
 .SH OPTIONS
-.PP
 \fBLink2rcs\fR recognizes the following options:
 .TP 4n
 .B \-a
@@ -103,7 +104,6 @@ Normally you need not specify this; it defaults to ".".
 (verbose) shows shell-command equivalents to the modifications
 which are made.
 .SH OPERATIONS
-.PP
 Normally, you use \fBlink2rcs\fR when constructing a development
 directory based on an existing source tree.
 To copy an entire tree,
@@ -133,7 +133,6 @@ specified).
 When you have created the template tree, you may use \fBrcsget\fR
 to check-out files into the destination tree.
 .SH ENVIRONMENT
-.PP
 \fBLink2rcs\fR is written in C and runs in a POSIX environment.
 .PP
 It uses the \fBDED_CM_LOOKUP\fP variable (see ded(1)) to decide
@@ -142,14 +141,10 @@ By default, \fBlinkrcs\fP creates links for RCS and SCCS directories.
 But if  \fBDEC_CM_LOOKUP\fP is set, \fBlink2rcs\fP creates links
 only if those features are listed in the environment variable.
 .SH FILES
-.PP
 \fBLink2rcs\fR consists of a single binary file, \fBlink2rcs\fR.
 .SH ANTICIPATED CHANGES
-.PP
 None.
-.SH SEE ALSO
-.PP
-ded, baseline, rcsget, checkout, permit, rcs(1)
-.SH AUTHOR:
-.PP
+.SH AUTHORS
 Thomas E. Dickey <dickey@invisible-island.net>
+.SH SEE ALSO
+ded, baseline, rcsget, checkout, permit, rcs(1)

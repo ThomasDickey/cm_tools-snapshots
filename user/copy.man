@@ -1,4 +1,10 @@
-.\" $Id: copy.man,v 11.14 2019/12/06 21:41:39 tom Exp $
+.\" $Id: copy.man,v 11.16 2025/09/28 23:02:39 tom Exp $
+.TH COPY 1 2025-09-28 "" "User commands"
+.ie n .ds CW R
+.el   \{
+.ie \n(.g .ds CW CR
+.el       .ds CW CW
+.\}
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -7,7 +13,7 @@
 .nf
 .nh
 .ta 9n 17n 25n 33n 41n 49n
-.ft CW
+.ft \*(CW
 ..
 .de Eh
 .ft \\n(mE
@@ -16,20 +22,16 @@
 .RE
 .sp .7
 ..
-.TH COPY 1
 .SH NAME
-.PP
-\fBcopy\fR \- file/directory copy utility
-.SH USAGE
-.PP
-.BI copy " [options] file1 file2"
-.PP
-.BI copy " [options] file ... directory"
+\fBcopy\fR \-
+file/directory copy utility
 .SH SYNOPSIS
-.PP
+.BI copy " [options] file1 file2"
+.br
+.BI copy " [options] file ... directory"
+.SH DESCRIPTION
 \fBCopy\fR is an extension of the basic POSIX \fBcp\fR utility.
 It copies files, preserving their modification date.
-.SH DESCRIPTION
 .PP
 \fBCopy\fR copies \fIfile1\fR onto \fIfile2\fR.
 It preserves
@@ -49,7 +51,6 @@ will be the same as the owner of the process which invokes \fBcopy\fR.
 Unless the "\-\fBi\fR" option is used, \fBcopy\fR ignores
 permissions of the (previous) destination file.
 .SH OPTIONS
-.PP
 \fBCopy\fR recognizes options similar to those of \fBcp\fR,
 but with extensions:
 .TP 4n
@@ -97,7 +98,6 @@ will create and copy into the directory "/usr/local/bin/bin"
 if "/usr/local/bin" exists.
 Use the "\-\fBm\fR" option
 to copy onto an existing directory.
-.RE
 .TP
 .B \-n
 disables the actual creation or modification
@@ -136,7 +136,6 @@ that appropriate adjustments must be made in the timestamp computation.
 local time, and
 that appropriate adjustments must be made in the timestamp computation.
 .SH OPERATIONS
-.PP
 \fBCopy\fR is used exactly as one would use \fBcp\fR (for
 file-copying).
 Directory copying is performed without the "\-\fBr\fR"
@@ -149,18 +148,13 @@ If more than two arguments are given, or if the destination ends with
 "/", \fBcopy\fR assumes that the user wants to write into an
 existing directory rather than create a new one.
 .SH ENVIRONMENT
-.PP
 \fBCopy\fR is a C-language program which runs in a POSIX environment.
 .SH FILES
-.PP
 \fBCopy\fR is a single binary file, "copy".
 .SH ANTICIPATED CHANGES
-.PP
 \fBCopy\fR does not currently know how to handle special files
 (e.g., \fB/dev/tty\fR).
-.SH SEE ALSO
-.PP
-cp\ (1)
-.SH AUTHOR:
-.PP
+.SH AUTHORS
 Thomas E. Dickey <dickey@invisible-island.net>
+.SH SEE ALSO
+cp\ (1)

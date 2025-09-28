@@ -1,3 +1,35 @@
+2025-09-28  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* package/cm_tools-12.0.spec, package/debian/changelog: bump
+
+	* package/debian/copyright: formatting
+
+	* user/baseline.man, user/checkin.man, user/checkout.man,
+	  user/checkup.man, user/copy.man, user/link2rcs.man, user/permit.man,
+	  user/rcsput.man:
+	check-manpage
+
+	* user/baseline.man, user/checkin.man, user/checkout.man,
+	  user/checkup.man, user/copy.man, user/link2rcs.man, user/permit.man,
+	  user/rcsput.man:
+	fixup-th-man
+
+	* user/rcsget.man, user/vcs.man: check-manpage
+
+	* user/rcsget.man, user/vcs.man: fixup-th-man
+
+	* configure: regen
+
+	* aclocal.m4, configure.in: use CF_PROG_INSTALL
+
+2025-07-09  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* config.guess, config.sub: update to 2025-07-10
+
+2025-06-08  Thomas E. Dickey  <dickey@invisible-island.net>
+
+	* install-sh: fix license
+
 2025-01-17  Thomas E. Dickey  <dickey@invisible-island.net>
 
 	* package/debian/copyright, COPYING, package/cm_tools-12.0.spec,

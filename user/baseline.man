@@ -1,4 +1,10 @@
-.\" $Id: baseline.man,v 11.6 2019/12/06 21:40:50 tom Exp $
+.\" $Id: baseline.man,v 11.8 2025/09/28 23:02:39 tom Exp $
+.TH BASELINE 1 2025-09-28 "" "User commands"
+.ie n .ds CW R
+.el   \{
+.ie \n(.g .ds CW CR
+.el       .ds CW CW
+.\}
 .de Es
 .ne \\$1
 .nr mE \\n(.f
@@ -7,7 +13,7 @@
 .nf
 .nh
 .ta 9n 17n 25n 33n 41n 49n
-.ft CW
+.ft \*(CW
 ..
 .de Eh
 .ft \\n(mE
@@ -16,18 +22,14 @@
 .RE
 .sp .7
 ..
-.TH BASELINE 1
 .SH NAME
-.PP
-\fBbaseline\fR \- rcs utility
-.SH USAGE
-.PP
-\fBbaseline\fI [options] [file-specifications]
+\fBbaseline\fR \-
+RCS utility
 .SH SYNOPSIS
-.PP
+\fBbaseline\fI [options] [file-specifications]\fR
+.SH DESCRIPTION
 \fBBaseline\fR permits you to set a baseline version in one or
 more RCS files.
-.SH DESCRIPTION
 .PP
 \fBBaseline\fR adds a baseline (placeholder) version to one or
 more RCS archives.
@@ -59,7 +61,6 @@ checkout \-r2 file1 file2 file3
 obtains the last development version beginning with "2.0", but
 before "3.0".
 .SH OPTIONS
-.PP
 \fBBaseline\fR recognizes several options:
 .TP 4n
 .BI \- integer
@@ -110,7 +111,6 @@ it encounters a non-RCS directory.
 makes the baseline process more verbose by causing
 permit, checkin and checkout to show their actions.
 .SH OPERATIONS
-.PP
 Before invoking \fBbaseline\fR, ensure that all of the files to
 be baselined have been checked into \fIrcs\fR
 (e.g., with "\fBcheckin\fR \-u").
@@ -138,10 +138,8 @@ Similarly, an attempt made to baseline
 a file with a lower version than has been archived will result in
 an error.
 .SH ENVIRONMENT
-.PP
 \fBBaseline\fR is written in C, and runs under POSIX systems.
 .SH FILES
-.PP
 \fBBaseline\fR uses the following files
 .TP
 \fBpermit\fR
@@ -152,13 +150,9 @@ the RCS check-in package
 .TP
 \fBcheckout\fR
 the RCS check-out package
-.TP
 .SH ANTICIPATED CHANGES
-.PP
 \fBBaseline\fR does not currently handle branch deltas.
-.SH SEE ALSO
-.PP
-checkin, checkout, ded, permit
-.SH AUTHOR:
-.PP
+.SH AUTHORS
 Thomas E. Dickey <dickey@invisible-island.net>
+.SH SEE ALSO
+checkin, checkout, ded, permit
